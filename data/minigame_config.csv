@@ -1,0 +1,5 @@
+minigame_id,minigame_name,type,attempt_limit
+mg_card_match,보물 파내기,CARD_MATCH,
+mg_slot,신화 스킬 룰렛,SLOT,5
+mg_square,행운의 룰렛,SQUARE_ROULETTE,
+mg_circle,마왕의 타워 룰렛,CIRCLE_ROULETTE,

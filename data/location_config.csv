@@ -1,0 +1,7 @@
+location_id,name,text_id,entry_path,grade_id,repeatable,linked_effect_id,linked_minigame_id,milestone_id
+loc_mercenary,용병 영지,t_mercenary,BRANCH_ROUTE,g_bonus,TRUE,e_flag3,,ms_mercenary_pirate
+loc_pirate,해적 영지,t_pirate,DIRECT,g_bonus,TRUE,e_flag3,,ms_mercenary_pirate
+loc_magictower,마법 타워,t_towermagic,DIRECT,,FALSE,,,
+loc_treasuremap,루드비히의 보물지도,t_treasuremap,DIRECT,g_jackpot,FALSE,,mg_card_match,
+loc_luckyroulette,행운의 룰렛,t_luckyroulette,DIRECT,,FALSE,,mg_square,
+loc_rest,영지(휴식),t_rest_zone,DIRECT,,TRUE,e_hp60,,

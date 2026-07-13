@@ -1,0 +1,5 @@
+grade_id,grade_name,weight,banner_color,card_bg_color,counter_cap
+g_jackpot,대박,10,#f5a623,#3a1a0a,7
+g_mid,중박,35,#5ac8e8,#0d2b36,12
+g_bad,운빨망함,30,#e05555,#241014,
+g_bonus,보너스,10,#b06de0,#221033,

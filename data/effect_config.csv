@@ -1,0 +1,35 @@
+effect_id,effect_type,target,value,value_type,skill_id,description
+e_hp30,STAT_PCT,HP,30,PERCENT,,HP 30% 회복
+e_atk_neg5,STAT_PCT,ATK,-5,PERCENT,,공격력 -5%
+e_atk7,STAT_PCT,ATK,7,PERCENT,,공격력 +7%
+e_maxhp7,STAT_PCT,MAX_HP,7,PERCENT,,최대HP +7%
+e_gold275,CURRENCY,GOLD,275,ABSOLUTE,,골드 +275
+e_gold1500,CURRENCY,GOLD,1500,ABSOLUTE,,골드 +1500
+e_gold300,CURRENCY,GOLD,300,ABSOLUTE,,골드 +300(대박 복합보상)
+e_angel_atk,STAT_PCT,ATK,15,PERCENT,,공격력 대폭 상승(천사의 축복)
+e_angel_hp,STAT_PCT,HP,50,PERCENT,,HP 대폭 회복(천사의 축복)
+e_star2,CURRENCY,STAR_FRAGMENT,2,ABSOLUTE,,별조각 +2
+e_atk21,STAT_PCT,ATK,21,PERCENT,,공격력 +21%
+e_maxhp21,STAT_PCT,MAX_HP,21,PERCENT,,최대HP +21%
+e_hp60,STAT_PCT,HP,60,PERCENT,,HP 60% 회복(휴식형)
+e_exp33,CURRENCY,EXP,33,ABSOLUTE,,EXP +33(무등급)
+e_exp22,CURRENCY,EXP,22,ABSOLUTE,,EXP +22(무등급)
+e_maxhp_neg5,STAT_PCT,MAX_HP,-5,PERCENT,,최대HP -5%
+e_hp_neg10,STAT_PCT,HP,-10,PERCENT,,HP -10%
+e_hp_neg15,STAT_PCT,HP,-15,PERCENT,,HP -15%
+e_flag3,CURRENCY,VICTORY_FLAG,3,ABSOLUTE,,승리의 깃발 +3
+e_gold8000,CURRENCY,GOLD,8000,ABSOLUTE,,골드 +8000(보물파내기)
+e_gold10800,CURRENCY,GOLD,10800,ABSOLUTE,,골드 +10800(보물파내기 최고티어)
+e_atk15,STAT_PCT,ATK,15,PERCENT,,공격력 +15%(베팅승리)
+e_hp_abs_neg6097,STAT_ABS,MAX_HP,-6097,ABSOLUTE,,최대HP -6097(악마계약)
+e_hp_neg7,STAT_PCT,HP,-7,PERCENT,,생명력 -7%(정령 대가)
+e_atk_neg7,STAT_PCT,ATK,-7,PERCENT,,공격력 -7%(정령 대가)
+e_feed1,CURRENCY,FEED,1,ABSOLUTE,,사료 +1(전투보상)
+e_gold_combat,CURRENCY,GOLD,200,ABSOLUTE,,전투 골드 보상(예시 고정치)
+e_exp_combat,CURRENCY,EXP,60,ABSOLUTE,,전투 EXP 보상(예시 고정치)
+e_lvup_hp5,STAT_PCT,HP,5,PERCENT,,레벨업 시 HP 5% 회복(고정)
+e_skill_legend,SKILL_GRANT,SKILL,1,ABSOLUTE,POOL_LEGEND,전설 스킬 획득(풀에서 추첨)
+e_skill_renta_mastery,SKILL_GRANT,SKILL,1,ABSOLUTE,sk_renta_mastery,연타 마스터리 획득(악마계약 전용)
+e_skill_myth,SKILL_GRANT,SKILL,1,ABSOLUTE,POOL_MYTH,신화 스킬 획득(풀에서 추첨)
+e_skill_common_upgrade,SKILL_UPGRADE,SKILL,1,ABSOLUTE,POOL_COMMON_PLUS,기존 스킬 "+" 강화(풀에서 추첨)
+e_ancient_succession,CURRENCY,ANCIENT_SUCCESSION,1,ABSOLUTE,,고대 계승 획득(용도 미확인)

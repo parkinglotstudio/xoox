@@ -1,0 +1,8 @@
+combat_id,tier,text_id,gold_min,gold_max,exp_min,exp_max
+c_normal,NORMAL,t_bone,100,800,40,80
+c_normal2,NORMAL,t_goblin,100,800,40,80
+c_normal3,NORMAL,t_slime,100,800,40,80
+c_normal4,NORMAL,t_stick,100,800,40,80
+c_normal5,NORMAL,t_paladin,100,800,40,80
+c_miniboss,MINIBOSS,t_darkknight,200,200,75,75
+c_finalboss,FINALBOSS,t_prince,,,,

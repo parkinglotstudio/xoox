@@ -1,0 +1,11 @@
+level,skill_grant_mode,skill_pool_tier,hp_heal_pct,exp_to_next
+1,,,,100
+2,CHOICE_3,일반,5,140
+3,CHOICE_3,일반,5,190
+4,AUTO,전설,5,255
+5,AUTO,일반,5,345
+6,AUTO,일반,5,465
+7,AUTO,일반,5,630
+8,CHOICE_3,전설,5,850
+9,AUTO,신화,5,1145
+10,AUTO,신화,5,1545
