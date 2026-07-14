@@ -5,6 +5,7 @@ export interface EffectDef {
   value: number;
   value_type: "PERCENT" | "ABSOLUTE";
   skill_id: string;
+  icon: string;
   description: string;
 }
 
@@ -15,6 +16,7 @@ export interface GradeDef {
   banner_color: string;
   card_bg_color: string;
   counter_cap: number | null;
+  is_negative: boolean;
 }
 
 export interface TextDef {
@@ -74,6 +76,9 @@ export interface MinigameRewardRow {
   minigame_id: string;
   effect_id: string;
   weight: number;
+  label: string;
+  color: string;
+  action: string;
 }
 
 export interface CombatDef {
@@ -100,6 +105,7 @@ export interface SkillDef {
   tier: string;
   is_upgrade: boolean;
   base_skill_id: string;
+  icon: string;
   effect_text: string;
 }
 
@@ -107,6 +113,7 @@ export interface GaugeDef {
   gauge_id: string;
   grade_id: string;
   cap: number;
+  icon: string;
   reward_minigame_id: string;
 }
 
@@ -129,10 +136,28 @@ export interface MilestoneDef {
   milestone_name: string;
   currency: string;
   cap: number;
-  tier1_reward: string;
+  tier1_effect: string;
   tier1_at: number;
-  tier2_reward: string;
+  tier2_effect: string;
   tier2_at: number;
+}
+
+export interface CurrencyDef {
+  currency_id: string;
+  state_key: string;
+  icon: string;
+  label: string;
+  always_show: boolean;
+}
+
+export interface PassiveItemDef {
+  item_id: string;
+  item_name: string;
+  icon: string;
+  effect_type: string;
+  effect_value: string;
+  owned_at_start: boolean;
+  description: string;
 }
 
 export interface GameData {
@@ -152,6 +177,9 @@ export interface GameData {
   phases: PhaseDef[];
   contentTypes: ContentTypeDef[];
   milestones: MilestoneDef[];
+  currencies: CurrencyDef[];
+  passives: PassiveItemDef[];
+  uiTexts: Record<string, string>;
 }
 
 export interface PlayerState {
@@ -172,4 +200,6 @@ export interface PlayerState {
   learnedSkills: string[];
   seenLocations: Set<string>;
   finalBossDefeated: boolean;
+  claimedMilestones: Set<string>;
+  ownedPassives: Set<string>;
 }

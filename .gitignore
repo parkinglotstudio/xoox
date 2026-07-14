@@ -1,3 +1,7 @@
 node_modules/
 dist/
 .DS_Store
+
+# 참고 영상 (대용량 바이너리 - GitHub 100MB 제한 초과)
+plan/
+*.mp4

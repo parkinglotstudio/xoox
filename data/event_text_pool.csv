@@ -19,6 +19,12 @@ t_fog2,DAILY,g_bad,안갯속에서 방향을 잃어 정체불명의 생물체에
 t_cliff,DAILY,g_bad,절벽길에서 발을 헛디뎌 크게 굴러떨어졌습니다.
 t_poisonberry,DAILY,g_bad,독이 있는 열매를 잘못 먹어 몸에 힘이 빠졌습니다.
 t_merchant,DAILY,g_mid,행운 상인을 만났습니다. 행운 기계를 5회 랜덤으로 세팅할 수 있습니다.
+t_bonus_star,DAILY,g_bonus,반짝이는 별똥별이 발치에 떨어져 별조각을 주웠습니다.
+t_bonus_coin,DAILY,g_bonus,길가에 떨어진 낡은 주머니를 열어보니 금화가 들어 있었습니다.
+t_bonus_feed,DAILY,g_bonus,친절한 상인이 지나가는 당신에게 사료를 나눠주었습니다.
+t_smith,DAILY,g_mid,대장간에서 무기를 벼려 방어구를 손봤습니다.
+t_training,DAILY,g_mid,험한 산길을 오르며 근력을 단련했습니다.
+t_shrine,DAILY,g_bad,버려진 사당에서 저주에 걸려 몸이 약해졌습니다.
 t_hometown,DAILY,,인간과 마수가 당신의 고향을 습격했습니다. 당신은 유일한 생존자로서 무기를 들고 모험의 여정을 떠나기로 했습니다.
 t_rest_zone,UNGRADED,,영지를 발견했습니다. 이 영지는 멀쩡해 보이지만 아무도 살고 있지 않습니다. 영지에서 휴식하고 체력이 회복되었습니다.
 t_awards,UNGRADED,,자신감이 넘친 당신은 숲의 기사의 수상식에 참석하여 최고 모발상을 받았습니다.
@@ -47,3 +53,4 @@ t_arena,BRANCH,,블러드 아레나에서 늑대 인간이 인간 검술사와 �
 t_stonegolem_offer,BRANCH,,이것은 오래된 돌의 정령이며 그가 당신을 부르고 있는 듯합니다.
 t_angel,BRANCH,,천사를 만났습니다! 축복을 하나 선택할 수 있습니다.
 t_challenger,BRANCH,,도전자가 나타났습니다! 최후의 결전을 받아들이겠습니까?
+t_goblin_merchant,BRANCH,,고블린 상인을 만났습니다. 기존 스킬 1개를 파괴하고 새 스킬로 교체하시겠습니까?

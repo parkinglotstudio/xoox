@@ -1,34 +1,34 @@
-skill_id,skill_name,tier,is_upgrade,base_skill_id,effect_text
-sk_lightning,천뢰,일반,FALSE,,하늘에서 번개가 내려친다
-sk_crown,왕관,전설,FALSE,,공격력·방어력·HP 상승
-sk_dodge,빈사시 회피,전설,FALSE,,HP 30% 미만 시 회피 상승
-sk_lightning_mastery,번개 마스터리,전설,FALSE,,번개 피해 증가
-sk_lightning_mastery_plus,번개 마스터리+,전설,TRUE,sk_lightning_mastery,번개 피해 추가 증가
-sk_firecracker,폭죽,신화,FALSE,,적에게 기절 부여
-sk_revival,부활,신화,FALSE,,사망 시 부활(영구 1회)
-sk_lifedeath,결사의 일전,신화,FALSE,,HP 10% 감소마다 흡혈·공격력 증가
-sk_comborush3,연속공격x3,신화,FALSE,,3연속공격 시 추가타
-sk_combo2,콤보x2,신화,FALSE,,연속공격 시 추가타
-sk_defense_max,방어 끝판왕,신화,FALSE,,턴마다 피해감소 증가
-sk_skinharden,피부 경화,일반,FALSE,,피해감소
-sk_skinharden_plus,피부 경화+,일반,TRUE,sk_skinharden,피해감소 증가
-sk_rage_shield,분노 공격 보호막,일반,FALSE,,분노 시전 시 보호막
-sk_rage_shield_plus,분노 공격 보호막+,일반,TRUE,sk_rage_shield,보호막 값 증가
-sk_counter_light,반격 빛의 창,일반,FALSE,,반격 시 빛의 창 소환
-sk_counter_light_plus,반격 빛의 창+,일반,TRUE,sk_counter_light,빛의 창 2개 소환
-sk_neartodeath_recover,빈사시 회복,일반,FALSE,,HP 낮을 때 회복
-sk_lightspear,빛의 창 숙련,일반,FALSE,,빛의 창 위력 증가
-sk_bleed,연속 출혈,일반,FALSE,,연속 공격 시 출혈
-sk_shuriken,수리검,일반,FALSE,,투척 공격 추가
-sk_orc,오크!,미확인,FALSE,,고대 계승 처치 보상 스킬
-sk_ice_touch,얼음의 접촉,신화,FALSE,,적 즉시 처치 확률
-sk_renta_mastery,연타 마스터리,전설,FALSE,,연타 확률·공격력 증가(악마계약 전용)
-sk_flame_shield,화염 방패,일반,FALSE,,화염 피해 흡수 방어막
-sk_normal_shield,일반 공격 보호막,일반,FALSE,,평타 시전 시 보호막 생성
-sk_rage_shuriken,분노 수리검,일반,FALSE,,분노 시 수리검 투척 추가타
-sk_ice_shard_normal,일반 공격 얼음가시,일반,FALSE,,평타에 빙결 확률 추가
-sk_heal_boost,회복 강화,일반,FALSE,,회복 효과량 증가
-sk_dodge_boost,회피 강화,일반,FALSE,,회피 확률 증가
-sk_rage_firewave,분노 공격 화염파,일반,FALSE,,분노 시전 시 화염파 발사
-sk_renta,연타,일반,FALSE,,일반 공격 연타 확률 상승
-sk_tough,강인,일반,FALSE,,피격 시 피해 감소 확률
+skill_id,skill_name,tier,is_upgrade,base_skill_id,icon,effect_text
+sk_lightning,천뢰,일반,FALSE,,⚡,하늘에서 번개가 내려친다
+sk_crown,왕관,전설,FALSE,,👑,공격력·방어력·HP 상승
+sk_dodge,빈사시 회피,전설,FALSE,,💨,HP 30% 미만 시 회피 상승
+sk_lightning_mastery,번개 마스터리,전설,FALSE,,⚡,번개 피해 증가
+sk_lightning_mastery_plus,번개 마스터리+,전설,TRUE,sk_lightning_mastery,⚡,번개 피해 추가 증가
+sk_firecracker,폭죽,신화,FALSE,,🎆,적에게 기절 부여
+sk_revival,부활,신화,FALSE,,✝️,사망 시 부활(영구 1회)
+sk_lifedeath,결사의 일전,신화,FALSE,,🩸,HP 10% 감소마다 흡혈·공격력 증가
+sk_comborush3,연속공격x3,신화,FALSE,,👊,3연속공격 시 추가타
+sk_combo2,콤보x2,신화,FALSE,,👊,연속공격 시 추가타
+sk_defense_max,방어 끝판왕,신화,FALSE,,🛡️,턴마다 피해감소 증가
+sk_skinharden,피부 경화,일반,FALSE,,🪨,피해감소
+sk_skinharden_plus,피부 경화+,일반,TRUE,sk_skinharden,🪨,피해감소 증가
+sk_rage_shield,분노 공격 보호막,일반,FALSE,,🛡️,분노 시전 시 보호막
+sk_rage_shield_plus,분노 공격 보호막+,일반,TRUE,sk_rage_shield,🛡️,보호막 값 증가
+sk_counter_light,반격 빛의 창,일반,FALSE,,🔆,반격 시 빛의 창 소환
+sk_counter_light_plus,반격 빛의 창+,일반,TRUE,sk_counter_light,🔆,빛의 창 2개 소환
+sk_neartodeath_recover,빈사시 회복,일반,FALSE,,💗,HP 낮을 때 회복
+sk_lightspear,빛의 창 숙련,일반,FALSE,,🔱,빛의 창 위력 증가
+sk_bleed,연속 출혈,일반,FALSE,,🩸,연속 공격 시 출혈
+sk_shuriken,수리검,일반,FALSE,,🌀,투척 공격 추가
+sk_orc,오크!,미확인,FALSE,,👹,고대 계승 처치 보상 스킬
+sk_ice_touch,얼음의 접촉,신화,FALSE,,❄️,적 즉시 처치 확률
+sk_renta_mastery,연타 마스터리,전설,FALSE,,👊,연타 확률·공격력 증가(악마계약 전용)
+sk_flame_shield,화염 방패,일반,FALSE,,🔥,화염 피해 흡수 방어막
+sk_normal_shield,일반 공격 보호막,일반,FALSE,,🛡️,평타 시전 시 보호막 생성
+sk_rage_shuriken,분노 수리검,일반,FALSE,,🌀,분노 시 수리검 투척 추가타
+sk_ice_shard_normal,일반 공격 얼음가시,일반,FALSE,,❄️,평타에 빙결 확률 추가
+sk_heal_boost,회복 강화,일반,FALSE,,💚,회복 효과량 증가
+sk_dodge_boost,회피 강화,일반,FALSE,,💨,회피 확률 증가
+sk_rage_firewave,분노 공격 화염파,일반,FALSE,,🔥,분노 시전 시 화염파 발사
+sk_renta,연타,일반,FALSE,,👊,일반 공격 연타 확률 상승
+sk_tough,강인,일반,FALSE,,💪,피격 시 피해 감소 확률

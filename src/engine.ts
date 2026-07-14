@@ -31,7 +31,46 @@ export function createInitialState(data: GameData): PlayerState {
     learnedSkills: [],
     seenLocations: new Set(),
     finalBossDefeated: false,
+    claimedMilestones: new Set(),
+    ownedPassives: new Set(data.passives.filter((p) => p.owned_at_start).map((p) => p.item_id)),
   };
+}
+
+export interface MilestoneReward {
+  milestoneName: string;
+  atCount: number;
+  effectId: string;
+}
+
+const CURRENCY_STATE_KEY: Record<string, keyof PlayerState> = {
+  GOLD: "gold",
+  EXP: "exp",
+  STAR_FRAGMENT: "starFragment",
+  FEED: "feed",
+  VICTORY_FLAG: "victoryFlag",
+  ANCIENT_SUCCESSION: "ancientSuccession",
+};
+
+export function checkMilestones(data: GameData, state: PlayerState): MilestoneReward[] {
+  const out: MilestoneReward[] = [];
+  for (const m of data.milestones) {
+    const key = CURRENCY_STATE_KEY[m.currency];
+    if (!key) continue;
+    const amount = state[key] as number;
+    const tiers: [string, number][] = [
+      [m.tier1_effect, m.tier1_at],
+      [m.tier2_effect, m.tier2_at],
+    ];
+    for (let i = 0; i < tiers.length; i++) {
+      const [effectId, at] = tiers[i];
+      const claimKey = `${m.milestone_id}:${i}`;
+      if (effectId && at > 0 && amount >= at && !state.claimedMilestones.has(claimKey)) {
+        state.claimedMilestones.add(claimKey);
+        out.push({ milestoneName: m.milestone_name, atCount: at, effectId });
+      }
+    }
+  }
+  return out;
 }
 
 export function pickPhase(data: GameData, day: number) {
@@ -70,8 +109,9 @@ export function pickUngradedText(data: GameData) {
 }
 
 export function pickLocation(data: GameData, state: PlayerState): LocationDef {
-  const unseen = data.locations.filter((l) => !state.seenLocations.has(l.location_id));
-  const pool = unseen.length > 0 ? unseen : data.locations.filter((l) => l.repeatable);
+  const direct = data.locations.filter((l) => l.entry_path === "DIRECT");
+  const unseen = direct.filter((l) => !state.seenLocations.has(l.location_id));
+  const pool = unseen.length > 0 ? unseen : direct.filter((l) => l.repeatable);
   return pool[randInt(0, pool.length - 1)];
 }
 
@@ -95,6 +135,20 @@ export function textFor(data: GameData, textId: string) {
   return data.texts.find((t) => t.text_id === textId)?.body ?? "";
 }
 
+export function uiText(data: GameData, key: string, vars?: Record<string, string | number>): string {
+  let text = data.uiTexts[key] ?? key;
+  if (vars) {
+    for (const [k, v] of Object.entries(vars)) {
+      text = text.split(`{${k}}`).join(String(v));
+    }
+  }
+  return text;
+}
+
+export function effectLine(effect: { icon: string; description: string }): string {
+  return effect.icon ? `${effect.icon} ${effect.description}` : effect.description;
+}
+
 export interface EffectResult {
   lines: string[];
   learnedSkill?: SkillDef;
@@ -111,27 +165,24 @@ export function applyEffectId(data: GameData, state: PlayerState, effectId: stri
       const pct = effect.value / 100;
       if (effect.target === "HP") {
         state.hp = Math.max(1, Math.min(state.maxHp, state.hp + state.maxHp * pct));
-        lines.push(`HP ${effect.value > 0 ? "+" : ""}${effect.value}% 회복`);
       } else if (effect.target === "MAX_HP") {
         const before = state.maxHp;
         state.maxHp = Math.max(1, Math.round(state.maxHp * (1 + pct)));
         state.hp = Math.min(state.maxHp, Math.max(1, state.hp + (state.maxHp - before)));
-        lines.push(`최대 HP ${effect.value > 0 ? "+" : ""}${effect.value}%`);
       } else if (effect.target === "ATK") {
         state.atk = Math.max(1, Math.round(state.atk * (1 + pct)));
-        lines.push(`공격력 ${effect.value > 0 ? "+" : ""}${effect.value}%`);
       } else if (effect.target === "DEF") {
         state.def = Math.max(1, Math.round(state.def * (1 + pct)));
-        lines.push(`방어력 ${effect.value > 0 ? "+" : ""}${effect.value}%`);
       }
+      lines.push(effectLine(effect));
       break;
     }
     case "STAT_ABS": {
       if (effect.target === "MAX_HP") {
         state.maxHp = Math.max(1000, state.maxHp + effect.value);
         state.hp = Math.min(state.hp, state.maxHp);
-        lines.push(`최대 HP ${effect.value > 0 ? "+" : ""}${effect.value}`);
       }
+      lines.push(effectLine(effect));
       break;
     }
     case "CURRENCY": {
@@ -146,15 +197,7 @@ export function applyEffectId(data: GameData, state: PlayerState, effectId: stri
       const key = map[effect.target];
       if (key) {
         (state[key] as number) += effect.value;
-        const label: Record<string, string> = {
-          GOLD: "골드",
-          EXP: "EXP",
-          STAR_FRAGMENT: "별조각",
-          FEED: "사료",
-          VICTORY_FLAG: "승리의 깃발",
-          ANCIENT_SUCCESSION: "고대 계승",
-        };
-        lines.push(`${label[effect.target]} +${effect.value}`);
+        lines.push(effectLine(effect));
       }
       break;
     }
@@ -169,7 +212,7 @@ export function applyEffectId(data: GameData, state: PlayerState, effectId: stri
         if (!state.learnedSkills.includes(directSkill.skill_id)) {
           state.learnedSkills.push(directSkill.skill_id);
         }
-        lines.push(`스킬 ${directSkill.skill_name} 학습`);
+        lines.push(uiText(data, "ui_skill_grant_line", { name: directSkill.skill_name }));
         break;
       }
       const tier = effect.skill_id === "POOL_LEGEND" ? "전설" : effect.skill_id === "POOL_MYTH" ? "신화" : "일반";
@@ -179,7 +222,7 @@ export function applyEffectId(data: GameData, state: PlayerState, effectId: stri
       if (pool.length > 0) {
         learnedSkill = pool[randInt(0, pool.length - 1)];
         state.learnedSkills.push(learnedSkill.skill_id);
-        lines.push(`스킬 ${learnedSkill.skill_name} 학습`);
+        lines.push(uiText(data, "ui_skill_grant_line", { name: learnedSkill.skill_name }));
       }
       break;
     }
@@ -263,9 +306,33 @@ export function gaugeValue(data: GameData, state: PlayerState, gaugeId: string) 
   return { current: state.gaugeCounts[gaugeId] ?? 0, cap: gauge.cap };
 }
 
-export function spinMinigame(data: GameData, minigameId: string): MinigameRewardRow | null {
-  const pool = data.minigameRewards.filter((r) => r.minigame_id === minigameId);
+export function getMinigamePool(data: GameData, minigameId: string): MinigameRewardRow[] {
+  return data.minigameRewards.filter((r) => r.minigame_id === minigameId);
+}
+
+export function spinMinigameRow(data: GameData, minigameId: string): MinigameRewardRow | null {
+  const pool = getMinigamePool(data, minigameId);
   if (pool.length === 0) return null;
-  const picked = weightedPick(pool, (r) => r.weight);
-  return picked.effect_id ? picked : null;
+  return weightedPick(pool, (r) => r.weight);
+}
+
+export function spinMinigame(data: GameData, minigameId: string): MinigameRewardRow | null {
+  const picked = spinMinigameRow(data, minigameId);
+  return picked && picked.effect_id ? picked : null;
+}
+
+export function rewardLabel(data: GameData, effectId: string): { icon: string; text: string } {
+  if (!effectId) return { icon: "❌", text: "꽝" };
+  const e = data.effects.find((x) => x.effect_id === effectId);
+  if (!e) return { icon: "🎁", text: "보상" };
+  return { icon: e.icon || "🎁", text: e.description };
+}
+
+export function rewardRowLabel(
+  data: GameData,
+  row: MinigameRewardRow
+): { icon: string; text: string; color: string } {
+  const effect = row.effect_id ? data.effects.find((x) => x.effect_id === row.effect_id) : undefined;
+  const icon = row.action === "RESPIN" ? "🔄" : effect?.icon || (row.effect_id ? "🎁" : "❌");
+  return { icon, text: row.label, color: row.color };
 }

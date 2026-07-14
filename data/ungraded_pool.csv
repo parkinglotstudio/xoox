@@ -1,0 +1,6 @@
+pool_id,text_id,effect_id,weight
+u_rest,t_rest_zone,e_hp60,10
+u_awards,t_awards,e_exp33,10
+u_princess,t_princess,e_exp22,10
+u_campfire,t_campfire,e_exp33,10
+u_shortcut,t_shortcut,e_exp22,10

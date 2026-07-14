@@ -23,6 +23,9 @@ export async function loadGameData(): Promise<GameData> {
     phases,
     contentTypes,
     milestones,
+    currencies,
+    passives,
+    uiTextRows,
   ] = await Promise.all([
     loadCsv("effect_config"),
     loadCsv("grade_config"),
@@ -40,6 +43,9 @@ export async function loadGameData(): Promise<GameData> {
     loadCsv("progression_phase_config"),
     loadCsv("content_type_config"),
     loadCsv("milestone_config"),
+    loadCsv("currency_config"),
+    loadCsv("passive_item_config"),
+    loadCsv("ui_text_config"),
   ]);
 
   return {
@@ -50,6 +56,7 @@ export async function loadGameData(): Promise<GameData> {
       value: num(r.value),
       value_type: r.value_type as any,
       skill_id: r.skill_id,
+      icon: r.icon,
       description: r.description,
     })),
     grades: grades.map((r) => ({
@@ -59,6 +66,7 @@ export async function loadGameData(): Promise<GameData> {
       banner_color: r.banner_color,
       card_bg_color: r.card_bg_color,
       counter_cap: numOrNull(r.counter_cap),
+      is_negative: bool(r.is_negative),
     })),
     texts: texts.map((r) => ({
       text_id: r.text_id,
@@ -111,6 +119,9 @@ export async function loadGameData(): Promise<GameData> {
       minigame_id: r.minigame_id,
       effect_id: r.effect_id,
       weight: num(r.weight),
+      label: r.label,
+      color: r.color,
+      action: r.action || "NORMAL",
     })),
     combats: combats.map((r) => ({
       combat_id: r.combat_id,
@@ -134,12 +145,14 @@ export async function loadGameData(): Promise<GameData> {
       tier: r.tier,
       is_upgrade: bool(r.is_upgrade),
       base_skill_id: r.base_skill_id,
+      icon: r.icon,
       effect_text: r.effect_text,
     })),
     gauges: gauges.map((r) => ({
       gauge_id: r.gauge_id,
       grade_id: r.grade_id,
       cap: num(r.cap),
+      icon: r.icon,
       reward_minigame_id: r.reward_minigame_id,
     })),
     phases: phases.map((r) => ({
@@ -154,14 +167,31 @@ export async function loadGameData(): Promise<GameData> {
       type_name: r.type_name,
       weight: num(r.weight),
     })),
+    uiTexts: Object.fromEntries(uiTextRows.map((r) => [r.key, r.text])),
+    currencies: currencies.map((r) => ({
+      currency_id: r.currency_id,
+      state_key: r.state_key,
+      icon: r.icon,
+      label: r.label,
+      always_show: bool(r.always_show),
+    })),
+    passives: passives.map((r) => ({
+      item_id: r.item_id,
+      item_name: r.item_name,
+      icon: r.icon,
+      effect_type: r.effect_type,
+      effect_value: r.effect_value,
+      owned_at_start: bool(r.owned_at_start),
+      description: r.description,
+    })),
     milestones: milestones.map((r) => ({
       milestone_id: r.milestone_id,
       milestone_name: r.milestone_name,
       currency: r.currency,
       cap: num(r.cap),
-      tier1_reward: r.tier1_reward,
+      tier1_effect: r.tier1_effect,
       tier1_at: num(r.tier1_at),
-      tier2_reward: r.tier2_reward,
+      tier2_effect: r.tier2_effect,
       tier2_at: num(r.tier2_at),
     })),
   };

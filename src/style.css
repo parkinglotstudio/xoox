@@ -90,6 +90,25 @@ body {
   flex-shrink: 0;
 }
 
+.currency-bar {
+  display: flex;
+  gap: 8px;
+  padding: 5px 12px;
+  background: #14141f;
+  border-bottom: 1px solid #2a2a3d;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.currency-chip {
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffdca0;
+  background: #22223a;
+  border-radius: 10px;
+  padding: 2px 9px;
+}
+
 .feed {
   flex: 1;
   overflow-y: auto;
@@ -473,15 +492,191 @@ body {
   text-align: center;
 }
 
-.minigame-panel .title {
+.mg-title {
   font-size: 20px;
   font-weight: 800;
   color: #ffd35a;
 }
 
+.mg-sub {
+  font-size: 12px;
+  color: #c9b8a8;
+}
+
+.mg-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .minigame-panel .result {
   font-size: 15px;
+  font-weight: 700;
   color: #fff;
+  min-height: 20px;
+}
+
+.mg-action-btn {
+  border: none;
+  border-radius: 26px;
+  padding: 12px 40px;
+  font-size: 16px;
+  font-weight: 900;
+  color: #2a1500;
+  background: linear-gradient(#ffd35a, #f0a93a);
+  cursor: pointer;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* 원형 룰렛 */
+.wheel-wrap {
+  position: relative;
+  width: 240px;
+  height: 240px;
+}
+
+.wheel-spin {
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 6px #3a2c1c, 0 6px 16px rgba(0, 0, 0, 0.5);
+}
+
+.wheel-pointer {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 20px solid #ffd35a;
+  z-index: 3;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+}
+
+.wheel-hub {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 34px;
+  height: 34px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(#5a4527, #2a2015);
+  border: 3px solid #ffd35a;
+  z-index: 2;
+}
+
+/* 슬롯머신 */
+.slot-machine {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  background: linear-gradient(#c22525, #8a1818);
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 4px #ffd35a, 0 6px 16px rgba(0, 0, 0, 0.5);
+}
+
+.slot-reel {
+  width: 64px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.slot-reel.slot-lock {
+  animation: slot-pop 0.3s ease;
+  background: #fff8d8;
+}
+
+@keyframes slot-pop {
+  0% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 보물 파내기 카드 */
+.card-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.card-legend-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #eee;
+  background: #2a2015;
+  border-radius: 6px;
+  padding: 3px 10px;
+}
+
+.card-legend-icons {
+  letter-spacing: -2px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.match-card {
+  aspect-ratio: 1;
+  border: 2px solid #3a3a55;
+  border-radius: 8px;
+  background: linear-gradient(#3a5ab0, #22407a);
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffd35a;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.match-card.flipped {
+  background: #f2e6c9;
+  transform: rotateY(0);
+}
+
+.match-card.matched {
+  border-color: #ffd35a;
+  box-shadow: 0 0 12px #ffd35a;
+  animation: slot-pop 0.3s ease;
+}
+
+/* 보물 상자 오픈 인트로 */
+.chest-box {
+  font-size: 90px;
+  filter: drop-shadow(0 0 24px #f5a623);
+  animation: chest-bounce 1s ease-in-out infinite;
+}
+
+@keyframes chest-bounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.05);
+  }
 }
 
 .log-tag {

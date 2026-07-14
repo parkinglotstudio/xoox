@@ -1,0 +1,63 @@
+key,text
+ui_start_badge,모험가 훈장을 보유하고 있어 스킬 1개를 선택할 수 있습니다.
+ui_start_nobadge,배울 수 있는 스킬 1개를 선택할 수 있습니다.
+ui_skill_learned,스킬 [{name}] 학습했습니다.
+ui_skill_learned_choice,스킬 [{name}] 학습했습니다. (3택1 중 선택)
+ui_skill_learned_auto,스킬 [{name}] 학습했습니다. (자동학습)
+ui_skill_grant_line,스킬 {name} 학습
+ui_combat_win,전투 승리
+ui_chip_exp,✨ EXP +{exp}
+ui_chip_gold,🪙 골드 +{gold}
+ui_levelup,Lv.{lv}로 상승했습니다.
+ui_levelup_heal,레벨업 시 HP 회복
+ui_chip_hp_heal,❤️ HP +{pct}%
+ui_miniboss_chest,정예를 처치하고 황금 보물상자를 발견했습니다.
+ui_chest_title,획득 성공
+ui_revive_down,격전 끝에 체력이 모두 소진되어 쓰러졌습니다...
+ui_revive_up,신화 스킬 [부활]이 발동하여 체력을 모두 회복하고 다시 일어섰습니다!
+ui_chip_full_heal,❤️ HP 100% 회복
+ui_finalboss_reward,수호자를 쓰러뜨려 고대 계승을 획득했습니다.
+ui_branch_pick,“{label}” 선택
+ui_bet_win,{mine}이(가) 정확한 공격으로 {other}을(를) 쓰러뜨렸습니다. 당신이 베팅에서 이겼습니다.
+ui_bet_lose,{other}이(가) {mine}을(를) 쓰러뜨렸습니다. 당신이 베팅에서 졌습니다.
+ui_try_fail,시도가 실패로 돌아갔습니다. (성공확률 {prob}%)
+ui_try_success,성공했습니다! (성공확률 {prob}%)
+ui_pass_quiet,조용히 지나갔습니다.
+ui_final_encounter,최후의 결전이 시작됩니다.
+ui_enemy_appear,전방에 적이 나타났습니다.
+ui_reward_get,보상을 획득했습니다.
+ui_nothing,특별한 일이 없었습니다.
+ui_btn_skill_choice,스킬 선택
+ui_skill_sub,아래에서 기술을 선택하세요
+ui_btn_blessing,축복 선택
+ui_angel_title,천사의 축복
+ui_angel_sub,아래에서 하나를 선택하세요
+ui_btn_next,다음날
+ui_btn_combat,전투
+ui_btn_combat_active,전투중...
+ui_btn_moving,이동 중
+ui_prob_label,성공확률 {prob}%
+ui_day_header,{day}일차
+ui_victory_icon,👑
+ui_victory_title,승리
+ui_victory_sub,챕터 {ch} · 생존 {day}일 · 최고 여정 {best}일
+ui_victory_loot,🪙 골드 x{gold}
+ui_mg_splash,BONUS GAME
+ui_mg_spinning,돌리는 중...
+ui_mg_nothing,아무 일도 없었습니다
+ui_mg_reward,보상 획득
+ui_mg_spin_btn,돌리기
+ui_mg_open_btn,오픈
+ui_mg_card_sub,동일한 카드 3개를 찾아 보상을 획득하세요
+ui_mg_spins_left,남은 돌리기 횟수:{n}
+ui_chest_found,보물 발견
+ui_milestone_reached,[{name}] 마일스톤 {at} 달성! 보상을 획득했습니다.
+ui_skillswap_destroy,기존 스킬 [{name}]을(를) 파괴했습니다.
+ui_skillswap_title,스킬 교체 룰렛
+ui_skillswap_none,교체할 스킬이 없습니다.
+ui_restart_btn,새 챕터 시작
+ui_stat_lv,LV
+ui_stat_atk,ATK
+ui_stat_def,DEF
+ui_stat_gold,GOLD
+ui_stat_hp_format,HP {hp}/{max}

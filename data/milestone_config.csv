@@ -1,2 +1,2 @@
-milestone_id,milestone_name,currency,cap,tier1_reward,tier1_at,tier2_reward,tier2_at
-ms_mercenary_pirate,용병과 해적,VICTORY_FLAG,200,골드 x10100,100,골드 x40500,200
+milestone_id,milestone_name,currency,cap,tier1_effect,tier1_at,tier2_effect,tier2_at
+ms_mercenary_pirate,용병과 해적,VICTORY_FLAG,200,e_gold10100,100,e_gold40500,200

@@ -1,5 +1,5 @@
 type_id,type_name,weight
-ct_direct,직접보상형,45
+ct_direct,직접보상형,40
 ct_location,지역도착형,20
-ct_branch,분기이벤트형,20
+ct_branch,분기이벤트형,25
 ct_ungraded,무등급형,15

@@ -1,4 +1,4 @@
 phase_id,day_start,day_end,combat_weight,content_weight
-ph_early,1,20,15,85
-ph_mid,21,40,40,60
+ph_early,1,20,28,72
+ph_mid,21,40,38,62
 ph_late,41,60,45,55
