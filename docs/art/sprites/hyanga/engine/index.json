@@ -1,0 +1,85 @@
+{
+  "engine_root": "docs/art/sprites/hyanga/engine",
+  "anims": [
+    {
+      "id": "attack_a",
+      "dir": "attack_a",
+      "manifest": "attack_a/attack_a.json",
+      "sheet": "attack_a/attack_a_sheet.png",
+      "cell": 512,
+      "frame_count": 4
+    },
+    {
+      "id": "attack_b",
+      "dir": "attack_b",
+      "manifest": "attack_b/attack_b.json",
+      "sheet": "attack_b/attack_b_sheet.png",
+      "cell": 512,
+      "frame_count": 4
+    },
+    {
+      "id": "hit",
+      "dir": "hit",
+      "manifest": "hit/hit.json",
+      "sheet": "hit/hit_sheet.png",
+      "cell": 512,
+      "frame_count": 3
+    },
+    {
+      "id": "hop",
+      "dir": "hop",
+      "manifest": "hop/hop.json",
+      "sheet": "hop/hop_sheet.png",
+      "cell": 512,
+      "frame_count": 6
+    },
+    {
+      "id": "ingame_idle",
+      "dir": "ingame_idle",
+      "manifest": "ingame_idle/ingame_idle.json",
+      "sheet": "ingame_idle/ingame_idle_sheet.png",
+      "cell": 512,
+      "frame_count": 10
+    },
+    {
+      "id": "lobby_idle_a",
+      "dir": "lobby_idle_a",
+      "manifest": "lobby_idle_a/lobby_idle_a.json",
+      "sheet": "lobby_idle_a/lobby_idle_a_sheet.png",
+      "cell": 512,
+      "frame_count": 10
+    },
+    {
+      "id": "lobby_idle_b",
+      "dir": "lobby_idle_b",
+      "manifest": "lobby_idle_b/lobby_idle_b.json",
+      "sheet": "lobby_idle_b/lobby_idle_b_sheet.png",
+      "cell": 512,
+      "frame_count": 10
+    },
+    {
+      "id": "lose",
+      "dir": "lose",
+      "manifest": "lose/lose.json",
+      "sheet": "lose/lose_sheet.png",
+      "cell": 512,
+      "frame_count": 4
+    },
+    {
+      "id": "move",
+      "dir": "move",
+      "manifest": "move/move.json",
+      "sheet": "move/move_sheet.png",
+      "cell": 512,
+      "frame_count": 4
+    },
+    {
+      "id": "win",
+      "dir": "win",
+      "manifest": "win/win.json",
+      "sheet": "win/win_sheet.png",
+      "cell": 512,
+      "frame_count": 4
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "anim_id": "win",
+  "cell": 512,
+  "pivot": "bottom-center",
+  "pad_bottom": 12,
+  "type": "frame_scales",
+  "baseline": "_pre_scale_backup",
+  "note": "ABSOLUTE scales vs _pre_scale_backup. 단서가 원본팩×이 값으로 재패킹.",
+  "scales": {
+    "0": 1.12,
+    "1": 1.11
+  }
+}

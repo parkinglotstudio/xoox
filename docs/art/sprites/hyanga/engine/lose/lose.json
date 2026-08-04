@@ -1,0 +1,106 @@
+{
+  "id": "lose",
+  "cell": 512,
+  "pivot": "bottom-center",
+  "size_policy": "contain into idle character bbox (w & h)",
+  "scales": [
+    0.4977578475336323,
+    0.4618585298196949
+  ],
+  "idle_ref": [
+    333,
+    430
+  ],
+  "idle_body": [
+    323,
+    172
+  ],
+  "note": "idle contain + user scale from baseline",
+  "cols": 4,
+  "rows": 1,
+  "frame_count": 4,
+  "sheet": "lose_sheet.png",
+  "frames": [
+    {
+      "index": 0,
+      "name": "lose_00.png",
+      "role": "hair_down",
+      "duration_ms": 320,
+      "file": "frames/lose_00.png",
+      "source_key": 0,
+      "char_size": [
+        333,
+        405
+      ],
+      "body_size": [
+        321,
+        162
+      ],
+      "applied_user_scale": 1.0
+    },
+    {
+      "index": 1,
+      "name": "lose_01.png",
+      "role": "hair_breath",
+      "duration_ms": 320,
+      "file": "frames/lose_01.png",
+      "source_key": 1,
+      "char_size": [
+        369,
+        387
+      ],
+      "body_size": [
+        342,
+        154
+      ],
+      "applied_user_scale": 1.105
+    },
+    {
+      "index": 2,
+      "name": "lose_02.png",
+      "role": "hair_down",
+      "duration_ms": 320,
+      "file": "frames/lose_02.png",
+      "source_key": 0,
+      "char_size": [
+        333,
+        405
+      ],
+      "body_size": [
+        321,
+        162
+      ],
+      "applied_user_scale": 1.0
+    },
+    {
+      "index": 3,
+      "name": "lose_03.png",
+      "role": "hair_breath",
+      "duration_ms": 320,
+      "file": "frames/lose_03.png",
+      "source_key": 1,
+      "char_size": [
+        369,
+        387
+      ],
+      "body_size": [
+        342,
+        154
+      ],
+      "applied_user_scale": 1.105
+    }
+  ],
+  "loop": true,
+  "applied_frame_scales": {
+    "anim_id": "lose",
+    "cell": 512,
+    "pivot": "bottom-center",
+    "pad_bottom": 12,
+    "type": "frame_scales",
+    "note": "Multiply each unique source pose by scale around bottom-center, then rebuild sheet. Target size = idle.",
+    "scales": {
+      "0": 1,
+      "1": 1.105
+    }
+  }
+}

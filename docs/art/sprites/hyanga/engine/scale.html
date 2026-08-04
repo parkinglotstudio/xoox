@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<title>크기 맞춤 · Size Align</title>
+<style>
+  :root { font-family: ui-sans-serif, system-ui, sans-serif; color: #1a1a1a; }
+  body { margin: 20px; background: #e8ece6; }
+  .nav { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .nav a {
+    display: inline-block; padding: 8px 14px; background: #fff; border: 1px solid #c5cbc0;
+    text-decoration: none; color: #1a1a1a; font-size: 13px; border-radius: 4px;
+  }
+  .nav a.active { background: #2d6a4f; color: #fff; border-color: #2d6a4f; }
+  h1 { font-size: 18px; margin: 0 0 6px; }
+  .sub { font-size: 12px; opacity: .7; margin-bottom: 14px; line-height: 1.45; }
+  .warn { font-size: 12px; background: #fff3cd; border: 1px solid #e6d59a; padding: 8px 10px; margin-bottom: 12px; line-height: 1.45; }
+  .row { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+  .stage-wrap {
+    border: 1px solid #b8beb4;
+    background:
+      linear-gradient(45deg, #d5d9d3 25%, transparent 25%),
+      linear-gradient(-45deg, #d5d9d3 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #d5d9d3 75%),
+      linear-gradient(-45deg, transparent 75%, #d5d9d3 75%);
+    background-size: 24px 24px;
+    background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+    background-color: #f2f4f0;
+    position: relative;
+  }
+  canvas { display: block; }
+  .panel { min-width: 300px; max-width: 380px; background: #fff; border: 1px solid #c5cbc0; padding: 14px; }
+  label { display: block; font-size: 12px; margin-top: 10px; }
+  select, input[type="range"], input[type="number"] { width: 100%; box-sizing: border-box; }
+  button { margin: 4px 4px 0 0; padding: 6px 10px; cursor: pointer; }
+  .hint { font-size: 11px; opacity: .75; margin-top: 10px; line-height: 1.45; }
+  .out { font-size: 11px; font-family: ui-monospace, monospace; max-height: 200px; overflow: auto; background: #f6f7f5; padding: 8px; margin-top: 8px; white-space: pre-wrap; }
+  .pivot {
+    position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px;
+    border: 2px solid #e23; border-radius: 50%; pointer-events: none; box-sizing: border-box;
+  }
+  .metrics { font-size: 11px; margin-top: 8px; line-height: 1.5; background: #f0f4ee; padding: 8px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="./studio.html">▶ 플레이</a>
+    <a href="./align.html">✥ 위치</a>
+    <a class="active" href="./scale.html">⤢ 크기</a>
+  </nav>
+  <h1>크기 맞춤</h1>
+  <p class="sub">스케일 숫자는 <b>원본팩(_pre_scale_backup) 대비 절대값</b>이야. 단서가 적용할 때도 같은 기준.</p>
+  <div class="warn" id="modeWarn">원본팩 로딩 중…</div>
+  <div class="row">
+    <div class="stage-wrap" id="stageWrap">
+      <canvas id="cv"></canvas>
+      <div class="pivot" id="pivot"></div>
+    </div>
+    <div class="panel">
+      <label>애니
+        <select id="anim"></select>
+      </label>
+      <label>기준 (아래·불투명)
+        <select id="ref"></select>
+      </label>
+      <label>맞출 프레임 (위·반투명)
+        <select id="edit"></select>
+      </label>
+      <label>위 레이어 투명도 <span id="opLabel">0.45</span>
+        <input id="opacity" type="range" min="0.15" max="0.9" step="0.05" value="0.45"/>
+      </label>
+      <label>절대 스케일 <span id="scLabel">1.000</span>
+        <input id="scale" type="range" min="0.50" max="1.50" step="0.005" value="1"/>
+      </label>
+      <label>미세 조절
+        <input id="step" type="number" min="0.005" max="0.1" step="0.005" value="0.01"/>
+      </label>
+      <div>
+        <button id="smaller">작게 −</button>
+        <button id="bigger">크게 +</button>
+        <button id="resetOne">이 프레임 1.0</button>
+        <button id="resetAll">전체 1.0</button>
+      </div>
+      <div>
+        <button id="matchHeight">높이 → 기준</button>
+        <button id="matchWidth">폭 → 기준</button>
+        <button id="matchContain">안에 맞춤(contain)</button>
+        <button id="matchIdle">idle 크기에 맞춤</button>
+      </div>
+      <div class="metrics" id="metrics">—</div>
+      <button id="save">스케일 JSON 다운로드</button>
+      <button id="copy">클립보드 복사</button>
+      <div class="out" id="out"></div>
+      <p class="hint">
+        · 빨간 점 = 피봇(bottom-center)<br/>
+        · <b>1.0 = 원본팩 크기</b> (이미 적용된 시트가 아님!)<br/>
+        · 적용 후 다시 열면 슬라이더에 절대값이 그대로 남아<br/>
+        · JSON을 채팅에 붙여 주면 단서가 원본팩×스케일로 재패킹<br/>
+        · [ ] / = 키로 축소·확대
+      </p>
+    </div>
+  </div>
+<script>
+const CELL = 512;
+const PIVOT = { x: CELL / 2, y: CELL - 12 };
+const PAD = 12;
+
+let index = null;
+let animId = "";
+let animMeta = null;
+let manifest = null;
+let idleManifest = null;
+let idleSheet = null;
+let unique = []; // [{key, label, frame, baseImg}]
+let baseImgs = {}; // key -> HTMLImageElement (from _pre_scale_backup)
+let usingBaseline = false;
+let refKey = 0;
+let editKey = 0;
+let opacity = 0.45;
+let scales = {};
+let refMode = "idle";
+
+const cv = document.getElementById("cv");
+const ctx = cv.getContext("2d", { willReadFrequently: true });
+cv.width = CELL; cv.height = CELL;
+document.getElementById("stageWrap").style.width = CELL + "px";
+document.getElementById("stageWrap").style.height = CELL + "px";
+document.getElementById("pivot").style.left = PIVOT.x + "px";
+document.getElementById("pivot").style.top = PIVOT.y + "px";
+
+function bust(url) {
+  return url + (url.includes("?") ? "&" : "?") + "t=" + Date.now();
+}
+
+function sourceKey(f) {
+  if (f.source_key != null) return f.source_key;
+  if (f.pose_index != null) return f.pose_index;
+  return f.index;
+}
+
+function buildUnique(man) {
+  const seen = new Set();
+  const out = [];
+  for (const f of man.frames || []) {
+    const k = sourceKey(f);
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push({ key: k, label: `#${f.index} ${f.role || f.name || ""}`.trim(), frame: f });
+  }
+  return out;
+}
+
+function frameForKey(key) {
+  return unique.find(u => u.key === key)?.frame;
+}
+
+function measureImg(img) {
+  const t = document.createElement("canvas");
+  t.width = CELL; t.height = CELL;
+  const tctx = t.getContext("2d", { willReadFrequently: true });
+  tctx.clearRect(0, 0, CELL, CELL);
+  tctx.drawImage(img, 0, 0);
+  const data = tctx.getImageData(0, 0, CELL, CELL).data;
+  let minX = CELL, minY = CELL, maxX = -1, maxY = -1;
+  for (let y = 0; y < CELL; y++) {
+    for (let x = 0; x < CELL; x++) {
+      if (data[(y * CELL + x) * 4 + 3] > 16) {
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (maxX < 0) return { w: 0, h: 0 };
+  return { w: maxX - minX + 1, h: maxY - minY + 1 };
+}
+
+function measureIdle() {
+  if (!idleSheet || !idleManifest?.frames?.length) return { w: 0, h: 0 };
+  const f0 = idleManifest.frames[0];
+  const cols = idleManifest.cols || idleManifest.frames.length;
+  const t = document.createElement("canvas");
+  t.width = CELL; t.height = CELL;
+  const tctx = t.getContext("2d", { willReadFrequently: true });
+  tctx.drawImage(idleSheet, (f0.index % cols) * CELL, Math.floor(f0.index / cols) * CELL, CELL, CELL, 0, 0, CELL, CELL);
+  return measureImg(t);
+}
+
+function drawImgScaled(img, scale, alpha) {
+  if (!img) return;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.translate(PIVOT.x, PIVOT.y);
+  ctx.scale(scale, scale);
+  ctx.translate(-PIVOT.x, -PIVOT.y);
+  ctx.drawImage(img, 0, 0);
+  ctx.restore();
+}
+
+function drawIdleRef(alpha) {
+  if (!idleSheet || !idleManifest?.frames?.length) return;
+  const f = idleManifest.frames[0];
+  const cols = idleManifest.cols || idleManifest.frames.length;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.drawImage(idleSheet, (f.index % cols) * CELL, Math.floor(f.index / cols) * CELL, CELL, CELL, 0, 0, CELL, CELL);
+  ctx.restore();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, CELL, CELL);
+  if (refMode === "idle") {
+    drawIdleRef(1);
+  } else {
+    drawImgScaled(baseImgs[refKey], scales[refKey] || 1, 1);
+  }
+  if (!(refMode === "frame" && editKey === refKey)) {
+    drawImgScaled(baseImgs[editKey], scales[editKey] || 1, opacity);
+  }
+  updateMetrics();
+  renderOut();
+}
+
+function updateMetrics() {
+  const img = baseImgs[editKey];
+  if (!img) { document.getElementById("metrics").textContent = "—"; return; }
+  const base = measureImg(img);
+  const s = scales[editKey] || 1;
+  let refTxt = "";
+  if (refMode === "idle") {
+    const ib = measureIdle();
+    refTxt = `idle 캐릭 ${ib.w}×${ib.h}`;
+  } else if (baseImgs[refKey]) {
+    const rb = measureImg(baseImgs[refKey]);
+    const rs = scales[refKey] || 1;
+    refTxt = `기준 캐릭 ${(rb.w * rs).toFixed(0)}×${(rb.h * rs).toFixed(0)}`;
+  }
+  const mode = usingBaseline ? "원본팩 기준(절대)" : "⚠ 시트 기준(상대·비추천)";
+  document.getElementById("metrics").textContent =
+    `모드: ${mode}\n맞출 원본 ${base.w}×${base.h} → ×${s.toFixed(3)} = ${(base.w * s).toFixed(0)}×${(base.h * s).toFixed(0)}\n${refTxt}`;
+}
+
+function renderOut() {
+  document.getElementById("out").textContent = JSON.stringify(exportObj(), null, 2);
+  document.getElementById("scLabel").textContent = (scales[editKey] || 1).toFixed(3);
+  document.getElementById("scale").value = String(scales[editKey] || 1);
+}
+
+function exportObj() {
+  const outScales = {};
+  unique.forEach(u => { outScales[String(u.key)] = scales[u.key] || 1; });
+  return {
+    anim_id: animId,
+    cell: CELL,
+    pivot: "bottom-center",
+    pad_bottom: PAD,
+    type: "frame_scales",
+    baseline: usingBaseline ? "_pre_scale_backup" : "current_sheet",
+    note: "ABSOLUTE scales vs _pre_scale_backup. 단서가 원본팩×이 값으로 재패킹.",
+    scales: outScales,
+  };
+}
+
+function setEditScale(v) {
+  scales[editKey] = Math.round(Math.max(0.5, Math.min(1.5, v)) * 1000) / 1000;
+  draw();
+}
+
+function autoMatch(mode) {
+  const img = baseImgs[editKey];
+  if (!img) return;
+  const eb = measureImg(img);
+  let tw, th;
+  if (refMode === "idle" || mode === "idle") {
+    const ib = measureIdle();
+    tw = ib.w; th = ib.h;
+  } else {
+    const rb = measureImg(baseImgs[refKey]);
+    const rs = scales[refKey] || 1;
+    tw = rb.w * rs; th = rb.h * rs;
+  }
+  if (!eb.w || !eb.h || !tw || !th) return;
+  let s = 1;
+  if (mode === "height") s = th / eb.h;
+  else if (mode === "width") s = tw / eb.w;
+  else s = Math.min(tw / eb.w, th / eb.h);
+  setEditScale(s);
+}
+
+async function loadImage(url) {
+  const img = new Image();
+  img.src = bust(url);
+  await img.decode();
+  return img;
+}
+
+async function loadIdle() {
+  const meta = index.anims.find(a => a.id === "ingame_idle");
+  if (!meta) return;
+  idleManifest = await (await fetch(bust("./" + meta.manifest), { cache: "no-store" })).json();
+  idleSheet = await loadImage("./" + meta.sheet);
+}
+
+async function tryLoadBaseline(dir, frameName) {
+  try {
+    return await loadImage(`./${dir}/_pre_scale_backup/${frameName}`);
+  } catch {
+    return null;
+  }
+}
+
+async function loadAnimById(id) {
+  animMeta = index.anims.find(a => a.id === id) || index.anims[0];
+  animId = animMeta.id;
+  manifest = await (await fetch(bust("./" + animMeta.manifest), { cache: "no-store" })).json();
+  unique = buildUnique(manifest);
+
+  // Load BASELINE cells (unscaled pack). Fallback to current frames/sheet cells.
+  baseImgs = {};
+  usingBaseline = true;
+  for (const u of unique) {
+    const name = u.frame.name;
+    let img = await tryLoadBaseline(animMeta.dir, name);
+    if (!img) {
+      usingBaseline = false;
+      img = await loadImage(`./${animMeta.dir}/frames/${name}`);
+    }
+    baseImgs[u.key] = img;
+  }
+
+  // Init scales from already-applied absolute values (so UI matches studio)
+  const applied = (manifest.applied_frame_scales && manifest.applied_frame_scales.scales) || {};
+  scales = {};
+  unique.forEach(u => {
+    const k = String(u.key);
+    scales[u.key] = applied[k] != null ? Number(applied[k]) : (applied[u.key] != null ? Number(applied[u.key]) : 1);
+  });
+
+  document.getElementById("modeWarn").textContent = usingBaseline
+    ? `✓ 원본팩(_pre_scale_backup) 기준 · 절대 스케일. 현재 적용값: ${unique.map(u => `${u.key}=${(scales[u.key]||1).toFixed(3)}`).join(", ")}`
+    : `⚠ 원본팩이 없어 현재 프레임을 기준으로 함. 적용 후 숫자가 어긋날 수 있음.`;
+
+  const refSel = document.getElementById("ref");
+  const editSel = document.getElementById("edit");
+  refSel.innerHTML = "";
+  editSel.innerHTML = "";
+  const idleOpt = document.createElement("option");
+  idleOpt.value = "__idle__";
+  idleOpt.textContent = "ingame_idle (기준 크기)";
+  refSel.appendChild(idleOpt);
+  unique.forEach(u => {
+    const o1 = document.createElement("option");
+    o1.value = String(u.key); o1.textContent = u.label; refSel.appendChild(o1);
+    const o2 = document.createElement("option");
+    o2.value = String(u.key); o2.textContent = u.label; editSel.appendChild(o2);
+  });
+  refMode = "idle";
+  refSel.value = "__idle__";
+  editKey = unique[Math.min(1, unique.length - 1)]?.key ?? 0;
+  editSel.value = String(editKey);
+  draw();
+}
+
+async function boot() {
+  index = await (await fetch(bust("./index.json"), { cache: "no-store" })).json();
+  await loadIdle();
+  const sel = document.getElementById("anim");
+  sel.innerHTML = "";
+  index.anims.forEach(a => {
+    const opt = document.createElement("option");
+    opt.value = a.id;
+    opt.textContent = `${a.id} (${a.frame_count}f)`;
+    sel.appendChild(opt);
+  });
+  const want = (location.hash || "").replace(/^#/, "") || "win";
+  const start = index.anims.some(a => a.id === want) ? want : index.anims[0]?.id;
+  sel.value = start;
+  await loadAnimById(start);
+}
+
+document.getElementById("anim").onchange = (e) => {
+  history.replaceState(null, "", "#" + e.target.value);
+  loadAnimById(e.target.value);
+};
+document.getElementById("ref").onchange = (e) => {
+  if (e.target.value === "__idle__") refMode = "idle";
+  else { refMode = "frame"; refKey = Number(e.target.value); }
+  draw();
+};
+document.getElementById("edit").onchange = (e) => { editKey = Number(e.target.value); draw(); };
+document.getElementById("opacity").oninput = (e) => {
+  opacity = Number(e.target.value);
+  document.getElementById("opLabel").textContent = opacity.toFixed(2);
+  draw();
+};
+document.getElementById("scale").oninput = (e) => setEditScale(Number(e.target.value));
+document.getElementById("smaller").onclick = () => setEditScale((scales[editKey] || 1) - Number(document.getElementById("step").value));
+document.getElementById("bigger").onclick = () => setEditScale((scales[editKey] || 1) + Number(document.getElementById("step").value));
+document.getElementById("resetOne").onclick = () => setEditScale(1);
+document.getElementById("resetAll").onclick = () => {
+  unique.forEach(u => { scales[u.key] = 1; });
+  draw();
+};
+document.getElementById("matchHeight").onclick = () => autoMatch("height");
+document.getElementById("matchWidth").onclick = () => autoMatch("width");
+document.getElementById("matchContain").onclick = () => autoMatch("contain");
+document.getElementById("matchIdle").onclick = () => {
+  refMode = "idle";
+  document.getElementById("ref").value = "__idle__";
+  autoMatch("idle");
+};
+document.getElementById("save").onclick = () => {
+  const blob = new Blob([JSON.stringify(exportObj(), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${animId}_frame_scales.json`;
+  a.click();
+};
+document.getElementById("copy").onclick = async () => {
+  await navigator.clipboard.writeText(JSON.stringify(exportObj(), null, 2));
+  alert("스케일 JSON 복사됨");
+};
+window.addEventListener("keydown", (e) => {
+  const step = (e.shiftKey ? 5 : 1) * Number(document.getElementById("step").value || 0.01);
+  if (e.key === "[" || e.key === "-") { e.preventDefault(); setEditScale((scales[editKey] || 1) - step); }
+  if (e.key === "]" || e.key === "=" || e.key === "+") { e.preventDefault(); setEditScale((scales[editKey] || 1) + step); }
+});
+
+boot().catch(err => {
+  document.body.insertAdjacentHTML("beforeend", `<pre style="color:crimson">${err}</pre>`);
+});
+</script>
+</body>
+</html>

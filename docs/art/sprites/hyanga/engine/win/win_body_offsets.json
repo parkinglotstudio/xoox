@@ -1,0 +1,21 @@
+{
+  "anim_id": "win",
+  "cell": 512,
+  "pivot": {
+    "x": 256,
+    "y": 500
+  },
+  "type": "body_offsets",
+  "baseline": "_pre_offset_backup",
+  "note": "ABSOLUTE dx/dy vs _pre_offset_backup (scaled pack before offsets)",
+  "offsets": {
+    "0": {
+      "dx": 0,
+      "dy": 0
+    },
+    "1": {
+      "dx": 0,
+      "dy": 0
+    }
+  }
+}

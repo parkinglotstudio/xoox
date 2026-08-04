@@ -1,0 +1,61 @@
+{
+  "id": "attack_a",
+  "cell": 512,
+  "pivot": "bottom-center",
+  "idle_ref": [
+    333,
+    430
+  ],
+  "note": "move(fast) → crouch → hairball fly/hit → return → idle. Scale vs idle like hop.",
+  "cols": 4,
+  "rows": 1,
+  "frame_count": 4,
+  "sheet": "attack_a_sheet.png",
+  "frames": [
+    {
+      "index": 0,
+      "name": "attack_a_00.png",
+      "role": "crouch",
+      "duration_ms": 180,
+      "file": "frames/attack_a_00.png",
+      "char_size": [
+        439,
+        353
+      ]
+    },
+    {
+      "index": 1,
+      "name": "attack_a_01.png",
+      "role": "fly",
+      "duration_ms": 140,
+      "file": "frames/attack_a_01.png",
+      "char_size": [
+        491,
+        408
+      ]
+    },
+    {
+      "index": 2,
+      "name": "attack_a_02.png",
+      "role": "hit",
+      "duration_ms": 160,
+      "file": "frames/attack_a_02.png",
+      "char_size": [
+        496,
+        369
+      ]
+    },
+    {
+      "index": 3,
+      "name": "attack_a_03.png",
+      "role": "return",
+      "duration_ms": 220,
+      "file": "frames/attack_a_03.png",
+      "char_size": [
+        470,
+        430
+      ]
+    }
+  ],
+  "loop": false
+}

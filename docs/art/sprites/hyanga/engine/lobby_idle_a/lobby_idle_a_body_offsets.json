@@ -1,0 +1,31 @@
+{
+  "anim_id": "lobby_idle_a",
+  "cell": 512,
+  "pivot": {
+    "x": 256,
+    "y": 500
+  },
+  "note": "Apply dx/dy to each unique pose, then rebuild pingpong sheet",
+  "offsets": {
+    "0": {
+      "dx": -5,
+      "dy": 0
+    },
+    "1": {
+      "dx": 0,
+      "dy": 0
+    },
+    "2": {
+      "dx": 0,
+      "dy": 0
+    },
+    "3": {
+      "dx": 0,
+      "dy": 0
+    },
+    "4": {
+      "dx": 0,
+      "dy": 0
+    }
+  }
+}

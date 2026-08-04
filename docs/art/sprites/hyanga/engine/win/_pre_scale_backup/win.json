@@ -1,0 +1,86 @@
+{
+  "id": "win",
+  "cell": 512,
+  "pivot": "bottom-center",
+  "per_frame_scale_to_idle_body": true,
+  "scales": [
+    0.47016011644832606,
+    0.41357234314980795
+  ],
+  "idle_ref": [
+    333,
+    430
+  ],
+  "note": "2 frames only: open + blink(hands down). Cheer with legs rejected.",
+  "cols": 4,
+  "rows": 1,
+  "frame_count": 4,
+  "sheet": "win_sheet.png",
+  "frames": [
+    {
+      "index": 0,
+      "name": "win_00.png",
+      "role": "open",
+      "duration_ms": 280,
+      "file": "frames/win_00.png",
+      "source_key": 0,
+      "char_size": [
+        372,
+        371
+      ],
+      "body_size": [
+        323,
+        148
+      ]
+    },
+    {
+      "index": 1,
+      "name": "win_01.png",
+      "role": "blink_hands_down",
+      "duration_ms": 160,
+      "file": "frames/win_01.png",
+      "source_key": 1,
+      "char_size": [
+        353,
+        372
+      ],
+      "body_size": [
+        323,
+        148
+      ]
+    },
+    {
+      "index": 2,
+      "name": "win_02.png",
+      "role": "open",
+      "duration_ms": 280,
+      "file": "frames/win_02.png",
+      "source_key": 0,
+      "char_size": [
+        372,
+        371
+      ],
+      "body_size": [
+        323,
+        148
+      ]
+    },
+    {
+      "index": 3,
+      "name": "win_03.png",
+      "role": "blink_hands_down",
+      "duration_ms": 160,
+      "file": "frames/win_03.png",
+      "source_key": 1,
+      "char_size": [
+        353,
+        372
+      ],
+      "body_size": [
+        323,
+        148
+      ]
+    }
+  ],
+  "loop": true
+}

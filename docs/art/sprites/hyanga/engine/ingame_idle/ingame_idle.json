@@ -1,0 +1,149 @@
+{
+  "id": "ingame_idle",
+  "cell": 512,
+  "pivot": "bottom-center",
+  "art_version": "orig_strip_shared_scale",
+  "shared_scale": 0.9866911427260211,
+  "target_height": 430,
+  "note": "Rebuilt from original ChatGPT strip (same as idle_blink). Flood-outer BG only + ONE shared scale — fixes blink size pop from v2 regen.",
+  "playback": "idle_rare_blink",
+  "pose_order": [
+    0,
+    0,
+    1,
+    2,
+    3,
+    2,
+    1,
+    0,
+    0,
+    0
+  ],
+  "cols": 10,
+  "rows": 1,
+  "frame_count": 10,
+  "sheet": "ingame_idle_sheet.png",
+  "frames": [
+    {
+      "index": 0,
+      "name": "ingame_idle_00.png",
+      "role": "open",
+      "source_frame": 0,
+      "duration_ms": 470,
+      "file": "frames/ingame_idle_00.png",
+      "char_size": [
+        333,
+        430
+      ]
+    },
+    {
+      "index": 1,
+      "name": "ingame_idle_01.png",
+      "role": "open",
+      "source_frame": 0,
+      "duration_ms": 470,
+      "file": "frames/ingame_idle_01.png",
+      "char_size": [
+        333,
+        430
+      ]
+    },
+    {
+      "index": 2,
+      "name": "ingame_idle_02.png",
+      "role": "narrow",
+      "source_frame": 1,
+      "duration_ms": 120,
+      "file": "frames/ingame_idle_02.png",
+      "char_size": [
+        334,
+        430
+      ]
+    },
+    {
+      "index": 3,
+      "name": "ingame_idle_03.png",
+      "role": "half",
+      "source_frame": 2,
+      "duration_ms": 120,
+      "file": "frames/ingame_idle_03.png",
+      "char_size": [
+        333,
+        430
+      ]
+    },
+    {
+      "index": 4,
+      "name": "ingame_idle_04.png",
+      "role": "closed",
+      "source_frame": 3,
+      "duration_ms": 150,
+      "file": "frames/ingame_idle_04.png",
+      "char_size": [
+        334,
+        429
+      ]
+    },
+    {
+      "index": 5,
+      "name": "ingame_idle_05.png",
+      "role": "half",
+      "source_frame": 2,
+      "duration_ms": 120,
+      "file": "frames/ingame_idle_05.png",
+      "char_size": [
+        333,
+        430
+      ]
+    },
+    {
+      "index": 6,
+      "name": "ingame_idle_06.png",
+      "role": "narrow",
+      "source_frame": 1,
+      "duration_ms": 120,
+      "file": "frames/ingame_idle_06.png",
+      "char_size": [
+        334,
+        430
+      ]
+    },
+    {
+      "index": 7,
+      "name": "ingame_idle_07.png",
+      "role": "open",
+      "source_frame": 0,
+      "duration_ms": 470,
+      "file": "frames/ingame_idle_07.png",
+      "char_size": [
+        333,
+        430
+      ]
+    },
+    {
+      "index": 8,
+      "name": "ingame_idle_08.png",
+      "role": "open",
+      "source_frame": 0,
+      "duration_ms": 470,
+      "file": "frames/ingame_idle_08.png",
+      "char_size": [
+        333,
+        430
+      ]
+    },
+    {
+      "index": 9,
+      "name": "ingame_idle_09.png",
+      "role": "open",
+      "source_frame": 0,
+      "duration_ms": 470,
+      "file": "frames/ingame_idle_09.png",
+      "char_size": [
+        333,
+        430
+      ]
+    }
+  ],
+  "loop": true
+}

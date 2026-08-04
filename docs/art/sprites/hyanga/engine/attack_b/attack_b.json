@@ -1,0 +1,62 @@
+{
+  "id": "attack_b",
+  "cell": 512,
+  "pivot": "bottom-center",
+  "shared_scale": 0.5391304347826087,
+  "idle_ref": [
+    333,
+    430
+  ],
+  "note": "In-place magic: peak ↔ peak_loop hair tremble. Body locked; scale fits tall hair in 512.",
+  "cols": 4,
+  "rows": 1,
+  "frame_count": 4,
+  "sheet": "attack_b_sheet.png",
+  "frames": [
+    {
+      "index": 0,
+      "name": "attack_b_00.png",
+      "role": "peak",
+      "duration_ms": 160,
+      "file": "frames/attack_b_00.png",
+      "char_size": [
+        167,
+        496
+      ]
+    },
+    {
+      "index": 1,
+      "name": "attack_b_01.png",
+      "role": "peak_loop",
+      "duration_ms": 160,
+      "file": "frames/attack_b_01.png",
+      "char_size": [
+        167,
+        493
+      ]
+    },
+    {
+      "index": 2,
+      "name": "attack_b_02.png",
+      "role": "peak",
+      "duration_ms": 160,
+      "file": "frames/attack_b_02.png",
+      "char_size": [
+        167,
+        496
+      ]
+    },
+    {
+      "index": 3,
+      "name": "attack_b_03.png",
+      "role": "peak_loop",
+      "duration_ms": 160,
+      "file": "frames/attack_b_03.png",
+      "char_size": [
+        167,
+        493
+      ]
+    }
+  ],
+  "loop": true
+}

@@ -1,0 +1,140 @@
+{
+  "id": "win",
+  "cell": 512,
+  "pivot": "bottom-center",
+  "per_frame_scale_to_idle_body": true,
+  "scales": [
+    0.47016011644832606,
+    0.41357234314980795
+  ],
+  "idle_ref": [
+    333,
+    430
+  ],
+  "note": "2-frame win + absolute scale from baseline | body offsets applied",
+  "cols": 4,
+  "rows": 1,
+  "frame_count": 4,
+  "sheet": "win_sheet.png",
+  "frames": [
+    {
+      "index": 0,
+      "name": "win_00.png",
+      "role": "open",
+      "duration_ms": 280,
+      "file": "frames/win_00.png",
+      "source_key": 0,
+      "char_size": [
+        416,
+        416
+      ],
+      "body_size": [
+        362,
+        166
+      ],
+      "applied_user_scale": 1.12,
+      "applied_offset": {
+        "dx": 0,
+        "dy": 0
+      }
+    },
+    {
+      "index": 1,
+      "name": "win_01.png",
+      "role": "blink_hands_down",
+      "duration_ms": 160,
+      "file": "frames/win_01.png",
+      "source_key": 1,
+      "char_size": [
+        392,
+        413
+      ],
+      "body_size": [
+        359,
+        165
+      ],
+      "applied_user_scale": 1.11,
+      "applied_offset": {
+        "dx": 0,
+        "dy": 0
+      }
+    },
+    {
+      "index": 2,
+      "name": "win_02.png",
+      "role": "open",
+      "duration_ms": 280,
+      "file": "frames/win_02.png",
+      "source_key": 0,
+      "char_size": [
+        416,
+        416
+      ],
+      "body_size": [
+        362,
+        166
+      ],
+      "applied_user_scale": 1.12,
+      "applied_offset": {
+        "dx": 0,
+        "dy": 0
+      }
+    },
+    {
+      "index": 3,
+      "name": "win_03.png",
+      "role": "blink_hands_down",
+      "duration_ms": 160,
+      "file": "frames/win_03.png",
+      "source_key": 1,
+      "char_size": [
+        392,
+        413
+      ],
+      "body_size": [
+        359,
+        165
+      ],
+      "applied_user_scale": 1.11,
+      "applied_offset": {
+        "dx": 0,
+        "dy": 0
+      }
+    }
+  ],
+  "loop": true,
+  "applied_frame_scales": {
+    "anim_id": "win",
+    "cell": 512,
+    "pivot": "bottom-center",
+    "pad_bottom": 12,
+    "type": "frame_scales",
+    "baseline": "_pre_scale_backup",
+    "note": "ABSOLUTE scales vs _pre_scale_backup. 단서가 원본팩×이 값으로 재패킹.",
+    "scales": {
+      "0": 1.12,
+      "1": 1.11
+    }
+  },
+  "applied_body_offsets": {
+    "anim_id": "win",
+    "cell": 512,
+    "pivot": {
+      "x": 256,
+      "y": 500
+    },
+    "type": "body_offsets",
+    "baseline": "_pre_offset_backup",
+    "note": "ABSOLUTE dx/dy vs _pre_offset_backup (scaled pack before offsets)",
+    "offsets": {
+      "0": {
+        "dx": 0,
+        "dy": 0
+      },
+      "1": {
+        "dx": 0,
+        "dy": 0
+      }
+    }
+  }
+}

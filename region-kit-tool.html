@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>이동 무대 시뮬 · CapGo식 · monocapibara</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
+    <style>
+      :root {
+        --bg: #0f1613;
+        --panel: #1a2420;
+        --line: #2e3d36;
+        --text: #e8f0ea;
+        --muted: #8aa094;
+        --accent: #6dbf8c;
+        --accent-dim: #3d7a56;
+        --phone: #0a100e;
+        font-family: Pretendard, "Apple SD Gothic Neo", sans-serif;
+        color: var(--text);
+        background: var(--bg);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(ellipse 70% 45% at 15% 0%, #1a3028 0%, transparent 55%),
+          var(--bg);
+      }
+      header {
+        padding: 16px 22px 8px;
+        border-bottom: 1px solid var(--line);
+      }
+      header h1 {
+        margin: 0;
+        font-size: 20px;
+        letter-spacing: -0.02em;
+        font-weight: 700;
+      }
+      header p {
+        margin: 6px 0 0;
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.45;
+        max-width: 720px;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+        gap: 16px;
+        padding: 16px 22px 28px;
+        align-items: start;
+      }
+      @media (max-width: 900px) {
+        .layout { grid-template-columns: 1fr; }
+      }
+      .phone-col { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+      /* 본편 .app 폰 프레임 — 무대는 위 ~36%만 (hybrid.css .stage) */
+      .phone {
+        width: min(100%, 360px);
+        aspect-ratio: 9 / 19.5;
+        border: 2px solid var(--line);
+        border-radius: 22px;
+        background: #12182c;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 12px 40px rgba(0,0,0,.45);
+        display: flex;
+        flex-direction: column;
+      }
+      .phone-chrome {
+        flex: 0 0 auto;
+        padding: 8px 10px 4px;
+        font-size: 10px;
+        color: #8a93b0;
+        background: #0e1424;
+        border-bottom: 1px solid #2a3250;
+      }
+      /* 본편 .stage flex:0 0 36% 와 동일 비율 */
+      #stageWrap {
+        flex: 0 0 36%;
+        min-height: 140px;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        background: #1a2820;
+      }
+      #stage {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .phone-fake-ui {
+        flex: 1 1 auto;
+        background:
+          linear-gradient(180deg, #1a2234 0%, #12182c 40%),
+          #12182c;
+        border-top: 1px solid #2a3250;
+        padding: 8px 10px;
+        font-size: 10px;
+        color: #6a7488;
+        line-height: 1.4;
+      }
+      .phone-fake-ui .bar {
+        height: 22px;
+        border-radius: 6px;
+        background: #2a3348;
+        margin-bottom: 8px;
+      }
+      .phone-fake-ui .card {
+        height: 48px;
+        border-radius: 8px;
+        background: #f0e6d0;
+        opacity: 0.35;
+        margin-bottom: 6px;
+      }
+      .phone-fake-ui .hint-ui {
+        margin-top: 8px;
+        color: #5a6478;
+      }
+      #status {
+        position: absolute;
+        left: 10px;
+        bottom: 10px;
+        font-size: 11px;
+        color: var(--muted);
+        background: rgba(0, 0, 0, 0.5);
+        padding: 4px 8px;
+        pointer-events: none;
+        max-width: 90%;
+      }
+      #guide {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity .2s;
+      }
+      #guide.on { opacity: 1; }
+      #guide .cross {
+        position: absolute;
+        border: 1px dashed rgba(255, 220, 120, 0.55);
+      }
+      #guide .actor-mark {
+        position: absolute;
+        width: 10px; height: 10px;
+        margin: -5px 0 0 -5px;
+        border-radius: 50%;
+        background: #6dbf8c;
+        box-shadow: 0 0 0 2px rgba(0,0,0,.4);
+      }
+      #guide .house-mark {
+        position: absolute;
+        width: 10px; height: 10px;
+        margin: -5px 0 0 -5px;
+        border-radius: 2px;
+        background: #ffc857;
+        box-shadow: 0 0 0 2px rgba(0,0,0,.4);
+      }
+      #guide .label {
+        position: absolute;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 5px;
+        background: rgba(0,0,0,.55);
+      }
+      .sim-btns { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; width: min(100%, 380px); }
+      .sim-btns button.primary {
+        background: linear-gradient(180deg, #7fd4a0, #3d7a56);
+        color: #0a100e;
+        font-weight: 800;
+        border-color: #a8efc4;
+        min-width: 140px;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        padding: 14px;
+      }
+      .panel h2 {
+        margin: 0 0 10px;
+        font-size: 15px;
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .panel + .panel { margin-top: 12px; }
+      label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 10px;
+      }
+      label span { color: var(--text); }
+      select, input[type="file"] {
+        width: 100%;
+        margin-top: 4px;
+        font-size: 12px;
+        color: var(--text);
+        background: #121a17;
+        border: 1px solid var(--line);
+        padding: 6px 8px;
+      }
+      input[type="range"] { width: 100%; margin-top: 4px; }
+      .tog {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--text);
+        margin-right: 10px;
+        cursor: pointer;
+      }
+      .tog input { width: auto; margin: 0; }
+      .btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+      button {
+        font-size: 12px;
+        padding: 7px 10px;
+        cursor: pointer;
+        background: var(--accent-dim);
+        color: var(--text);
+        border: 1px solid var(--accent);
+      }
+      button:hover { background: var(--accent); color: #0a100e; }
+      button:disabled { opacity: .45; cursor: wait; }
+      #export {
+        margin: 8px 0 0;
+        padding: 8px;
+        font-size: 11px;
+        line-height: 1.45;
+        background: #0c1210;
+        border: 1px solid var(--line);
+        white-space: pre-wrap;
+        color: #b8d4c2;
+        min-height: 72px;
+      }
+      .hint {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 8px;
+        line-height: 1.45;
+      }
+      .layer-card {
+        border: 1px solid var(--line);
+        padding: 10px;
+        margin-top: 10px;
+        background: #121a17;
+      }
+      .layer-card h3 { margin: 0 0 4px; font-size: 13px; }
+      .layer-card p { margin: 0 0 6px; font-size: 11px; color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>이동 무대 시뮬 · CapGo식</h1>
+      <p>
+        본게임이 아니라 <b>시뮬</b>. 무대 위쪽 ~36% · 파티 3마리(본편 .party-move) ·
+        집 CONTENT 약 2배 · 오른쪽 대각선 착지.
+      </p>
+    </header>
+    <div class="layout">
+      <div class="phone-col">
+        <div class="phone">
+          <div class="phone-chrome">정찰 · 랩 · HUD (가짜 · 본편과 동일 배치)</div>
+          <div id="stageWrap">
+            <canvas id="stage"></canvas>
+            <div id="guide">
+              <div class="cross" id="guideLine"></div>
+              <div class="actor-mark" id="markActor"></div>
+              <div class="house-mark" id="markHouse"></div>
+              <div class="label" id="labelActor" style="color:#9fe0b8">캐릭</div>
+              <div class="label" id="labelHouse" style="color:#ffc857">집 착지</div>
+            </div>
+            <div id="status">준비 중…</div>
+          </div>
+          <div class="phone-fake-ui">
+            <div class="bar"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="hint-ui">↓ 여기는 로그/버튼 자리 · 무대는 위 36%만</div>
+          </div>
+        </div>
+        <div class="sim-btns">
+          <button type="button" class="primary" id="btnSimPlay">▶ 이동 시뮬</button>
+          <button type="button" id="btnSimStop">착지 정지</button>
+          <button type="button" id="btnSimClear">초기화</button>
+          <button type="button" id="btnGuide">가이드 ON</button>
+        </div>
+        <p class="hint" style="text-align:center;max-width:380px">
+          「이동 시뮬」= 스크롤 ON → 집 다가옴 → 자동 착지(대각선). 슬라이더로 위치 미세 조정.
+        </p>
+      </div>
+
+      <aside>
+        <div class="panel">
+          <h2>① CapGo 착지 포즈</h2>
+          <p class="hint" style="margin-top:0">
+            원작: 캐릭 가운데~왼쪽 고정, 집은 오른쪽 앞쪽 대각선. UI는 안 줄이고 무대 비율만 맞춥니다.
+          </p>
+          <p class="hint" style="margin-top:0">
+            파티 3마리 = 본편 <code>.party-move</code> (선두 · 펫↑ · 펫↓). 집은 CONTENT 약 2배.
+          </p>
+          <label>선두 X <span id="actorXLabel">-0.28</span>
+            <input id="actorX" type="range" min="-0.50" max="0.15" step="0.01" value="-0.28" />
+          </label>
+          <label>선두 크기 <span id="actorHLabel">0.14</span>
+            <input id="actorH" type="range" min="0.08" max="0.30" step="0.01" value="0.14" />
+          </label>
+          <label>선두 발 높이 <span id="actorFootLabel">0.22</span>
+            <input id="actorFoot" type="range" min="0.08" max="0.45" step="0.01" value="0.22" />
+          </label>
+          <label>파티 전체 올리기 <span id="partyLiftLabel">0.06</span>
+            <input id="partyLift" type="range" min="0" max="0.25" step="0.01" value="0.06" />
+          </label>
+          <label>집 착지 X (대각선) <span id="houseXLabel">0.58</span>
+            <input id="houseX" type="range" min="0.20" max="0.80" step="0.01" value="0.58" />
+          </label>
+          <label>집 띄움 <span id="houseYLabel">0.00</span>
+            <input id="houseY" type="range" min="0" max="0.18" step="0.01" value="0.00" />
+          </label>
+          <label>집 크기 <span id="houseHLabel">0.42</span>
+            <input id="houseH" type="range" min="0.28" max="0.70" step="0.01" value="0.42" />
+          </label>
+        </div>
+
+        <div class="panel">
+          <h2>② 맵 · prop</h2>
+          <label>스테이지 키트
+            <select id="mapSelect">
+              <option value="region_ws_01">ws_01 풀빛골목</option>
+              <option value="region_ws_02">ws_02 노을장터</option>
+              <option value="region_ws_03">ws_03 바람언덕</option>
+              <option value="region_ws_04">ws_04 달빛나루</option>
+              <option value="region_ws_05">ws_05 안개성채</option>
+              <option value="region_ws_06">ws_06 별모래길</option>
+              <option value="region_default">default</option>
+            </select>
+          </label>
+          <label>조우 집 (CONTENT)
+            <select id="contentProp">
+              <option value="prop_territory_rest">영지 · 휴식 (파란 지붕)</option>
+              <option value="prop_territory_pirate">영지 · 해적</option>
+              <option value="prop_territory_mercenary">영지 · 용병</option>
+              <option value="prop_visit">방문</option>
+              <option value="prop_park">공원</option>
+              <option value="prop_station">정거장</option>
+              <option value="prop_hut">오두막</option>
+            </select>
+          </label>
+          <label>속도 FAR <span id="speedFarLabel">0.30</span>
+            <input id="speedFar" type="range" min="0" max="2" step="0.05" value="0.3" />
+          </label>
+          <label>속도 NEAR <span id="speedNearLabel">1.00</span>
+            <input id="speedNear" type="range" min="0" max="3" step="0.05" value="1" />
+          </label>
+          <label>전체 배속 <span id="globalSpeedLabel">1.00</span>
+            <input id="globalSpeed" type="range" min="0.1" max="2.5" step="0.1" value="1" />
+          </label>
+          <div class="btns">
+            <button type="button" id="btnPlay">스크롤만 ▶</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>③ 레이어 검수</h2>
+          <label class="tog"><input id="visFar" type="checkbox" checked /> FAR</label>
+          <label class="tog"><input id="visNear" type="checkbox" checked /> NEAR</label>
+          <label class="tog"><input id="visObj" type="checkbox" checked /> OBJ</label>
+          <label class="tog"><input id="visContent" type="checkbox" checked /> CONTENT</label>
+          <label class="tog"><input id="visActor" type="checkbox" checked /> 캐릭</label>
+          <div class="layer-card">
+            <h3>그림 교체 (선택)</h3>
+            <p>원경 / 근경 PNG 업로드</p>
+            <label>FAR <input id="fileFar" type="file" accept="image/png,image/*" /></label>
+            <label>NEAR <input id="fileNear" type="file" accept="image/png,image/*" /></label>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>CSV 메모</h2>
+          <pre id="export"></pre>
+          <div class="btns">
+            <button type="button" id="btnCopy">값 복사</button>
+          </div>
+          <p class="hint">착지 포즈는 코드 기본값 · 시뮬에서 눈으로 맞춘 뒤 본편에 반영하면 됩니다.</p>
+        </div>
+      </aside>
+    </div>
+    <script type="module" src="/src/tools/regionKitTool/main.ts"></script>
+  </body>
+</html>

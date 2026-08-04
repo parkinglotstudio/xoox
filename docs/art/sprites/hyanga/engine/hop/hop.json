@@ -1,0 +1,98 @@
+{
+  "id": "hop",
+  "cell": 512,
+  "pivot": "bottom-center",
+  "size_policy": {
+    "idle_ref_height": 430,
+    "exclude_drop_shadow": true,
+    "crouch": 0.8,
+    "standing": 1.0,
+    "hairball": 0.95
+  },
+  "note": "Drop shadows removed before sizing — shadow+gap was shrinking body",
+  "cols": 6,
+  "rows": 1,
+  "frame_count": 6,
+  "sheet": "hop_sheet.png",
+  "frames": [
+    {
+      "index": 0,
+      "name": "hop_00.png",
+      "role": "crouch",
+      "src": "hop_00_crouch.png",
+      "duration_ms": 200,
+      "file": "frames/hop_00.png",
+      "char_size": [
+        464,
+        344
+      ],
+      "h_vs_idle": 0.8
+    },
+    {
+      "index": 1,
+      "name": "hop_01.png",
+      "role": "launch",
+      "src": "hop_01_launch.png",
+      "duration_ms": 170,
+      "file": "frames/hop_01.png",
+      "char_size": [
+        409,
+        430
+      ],
+      "h_vs_idle": 1.0
+    },
+    {
+      "index": 2,
+      "name": "hop_02.png",
+      "role": "tumble_a",
+      "src": "hop_02_tumble_a.png",
+      "duration_ms": 150,
+      "file": "frames/hop_02.png",
+      "char_size": [
+        473,
+        408
+      ],
+      "h_vs_idle": 0.949
+    },
+    {
+      "index": 3,
+      "name": "hop_03.png",
+      "role": "tumble_b",
+      "src": "hop_03_tumble_b.png",
+      "duration_ms": 150,
+      "file": "frames/hop_03.png",
+      "char_size": [
+        412,
+        408
+      ],
+      "h_vs_idle": 0.949
+    },
+    {
+      "index": 4,
+      "name": "hop_04.png",
+      "role": "landing",
+      "src": "hop_04_landing.png",
+      "duration_ms": 180,
+      "file": "frames/hop_04.png",
+      "char_size": [
+        393,
+        430
+      ],
+      "h_vs_idle": 1.0
+    },
+    {
+      "index": 5,
+      "name": "hop_05.png",
+      "role": "landed",
+      "src": "hop_05_landed.png",
+      "duration_ms": 270,
+      "file": "frames/hop_05.png",
+      "char_size": [
+        421,
+        430
+      ],
+      "h_vs_idle": 1.0
+    }
+  ],
+  "loop": false
+}

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<title>위치 맞춤 · Body Align</title>
+<style>
+  :root { font-family: ui-sans-serif, system-ui, sans-serif; color: #1a1a1a; }
+  body { margin: 20px; background: #e8ece6; }
+  .nav { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .nav a {
+    display: inline-block; padding: 8px 14px; background: #fff; border: 1px solid #c5cbc0;
+    text-decoration: none; color: #1a1a1a; font-size: 13px; border-radius: 4px;
+  }
+  .nav a.active { background: #2d6a4f; color: #fff; border-color: #2d6a4f; }
+  h1 { font-size: 18px; margin: 0 0 6px; }
+  .sub { font-size: 12px; opacity: .7; margin-bottom: 10px; line-height: 1.45; }
+  .warn { font-size: 12px; background: #fff3cd; border: 1px solid #e6d59a; padding: 8px 10px; margin-bottom: 12px; line-height: 1.45; }
+  .row { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+  .stage-wrap {
+    border: 1px solid #b8beb4;
+    background:
+      linear-gradient(45deg, #d5d9d3 25%, transparent 25%),
+      linear-gradient(-45deg, #d5d9d3 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #d5d9d3 75%),
+      linear-gradient(-45deg, transparent 75%, #d5d9d3 75%);
+    background-size: 24px 24px;
+    background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+    background-color: #f2f4f0;
+    position: relative;
+  }
+  canvas { display: block; cursor: grab; }
+  canvas.dragging { cursor: grabbing; }
+  .panel { min-width: 300px; max-width: 360px; background: #fff; border: 1px solid #c5cbc0; padding: 14px; }
+  label { display: block; font-size: 12px; margin-top: 10px; }
+  select, input[type="range"], input[type="number"] { width: 100%; box-sizing: border-box; }
+  button { margin: 4px 4px 0 0; padding: 6px 10px; cursor: pointer; }
+  .hint { font-size: 11px; opacity: .75; margin-top: 10px; line-height: 1.45; }
+  .offsets { font-size: 11px; font-family: ui-monospace, monospace; max-height: 180px; overflow: auto; background: #f6f7f5; padding: 8px; margin-top: 8px; white-space: pre-wrap; }
+  .pivot {
+    position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px;
+    border: 2px solid #e23; border-radius: 50%; pointer-events: none; box-sizing: border-box;
+  }
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="./studio.html">▶ 플레이</a>
+    <a class="active" href="./align.html">✥ 위치</a>
+    <a href="./scale.html">⤢ 크기</a>
+  </nav>
+  <h1>위치 맞춤</h1>
+  <p class="sub">dx/dy는 <b>위치 원본팩(_pre_offset_backup) 대비 절대값</b>이야. 단서 적용도 같은 기준.</p>
+  <div class="warn" id="modeWarn">원본팩 로딩 중…</div>
+  <div class="row">
+    <div class="stage-wrap" id="stageWrap">
+      <canvas id="cv"></canvas>
+      <div class="pivot" id="pivot"></div>
+    </div>
+    <div class="panel">
+      <label>애니
+        <select id="anim"></select>
+      </label>
+      <label>기준(아래·불투명)
+        <select id="ref"></select>
+      </label>
+      <label>맞출 프레임(위·반투명)
+        <select id="edit"></select>
+      </label>
+      <label>위 레이어 투명도 <span id="opLabel">0.45</span>
+        <input id="opacity" type="range" min="0.15" max="0.9" step="0.05" value="0.45"/>
+      </label>
+      <label>이동 단위(px)
+        <input id="step" type="number" min="1" max="20" value="1"/>
+      </label>
+      <div>
+        <button id="up">↑</button>
+        <button id="down">↓</button>
+        <button id="left">←</button>
+        <button id="right">→</button>
+        <button id="resetOne">이 프레임 0,0</button>
+        <button id="resetAll">전체 0,0</button>
+      </div>
+      <button id="save">오프셋 JSON 다운로드</button>
+      <button id="copy">클립보드 복사</button>
+      <div class="offsets" id="offsets"></div>
+      <p class="hint">
+        · 빨간 점 = 피봇(bottom-center)<br/>
+        · <b>0,0 = 위치 원본팩</b> (이미 옮긴 시트가 아님!)<br/>
+        · 적용 후 다시 열면 dx/dy 절대값이 그대로 남아<br/>
+        · JSON을 채팅에 붙여 주면 단서가 원본팩+오프셋으로 재패킹<br/>
+        · ←→↑↓ · Shift=10px
+      </p>
+    </div>
+  </div>
+<script>
+const CELL = 512;
+const PIVOT = { x: CELL / 2, y: CELL - 12 };
+
+let index = null;
+let animId = "";
+let animMeta = null;
+let manifest = null;
+let unique = [];
+let baseImgs = {};
+let usingBaseline = false;
+let baselineName = "";
+let offsets = {};
+let refKey = 0;
+let editKey = 0;
+let opacity = 0.45;
+let dragging = false;
+let dragStart = null;
+
+const cv = document.getElementById("cv");
+const ctx = cv.getContext("2d");
+cv.width = CELL; cv.height = CELL;
+document.getElementById("stageWrap").style.width = CELL + "px";
+document.getElementById("stageWrap").style.height = CELL + "px";
+document.getElementById("pivot").style.left = PIVOT.x + "px";
+document.getElementById("pivot").style.top = PIVOT.y + "px";
+
+function bust(url) {
+  return url + (url.includes("?") ? "&" : "?") + "t=" + Date.now();
+}
+
+function sourceKey(f) {
+  if (f.source_key != null) return f.source_key;
+  if (f.pose_index != null) return f.pose_index;
+  return f.index;
+}
+
+function buildUnique(man) {
+  const seen = new Set();
+  const out = [];
+  for (const f of man.frames || []) {
+    const k = sourceKey(f);
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push({ key: k, label: `#${f.index} ${f.role || f.name || ""}`.trim(), frame: f });
+  }
+  return out;
+}
+
+async function loadImage(url) {
+  const img = new Image();
+  img.src = bust(url);
+  await img.decode();
+  return img;
+}
+
+async function tryLoad(url) {
+  try { return await loadImage(url); } catch { return null; }
+}
+
+function drawImg(img, dx, dy, alpha) {
+  if (!img) return;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.drawImage(img, dx, dy);
+  ctx.restore();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, CELL, CELL);
+  const r = offsets[refKey] || { dx: 0, dy: 0 };
+  const e = offsets[editKey] || { dx: 0, dy: 0 };
+  drawImg(baseImgs[refKey], r.dx, r.dy, 1);
+  if (editKey !== refKey) drawImg(baseImgs[editKey], e.dx, e.dy, opacity);
+  renderOffsets();
+}
+
+function exportObj() {
+  const out = {};
+  unique.forEach(u => {
+    const o = offsets[u.key] || { dx: 0, dy: 0 };
+    out[String(u.key)] = { dx: o.dx|0, dy: o.dy|0 };
+  });
+  return {
+    anim_id: animId,
+    cell: CELL,
+    pivot: PIVOT,
+    type: "body_offsets",
+    baseline: baselineName || "current_frames",
+    note: "ABSOLUTE dx/dy vs baseline. 단서가 원본팩+오프셋으로 재패킹.",
+    offsets: out,
+  };
+}
+
+function renderOffsets() {
+  document.getElementById("offsets").textContent = JSON.stringify(exportObj(), null, 2);
+}
+
+function nudge(dx, dy) {
+  if (!offsets[editKey]) offsets[editKey] = { dx: 0, dy: 0 };
+  offsets[editKey].dx += dx;
+  offsets[editKey].dy += dy;
+  draw();
+}
+
+async function loadAnimById(id) {
+  animMeta = index.anims.find(a => a.id === id) || index.anims[0];
+  animId = animMeta.id;
+  manifest = await (await fetch(bust("./" + animMeta.manifest), { cache: "no-store" })).json();
+  unique = buildUnique(manifest);
+
+  // Prefer _pre_offset_backup (scaled, before position). Else _pre_scale_backup. Else current frames.
+  baseImgs = {};
+  usingBaseline = false;
+  baselineName = "";
+  const dir = animMeta.dir;
+  for (const u of unique) {
+    const name = u.frame.name;
+    let img = await tryLoad(`./${dir}/_pre_offset_backup/${name}`);
+    if (img) { usingBaseline = true; baselineName = "_pre_offset_backup"; }
+    if (!img) {
+      img = await tryLoad(`./${dir}/_pre_scale_backup/${name}`);
+      if (img) { usingBaseline = true; baselineName = "_pre_scale_backup"; }
+    }
+    if (!img) img = await loadImage(`./${dir}/frames/${name}`);
+    baseImgs[u.key] = img;
+  }
+
+  const applied = (manifest.applied_body_offsets && manifest.applied_body_offsets.offsets) || {};
+  offsets = {};
+  unique.forEach(u => {
+    const k = String(u.key);
+    const o = applied[k] || applied[u.key] || { dx: 0, dy: 0 };
+    offsets[u.key] = { dx: Number(o.dx) || 0, dy: Number(o.dy) || 0 };
+  });
+
+  document.getElementById("modeWarn").textContent = usingBaseline
+    ? `✓ ${baselineName} 기준 · 절대 오프셋. 현재 적용값: ${unique.map(u => `${u.key}=(${offsets[u.key].dx},${offsets[u.key].dy})`).join(" ")}`
+    : `⚠ 위치 원본팩이 없어 현재 프레임 기준. 값이 어긋날 수 있음.`;
+
+  const refSel = document.getElementById("ref");
+  const editSel = document.getElementById("edit");
+  refSel.innerHTML = "";
+  editSel.innerHTML = "";
+  unique.forEach(u => {
+    const o1 = document.createElement("option");
+    o1.value = String(u.key); o1.textContent = u.label; refSel.appendChild(o1);
+    const o2 = document.createElement("option");
+    o2.value = String(u.key); o2.textContent = u.label; editSel.appendChild(o2);
+  });
+  refKey = unique[0]?.key ?? 0;
+  editKey = unique[Math.min(1, unique.length - 1)]?.key ?? 0;
+  refSel.value = String(refKey);
+  editSel.value = String(editKey);
+  draw();
+}
+
+async function boot() {
+  index = await (await fetch(bust("./index.json"), { cache: "no-store" })).json();
+  const sel = document.getElementById("anim");
+  sel.innerHTML = "";
+  index.anims.forEach(a => {
+    const opt = document.createElement("option");
+    opt.value = a.id;
+    opt.textContent = `${a.id} (${a.frame_count}f)`;
+    sel.appendChild(opt);
+  });
+  const want = (location.hash || "").replace(/^#/, "") || "win";
+  const start = index.anims.some(a => a.id === want) ? want : index.anims[0]?.id;
+  sel.value = start;
+  await loadAnimById(start);
+}
+
+document.getElementById("anim").onchange = (e) => {
+  history.replaceState(null, "", "#" + e.target.value);
+  loadAnimById(e.target.value);
+};
+document.getElementById("ref").onchange = (e) => { refKey = Number(e.target.value); draw(); };
+document.getElementById("edit").onchange = (e) => { editKey = Number(e.target.value); draw(); };
+document.getElementById("opacity").oninput = (e) => {
+  opacity = Number(e.target.value);
+  document.getElementById("opLabel").textContent = opacity.toFixed(2);
+  draw();
+};
+document.getElementById("up").onclick = () => nudge(0, -Number(document.getElementById("step").value));
+document.getElementById("down").onclick = () => nudge(0, Number(document.getElementById("step").value));
+document.getElementById("left").onclick = () => nudge(-Number(document.getElementById("step").value), 0);
+document.getElementById("right").onclick = () => nudge(Number(document.getElementById("step").value), 0);
+document.getElementById("resetOne").onclick = () => { offsets[editKey] = { dx: 0, dy: 0 }; draw(); };
+document.getElementById("resetAll").onclick = () => {
+  unique.forEach(u => { offsets[u.key] = { dx: 0, dy: 0 }; });
+  draw();
+};
+document.getElementById("save").onclick = () => {
+  const blob = new Blob([JSON.stringify(exportObj(), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${animId}_body_offsets.json`;
+  a.click();
+};
+document.getElementById("copy").onclick = async () => {
+  await navigator.clipboard.writeText(JSON.stringify(exportObj(), null, 2));
+  alert("오프셋 JSON 복사됨");
+};
+
+cv.addEventListener("pointerdown", (e) => {
+  dragging = true;
+  cv.classList.add("dragging");
+  const cur = offsets[editKey] || { dx: 0, dy: 0 };
+  dragStart = { x: e.clientX, y: e.clientY, dx: cur.dx, dy: cur.dy };
+  cv.setPointerCapture(e.pointerId);
+});
+cv.addEventListener("pointermove", (e) => {
+  if (!dragging) return;
+  offsets[editKey] = {
+    dx: Math.round(dragStart.dx + (e.clientX - dragStart.x)),
+    dy: Math.round(dragStart.dy + (e.clientY - dragStart.y)),
+  };
+  draw();
+});
+cv.addEventListener("pointerup", () => { dragging = false; cv.classList.remove("dragging"); });
+
+window.addEventListener("keydown", (e) => {
+  const step = (e.shiftKey ? 10 : 1) * Number(document.getElementById("step").value || 1);
+  if (e.key === "ArrowUp") { e.preventDefault(); nudge(0, -step); }
+  if (e.key === "ArrowDown") { e.preventDefault(); nudge(0, step); }
+  if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-step, 0); }
+  if (e.key === "ArrowRight") { e.preventDefault(); nudge(step, 0); }
+});
+
+boot().catch(err => {
+  document.body.insertAdjacentHTML("beforeend", `<pre style="color:crimson">${err}</pre>`);
+});
+</script>
+</body>
+</html>

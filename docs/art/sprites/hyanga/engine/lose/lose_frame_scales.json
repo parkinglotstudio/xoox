@@ -1,0 +1,12 @@
+{
+  "anim_id": "lose",
+  "cell": 512,
+  "pivot": "bottom-center",
+  "pad_bottom": 12,
+  "type": "frame_scales",
+  "note": "Multiply each unique source pose by scale around bottom-center, then rebuild sheet. Target size = idle.",
+  "scales": {
+    "0": 1,
+    "1": 1.105
+  }
+}

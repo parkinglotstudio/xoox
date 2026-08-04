@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<title>Hyanga Sprite Studio · 플레이</title>
+<style>
+  :root { font-family: ui-sans-serif, system-ui, sans-serif; color: #1a1a1a; }
+  body { margin: 24px; background: #e8ece6; }
+  .nav { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .nav a {
+    display: inline-block; padding: 8px 14px; background: #fff; border: 1px solid #c5cbc0;
+    text-decoration: none; color: #1a1a1a; font-size: 13px; border-radius: 4px;
+  }
+  .nav a.active { background: #2d6a4f; color: #fff; border-color: #2d6a4f; }
+  h1 { font-size: 20px; margin: 0 0 8px; }
+  .sub { font-size: 12px; opacity: .7; margin-bottom: 16px; }
+  .row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+  .stage {
+    background:
+      linear-gradient(45deg, #d5d9d3 25%, transparent 25%),
+      linear-gradient(-45deg, #d5d9d3 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #d5d9d3 75%),
+      linear-gradient(-45deg, transparent 75%, #d5d9d3 75%);
+    background-size: 24px 24px;
+    background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+    background-color: #f2f4f0;
+    border: 1px solid #b8beb4;
+    overflow: hidden;
+  }
+  .panel { min-width: 300px; background: #fff; border: 1px solid #c5cbc0; padding: 14px; }
+  label { display: block; font-size: 12px; margin-top: 10px; }
+  select, input[type="number"], input[type="range"] { width: 100%; box-sizing: border-box; }
+  button { margin: 4px 4px 0 0; padding: 6px 10px; cursor: pointer; }
+  .frames { margin-top: 10px; max-height: 260px; overflow: auto; font-size: 12px; }
+  .frames div { display: flex; gap: 8px; align-items: center; margin: 4px 0; }
+  .frames input { width: 72px; }
+  code { font-size: 11px; }
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <a class="active" href="./studio.html">▶ 플레이</a>
+    <a href="./align.html">✥ 위치</a>
+    <a href="./scale.html">⤢ 크기</a>
+  </nav>
+  <h1>플레이</h1>
+  <p class="sub">엔진 미리보기 · 애니 선택 · 프레임 시간 조절 후 JSON 다운로드 · 크기 기준은 항상 <b>idle</b></p>
+  <div class="row">
+    <div class="stage" id="stage"><canvas id="cv"></canvas></div>
+    <div class="panel">
+      <label>애니 <span id="animCount" style="opacity:.6"></span>
+        <select id="anim"></select>
+      </label>
+      <button id="play">Play / Pause</button>
+      <button id="step">Step</button>
+      <button id="reset">Reset</button>
+      <label>배속 <span id="spdLabel">1.0×</span>
+        <input id="speed" type="range" min="0.1" max="3" step="0.1" value="1"/>
+      </label>
+      <label>기본 duration(ms) 일괄
+        <input id="bulk" type="number" min="16" step="10" value="120"/>
+      </label>
+      <button id="applyBulk">일괄 적용</button>
+      <button id="downloadManifest">매니페스트 JSON 다운로드</button>
+      <div class="frames" id="frameList"></div>
+      <p style="font-size:11px;margin-top:12px;opacity:.7">시간 수정 후 JSON 저장 → 단서가 <code>rebuild --manifest</code></p>
+    </div>
+  </div>
+<script>
+let index, manifest, sheet, animMeta;
+let idx = 0, playing = true, acc = 0, last = 0, speed = 1, cell = 512;
+const cv = document.getElementById("cv");
+const ctx = cv.getContext("2d");
+const stage = document.getElementById("stage");
+
+function bust(url) {
+  const sep = url.includes("?") ? "&" : "?";
+  return url + sep + "t=" + Date.now();
+}
+
+async function boot() {
+  index = await (await fetch(bust("./index.json"), { cache: "no-store" })).json();
+  const sel = document.getElementById("anim");
+  sel.innerHTML = "";
+  document.getElementById("animCount").textContent = `(${index.anims.length}개)`;
+  index.anims.forEach((a, i) => {
+    const opt = document.createElement("option");
+    opt.value = i;
+    opt.textContent = `${a.id} (${a.frame_count}f)`;
+    sel.appendChild(opt);
+  });
+  sel.onchange = () => {
+    const i = Number(sel.value);
+    const id = index.anims[i]?.id;
+    if (id) history.replaceState(null, "", "#"+id);
+    loadAnim(i);
+  };
+  const want = (location.hash || "").replace(/^#/, "") || new URLSearchParams(location.search).get("anim");
+  let start = 0;
+  if (want) {
+    const found = index.anims.findIndex(a => a.id === want);
+    if (found >= 0) start = found;
+  }
+  sel.value = String(start);
+  if (index.anims.length) await loadAnim(start);
+  last = performance.now();
+  requestAnimationFrame(loop);
+}
+
+async function loadAnim(i) {
+  animMeta = index.anims[i];
+  manifest = await (await fetch(bust("./" + animMeta.manifest), { cache: "no-store" })).json();
+  cell = manifest.cell || animMeta.cell || 512;
+  cv.width = cell; cv.height = cell;
+  stage.style.width = cell + "px";
+  stage.style.height = cell + "px";
+  sheet = new Image();
+  sheet.src = bust("./" + animMeta.sheet);
+  await sheet.decode();
+  idx = 0; acc = 0;
+  buildList();
+  draw();
+}
+
+function buildList() {
+  const el = document.getElementById("frameList");
+  el.innerHTML = "";
+  (manifest.frames || []).forEach((f, i) => {
+    const row = document.createElement("div");
+    row.innerHTML = `<span>#${i}</span><code>${f.name || f.src || ""}</code>`;
+    const inp = document.createElement("input");
+    inp.type = "number";
+    inp.min = 16;
+    inp.value = f.duration_ms;
+    inp.addEventListener("change", () => { f.duration_ms = Number(inp.value) || 100; });
+    row.appendChild(inp);
+    el.appendChild(row);
+  });
+}
+
+function draw() {
+  if (!manifest?.frames?.length || !sheet?.complete) return;
+  const cols = manifest.cols || manifest.frames.length;
+  const col = idx % cols;
+  const row = Math.floor(idx / cols);
+  ctx.clearRect(0, 0, cell, cell);
+  ctx.drawImage(sheet, col * cell, row * cell, cell, cell, 0, 0, cell, cell);
+}
+
+function loop(t) {
+  const dt = t - last;
+  last = t;
+  if (playing && manifest?.frames?.length) {
+    acc += dt * speed;
+    const dur = manifest.frames[idx].duration_ms || 100;
+    while (acc >= dur) {
+      acc -= dur;
+      idx = (idx + 1) % manifest.frames.length;
+    }
+  }
+  draw();
+  requestAnimationFrame(loop);
+}
+
+document.getElementById("play").onclick = () => playing = !playing;
+document.getElementById("step").onclick = () => { playing = false; idx = (idx + 1) % manifest.frames.length; acc = 0; };
+document.getElementById("reset").onclick = () => { idx = 0; acc = 0; };
+document.getElementById("speed").oninput = (e) => {
+  speed = Number(e.target.value);
+  document.getElementById("spdLabel").textContent = speed.toFixed(1) + "×";
+};
+document.getElementById("applyBulk").onclick = () => {
+  const v = Number(document.getElementById("bulk").value) || 120;
+  manifest.frames.forEach(f => f.duration_ms = v);
+  buildList();
+};
+document.getElementById("downloadManifest").onclick = () => {
+  const blob = new Blob([JSON.stringify(manifest, null, 2)], {type: "application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = (manifest.id || "anim") + ".json";
+  a.click();
+};
+
+boot().catch(err => {
+  document.body.insertAdjacentHTML("beforeend", `<pre style="color:crimson">${err}</pre>`);
+});
+</script>
+</body>
+</html>

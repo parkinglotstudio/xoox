@@ -1,0 +1,72 @@
+{
+  "id": "hit",
+  "cell": 512,
+  "pivot": "bottom-center",
+  "scales": [
+    0.5588235294117647,
+    0.4792284866468843,
+    0.4938837920489297
+  ],
+  "idle_ref": [
+    333,
+    430
+  ],
+  "idle_body": [
+    323,
+    172
+  ],
+  "size_policy": "per-frame scale so body width ~= idle body width",
+  "note": "Oneshoot; each frame body width matched to idle",
+  "cols": 3,
+  "rows": 1,
+  "frame_count": 3,
+  "sheet": "hit_sheet.png",
+  "frames": [
+    {
+      "index": 0,
+      "name": "hit_00.png",
+      "role": "snap",
+      "duration_ms": 110,
+      "file": "frames/hit_00.png",
+      "char_size": [
+        356,
+        398
+      ],
+      "body_size": [
+        323,
+        159
+      ]
+    },
+    {
+      "index": 1,
+      "name": "hit_01.png",
+      "role": "dizzy",
+      "duration_ms": 180,
+      "file": "frames/hit_01.png",
+      "char_size": [
+        368,
+        381
+      ],
+      "body_size": [
+        323,
+        152
+      ]
+    },
+    {
+      "index": 2,
+      "name": "hit_02.png",
+      "role": "recover",
+      "duration_ms": 200,
+      "file": "frames/hit_02.png",
+      "char_size": [
+        346,
+        411
+      ],
+      "body_size": [
+        324,
+        164
+      ]
+    }
+  ],
+  "loop": false
+}

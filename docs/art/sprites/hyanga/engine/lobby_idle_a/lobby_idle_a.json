@@ -1,0 +1,138 @@
+{
+  "id": "lobby_idle_a",
+  "cell": 512,
+  "pivot": "bottom-center",
+  "align": "body-lock+manual-offset",
+  "playback": "smooth_LCR_pingpong",
+  "pose_order": [
+    0,
+    1,
+    2,
+    1,
+    0,
+    1,
+    2,
+    1,
+    0,
+    1
+  ],
+  "roles": [
+    "L",
+    "C",
+    "R"
+  ],
+  "source_map": {
+    "L": 1,
+    "C": 2,
+    "R": 0
+  },
+  "cols": 10,
+  "rows": 1,
+  "frame_count": 10,
+  "sheet": "lobby_idle_a_sheet.png",
+  "note": "Strip order was alternating; remapped to L-C-R to avoid mid-loop break. B excludes blink.",
+  "frames": [
+    {
+      "index": 0,
+      "name": "lobby_idle_a_00.png",
+      "role": "L",
+      "source_frame": 1,
+      "key_index": 0,
+      "duration_ms": 300,
+      "file": "frames/lobby_idle_a_00.png",
+      "align": "body-lock+manual-offset+smooth-order"
+    },
+    {
+      "index": 1,
+      "name": "lobby_idle_a_01.png",
+      "role": "C",
+      "source_frame": 2,
+      "key_index": 1,
+      "duration_ms": 230,
+      "file": "frames/lobby_idle_a_01.png",
+      "align": "body-lock+manual-offset+smooth-order"
+    },
+    {
+      "index": 2,
+      "name": "lobby_idle_a_02.png",
+      "role": "R",
+      "source_frame": 0,
+      "key_index": 2,
+      "duration_ms": 300,
+      "file": "frames/lobby_idle_a_02.png",
+      "align": "body-lock+manual-offset+smooth-order"
+    },
+    {
+      "index": 3,
+      "name": "lobby_idle_a_03.png",
+      "role": "C",
+      "source_frame": 2,
+      "key_index": 1,
+      "duration_ms": 230,
+      "file": "frames/lobby_idle_a_03.png",
+      "align": "body-lock+manual-offset+smooth-order"
+    },
+    {
+      "index": 4,
+      "name": "lobby_idle_a_04.png",
+      "role": "L",
+      "source_frame": 1,
+      "key_index": 0,
+      "duration_ms": 300,
+      "file": "frames/lobby_idle_a_04.png",
+      "align": "body-lock+manual-offset+smooth-order"
+    },
+    {
+      "index": 5,
+      "name": "lobby_idle_a_05.png",
+      "role": "C",
+      "source_frame": 2,
+      "key_index": 1,
+      "duration_ms": 230,
+      "file": "frames/lobby_idle_a_05.png",
+      "align": "body-lock+manual-offset+smooth-order"
+    },
+    {
+      "index": 6,
+      "name": "lobby_idle_a_06.png",
+      "role": "R",
+      "source_frame": 0,
+      "key_index": 2,
+      "duration_ms": 300,
+      "file": "frames/lobby_idle_a_06.png",
+      "align": "body-lock+manual-offset+smooth-order"
+    },
+    {
+      "index": 7,
+      "name": "lobby_idle_a_07.png",
+      "role": "C",
+      "source_frame": 2,
+      "key_index": 1,
+      "duration_ms": 230,
+      "file": "frames/lobby_idle_a_07.png",
+      "align": "body-lock+manual-offset+smooth-order"
+    },
+    {
+      "index": 8,
+      "name": "lobby_idle_a_08.png",
+      "role": "L",
+      "source_frame": 1,
+      "key_index": 0,
+      "duration_ms": 300,
+      "file": "frames/lobby_idle_a_08.png",
+      "align": "body-lock+manual-offset+smooth-order"
+    },
+    {
+      "index": 9,
+      "name": "lobby_idle_a_09.png",
+      "role": "C",
+      "source_frame": 2,
+      "key_index": 1,
+      "duration_ms": 230,
+      "file": "frames/lobby_idle_a_09.png",
+      "align": "body-lock+manual-offset+smooth-order"
+    }
+  ],
+  "loop": true,
+  "speed_note": "durations scaled for 1x ≈ previous 0.6x studio preview (×1/0.6)"
+}

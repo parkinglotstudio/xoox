@@ -1,0 +1,67 @@
+{
+  "id": "move",
+  "cell": 512,
+  "pivot": "bottom-center",
+  "shared_scale": 0.5939226519337016,
+  "idle_ref": [
+    333,
+    430
+  ],
+  "body_x_avg": 285.49938366718027,
+  "note": "Idle height matched; body shifted right; soft hair-tip extend to hide source flat cut",
+  "cols": 4,
+  "rows": 1,
+  "frame_count": 4,
+  "sheet": "move_sheet.png",
+  "frames": [
+    {
+      "index": 0,
+      "name": "move_00.png",
+      "role": "run_a",
+      "source_frame": 0,
+      "duration_ms": 170,
+      "file": "frames/move_00.png",
+      "char_size": [
+        486,
+        431
+      ]
+    },
+    {
+      "index": 1,
+      "name": "move_01.png",
+      "role": "run_b",
+      "source_frame": 1,
+      "duration_ms": 170,
+      "file": "frames/move_01.png",
+      "char_size": [
+        485,
+        429
+      ]
+    },
+    {
+      "index": 2,
+      "name": "move_02.png",
+      "role": "run_a",
+      "source_frame": 0,
+      "duration_ms": 170,
+      "file": "frames/move_02.png",
+      "char_size": [
+        486,
+        431
+      ]
+    },
+    {
+      "index": 3,
+      "name": "move_03.png",
+      "role": "run_b",
+      "source_frame": 1,
+      "duration_ms": 170,
+      "file": "frames/move_03.png",
+      "char_size": [
+        485,
+        429
+      ]
+    }
+  ],
+  "loop": true
+}

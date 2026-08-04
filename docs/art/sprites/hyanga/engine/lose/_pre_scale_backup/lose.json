@@ -1,0 +1,90 @@
+{
+  "id": "lose",
+  "cell": 512,
+  "pivot": "bottom-center",
+  "size_policy": "contain into idle character bbox (w & h)",
+  "scales": [
+    0.4977578475336323,
+    0.4618585298196949
+  ],
+  "idle_ref": [
+    333,
+    430
+  ],
+  "idle_body": [
+    323,
+    172
+  ],
+  "note": "Each frame contained within idle char size. Tools: studio/align/scale.",
+  "cols": 4,
+  "rows": 1,
+  "frame_count": 4,
+  "sheet": "lose_sheet.png",
+  "frames": [
+    {
+      "index": 0,
+      "name": "lose_00.png",
+      "role": "hair_down",
+      "duration_ms": 320,
+      "file": "frames/lose_00.png",
+      "source_key": 0,
+      "char_size": [
+        333,
+        405
+      ],
+      "body_size": [
+        321,
+        162
+      ]
+    },
+    {
+      "index": 1,
+      "name": "lose_01.png",
+      "role": "hair_breath",
+      "duration_ms": 320,
+      "file": "frames/lose_01.png",
+      "source_key": 1,
+      "char_size": [
+        333,
+        350
+      ],
+      "body_size": [
+        309,
+        140
+      ]
+    },
+    {
+      "index": 2,
+      "name": "lose_02.png",
+      "role": "hair_down",
+      "duration_ms": 320,
+      "file": "frames/lose_02.png",
+      "source_key": 0,
+      "char_size": [
+        333,
+        405
+      ],
+      "body_size": [
+        321,
+        162
+      ]
+    },
+    {
+      "index": 3,
+      "name": "lose_03.png",
+      "role": "hair_breath",
+      "duration_ms": 320,
+      "file": "frames/lose_03.png",
+      "source_key": 1,
+      "char_size": [
+        333,
+        350
+      ],
+      "body_size": [
+        309,
+        140
+      ]
+    }
+  ],
+  "loop": true
+}

@@ -1,0 +1,59 @@
+{
+  "id": "idle_blink",
+  "cell": 512,
+  "pivot": "bottom-center",
+  "fill_ratio": 0.88,
+  "cols": 5,
+  "rows": 1,
+  "frame_count": 5,
+  "sheet": "idle_blink_sheet.png",
+  "bg": {
+    "mode": "chroma",
+    "tolerance": 42,
+    "soft": 18,
+    "key": "auto-corners"
+  },
+  "frames": [
+    {
+      "index": 0,
+      "name": "idle_blink_00.png",
+      "src": "strip_00.png",
+      "src_path": "/Users/max/1_작업 폴더/모노카피바라 프로젝트/monocapibara/docs/art/sprites/hyanga/engine/idle_blink/strip_splits/strip_00.png",
+      "duration_ms": 800,
+      "file": "frames/idle_blink_00.png"
+    },
+    {
+      "index": 1,
+      "name": "idle_blink_01.png",
+      "src": "strip_01.png",
+      "src_path": "/Users/max/1_작업 폴더/모노카피바라 프로젝트/monocapibara/docs/art/sprites/hyanga/engine/idle_blink/strip_splits/strip_01.png",
+      "duration_ms": 60,
+      "file": "frames/idle_blink_01.png"
+    },
+    {
+      "index": 2,
+      "name": "idle_blink_02.png",
+      "src": "strip_02.png",
+      "src_path": "/Users/max/1_작업 폴더/모노카피바라 프로젝트/monocapibara/docs/art/sprites/hyanga/engine/idle_blink/strip_splits/strip_02.png",
+      "duration_ms": 60,
+      "file": "frames/idle_blink_02.png"
+    },
+    {
+      "index": 3,
+      "name": "idle_blink_03.png",
+      "src": "strip_03.png",
+      "src_path": "/Users/max/1_작업 폴더/모노카피바라 프로젝트/monocapibara/docs/art/sprites/hyanga/engine/idle_blink/strip_splits/strip_03.png",
+      "duration_ms": 120,
+      "file": "frames/idle_blink_03.png"
+    },
+    {
+      "index": 4,
+      "name": "idle_blink_04.png",
+      "src": "strip_04.png",
+      "src_path": "/Users/max/1_작업 폴더/모노카피바라 프로젝트/monocapibara/docs/art/sprites/hyanga/engine/idle_blink/strip_splits/strip_04.png",
+      "duration_ms": 80,
+      "file": "frames/idle_blink_04.png"
+    }
+  ],
+  "loop": true
+}
