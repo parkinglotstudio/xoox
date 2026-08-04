@@ -55,6 +55,7 @@ export function createInitialState(data: GameData): PlayerState {
     purifyBuffPct: 0,
     joinedPartyMembers: [],
     permanentPartyMembers: [],
+    collectedMemories: [],
     rescuedAnimals: [],
   };
 }

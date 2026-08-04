@@ -85,6 +85,7 @@ export async function loadGameData(): Promise<GameData> {
     areaRows,
     areaConnRows,
     areaNpcRows,
+    tigonMemoryRows,
   ] = await Promise.all([
     loadCsv("effect_config"),
     loadCsv("grade_config"),
@@ -135,6 +136,7 @@ export async function loadGameData(): Promise<GameData> {
     loadCsv("area_config"),
     loadCsv("area_connection_config"),
     loadCsv("area_npc_config"),
+    loadCsv("tigon_memory_config"),
   ]);
 
   const items: ItemDef[] = itemsRaw.map((r) => ({
@@ -575,6 +577,17 @@ export async function loadGameData(): Promise<GameData> {
       appear_condition: (r.appear_condition || "ALWAYS").toUpperCase(),
       flavor_text: r.flavor_text || "",
     })),
+    tigonMemories: tigonMemoryRows
+      .map((r) => ({
+        memory_id: r.memory_id,
+        order: num(r.order),
+        unlock_trigger: (r.unlock_trigger || "MAP_FIND").toUpperCase(),
+        unlock_value: r.unlock_value || "",
+        scenario_text: r.scenario_text || "",
+        reactor: r.reactor || "",
+        reaction_text: r.reaction_text || "",
+      }))
+      .sort((a, b) => a.order - b.order),
   };
 
   const covered = new Set(data.minigameEntries.map((e) => e.minigame_id));

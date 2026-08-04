@@ -570,6 +570,23 @@ export interface GameData {
   areas: AreaDef[];
   areaConnections: AreaConnectionDef[];
   areaNpcs: AreaNpcDef[];
+  tigonMemories: TigonMemoryDef[];
+}
+
+/**
+ * Tigon 기억 조각 — 탐방 맵에 숨겨진 선택적 수집물(29번 문서 §0-1: 수동 탐방=숨은 콘텐츠).
+ * 메인 진행에는 관여하지 않는다. 다 모으면 Tigon의 서사가 완성된다.
+ */
+export interface TigonMemoryDef {
+  memory_id: string;
+  order: number;
+  /** MAP_FIND = 맵에서 발견(현재 유일) · 이후 DAY/STAGE 등으로 확장 가능 */
+  unlock_trigger: string;
+  unlock_value: string;
+  scenario_text: string;
+  /** 이 조각을 보고 반응할 리더 */
+  reactor: string;
+  reaction_text: string;
 }
 
 /**
@@ -656,6 +673,8 @@ export interface PlayerState {
   joinedPartyMembers: string[];
   /** roster_scope=PERMANENT로 영구 소장된 member_id 목록(도감) */
   permanentPartyMembers: string[];
+  /** 탐방 맵에서 주운 Tigon 기억 조각 memory_id 목록(스크랩북) */
+  collectedMemories: string[];
   /** 구조 조우로 정화 성공(구조 완료)한 animal_id 목록 — 스테이지 풀에서 제외됨 */
   rescuedAnimals: string[];
 }

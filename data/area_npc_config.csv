@@ -17,3 +17,11 @@ n_scrap_cart,area_scrapyard,42,60,🛒,뒤집힌 손수레,MEMO,,ALWAYS,바퀴 �
 n_scrap_tv,area_scrapyard,70,46,📺,깨진 브라운관,MEMO,,ALWAYS,화면에 아무것도 비치지 않는다. 오래전에 버려졌다.
 n_scrap_toy,area_scrapyard,32,32,🧸,흙 묻은 인형,MEMO,,ALWAYS,누군가의 손을 오래 탔던 것 같다. 여기 왜 있을까.
 n_scrap_gate,area_scrapyard,58,16,⛓️,녹슨 철망,MEMO,,ALWAYS,구멍이 하나 벌어져 있다. 작은 몸이라면 지나갈 수 있겠다.
+m_tm01,area_sewer_gate,18,80,✨,희미한 기억,MEMORY,tm_01,ALWAYS,
+m_tm02,area_sewer_gate,82,50,✨,희미한 기억,MEMORY,tm_02,ALWAYS,
+m_tm03,area_sewer_gate,22,22,✨,희미한 기억,MEMORY,tm_03,ALWAYS,
+m_tm04,area_sewer_main,84,66,✨,희미한 기억,MEMORY,tm_04,ALWAYS,
+m_tm05,area_sewer_main,18,40,✨,희미한 기억,MEMORY,tm_05,ALWAYS,
+m_tm06,area_sewer_main,80,22,✨,희미한 기억,MEMORY,tm_06,ALWAYS,
+m_tm07,area_scrapyard,20,66,✨,희미한 기억,MEMORY,tm_07,ALWAYS,
+m_tm08,area_scrapyard,84,26,✨,희미한 기억,MEMORY,tm_08,ALWAYS,

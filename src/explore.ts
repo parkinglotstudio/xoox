@@ -15,6 +15,10 @@ import type { GameData, AreaDef, AreaNpcDef } from "./types";
 export interface ExploreHooks {
   log: (body: string) => void;
   onAreaChange?: (area: AreaDef) => void;
+  /** 이미 주운 기억 조각인지 */
+  hasMemory: (memoryId: string) => boolean;
+  /** 기억 조각 획득 — 저장은 호출측(main)이 담당 */
+  collectMemory: (memoryId: string) => void;
 }
 
 /** 걷는 속도(px/초) — 이동 거리에 비례해 소요시간을 정한다 */
@@ -137,9 +141,11 @@ export class ExploreView {
 
     for (const npc of this.data.areaNpcs.filter((n) => n.area_id === area.area_id)) {
       if (npc.appear_condition !== "ALWAYS") continue;
+      // 이미 주운 기억 조각은 표시하지 않는다(수집형이므로 소진됨)
+      if (npc.trigger_type === "MEMORY" && this.hooks.hasMemory(npc.trigger_ref)) continue;
       const el = document.createElement("button");
       el.type = "button";
-      el.className = "explore-poi";
+      el.className = `explore-poi${npc.trigger_type === "MEMORY" ? " memory" : ""}`;
       el.style.left = `${npc.x_pct}%`;
       el.style.top = `${npc.y_pct}%`;
       el.dataset.npc = npc.npc_id;
@@ -310,9 +316,30 @@ export class ExploreView {
       this.actorInner.classList.add("react");
       window.setTimeout(() => this.actorInner.classList.remove("react"), 520);
 
-      this.hooks.log(`${npc.icon} ${npc.label}\n${npc.flavor_text || npc.label}`);
+      if (npc.trigger_type === "MEMORY") {
+        this.collectMemory(npc);
+        poi?.remove(); // 주운 조각은 맵에서 사라진다
+      } else {
+        this.hooks.log(`${npc.icon} ${npc.label}\n${npc.flavor_text || npc.label}`);
+      }
     } finally {
       this.setBusy(false);
+    }
+  }
+
+  /** Tigon 기억 조각 획득 — 본문 + 리더 반응을 로그에 남긴다 */
+  private collectMemory(npc: AreaNpcDef) {
+    const mem = this.data.tigonMemories.find((m) => m.memory_id === npc.trigger_ref);
+    if (!mem) {
+      console.warn("[explore] 기억 조각 정의 없음:", npc.trigger_ref);
+      return;
+    }
+    this.hooks.collectMemory(mem.memory_id);
+    const total = this.data.tigonMemories.length;
+    const got = this.data.tigonMemories.filter((m) => this.hooks.hasMemory(m.memory_id)).length;
+    this.hooks.log(`✨ 희미한 기억 (${got}/${total})\n${mem.scenario_text}`);
+    if (mem.reactor && mem.reaction_text) {
+      this.hooks.log(`— ${mem.reactor}: ${mem.reaction_text}`);
     }
   }
 

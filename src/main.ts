@@ -272,6 +272,20 @@ app.innerHTML = `
       </div>
       <button class="intro-start-btn" id="introStartBtn" type="button">게임 스타트</button>
     </div>
+    <div class="scrapbook-panel" id="scrapbookPanel" style="display:none">
+      <div class="scrapbook-sheet">
+        <div class="scrapbook-head">
+          <div class="scrapbook-title">📖 기억의 스크랩북</div>
+          <div class="scrapbook-count" id="scrapbookCount"></div>
+        </div>
+        <div class="scrapbook-grid" id="scrapbookGrid"></div>
+        <div class="scrapbook-detail" id="scrapbookDetail"></div>
+        <button type="button" class="scrapbook-close" id="scrapbookClose">닫기</button>
+      </div>
+    </div>
+    <button type="button" class="scrapbook-fab" id="scrapbookFab" style="display:none">
+      <span class="scrapbook-fab-icon">📖</span><span class="scrapbook-fab-badge" id="scrapbookBadge"></span>
+    </button>
     <div class="cutscene-overlay" id="cutsceneOverlay" style="display:none">
       <div class="cutscene-chapter" id="cutsceneChapter"></div>
       <div class="cutscene-box" id="cutsceneBox">
@@ -708,6 +722,55 @@ function setStageMode(
  */
 const EXPLORE_MODES = new Set(["IDLE", "MOVING", "EVENT", "LOCATION_FIND", "LOCATION_ARRIVE"]);
 
+// ── 스크랩북(Tigon 기억 조각 열람) ──────────────────────────────────────
+// 22번 문서 데이터 + 탐방 맵에서 주운 조각을 펼쳐본다. 메인 진행과 무관한 수집 콘텐츠.
+
+const scrapbookPanel = document.getElementById("scrapbookPanel")!;
+const scrapbookGrid = document.getElementById("scrapbookGrid")!;
+const scrapbookDetail = document.getElementById("scrapbookDetail")!;
+const scrapbookCount = document.getElementById("scrapbookCount")!;
+const scrapbookFab = document.getElementById("scrapbookFab")!;
+const scrapbookBadge = document.getElementById("scrapbookBadge")!;
+
+/** 하단 진입 버튼의 획득 개수 배지 갱신 */
+function renderScrapbookBadge() {
+  if (!data?.tigonMemories?.length) return;
+  const got = state.collectedMemories.length;
+  scrapbookFab.style.display = got > 0 ? "flex" : "none";
+  scrapbookBadge.textContent = `${got}`;
+}
+
+function openScrapbook() {
+  const mems = data.tigonMemories;
+  const got = state.collectedMemories.length;
+  scrapbookCount.textContent = `${got} / ${mems.length}`;
+  scrapbookDetail.innerHTML = `<div class="scrapbook-hint">조각을 눌러 펼쳐 보세요.</div>`;
+
+  scrapbookGrid.innerHTML = mems
+    .map((m, i) => {
+      const owned = state.collectedMemories.includes(m.memory_id);
+      return `<button type="button" class="scrapbook-slot${owned ? " owned" : ""}" data-mem="${m.memory_id}" ${owned ? "" : "disabled"}>
+        <span class="scrapbook-slot-no">${i + 1}</span>
+        <span class="scrapbook-slot-mark">${owned ? "✨" : "?"}</span>
+      </button>`;
+    })
+    .join("");
+
+  scrapbookGrid.querySelectorAll<HTMLElement>(".scrapbook-slot.owned").forEach((el) => {
+    el.addEventListener("click", () => {
+      const m = mems.find((x) => x.memory_id === el.dataset.mem);
+      if (!m) return;
+      scrapbookGrid.querySelectorAll(".scrapbook-slot").forEach((s) => s.classList.remove("sel"));
+      el.classList.add("sel");
+      scrapbookDetail.innerHTML =
+        `<div class="scrapbook-text">${m.scenario_text}</div>` +
+        (m.reactor ? `<div class="scrapbook-reaction">— ${m.reactor}: ${m.reaction_text}</div>` : "");
+    });
+  });
+
+  scrapbookPanel.style.display = "flex";
+}
+
 /**
  * 탐방 뷰 초기화 — 무대 안쪽 레이어로 마운트한다.
  * 지역 데이터가 비어 있으면(아직 CSV 미작성) 조용히 건너뛴다.
@@ -716,6 +779,11 @@ function initExplore() {
   if (!data.areas.length) return;
   explore = new ExploreView(visualStage, data, {
     log: (body) => void appendCard({ body }),
+    hasMemory: (id) => state.collectedMemories.includes(id),
+    collectMemory: (id) => {
+      if (!state.collectedMemories.includes(id)) state.collectedMemories.push(id);
+      renderScrapbookBadge();
+    },
   });
   const startArea = data.areas.find((a) => a.stage_map_id === getStageMapForDay(data, state.day)?.stage_map_id)
     ?? data.areas[0];
@@ -3925,6 +3993,14 @@ async function init() {
   await playCutscene("intro");
   state = createInitialState(data);
   bindStaticUi();
+  scrapbookFab.addEventListener("click", openScrapbook);
+  document.getElementById("scrapbookClose")!.addEventListener("click", () => {
+    scrapbookPanel.style.display = "none";
+  });
+  scrapbookPanel.addEventListener("click", (e) => {
+    if (e.target === scrapbookPanel) scrapbookPanel.style.display = "none";
+  });
+  renderScrapbookBadge();
   initExplore();
   ensureWandererHero();
   applyStageBackground();
