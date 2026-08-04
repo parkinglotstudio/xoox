@@ -61,6 +61,8 @@ import type { GameData, PlayerState, GradeDef, BranchDef, SkillDef, MinigameRewa
 const app = document.getElementById("app")!;
 app.innerHTML = `
   <div class="phone">
+    <div class="game-row" id="gameRow">
+    <div class="main-area" id="mainArea">
     <div class="day-roadmap" id="dayRoadmap"></div>
     <div class="visual-stage" id="visualStage">
       <div class="stage-sky" id="stageSky"></div>
@@ -127,18 +129,9 @@ app.innerHTML = `
       </div>
       <div class="stage-log" id="stageLog"></div>
     </div>
-    <div class="statbar" id="statbar">
-      <div class="stat-chip"><span class="label" id="statLvLabel"></span><span class="value" id="statLevel">1</span></div>
-      <div class="hp-bar-wrap">
-        <div class="hp-bar-track"><div class="hp-bar-fill" id="hpFill" style="width:100%"></div></div>
-        <span id="hpText" style="font-size:10px;color:#e8b8b8;"></span>
-      </div>
-      <div class="stat-chip"><span class="label" id="statAtkLabel"></span><span class="value" id="statAtk">0</span></div>
-      <div class="stat-chip"><span class="label" id="statDefLabel"></span><span class="value" id="statDef">0</span></div>
-      <div class="stat-chip"><span class="label" id="statGoldLabel"></span><span class="value" id="statGold">0</span></div>
     </div>
-    <div class="currency-bar" id="currencyBar"></div>
     <div class="feed" id="feed"></div>
+    </div>
     <div class="banner-overlay" id="bannerOverlay" style="display:none">
       <div class="banner-text" id="bannerText"></div>
     </div>
@@ -233,6 +226,17 @@ app.innerHTML = `
       <button class="mg-action-btn" id="restartBtn"></button>
     </div>
     <div class="controls">
+      <div class="statbar" id="statbar">
+        <div class="stat-chip"><span class="label" id="statLvLabel"></span><span class="value" id="statLevel">1</span></div>
+        <div class="hp-bar-wrap">
+          <div class="hp-bar-track"><div class="hp-bar-fill" id="hpFill" style="width:100%"></div></div>
+          <span id="hpText" style="font-size:10px;color:#e8b8b8;"></span>
+        </div>
+        <div class="stat-chip"><span class="label" id="statAtkLabel"></span><span class="value" id="statAtk">0</span></div>
+        <div class="stat-chip"><span class="label" id="statDefLabel"></span><span class="value" id="statDef">0</span></div>
+        <div class="stat-chip"><span class="label" id="statGoldLabel"></span><span class="value" id="statGold">0</span></div>
+      </div>
+      <div class="currency-bar" id="currencyBar"></div>
       <div class="controls-dock">
         <div class="gauge jackpot">
           <div class="gauge-icon" id="gaugeJackpotIcon"></div>
@@ -1650,15 +1654,22 @@ function currencyAmount(c: { state_key: string }): number {
 
 function getControlsOverlayHeight(): number {
   const controls = document.querySelector(".controls") as HTMLElement | null;
-  if (!controls || controls.offsetParent === null) return 148;
+  if (!controls || controls.offsetParent === null) return 110;
   const h = controls.getBoundingClientRect().height;
-  return Math.max(120, Math.ceil(h));
+  // 가로 모드에서 도크가 낮아졌으므로 하한도 함께 낮춤(세로 시절 120)
+  return Math.max(72, Math.ceil(h));
 }
 
-/** 하단 도크에 가리지 않도록 feed 패딩을 실제 높이로 맞춤 */
-function syncFeedBottomPad(extra = 20) {
+/**
+ * 도크 높이를 CSS 변수로 노출 — `.main-area`가 이 값만큼 하단 여백을 잡아
+ * statbar/currency-bar가 도크에 가리지 않는다.
+ *
+ * 가로 모드 전환(2026-08-04) 이후 도크는 메인 영역 폭(right:35%)까지만 덮으므로
+ * 채팅 패널(.feed)에는 더 이상 큰 하단 여백이 필요 없다.
+ */
+function syncFeedBottomPad(extra = 0) {
   const h = getControlsOverlayHeight() + extra;
-  feedEl.style.paddingBottom = `${h}px`;
+  feedEl.style.paddingBottom = "12px";
   document.documentElement.style.setProperty("--controls-overlay-h", `${h}px`);
 }
 
@@ -1678,11 +1689,11 @@ function scrollFeedToBottom(opts?: { el?: HTMLElement | null; anticipatePx?: num
     // 1) 먼저 바닥으로 (상단 창 확대로 clientHeight가 줄어도 하단 유지)
     const maxScroll = Math.max(0, feedEl.scrollHeight - feedEl.clientHeight);
     feedEl.scrollTop = maxScroll;
-    // 2) 타깃 카드가 도크에 가리면 추가 보정
+    // 2) 타깃 카드가 패널 하단을 넘치면 추가 보정
+    //    (가로 모드: 도크는 메인 영역만 덮으므로 채팅 패널엔 가림이 없음)
     if (target && feedEl.contains(target)) {
       const feedRect = feedEl.getBoundingClientRect();
-      const overlay = getControlsOverlayHeight();
-      const visibleBottom = feedRect.bottom - overlay;
+      const visibleBottom = feedRect.bottom;
       const tRect = target.getBoundingClientRect();
       const overflow = tRect.bottom + anticipate - visibleBottom;
       if (overflow > 0) {
