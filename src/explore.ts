@@ -29,6 +29,21 @@ const FADE_MS = 320;
 /** 카메라가 배우를 화면 세로 어디에 두는지(0=위, 1=아래) */
 const CAM_ANCHOR = 0.66;
 
+/**
+ * 맵 노드 종류 라벨.
+ * `_2` 접미사 콘텐츠는 "같은 장소의 재방문"으로 묶여 후반 구역에 배치된다(30번 문서).
+ * 실제 콘텐츠 실행(전투 시작·미니게임 진입 등) 연결은 아직 안 됨 — 지금은 배치·표시까지.
+ */
+const NODE_KIND_LABEL: Record<string, string> = {
+  REST: "쉼터",
+  LOCATION: "지역",
+  MINIGAME: "미니게임",
+  NPC: "만남",
+  COMBAT: "전투",
+  MINIBOSS: "관문",
+  BOSS: "보스",
+};
+
 export class ExploreView {
   private data: GameData;
   private hooks: ExploreHooks;
@@ -145,7 +160,8 @@ export class ExploreView {
       if (npc.trigger_type === "MEMORY" && this.hooks.hasMemory(npc.trigger_ref)) continue;
       const el = document.createElement("button");
       el.type = "button";
-      el.className = `explore-poi${npc.trigger_type === "MEMORY" ? " memory" : ""}`;
+      // 노드 타입별 외형 구분 — 전투/보스는 위협, 거점은 안전, NPC/지역은 평범
+      el.className = `explore-poi node-${npc.trigger_type.toLowerCase()}`;
       el.style.left = `${npc.x_pct}%`;
       el.style.top = `${npc.y_pct}%`;
       el.dataset.npc = npc.npc_id;
@@ -320,7 +336,10 @@ export class ExploreView {
         this.collectMemory(npc);
         poi?.remove(); // 주운 조각은 맵에서 사라진다
       } else {
-        this.hooks.log(`${npc.icon} ${npc.label}\n${npc.flavor_text || npc.label}`);
+        // 콘텐츠 실행 연결은 다음 단계 — 지금은 어떤 노드인지 알려주기만 한다
+        const kind = NODE_KIND_LABEL[npc.trigger_type] ?? "";
+        const head = kind ? `${npc.icon} ${npc.label} · ${kind}` : `${npc.icon} ${npc.label}`;
+        this.hooks.log(`${head}\n${npc.flavor_text || npc.label}`);
       }
     } finally {
       this.setBusy(false);

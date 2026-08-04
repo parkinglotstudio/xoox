@@ -1,27 +1,42 @@
 npc_id,area_id,x_pct,y_pct,icon,label,trigger_type,trigger_ref,appear_condition,flavor_text
-n_gate_pipe,area_sewer_gate,28,86,🚰,새는 배관,MEMO,,ALWAYS,물이 뚝뚝 떨어진다. 이 소리를 따라온 아이가 있었을까.
-n_gate_sign,area_sewer_gate,70,72,🪧,낡은 이정표,MEMO,,ALWAYS,글씨는 지워졌지만 화살표만은 안쪽을 가리키고 있다.
-n_gate_puddle,area_sewer_gate,34,58,💧,고인 웅덩이,MEMO,,ALWAYS,수면에 비친 얼굴이 낯설다. 며칠이나 씻지 못했을까.
-n_gate_bench,area_sewer_gate,66,44,🪑,부서진 벤치,MEMO,,ALWAYS,누군가 오래 앉아 있었던 자국이 남아 있다.
-n_gate_grate,area_sewer_gate,38,28,🕳️,벌어진 배수구,MEMO,,ALWAYS,안쪽에서 미지근한 바람이 올라온다.
-n_gate_light,area_sewer_gate,62,14,🔦,떨어진 손전등,MEMO,,ALWAYS,아직 희미하게 켜져 있다. 누가 급히 두고 간 걸까.
-n_main_paw,area_sewer_main,64,88,🐾,젖은 발자국,MEMO,,ALWAYS,작은 발자국이 안쪽으로 이어진다. 아직 마르지 않았다.
-n_main_box,area_sewer_main,30,74,📦,낡은 종이상자,MEMO,,ALWAYS,누군가 여기서 며칠은 버틴 흔적이 있다.
-n_main_bowl,area_sewer_main,70,60,🥣,빈 밥그릇,MEMO,,ALWAYS,누가 챙겨주던 흔적. 그 사람은 이제 오지 않는 모양이다.
-n_main_lamp,area_sewer_main,36,46,💡,깜빡이는 등,MEMO,,ALWAYS,아직 전기가 흐른다. 누가 아직 이곳을 쓰고 있다는 뜻일까.
-n_main_blanket,area_sewer_main,66,32,🧣,버려진 목도리,MEMO,,ALWAYS,작은 몸에 맞게 여러 번 접힌 자국이 있다.
-n_main_door,area_sewer_main,32,18,🚪,반쯤 열린 철문,MEMO,,ALWAYS,안쪽은 더 깊고 어둡다. 그래도 가야 한다.
-n_scrap_tire,area_scrapyard,34,88,🛞,버려진 타이어 더미,MEMO,,ALWAYS,사람이 떠난 뒤에도 이런 것만 남았다.
-n_scrap_can,area_scrapyard,68,74,🥫,찌그러진 캔,MEMO,,ALWAYS,누군가 먹이통 대신 쓴 듯 안쪽이 닳아 있다.
-n_scrap_cart,area_scrapyard,42,60,🛒,뒤집힌 손수레,MEMO,,ALWAYS,바퀴 하나가 아직 천천히 돌고 있다.
-n_scrap_tv,area_scrapyard,70,46,📺,깨진 브라운관,MEMO,,ALWAYS,화면에 아무것도 비치지 않는다. 오래전에 버려졌다.
-n_scrap_toy,area_scrapyard,32,32,🧸,흙 묻은 인형,MEMO,,ALWAYS,누군가의 손을 오래 탔던 것 같다. 여기 왜 있을까.
-n_scrap_gate,area_scrapyard,58,16,⛓️,녹슨 철망,MEMO,,ALWAYS,구멍이 하나 벌어져 있다. 작은 몸이라면 지나갈 수 있겠다.
-m_tm01,area_sewer_gate,18,80,✨,희미한 기억,MEMORY,tm_01,ALWAYS,
-m_tm02,area_sewer_gate,82,50,✨,희미한 기억,MEMORY,tm_02,ALWAYS,
-m_tm03,area_sewer_gate,22,22,✨,희미한 기억,MEMORY,tm_03,ALWAYS,
-m_tm04,area_sewer_main,84,66,✨,희미한 기억,MEMORY,tm_04,ALWAYS,
-m_tm05,area_sewer_main,18,40,✨,희미한 기억,MEMORY,tm_05,ALWAYS,
-m_tm06,area_sewer_main,80,22,✨,희미한 기억,MEMORY,tm_06,ALWAYS,
-m_tm07,area_scrapyard,20,66,✨,희미한 기억,MEMORY,tm_07,ALWAYS,
-m_tm08,area_scrapyard,84,26,✨,희미한 기억,MEMORY,tm_08,ALWAYS,
+s1_start,area_s1,50,94,🚩,여정의 시작,MEMO,,ALWAYS,여기서부터다. 무지개섬으로 가는 길.
+s1_rest,area_s1,26,84,🏕️,안전 대피소,REST,loc_rest,ALWAYS,잠시 숨을 고를 수 있는 곳.
+s1_wander,area_s1,72,76,🚶,떠돌이,NPC,b_wander,ALWAYS,저쪽에서 온 것 같은 승무원이 서 있다.
+s1_mercenary,area_s1,30,64,🏚️,버려진 항만 초소,LOCATION,loc_mercenary,ALWAYS,오래전 누가 쓰던 초소. 아직 쓸 만한 게 남아 있을까.
+s1_memory1,area_s1,80,58,✨,희미한 기억,MEMORY,tm_01,ALWAYS,
+s1_goblin,area_s1,64,48,🛍️,사치품 상인,NPC,b_goblin,ALWAYS,편해지는 대신 무언가를 요구하는 눈빛이다.
+s1_roulette,area_s1,26,40,🎡,무지개 조각 룰렛,MINIGAME,loc_luckyroulette,ALWAYS,무지개 조각이 돌아간다. 돌려볼까.
+s1_memory2,area_s1,74,30,✨,희미한 기억,MEMORY,tm_02,ALWAYS,
+s1_combat8,area_s1,50,20,⚔️,오염된 잔재,COMBAT,c_normal,ALWAYS,길을 막고 있다. 지나가려면 상대해야 한다.
+s1_gate,area_s1,50,8,♞,오염 기사,MINIBOSS,c_miniboss,ALWAYS,구역의 관문을 지키고 있다.
+s2_pirate,area_s2,30,86,🚢,좌초된 화물선,LOCATION,loc_pirate,ALWAYS,모래에 처박힌 배. 선실 안은 아직 어둡다.
+s2_devil,area_s2,72,78,😈,사치품 상인의 유혹,NPC,b_devil,ALWAYS,대가를 알면서도 손을 잡고 싶어진다.
+s2_memory3,area_s2,22,68,✨,희미한 기억,MEMORY,tm_03,ALWAYS,
+s2_tower,area_s2,60,60,📡,신호 중계탑,LOCATION,loc_magictower,ALWAYS,Olmas가 말한 신호는 여기서 오는 걸까.
+s2_medusa,area_s2,28,50,📷,감시 카메라 눈,NPC,b_medusa,ALWAYS,오래된 인간 감시 장치. 응시하면 대가가 있다.
+s2_treasure,area_s2,74,42,🗺️,낡은 항해 일지,MINIGAME,loc_treasuremap,ALWAYS,좌표 몇 개가 아직 읽힌다.
+s2_arena,area_s2,34,32,🤼,생존자 무리의 갈등,NPC,b_arena,ALWAYS,어느 쪽을 도울지 골라야 한다.
+s2_memory4,area_s2,78,26,✨,희미한 기억,MEMORY,tm_04,ALWAYS,
+s2_combat23,area_s2,50,18,⚔️,오염된 잔재,COMBAT,c_normal5,ALWAYS,이 앞은 지나갈 수 없다.
+s2_boss,area_s2,50,7,👑,탐욕의 근원,BOSS,c_finalboss,ALWAYS,구역의 주인. 여기를 넘어야 더 갈 수 있다.
+s3_rest,area_s3,72,88,🏕️,안전 대피소,REST,loc_rest_2,ALWAYS,다시 찾은 대피소. 그때보다 낡았다.
+s3_mercenary,area_s3,28,80,🏚️,버려진 항만 초소,LOCATION,loc_mercenary_2,ALWAYS,전에 지나간 그 초소다. 이번엔 분위기가 다르다.
+s3_spirit,area_s3,66,70,🕯️,흐릿한 정령,NPC,b_spirit_2,ALWAYS,무언가를 내주면 답을 준다고 한다.
+s3_memory5,area_s3,24,62,✨,희미한 기억,MEMORY,tm_05,ALWAYS,
+s3_pirate,area_s3,58,52,🚢,좌초된 화물선,LOCATION,loc_pirate_2,ALWAYS,같은 배. 더 깊이 들어가 볼 수 있다.
+s3_golem,area_s3,26,44,🗿,폐기물 거인,NPC,b_stonegolem_2,ALWAYS,기도 대신 달래야 하는 상대.
+s3_roulette,area_s3,74,36,🎡,무지개 조각 룰렛,MINIGAME,loc_luckyroulette_2,ALWAYS,여전히 돌아가고 있다.
+s3_angel,area_s3,36,28,🕊️,온기의 조각,NPC,b_angel_2,ALWAYS,드물게 좋은 것을 건네는 존재.
+s3_memory6,area_s3,78,22,✨,희미한 기억,MEMORY,tm_06,ALWAYS,
+s3_combat38,area_s3,50,16,⚔️,오염된 잔재,COMBAT,c_normal7_2,ALWAYS,더 강해진 잔재가 길을 막는다.
+s3_gate,area_s3,50,6,♞,오염 기사,MINIBOSS,c_miniboss_2,ALWAYS,두 번째 관문.
+s4_tower,area_s4,30,88,📡,신호 중계탑,LOCATION,loc_magictower_2,ALWAYS,마지막 중계탑. 신호가 가장 강하다.
+s4_mercenary,area_s4,72,80,🤝,오래된 승무원,NPC,b_mercenary_2,ALWAYS,여기까지 온 사람이 또 있었다.
+s4_memory7,area_s4,24,70,✨,희미한 기억,MEMORY,tm_07,ALWAYS,
+s4_treasure,area_s4,64,62,🗺️,낡은 항해 일지,MINIGAME,loc_treasuremap_2,ALWAYS,마지막 좌표가 적혀 있다.
+s4_darktower,area_s4,28,52,🗼,낡은 신호탑 오르기,NPC,b_darktower_2,ALWAYS,올라가면 멀리까지 보인다. 떨어지면 크게 다친다.
+s4_rest,area_s4,74,44,🏕️,안전 대피소,REST,loc_rest_2,ALWAYS,결전 전 마지막 쉼터.
+s4_challenger,area_s4,34,34,⚔️,마지막 도전자,NPC,b_challenger_2,ALWAYS,끝까지 남은 자가 길을 막아선다.
+s4_memory8,area_s4,76,28,✨,희미한 기억,MEMORY,tm_08,ALWAYS,
+s4_combat52,area_s4,50,18,⚔️,오염된 잔재,COMBAT,c_normal9_2,ALWAYS,최종 오염원의 기척이 느껴진다.
+s4_final,area_s4,50,6,👑,탐욕의 근원,BOSS,c_finalboss_2,ALWAYS,여기가 끝이다. 모두를 되찾으러 간다.

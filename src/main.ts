@@ -785,9 +785,12 @@ function initExplore() {
       renderScrapbookBadge();
     },
   });
-  const startArea = data.areas.find((a) => a.stage_map_id === getStageMapForDay(data, state.day)?.stage_map_id)
-    ?? data.areas[0];
-  explore.enter(startArea.area_id, { silent: true });
+  // 시작 구역은 항상 첫 구역.
+  // (getStageMapForDay는 매칭 실패 시 '마지막 스테이지'를 돌려주는데,
+  //  initExplore가 state.day=1 설정보다 먼저 실행돼 day 0으로 조회되면
+  //  최종 구역에서 시작해 버린다 — 실제로 발생했던 버그)
+  const startArea = data.areas[0];
+  if (startArea) explore.enter(startArea.area_id, { silent: true });
   (window as unknown as { __explore: () => void }).__explore = () => {
     if (!explore) return;
     if (explore.isOn()) {

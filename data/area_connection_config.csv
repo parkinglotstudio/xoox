@@ -1,3 +1,4 @@
 connection_id,from_area_id,to_area_id,exit_point,bidirectional,unlock_condition
-c_gate_main,area_sewer_gate,area_sewer_main,TOP,TRUE,
-c_main_scrap,area_sewer_main,area_scrapyard,TOP,TRUE,
+c_s1_s2,area_s1,area_s2,TOP,TRUE,
+c_s2_s3,area_s2,area_s3,TOP,TRUE,
+c_s3_s4,area_s3,area_s4,TOP,TRUE,

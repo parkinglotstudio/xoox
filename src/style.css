@@ -6279,3 +6279,73 @@ body {
   font-size: 12px;
   cursor: pointer;
 }
+
+/* ── 맵 노드 타입별 외형 (30번 문서) ──
+   전투·보스는 위협적으로, 쉼터는 안전하게, 기억조각은 금빛으로 구분한다 */
+
+/* 전투 — 붉은 경고 */
+.explore-poi.node-combat .explore-poi-icon {
+  filter: drop-shadow(0 0 7px rgba(255, 110, 110, 0.75)) drop-shadow(0 3px 5px rgba(0, 0, 0, 0.6));
+}
+.explore-poi.node-combat .explore-poi-label {
+  color: #ffc4c4;
+  background: rgba(48, 12, 12, 0.66);
+}
+
+/* 관문(정예) — 보라, 조금 더 큼 */
+.explore-poi.node-miniboss .explore-poi-icon {
+  font-size: 32px;
+  filter: drop-shadow(0 0 10px rgba(190, 130, 255, 0.85)) drop-shadow(0 3px 6px rgba(0, 0, 0, 0.65));
+}
+.explore-poi.node-miniboss .explore-poi-label {
+  color: #e2c8ff;
+  background: rgba(36, 14, 54, 0.7);
+}
+
+/* 보스 — 가장 크고 붉은 금빛, 느리게 고동친다 */
+.explore-poi.node-boss .explore-poi-icon {
+  font-size: 38px;
+  filter: drop-shadow(0 0 14px rgba(255, 170, 60, 0.9)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.7));
+  animation: boss-pulse 3.2s ease-in-out infinite;
+}
+.explore-poi.node-boss .explore-poi-label {
+  color: #ffd9a0;
+  background: rgba(56, 22, 8, 0.74);
+  font-weight: 800;
+}
+@keyframes boss-pulse {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.1); }
+}
+
+/* 쉼터 — 따뜻한 초록 */
+.explore-poi.node-rest .explore-poi-icon {
+  filter: drop-shadow(0 0 8px rgba(140, 235, 170, 0.7)) drop-shadow(0 3px 5px rgba(0, 0, 0, 0.6));
+}
+.explore-poi.node-rest .explore-poi-label {
+  color: #c2f0d2;
+  background: rgba(12, 40, 24, 0.66);
+}
+
+/* 지역·미니게임 — 청록 계열 */
+.explore-poi.node-location .explore-poi-label,
+.explore-poi.node-minigame .explore-poi-label {
+  color: #cfe6f2;
+  background: rgba(10, 26, 40, 0.66);
+}
+
+/* 만남(NPC) — 연보라 */
+.explore-poi.node-npc .explore-poi-label {
+  color: #dcd2f0;
+  background: rgba(26, 18, 44, 0.66);
+}
+
+/* 기억 조각(수집물) — 금빛. node-memory로 클래스명이 바뀌었다 */
+.explore-poi.node-memory .explore-poi-icon {
+  filter: drop-shadow(0 0 8px rgba(255, 240, 170, 0.85)) drop-shadow(0 3px 5px rgba(0, 0, 0, 0.6));
+  animation: memory-shimmer 2.2s ease-in-out infinite;
+}
+.explore-poi.node-memory .explore-poi-label {
+  color: #ffeaa0;
+  background: rgba(40, 30, 8, 0.6);
+}
