@@ -1,56 +1,137 @@
-text_id,category,grade_id,body
-t_mana,DAILY,g_mid,거대한 마나 열매를 삼켜 체력이 회복되었습니다.
-t_storm,DAILY,g_bad,폭풍이 몰아쳐 당신은 폭풍 속에서 검술을 연습하기로 했지만 결국 다치고 말았습니다.
-t_weapon,DAILY,g_mid,무기를 갈아서 더욱 날카롭게 만들었습니다.
-t_unicorn,DAILY,g_mid,다친 유니콘을 치료해주고 그의 축복을 받았습니다.
-t_ruin,DAILY,g_jackpot,마물 고대종이 원고 드래곤족과의 전투 유적을 발견했습니다.
-t_luckybox,DAILY,g_jackpot,운빨이 정말 좋으시네요! 행운의 보물을 발견하셨습니다.
-t_waterblessing,DAILY,g_jackpot,물의 여신 오케아니데스를 만나 축복을 받았습니다.
-t_potion,DAILY,g_mid,버려진 상자에서 축복 포션을 발견했습니다.
-t_fairy,DAILY,g_mid,동굴 속에서 잡혀 있던 요정 공주를 구했고 그녀는 감사의 마음으로 보물을 선물했습니다.
-t_virus,DAILY,g_mid,끔찍한 바이러스에 감염되어 겨우 살았지만 몸이 강해진 것 같습니다.
-t_oldbook,DAILY,g_mid,버려진 고서에서 수련법을 익혀 실력이 늘었습니다.
-t_hotspring,DAILY,g_mid,숨겨진 온천을 발견해 몸을 담그니 피로가 풀렸습니다.
-t_music_box,DAILY,g_bad,신비한 오르골을 발견했습니다. 오르골을 열어보니 잔잔한 음악이 들려와 잠에 곯아떨어졌습니다.
-t_trap,DAILY,g_bad,사냥감을 잡기 위해 함정을 파내려다가 실수로 함정에 떨어져 크게 다쳤습니다.
-t_fog,DAILY,g_bad,독이 있는 안개를 간신히 헤쳐나갔습니다.
-t_thunder,DAILY,g_bad,천둥을 마주치게 되는데 뭐라도 해야 할 것 같습니다.
-t_fog2,DAILY,g_bad,안갯속에서 방향을 잃어 정체불명의 생물체에게 습격당해 다쳤습니다.
-t_cliff,DAILY,g_bad,절벽길에서 발을 헛디뎌 크게 굴러떨어졌습니다.
-t_poisonberry,DAILY,g_bad,독이 있는 열매를 잘못 먹어 몸에 힘이 빠졌습니다.
-t_merchant,DAILY,g_mid,행운 상인을 만났습니다. 행운 기계를 5회 랜덤으로 세팅할 수 있습니다.
-t_bonus_star,DAILY,g_bonus,반짝이는 별똥별이 발치에 떨어져 별조각을 주웠습니다.
-t_bonus_coin,DAILY,g_bonus,길가에 떨어진 낡은 주머니를 열어보니 금화가 들어 있었습니다.
-t_bonus_feed,DAILY,g_bonus,친절한 상인이 지나가는 당신에게 사료를 나눠주었습니다.
-t_smith,DAILY,g_mid,대장간에서 무기를 벼려 방어구를 손봤습니다.
-t_training,DAILY,g_mid,험한 산길을 오르며 근력을 단련했습니다.
-t_shrine,DAILY,g_bad,버려진 사당에서 저주에 걸려 몸이 약해졌습니다.
-t_hometown,DAILY,,인간과 마수가 당신의 고향을 습격했습니다. 당신은 유일한 생존자로서 무기를 들고 모험의 여정을 떠나기로 했습니다.
-t_rest_zone,UNGRADED,,영지를 발견했습니다. 이 영지는 멀쩡해 보이지만 아무도 살고 있지 않습니다. 영지에서 휴식하고 체력이 회복되었습니다.
-t_awards,UNGRADED,,자신감이 넘친 당신은 숲의 기사의 수상식에 참석하여 최고 모발상을 받았습니다.
-t_princess,UNGRADED,,애벌레 공주가 당신을 귀엽다고 생각해서 머리를 쓰다듬으려 했지만 당신에게 얻어맞았습니다.
-t_campfire,UNGRADED,,지나가던 나그네와 모닥불을 나누며 이런저런 이야기를 들었습니다.
-t_shortcut,UNGRADED,,지름길을 발견해 편하게 이동했습니다.
-t_mercenary,LOCATION,g_bonus,용병 영지를 발견했습니다. 용병이 군영을 지키고 있는 것 같습니다.
-t_pirate,LOCATION,g_bonus,해적 영지를 발견했습니다. 해적이 군영을 지키고 있는 것 같습니다.
-t_towermagic,LOCATION,,마법 타워를 발견했습니다. 히페리온 시대의 마법 타워인 것 같습니다. 홀로 서있으며 매우 신비롭습니다.
-t_treasuremap,LOCATION,g_jackpot,루드비히의 보물지도를 우연히 획득하여 보물을 찾으러 가기로 했습니다.
-t_luckyroulette,LOCATION,,행운의 룰렛을 발견했습니다.
-t_stonegolem,LOCATION,,돌의 정령을 발견했습니다. 이것은 오래된 돌의 정령이며 그가 당신을 부르고 있는 듯합니다.
-t_darktower,LOCATION,,고원 깊은 곳에서 마왕의 타워를 발견했습니다. 다가가다가 신비한 힘에 감싸이는 것을 느꼈습니다.
-t_bone,COMBAT,,큰 뼈다귀 1개가 갑자기 발치에 떨어졌습니다. 전방에 당신과 닮은 생물체가 악의의 눈빛으로 쳐다보고 있습니다.
-t_goblin,COMBAT,,전방에 고블린이 나타났습니다.
-t_slime,COMBAT,,건장하고 특이한 모자를 쓰고 있는 슬라임들이 달려드는데 싸움이 불가피한 것 같습니다.
-t_stick,COMBAT,,날카로운 막대기를 들고 있는 배 모양 생물체를 궁금하게 쳐다보는 순간 그 막대기가 당신을 향해 휘둘러졌습니다.
-t_paladin,COMBAT,,전방에 팔라딘 1명이 순찰하고 있는데 당신이 반응하기도 전에 망치가 날아왔습니다.
-t_darkknight,COMBAT,,어둠의 기사를 발견했습니다. 고대 마법 왕국의 수호자입니다.
-t_prince,COMBAT,,화려한 갑옷을 입고 있는 왕자가 당신을 가로막아 거만한 말투로 당신의 털가죽을 가져가겠다고 했습니다.
-t_wander,BRANCH,,떠돌아다니는 몬스터를 발견했습니다.
-t_spirit,BRANCH,,정령: 숲의 여신님께 제물을 바치면 새로운 스킬 1개를 획득할 수 있어요.
-t_devil,BRANCH,,악마를 만났습니다! 악마와 계약하여 스킬을 획득하시겠습니까?
-t_medusa,BRANCH,,메두사를 발견했습니다. 내 눈을 바라볼 용기가 있니?
-t_arena,BRANCH,,블러드 아레나에서 늑대 인간이 인간 검술사와 결투를 벌이고 있는데 피를 바쳐 베팅하시겠습니까?
-t_stonegolem_offer,BRANCH,,이것은 오래된 돌의 정령이며 그가 당신을 부르고 있는 듯합니다.
-t_angel,BRANCH,,천사를 만났습니다! 축복을 하나 선택할 수 있습니다.
-t_challenger,BRANCH,,도전자가 나타났습니다! 최후의 결전을 받아들이겠습니까?
-t_goblin_merchant,BRANCH,,고블린 상인을 만났습니다. 기존 스킬 1개를 파괴하고 새 스킬로 교체하시겠습니까?
+text_id,category,grade_id,body,body_line2
+t_mana,DAILY,g_mid,버려진 정수처리소에서 깨끗한 물 한 모금을 마셨다. 체력이 차오른다.,
+t_storm,DAILY,g_bad,갑작스런 폭풍우에 휩쓸려 방벽 잔해에 부딪히고 말았다.,
+t_weapon,DAILY,g_mid,버려진 공구함에서 쓸만한 장비를 손봤다. 다음 조우가 조금은 수월해질 것 같다.,
+t_unicorn,DAILY,g_mid,다친 새끼 여우를 치료해줬다. 여우는 고맙다는 듯 코를 비비고 떠났다.,
+t_ruin,DAILY,g_jackpot,인간들이 버리고 간 낡은 연구소 잔해를 발견했다. 벽면 가득 오염 관련 기록이 남아있다.,한때는 이 구역도 사람들로 북적였을 것이다.
+t_luckybox,DAILY,g_jackpot,운이 정말 좋다! 무지개 조각이 가득한 상자를 발견했다.,상자를 열자 눈부신 빛이 퍼져 나왔다.
+t_mythslot,DAILY,g_jackpot,다친 이를 도왔더니 놀랍게도 무지개의 수호정이었다. 그가 감사의 표시로 잠든 힘을 시험할 기회를 주었다.,
+t_waterblessing,DAILY,g_jackpot,정수처리소 깊은 곳에서 아직 살아있는 물줄기를 만났다.,맑은 물이 몸을 감싸며 힘이 차오른다.
+t_potion,DAILY,g_mid,버려진 상자에서 아직 쓸만한 응급 키트를 발견했다.,
+t_fairy,DAILY,g_mid,무너진 배수로에 갇혀 있던 작은 새를 구해줬다. 새는 감사하다는 듯 반짝이는 조각을 물어다 줬다.,
+t_virus,DAILY,g_mid,오염된 공기를 마시고 한동안 앓았지만 이겨내고 나니 오히려 몸이 단단해졌다.,
+t_oldbook,DAILY,g_mid,버려진 항해 일지에서 옛 승무원의 요령을 익혔다.,
+t_hotspring,DAILY,g_mid,따뜻한 배수관 옆에서 몸을 녹이니 피로가 풀렸다.,
+t_music_box,DAILY,g_bad,낡은 라디오에서 흘러나오는 잔잔한 소리에 그만 잠들어 버렸다.,
+t_trap,DAILY,g_bad,무너진 배관 사이를 지나다 발을 헛디뎌 깊은 구멍에 빠지고 말았다.,
+t_fog,DAILY,g_bad,짙은 오염 안개를 간신히 헤쳐 나왔다.,
+t_thunder,DAILY,g_bad,무너진 송전탑에서 스파크가 튄다. 서둘러 피해야 할 것 같다.,
+t_fog2,DAILY,g_bad,오염 안갯속에서 방향을 잃고 헤매다 무언가에 부딪혀 다쳤다.,
+t_cliff,DAILY,g_bad,무너진 고가도로에서 발을 헛디뎌 크게 굴러떨어졌다.,
+t_poisonberry,DAILY,g_bad,오염된 물을 잘못 마셔 온몸에 힘이 빠졌다.,
+t_merchant,DAILY,g_mid,떠돌이 정비공을 만났다. 낡은 기계를 손봐 5회 무료로 돌려준다고 한다.,
+t_bonus_star,DAILY,g_bonus,반짝이는 별똥별이 발치에 떨어져 별조각을 주웠습니다.,
+t_bonus_coin,DAILY,g_bonus,길가에 떨어진 낡은 주머니를 열어보니 예전 사람들이 쓰던 동전이 들어 있었다.,
+t_bonus_feed,DAILY,g_bonus,지나가던 다른 승무원이 사료를 나눠줬다.,
+t_smith,DAILY,g_mid,버려진 정비소에서 부품을 주워 몸을 보호할 장비를 손봤다.,
+t_training,DAILY,g_mid,무너진 건물 잔해를 오르내리며 몸을 단련했다.,
+t_shrine,DAILY,g_bad,버려진 예배당 안에서 오염된 공기를 들이마셔 몸이 약해졌다.,
+t_hometown,DAILY,,가족을 잃고 며칠을 떠돌던 끝 무너진 선착장 너머로 빛이 보였다. 마지막 힘을 다해 헤엄쳐 닿은 곳 — 무지개섬 XOOX. "다 컸어? 여기서는 누구도 다시는 안 버려." 이제 당신은 또 다른 버림받은 생명을 구하는 승무원이 된다.,
+t_rest_zone,UNGRADED,,안전해 보이는 대피소를 발견했다. 아무도 살고 있지 않지만 비바람은 피할 수 있다. 잠시 쉬며 체력을 회복했다.,
+t_awards,UNGRADED,,버려진 게시판에서 예전 가장 귀여운 반려동물 대회 우승 사진을 발견했다. 어쩐지 낯이 익다.,
+t_princess,UNGRADED,,낯선 아이가 당신을 귀엽다고 쓰다듬으려 했지만 깜짝 놀라 앞발로 쳐내고 말았다.,
+t_campfire,UNGRADED,,지나가던 다른 승무원과 모닥불을 나누며 이런저런 이야기를 들었다.,
+t_shortcut,UNGRADED,,지름길을 발견해 편하게 이동했습니다.,
+t_mercenary,LOCATION,g_bonus,버려진 항만 초소를 발견했다. 낯선 승무원이 안을 지키고 있는 것 같다.,
+t_mercenary_ask,BRANCH,,초소 안으로 들어가시겠습니까?,
+t_mercenary_discover,LOCATION,g_bonus,버려진 항만 초소를 발견했다.,
+t_mercenary_guard,LOCATION,g_bonus,낯선 승무원이 안을 지키고 있는 것 같다.,
+t_mercenary_reward,LOCATION,g_bonus,대화가 잘 통해 화살을 나눠 받았다.,
+t_pirate,LOCATION,g_bonus,좌초된 화물선을 발견했다. 안에서 인기척이 느껴진다.,
+t_pirate_discover,LOCATION,g_bonus,좌초된 화물선을 발견했다.,
+t_pirate_guard,LOCATION,g_bonus,안에서 인기척이 느껴진다.,
+t_pirate_reward,LOCATION,g_bonus,화물칸을 뒤져 쓸만한 물건을 찾았다.,
+t_towermagic,LOCATION,,낡은 신호 중계탑을 발견했다. 오래전 인간들이 세운 통신 시설인 것 같다. 홀로 선 채 희미하게 깜빡인다.,
+t_treasuremap,LOCATION,g_jackpot,낡은 항해 일지를 주웠다. 숨겨둔 물자의 위치가 적혀 있어 찾으러 가기로 했다.,일지에 표시된 곳으로 향할 준비가 되었다.
+t_luckyroulette,LOCATION,,무지개 조각이 박힌 낡은 룰렛을 발견했다.,
+t_stonegolem,LOCATION,,고철과 콘크리트가 뒤엉켜 사람 형상을 이룬 거대한 잔해를 발견했다. 무언가 부르는 듯한 진동이 느껴진다.,
+t_darktower,LOCATION,,폐허 깊은 곳에서 낡은 신호탑을 발견했다. 다가서자 정체 모를 진동이 몸을 감싼다.,
+t_bone,COMBAT,,녹슨 파이프와 철판이 뒤엉킨 형체가 발치에 쓰러져 있다. 다가서자 틈새에서 붉은 빛이 켜지며 몸을 일으킨다.,
+t_goblin,COMBAT,,하수구 틈에서 그림자가 튀어나와 가진 것을 낚아채려 든다.,
+t_slime,COMBAT,,발밑 웅덩이가 부글대더니 검은 슬러지가 형체를 이루며 달려든다.,
+t_stick,COMBAT,,말라죽은 나무 둥치가 갈라진 가지를 무기처럼 휘두르며 다가온다.,
+t_paladin,COMBAT,,녹슨 방벽 로봇이 순찰 경로를 따라 움직이다 당신을 감지하고 팔을 들어올린다.,
+t_yeti,COMBAT,,버려진 냉각탑 안에서 서늘한 형체가 흘러나와 길을 막는다.,
+t_twinhead,COMBAT,,귀를 찢을 듯한 울음소리와 함께 머리 둘 달린 형체가 나타난다. 아무래도 피할 수 없을 것 같다.,
+t_claydoll,COMBAT,,오염된 진흙으로 빚어진 인형이 등짐을 멘 채 쉬고 있다. 무방비 상태다.,
+t_necro,COMBAT,,주변에 스민 오염 기운이 짓누르는 가운데 폐기물을 조종하는 존재가 앞을 막아선다.,
+t_wolfden,COMBAT,,낮은 울음소리가 들려온다. 오염이 짙게 밴 구역에 잘못 들어선 듯하다.,
+t_darkknight,COMBAT,,무너진 방벽 뒤에서 오염 기사가 걸어나온다. 낡은 장갑 틈으로 검은 빛이 새어나온다.,
+t_prince,COMBAT,,빛나는 잔해 더미 위에 군림하듯 선 존재가 거만하게 앞을 막는다. 탐욕의 근원 — 이 구역 오염의 중심이다.,
+t_wander,BRANCH,,떠도는 오염 잔재를 발견했다.,
+t_spirit,BRANCH,,낡은 단말기에서 목소리가 들린다: 무지개 조각을 바치면 잠든 힘 하나를 깨울 수 있다.,
+t_devil,BRANCH,,사치품을 파는 낯선 상인을 만났다. 편해지는 대신 무언가 내줘야 할 것 같다. 거래하시겠습니까?,
+t_medusa,BRANCH,,녹슨 감시 카메라의 렌즈가 당신을 향한다. 오래 마주 보면 무언가 새어나올 것 같다.,
+t_arena,BRANCH,,폐허 안쪽에서 낯선 이들이 위험한 내기를 벌이고 있다. 어느 쪽에 힘을 보태겠습니까?,
+t_stonegolem_offer,BRANCH,,폐기물 거인이 미동도 없이 서 있다. 다가서자 무거운 진동이 울린다.,
+t_angel,BRANCH,,무지개 조각이 스며든 빛 하나가 나타났다! 어느 쪽 힘을 받아들이겠습니까?,
+t_challenger,BRANCH,,구역 저편에서 강한 오염의 기척이 느껴진다! 최후의 결전을 받아들이겠습니까?,
+t_goblin_merchant,BRANCH,,떠돌이 정비공을 만났다. 기존 기술 하나를 정리하고 새 기술로 바꿔보겠습니까?,
+t_mana_2,DAILY,g_mid,[임시] 다른 길에서 비슷한 일이 벌어졌습니다. 버려진 정수처리소에서 깨끗한 물 한 모금을 마셨다. 체력이 차오른다.,
+t_weapon_2,DAILY,g_mid,[임시] 조금 다른 버전의 이야기입니다. 버려진 공구함에서 쓸만한 장비를 손봤다.,
+t_unicorn_2,DAILY,g_mid,[임시] 옆 계곡에서도 같은 소문이 돌았습니다. 다친 새끼 여우를 치료해줬다. 여우는 고맙다는 듯 코를 비비고 떠났다.,
+t_potion_2,DAILY,g_mid,[임시] 또 다른 모험에서 마주친 일입니다. 버려진 상자에서 아직 쓸만한 응급 키트를 발견했다.,
+t_fairy_2,DAILY,g_mid,[임시] 다른 길에서 비슷한 일이 벌어졌습니다. 무너진 배수로에 갇혀 있던 작은 새를 구해줬다.,
+t_virus_2,DAILY,g_mid,[임시] 조금 다른 버전의 이야기입니다. 오염된 공기를 마시고 한동안 앓았지만 이겨내고 나니 오히려 몸이 단단해졌다.,
+t_oldbook_2,DAILY,g_mid,[임시] 옆 계곡에서도 같은 소문이 돌았습니다. 버려진 항해 일지에서 옛 승무원의 요령을 익혔다.,
+t_hotspring_2,DAILY,g_mid,[임시] 또 다른 모험에서 마주친 일입니다. 따뜻한 배수관 옆에서 몸을 녹이니 피로가 풀렸다.,
+t_smith_2,DAILY,g_mid,[임시] 다른 길에서 비슷한 일이 벌어졌습니다. 버려진 정비소에서 부품을 주워 장비를 손봤다.,
+t_training_2,DAILY,g_mid,[임시] 조금 다른 버전의 이야기입니다. 무너진 건물 잔해를 오르내리며 몸을 단련했다.,
+t_storm_2,DAILY,g_bad,[임시] 옆 계곡에서도 같은 소문이 돌았습니다. 갑작스런 폭풍우에 휩쓸려 방벽 잔해에 부딪히고 말았다.,
+t_music_box_2,DAILY,g_bad,[임시] 또 다른 모험에서 마주친 일입니다. 낡은 라디오에서 흘러나오는 잔잔한 소리에 그만 잠들어 버렸다.,
+t_trap_2,DAILY,g_bad,[임시] 다른 길에서 비슷한 일이 벌어졌습니다. 무너진 배관 사이를 지나다 발을 헛디뎌 깊은 구멍에 빠지고 말았다.,
+t_fog_2,DAILY,g_bad,[임시] 조금 다른 버전의 이야기입니다. 짙은 오염 안개를 간신히 헤쳐 나왔다.,
+t_fog2_2,DAILY,g_bad,[임시] 옆 계곡에서도 같은 소문이 돌았습니다. 오염 안갯속에서 방향을 잃고 헤매다 무언가에 부딪혀 다쳤다.,
+t_cliff_2,DAILY,g_bad,[임시] 또 다른 모험에서 마주친 일입니다. 무너진 고가도로에서 발을 헛디뎌 크게 굴러떨어졌다.,
+t_poisonberry_2,DAILY,g_bad,[임시] 다른 길에서 비슷한 일이 벌어졌습니다. 오염된 물을 잘못 마셔 온몸에 힘이 빠졌다.,
+t_shrine_2,DAILY,g_bad,[임시] 조금 다른 버전의 이야기입니다. 버려진 예배당 안에서 오염된 공기를 들이마셔 몸이 약해졌다.,
+t_ruin_2,DAILY,g_jackpot,인간들이 버리고 간 낡은 연구소 잔해를 또 발견했다. 벽면 가득 오염 관련 기록이 남아있다.,한때는 이 구역도 사람들로 북적였을 것이다.
+t_luckybox_2,DAILY,g_jackpot,운이 정말 좋다! 무지개 조각이 가득한 상자를 또 발견했다.,상자를 열자 눈부신 빛이 퍼져 나왔다.
+t_mythslot_2,DAILY,g_jackpot,[임시] 또 다른 길에서 다친 이를 도왔더니 놀랍게도 무지개의 수호정이었다. 그가 감사의 표시로 잠든 힘을 시험할 기회를 주었다.,
+t_waterblessing_2,DAILY,g_jackpot,정수처리소 깊은 곳에서 아직 살아있는 물줄기를 다시 만났다.,맑은 물이 몸을 감싸며 힘이 차오른다.
+t_bonus_star_2,DAILY,g_bonus,[임시] 조금 다른 버전의 이야기입니다. 반짝이는 별똥별이 발치에 떨어져 별조각을 주웠습니다.,
+t_bonus_coin_2,DAILY,g_bonus,[임시] 옆 계곡에서도 같은 소문이 돌았습니다. 길가에 떨어진 낡은 주머니를 열어보니 예전 사람들이 쓰던 동전이 들어 있었다.,
+t_bonus_feed_2,DAILY,g_bonus,[임시] 또 다른 모험에서 마주친 일입니다. 지나가던 다른 승무원이 사료를 나눠줬다.,
+t_rest_zone_2,UNGRADED,,[임시] 다른 길에서 비슷한 일이 벌어졌습니다. 안전해 보이는 대피소를 발견했다. 잠시 쉬며 체력을 회복했다.,
+t_awards_2,UNGRADED,,[임시] 조금 다른 버전의 이야기입니다. 버려진 게시판에서 예전 가장 귀여운 반려동물 대회 우승 사진을 발견했다. 어쩐지 낯이 익다.,
+t_princess_2,UNGRADED,,[임시] 옆 계곡에서도 같은 소문이 돌았습니다. 낯선 아이가 당신을 귀엽다고 쓰다듬으려 했지만 깜짝 놀라 앞발로 쳐내고 말았다.,
+t_campfire_2,UNGRADED,,[임시] 또 다른 모험에서 마주친 일입니다. 지나가던 다른 승무원과 모닥불을 나누며 이런저런 이야기를 들었다.,
+t_shortcut_2,UNGRADED,,[임시] 다른 길에서 비슷한 일이 벌어졌습니다. 지름길을 발견해 편하게 이동했습니다.,
+t_mercenary_2,LOCATION,g_bonus,[임시] 다른 길에서 비슷한 일이 벌어졌습니다. 버려진 항만 초소를 발견했다. 낯선 승무원이 안을 지키고 있는 것 같다.,
+t_mercenary_ask_2,BRANCH,,[임시] 초소 안으로 들어가시겠습니까?,
+t_mercenary_discover_2,LOCATION,g_bonus,[임시] 버려진 항만 초소를 발견했다.,
+t_mercenary_guard_2,LOCATION,g_bonus,[임시] 낯선 승무원이 안을 지키고 있는 것 같다.,
+t_mercenary_reward_2,LOCATION,g_bonus,[임시] 대화가 잘 통해 화살을 나눠 받았다.,
+t_pirate_2,LOCATION,g_bonus,[임시] 조금 다른 버전의 이야기입니다. 좌초된 화물선을 발견했다. 안에서 인기척이 느껴진다.,
+t_pirate_discover_2,LOCATION,g_bonus,[임시] 좌초된 화물선을 발견했다.,
+t_pirate_guard_2,LOCATION,g_bonus,[임시] 안에서 인기척이 느껴진다.,
+t_pirate_reward_2,LOCATION,g_bonus,[임시] 화물칸을 뒤져 쓸만한 물건을 찾았다.,
+t_towermagic_2,LOCATION,,[임시] 옆 계곡에서도 같은 소문이 돌았습니다. 낡은 신호 중계탑을 발견했다. 홀로 선 채 희미하게 깜빡인다.,
+t_treasuremap_2,LOCATION,g_jackpot,낡은 항해 일지를 또 손에 넣어 물자를 찾으러 가기로 했다.,일지에 표시된 곳으로 향할 준비가 되었다.
+t_luckyroulette_2,LOCATION,,[임시] 다른 길에서 비슷한 일이 벌어졌습니다. 무지개 조각이 박힌 낡은 룰렛을 발견했다.,
+t_wander_2,BRANCH,,[임시] 다른 길에서 비슷한 일이 벌어졌습니다. 떠도는 오염 잔재를 발견했다.,
+t_spirit_2,BRANCH,,[임시] 조금 다른 버전의 이야기입니다. 낡은 단말기에서 목소리가 들린다: 무지개 조각을 바치면 잠든 힘 하나를 깨울 수 있다.,
+t_devil_2,BRANCH,,[임시] 옆 계곡에서도 같은 소문이 돌았습니다. 사치품을 파는 낯선 상인을 만났다. 거래하시겠습니까?,
+t_medusa_2,BRANCH,,[임시] 또 다른 모험에서 마주친 일입니다. 녹슨 감시 카메라의 렌즈가 당신을 향한다.,
+t_stonegolem_offer_2,BRANCH,,[임시] 다른 길에서 비슷한 일이 벌어졌습니다. 폐기물 거인이 미동도 없이 서 있다.,
+t_arena_2,BRANCH,,[임시] 조금 다른 버전의 이야기입니다. 폐허 안쪽에서 낯선 이들이 위험한 내기를 벌이고 있다.,
+t_darktower_2,LOCATION,,[임시] 옆 계곡에서도 같은 소문이 돌았습니다. 폐허 깊은 곳에서 낡은 신호탑을 발견했다.,
+t_angel_2,BRANCH,,[임시] 또 다른 모험에서 마주친 일입니다. 무지개 조각이 스며든 빛 하나가 나타났다! 어느 쪽 힘을 받아들이겠습니까?,
+t_challenger_2,BRANCH,,[임시] 다른 길에서 비슷한 일이 벌어졌습니다. 구역 저편에서 강한 오염의 기척이 느껴진다!,
+t_goblin_merchant_2,BRANCH,,[임시] 조금 다른 버전의 이야기입니다. 떠돌이 정비공을 만났다. 기술을 바꿔보겠습니까?,
+t_bone_2,COMBAT,,[임시] 다른 길에서 비슷한 일이 벌어졌습니다. 녹슨 파이프와 철판이 뒤엉킨 형체가 발치에 쓰러져 있다.,
+t_goblin_2,COMBAT,,[임시] 조금 다른 버전의 이야기입니다. 하수구 틈에서 그림자가 튀어나와 가진 것을 낚아채려 든다.,
+t_slime_2,COMBAT,,[임시] 옆 계곡에서도 같은 소문이 돌았습니다. 발밑 웅덩이가 부글대더니 검은 슬러지가 형체를 이루며 달려든다.,
+t_stick_2,COMBAT,,[임시] 또 다른 모험에서 마주친 일입니다. 말라죽은 나무 둥치가 갈라진 가지를 무기처럼 휘두르며 다가온다.,
+t_paladin_2,COMBAT,,[임시] 다른 길에서 비슷한 일이 벌어졌습니다. 녹슨 방벽 로봇이 팔을 들어올린다.,
+t_yeti_2,COMBAT,,[임시] 조금 다른 버전의 이야기입니다. 버려진 냉각탑 안에서 서늘한 형체가 흘러나와 길을 막는다.,
+t_twinhead_2,COMBAT,,[임시] 옆 계곡에서도 같은 소문이 돌았습니다. 머리 둘 달린 형체가 나타난다. 피할 수 없을 것 같다.,
+t_claydoll_2,COMBAT,,[임시] 또 다른 모험에서 마주친 일입니다. 오염된 진흙으로 빚어진 인형이 등짐을 멘 채 쉬고 있다.,
+t_necro_2,COMBAT,,[임시] 다른 길에서 비슷한 일이 벌어졌습니다. 오염 기운이 짓누르는 가운데 폐기물을 조종하는 존재가 앞을 막아선다.,
+t_wolfden_2,COMBAT,,[임시] 조금 다른 버전의 이야기입니다. 낮은 울음소리가 들려온다. 오염이 짙게 밴 구역 같다.,
+t_darkknight_2,COMBAT,,[임시] 옆 계곡에서도 같은 소문이 돌았습니다. 무너진 방벽 뒤에서 오염 기사가 걸어나온다.,
+t_prince_2,COMBAT,,[임시] 또 다른 모험에서 마주친 일입니다. 빛나는 잔해 더미 위에 군림하듯 선 탐욕의 근원이 앞을 막는다.,
+t_purify_wave1,COMBAT,,하수도 깊은 곳. 오염된 유기견이 눈이 텅 빈 채 웅크려 있다. 죽이는 게 아니라 정화한다.,
+t_purify_wave2,COMBAT,,쓰레기더미에 쓰러진 오염된 길고양이. 눈이 붉게 충혈됐다. 정화의 빛을 비춘다.,
+t_purify_miniboss,COMBAT,,타락의 근원이 가까이 있다. 오염 응축체가 반격 태세를 갖춘다.,
+t_purify_final,COMBAT,,오염이 극에 달한 존재. 전투가 아니라 대화로 설득해야 한다.,

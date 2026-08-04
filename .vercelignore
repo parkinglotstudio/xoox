@@ -1,0 +1,14 @@
+node_modules
+backups
+home
+plan_old
+docs
+scripts
+.claude
+.git
+dist
+*.mp4
+tsconfig.tsbuildinfo
+HANDOFF.md
+NEXT_AI_PROMPT.md
+STRUCTURE_COMPARE.md

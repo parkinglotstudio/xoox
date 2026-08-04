@@ -1,2 +1,0 @@
-item_id,item_name,icon,effect_type,effect_value,owned_at_start,description
-pi_adventurer_badge,모험가 훈장,🎖️,START_SKILL_TIER,전설,FALSE,시작 시 스킬을 전설 등급 3택으로 획득

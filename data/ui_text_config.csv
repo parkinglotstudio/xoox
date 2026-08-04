@@ -1,10 +1,14 @@
 key,text
-ui_start_badge,모험가 훈장을 보유하고 있어 스킬 1개를 선택할 수 있습니다.
-ui_start_nobadge,배울 수 있는 스킬 1개를 선택할 수 있습니다.
+ui_start_badge,모험가 훈장 혜택 미리보기: 스킬 1개를 선택해 보세요.
+ui_start_nobadge,모험가 훈장 혜택 미리보기: 스킬 1개를 선택해 보세요.
+ui_start_medal_owned,모험가 훈장을 보유하고 있어 스킬 1개를 선택할 수 있습니다.
 ui_skill_learned,스킬 [{name}] 학습했습니다.
 ui_skill_learned_choice,스킬 [{name}] 학습했습니다. (3택1 중 선택)
 ui_skill_learned_auto,스킬 [{name}] 학습했습니다. (자동학습)
 ui_skill_grant_line,스킬 {name} 학습
+ui_skill_kind_label,스킬
+ui_skill_learn_chip,{name} 학습
+ui_skill_upgrade_chip,{name} 강화(+)
 ui_combat_win,전투 승리
 ui_chip_exp,✨ EXP +{exp}
 ui_chip_gold,🪙 골드 +{gold}
@@ -16,7 +20,7 @@ ui_chest_title,획득 성공
 ui_revive_down,격전 끝에 체력이 모두 소진되어 쓰러졌습니다...
 ui_revive_up,신화 스킬 [부활]이 발동하여 체력을 모두 회복하고 다시 일어섰습니다!
 ui_chip_full_heal,❤️ HP 100% 회복
-ui_finalboss_reward,수호자를 쓰러뜨려 고대 계승을 획득했습니다.
+ui_finalboss_reward,탐욕의 근원을 정화해 오래된 기록을 회수했습니다.
 ui_branch_pick,“{label}” 선택
 ui_bet_win,{mine}이(가) 정확한 공격으로 {other}을(를) 쓰러뜨렸습니다. 당신이 베팅에서 이겼습니다.
 ui_bet_lose,{other}이(가) {mine}을(를) 쓰러뜨렸습니다. 당신이 베팅에서 졌습니다.
@@ -34,8 +38,20 @@ ui_angel_title,천사의 축복
 ui_angel_sub,아래에서 하나를 선택하세요
 ui_btn_next,다음날
 ui_btn_combat,전투
-ui_btn_combat_active,전투중...
+ui_btn_combat_active,전투 중
 ui_btn_moving,이동 중
+ui_btn_pickup,줍기
+ui_btn_learned_skills,학습한 스킬
+ui_learned_skills_title,학습한 스킬
+ui_learned_skills_empty,아직 학습한 스킬이 없습니다.
+ui_learned_skills_close,닫기
+ui_mg_lucky_title,행운의 보물
+ui_mg_lucky_sub,행운을 빕니다
+ui_mg_lucky_hidden,❔
+ui_mg_lucky_match,축하합니다!
+ui_mg_myth_title,신화 스킬
+ui_mg_myth_angel,천사의 힘
+ui_mg_myth_devil,악마의 아이
 ui_prob_label,성공확률 {prob}%
 ui_day_header,{day}일차
 ui_victory_icon,👑
@@ -47,13 +63,27 @@ ui_mg_spinning,돌리는 중...
 ui_mg_nothing,아무 일도 없었습니다
 ui_mg_reward,보상 획득
 ui_mg_spin_btn,돌리기
+ui_mg_leave_btn,떠나기
+ui_mg_left,떠났습니다
+ui_devil_banner,낯선 상인을 만났다!
+ui_devil_ask,거래하여 {hl}하시겠습니까?
+ui_devil_ask_hl,스킬 획득
+ui_devil_cost_max,MAX
+ui_devil_cost_hp,{n} HP 최대치 감소
+ui_preview_refuse,거절
+ui_preview_accept,응하기
+ui_medusa_banner,녹슨 감시 카메라를 발견했다
+ui_medusa_ask,오래 마주 볼 용기가 있나?
 ui_mg_open_btn,오픈
-ui_mg_card_sub,동일한 카드 3개를 찾아 보상을 획득하세요
+ui_mg_card_sub,같은 카드 3개를 찾아 보상을 획득하세요
+ui_mg_dig_found,{name} 발견!
+ui_mg_dig_tap,파기
+ui_mg_dig_title,보물 파내기
 ui_mg_spins_left,남은 돌리기 횟수:{n}
 ui_chest_found,보물 발견
 ui_milestone_reached,[{name}] 마일스톤 {at} 달성! 보상을 획득했습니다.
 ui_skillswap_destroy,기존 스킬 [{name}]을(를) 파괴했습니다.
-ui_skillswap_title,스킬 교체 룰렛
+ui_skillswap_title,스킬 선택
 ui_skillswap_none,교체할 스킬이 없습니다.
 ui_restart_btn,새 챕터 시작
 ui_stat_lv,LV
@@ -61,3 +91,110 @@ ui_stat_atk,ATK
 ui_stat_def,DEF
 ui_stat_gold,GOLD
 ui_stat_hp_format,HP {hp}/{max}
+ui_reward_modal_title,보상
+ui_stage_turn,턴 {turn}
+ui_stage_player_hit,{name}에게 {dmg} 피해!
+ui_stage_enemy_hit,{name}의 공격! {dmg} 피해
+ui_stage_player_win,{name}을(를) 쓰러뜨렸다!
+ui_stage_timeout,시간이 지나 전투가 종료되었다
+ui_stage_hp,{cur}/{max}
+ui_combat_lose,전투에서 패배했습니다...
+ui_day_unit,일
+ui_skill_upgraded,스킬 [{name}] 강화(+) 했습니다.
+ui_skill_upgraded_choice,스킬 [{name}] 강화(+) 했습니다. (3택1 중 선택)
+ui_skill_upgrade_badge,강화+
+ui_skill_upgrade_desc,[{name}] 강화 — {text}
+ui_skill_upgrade_line,스킬 {name} 강화(+)
+ui_skill_tip_status_base,상태: 기본 (강화 가능)
+ui_skill_tip_status_plus,상태: 강화(+)
+ui_skill_tip_status_max,상태: 최대
+ui_skill_tip_power,전투 배율 ×{pct}%
+ui_skill_tip_ability,능력
+ui_stage_shield,SHD {cur}/{max}
+ui_stage_shield_gain,보호막 +{n}
+ui_stage_shield_absorb,보호막이 {n} 피해를 흡수!
+ui_stage_shield_break,보호막이 깨졌습니다!
+ui_stage_skill_heal,HP +{n}
+ui_stage_enemy_blocked,{name}의 공격을 막았다!
+ui_stage_counter_hit,반격! {name}에게 {dmg} 피해
+ui_stage_turn_banner,— 턴 {turn} —
+ui_stage_round_banner,— 라운드 {turn}/{max} —
+ui_stage_side_player,— 모험가 공격 —
+ui_stage_side_enemy,— {name} 공격 —
+ui_stage_turn_total,{n}턴 예정
+ui_stage_basic_hit,일반 공격! {name}에게 {dmg} 피해
+ui_stage_atk_buff,⚔️ {name}! 전투 공격력 +{pct}%
+ui_stage_skill_dmg,{icon} {name}! {dmg} 피해
+ui_stage_buff_start,{icon} {name} 적용 — {text}
+ui_stage_shield_proc,{icon} {name}! 보호막 +{n}
+ui_stage_forgiving_hold,아슬아슬하게 버킰다!
+ui_skill_hint_passive,타이밍: 전투 중 항상
+ui_skill_hint_start,타이밍: 전투 시작 시
+ui_skill_hint_throw,타이밍: 평타 전 투척
+ui_skill_hint_active,타이밍: 평타 후 액티브
+ui_skill_hint_active_chance,타이밍: 평타 후 액티브 ({pct})
+ui_skill_hint_after,타이밍: 공격 후
+ui_skill_hint_after_chance,타이밍: 공격 후 ({pct})
+ui_skill_hint_onhit,타이밍: 피격 시
+ui_skill_hint_onhit_hp,타이밍: HP {pct}% 이하 피격 시
+ui_skill_hint_onhit_chance,타이밍: 피격 시 ({pct})
+ui_skill_hint_rage,타이밍: 분노 시전 시
+ui_skill_hint_hp_first,타이밍: HP {pct}% 이하 최초 1회
+ui_skill_hint_counter,타이밍: 반격 성공 시
+ui_skill_hint_every_n,타이밍: {n}라운드마다
+ui_skill_hint_combo,타이밍: 연타 성공 시
+ui_skill_hint_combo_rate,연타율 +{pct}%
+ui_skill_hint_dodge,회피율 +{rate}%
+ui_skill_hint_dodge_hp,HP {pct}% 이하 회피율 +{rate}%
+ui_stage_dodge,💨 회피!
+ui_stage_combo,👊 연타! {name}에게 {dmg} 피해
+ui_stage_freeze_skip,❄️ {ename}이(가) 동결되어 움직일 수 없다!
+ui_stage_stun_skip,🎆 {ename}이(가) 기절하여 움직일 수 없다!
+ui_stage_burn_tick,🔥 화상×{n}! {dmg} 피해
+ui_stage_poison_tick,🩸 출혈×{n}! {dmg} 피해
+ui_stage_status_apply,{icon} {name}! {status}
+ui_status_burn,화상
+ui_status_poison,출혈
+ui_status_freeze,동결
+ui_status_stun,기절
+ui_stage_crit_recover,{name}! 빈사 회복 {n}라운드 시작
+ui_stage_crit_recover_tick,💗 빈사 회복 +{n} (남은 {left}라운드)
+ui_stage_execute,❄️ {name}! {ename}을(를) 즉사시켰다!
+ui_stage_rage,RAGE {cur}/{max}
+ui_stage_player_rage,💢 분노 발동!
+ui_stage_player_rage_basic,💢 분노 일격! {dmg} 피해
+ui_stage_player_rage_skill,{icon} {name}! {dmg} 피해
+ui_stage_enemy_skill_dmg,{icon} {ename}의 {name}! {dmg} 피해
+ui_stage_enemy_shield_gain,{icon} {ename}이(가) {name}! 보호막 +{n}
+ui_stage_enemy_shield_absorb,{ename} 보호막이 {n} 피해를 흡수!
+ui_stage_enemy_shield_break,{ename} 보호막이 깨졌습니다!
+ui_stage_enemy_basic,{icon} {ename}의 일반 공격! {dmg} 피해
+ui_stage_enemy_combo,{icon} {ename}의 {name}! {dmg} 피해
+ui_stage_enemy_rage,💢 {ename} {name}! {dmg} 피해
+ui_stage_enemy_rage_charge,{ename} 분노 충전… ({cur}/{max})
+ui_stage_phase,— 페이즈 {n} —
+ui_stage_volley,{icon} {name} ({i}/{n})! {dmg} 피해
+ui_volley_bolt,번개
+ui_volley_dagger,수리검
+ui_volley_firewave,화염파
+ui_volley_spear,빛의 창
+ui_skill_hint_volley,연속 발사 {n}발
+ui_skill_hint_volley_slot,연속 발사
+ui_stage_enemy_skill_tip_slot,슬롯: {slot}
+ui_stage_loc_find,{name} 발견
+ui_stage_loc_arrive,{name}에 도착했다
+ui_stage_idle_continue,버튼을 눌러 계속 · {map}
+ui_stage_moving_day,{day}일차로 이동 중…
+ui_stage_combat_wait_title,전투 대기
+ui_stage_combat_wait_sub,{name}과(와)의 전투가 기다립니다
+ui_stage_combat_win_title,전투 승리!
+ui_stage_combat_lose_title,전투 패배…
+ui_stage_reward_title,{grade} 발견
+ui_stage_branch_title,갈림길
+ui_tier_normal,일반
+ui_tier_elite,정예
+ui_tier_boss,최종
+ui_vs_player,모험가
+ui_enemy_generic,적
+ui_enemy_appear_named,[{tier}] {name}이(가) 나타났습니다!
+ui_enemy_tier_line,→ 등급: {tier} · {name}

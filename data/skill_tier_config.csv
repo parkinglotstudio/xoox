@@ -1,0 +1,5 @@
+tier_id,tier_name,sort_order,color,description
+tier_common,일반,10,#9aa0a6,일반 스킬 풀
+tier_legend,전설,20,#f5a623,전설 스킬 풀
+tier_myth,신화,30,#b06de0,신화 스킬 풀
+tier_unknown,미확인,99,#888888,데이터 미확정 티어

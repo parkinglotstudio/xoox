@@ -1,0 +1,26 @@
+entity_id,display_name,icon,side,combat_id,base_stat_profile,note
+ent_player,모험가,🪺,PLAYER,,default,플레이어 유닛. 스탯은 player_base_stat_config
+ent_c_normal,폐기물 병정,💀,ENEMY,c_normal,,일반
+ent_c_normal2,하수구 약탈자,👺,ENEMY,c_normal2,,
+ent_c_normal3,오염 슬러지,🟢,ENEMY,c_normal3,,
+ent_c_normal4,고사목 괴수,🪵,ENEMY,c_normal4,,
+ent_c_normal5,방벽 파수 로봇,🛡️,ENEMY,c_normal5,,
+ent_c_normal6,냉각 유령,❄️,ENEMY,c_normal6,,
+ent_c_normal7,쌍두 탐욕귀,👹,ENEMY,c_normal7,,
+ent_c_normal8,오염토 인형,🗿,ENEMY,c_normal8,,
+ent_c_normal9,폐기물 소환사,🦴,ENEMY,c_normal9,,
+ent_c_normal10,들짐승 잔재,🐺,ENEMY,c_normal10,,
+ent_c_miniboss,오염 기사,♞,ENEMY,c_miniboss,,정예
+ent_c_finalboss,탐욕의 근원,👑,ENEMY,c_finalboss,,최종
+ent_c_normal_2,폐기물 병정,💀,ENEMY,c_normal_2,,맵2풀
+ent_c_normal2_2,하수구 약탈자,👺,ENEMY,c_normal2_2,,
+ent_c_normal3_2,오염 슬러지,🟢,ENEMY,c_normal3_2,,
+ent_c_normal4_2,고사목 괴수,🪵,ENEMY,c_normal4_2,,
+ent_c_normal5_2,방벽 파수 로봇,🛡️,ENEMY,c_normal5_2,,
+ent_c_normal6_2,냉각 유령,❄️,ENEMY,c_normal6_2,,
+ent_c_normal7_2,쌍두 탐욕귀,👹,ENEMY,c_normal7_2,,
+ent_c_normal8_2,오염토 인형,🗿,ENEMY,c_normal8_2,,
+ent_c_normal9_2,폐기물 소환사,🦴,ENEMY,c_normal9_2,,
+ent_c_normal10_2,들짐승 잔재,🐺,ENEMY,c_normal10_2,,
+ent_c_miniboss_2,오염 기사,♞,ENEMY,c_miniboss_2,,
+ent_c_finalboss_2,탐욕의 근원,👑,ENEMY,c_finalboss_2,,

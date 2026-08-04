@@ -1,0 +1,9 @@
+item_id,item_name,icon,category,effect_target,state_key,stackable,show_in_bar,always_show,event_id,passive_effect_type,passive_effect_value,owned_at_start,description,sort_order
+item_gold,골드,🪙,CURRENCY,GOLD,gold,TRUE,FALSE,TRUE,,,FALSE,기본 재화. 스탯바에 상시 표시,10
+item_exp,경험치,✨,SYSTEM,EXP,exp,TRUE,FALSE,FALSE,,,FALSE,레벨업용. 아이템바 비표시,20
+item_star,별조각,⭐,CURRENCY,STAR_FRAGMENT,starFragment,TRUE,TRUE,FALSE,,,FALSE,상점/교환용 재화,30
+item_feed,사료,🍖,CURRENCY,FEED,feed,TRUE,TRUE,FALSE,,,FALSE,회복/소모 재화,40
+item_victory_flag,승리의 깃발,🚩,EVENT_CURRENCY,VICTORY_FLAG,victoryFlag,TRUE,TRUE,FALSE,ev_mercenary_pirate,,,FALSE,용병·해적 이벤트 수집 재화,50
+item_ancient_succession,고대 계승,📜,CURRENCY,ANCIENT_SUCCESSION,ancientSuccession,TRUE,TRUE,FALSE,,,FALSE,특수 계승 재화,60
+item_arrow,화살,🏹,MATERIAL,ARROW,inventory,TRUE,TRUE,FALSE,ev_mercenary_pirate,,,FALSE,용병 영지 대화 보상(연출용). 수량 인벤토리,70
+item_adventurer_badge,모험가 훈장,🎖️,PASSIVE,,,FALSE,FALSE,FALSE,,START_SKILL_TIER,전설,FALSE,시작 스킬을 전설 3택으로 획득. 훈장 시스템 연동 예정,100

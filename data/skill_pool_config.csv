@@ -1,0 +1,5 @@
+pool_id,tier_name,want_upgrade,note
+POOL_COMMON,일반,FALSE,일반 스킬 풀
+POOL_LEGEND,전설,FALSE,전설 스킬 풀
+POOL_MYTH,신화,FALSE,신화 스킬 풀
+POOL_COMMON_PLUS,일반,TRUE,보유 스킬 +강화 풀

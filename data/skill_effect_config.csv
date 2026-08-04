@@ -1,0 +1,71 @@
+effect_row_id,skill_id,trigger,trigger_value,target,op,value,value_type,enabled,action_slot,note
+se_skinharden_dr,sk_skinharden,ALWAYS,0,DMG_TAKEN_MULT,MUL,0.90,RATIO,TRUE,PASSIVE,Hardened 10%
+se_skinharden_p_dr,sk_skinharden_plus,ALWAYS,0,DMG_TAKEN_MULT,MUL,0.85,RATIO,TRUE,PASSIVE,skin harden+
+se_tough,sk_tough,ALWAYS,0,DMG_TAKEN_MULT,MUL,0.95,RATIO,TRUE,PASSIVE,DR 5%
+se_dodge_boost,sk_dodge_boost,ALWAYS,0,DODGE_RATE,ADD,10,FLAT,TRUE,PASSIVE,Dodge +10
+se_dodge_crit,sk_dodge,ALWAYS,30,DODGE_RATE,ADD,20,FLAT,TRUE,PASSIVE,Critical Dodge HP<=30 +20
+se_lightning_m,sk_lightning_mastery,ALWAYS,0,SKILL_DMG_MULT,ADD,0.08,RATIO,TRUE,PASSIVE,bolt mastery
+se_lightning_mp,sk_lightning_mastery_plus,ALWAYS,0,SKILL_DMG_MULT,ADD,0.14,RATIO,TRUE,PASSIVE,bolt mastery+
+se_crown_atk,sk_crown,ALWAYS,0,ATK_MULT,ADD,0.15,RATIO,TRUE,PASSIVE,Royal Crown ATK
+se_crown_def,sk_crown,ALWAYS,0,DEF_MULT,ADD,0.15,RATIO,TRUE,PASSIVE,Royal Crown DEF
+se_crown_hp,sk_crown,ALWAYS,0,MAX_HP_MULT,ADD,0.15,RATIO,TRUE,PASSIVE,Royal Crown HP
+se_heal_boost,sk_heal_boost,ALWAYS,0,HEAL_BONUS_PCT,ADD,2,FLAT,TRUE,PASSIVE,Enhanced Recovery +2%p
+se_lightspear,sk_lightspear,ALWAYS,0,LIGHT_SPEAR_MULT,ADD,0.60,RATIO,TRUE,PASSIVE,spear mastery
+se_defense_max,sk_defense_max,ALWAYS,0,ROUND_DR_ADD,ADD,0.08,RATIO,TRUE,PASSIVE,Battle-Hardened +8%/round
+se_lifedeath,sk_lifedeath,ALWAYS,30,GLASS_CANNON,SET,1,FLAT,TRUE,PASSIVE,Glass Cannon flag HP<=30
+se_lifedeath_kill,sk_lifedeath,ALWAYS,0,KILL_HEAL_PCT,ADD,0.10,RATIO,TRUE,PASSIVE,kill heal 10%
+se_combo2_rate,sk_combo2,ALWAYS,0,COMBO_RATE,ADD,15,FLAT,TRUE,PASSIVE,Combo Spirit rate
+se_combo2_max,sk_combo2,ALWAYS,0,COMBO_MAX,SET,2,FLAT,TRUE,PASSIVE,combo max 2
+se_combo2_skill,sk_combo2,ALWAYS,0,SKILL_DMG_MULT,ADD,-0.10,RATIO,TRUE,PASSIVE,skill dmg down
+se_comborush3,sk_comborush3,ON_COMBO,100,COMBO_EXTRA_HIT,ADD,0.50,ATK_RATIO,TRUE,COMBO,extra hit on combo
+se_renta_m_rate,sk_renta_mastery,ALWAYS,0,COMBO_RATE,ADD,15,FLAT,TRUE,PASSIVE,Combo Mastery rate
+se_renta_m_stack,sk_renta_mastery,ALWAYS,0,COMBO_ATK_STACK,ADD,0.10,RATIO,TRUE,PASSIVE,ATK stack per combo
+se_renta,sk_renta,ALWAYS,0,COMBO_RATE,ADD,10,FLAT,TRUE,PASSIVE,Combo +10
+se_renta_p,sk_renta_plus,ALWAYS,0,COMBO_RATE,ADD,15,FLAT,TRUE,PASSIVE,Combo+ +15
+se_orc_crit,sk_orc,ALWAYS,0,CRIT_RATE,ADD,50,FLAT,TRUE,PASSIVE,Orc crit
+se_orc_rage_lock,sk_orc,ALWAYS,0,RAGE_GAIN_LOCK,SET,1,FLAT,TRUE,PASSIVE,no rage gain
+se_shuriken_n,sk_shuriken,ON_PLAYER_TURN,100,VOLLEY_COUNT,ADD,1,FLAT,TRUE,DAGGER,수리검 1발
+se_shuriken_r,sk_shuriken,ON_PLAYER_TURN,100,VOLLEY_RATIO,SET,0.45,ATK_RATIO,TRUE,DAGGER,발당 ATK45%
+se_shuriken_p_n,sk_shuriken_plus,ON_PLAYER_TURN,100,VOLLEY_COUNT,ADD,2,FLAT,TRUE,DAGGER,수리검+ 2발
+se_shuriken_p_r,sk_shuriken_plus,ON_PLAYER_TURN,100,VOLLEY_RATIO,SET,0.45,ATK_RATIO,TRUE,DAGGER,발당 ATK45%
+se_lightning_n,sk_lightning,ALWAYS,0,VOLLEY_COUNT,ADD,1,FLAT,TRUE,BOLT,번개 1발/턴
+se_lightning_r,sk_lightning,ALWAYS,0,VOLLEY_RATIO,SET,0.30,ATK_RATIO,TRUE,BOLT,발당 ATK30%
+se_lightning_p_n,sk_lightning_plus,ALWAYS,0,VOLLEY_COUNT,ADD,2,FLAT,TRUE,BOLT,번개+ 2발/턴
+se_lightning_p_r,sk_lightning_plus,ALWAYS,0,VOLLEY_RATIO,SET,0.30,ATK_RATIO,TRUE,BOLT,발당 ATK30%
+se_normal_shield,sk_normal_shield,ON_PLAYER_TURN,40,SHIELD_FLAT,ADD,0.05,MAX_HP_PCT,TRUE,AFTER_ATTACK,BA shield 40%
+se_normal_shield_p,sk_normal_shield_plus,ON_PLAYER_TURN,50,SHIELD_FLAT,ADD,0.08,MAX_HP_PCT,TRUE,AFTER_ATTACK,BA shield+ 50%
+se_ice_shard,sk_ice_shard_normal,ON_PLAYER_TURN,35,BONUS_DMG_FLAT,ADD,0.30,ATK_RATIO,TRUE,AFTER_ATTACK,icy spike 35%
+se_ice_shard_fz,sk_ice_shard_normal,ON_PLAYER_TURN,8,STATUS_FREEZE,ADD,1,FLAT,TRUE,AFTER_ATTACK,freeze 8% with spike
+se_ice_shard_p,sk_ice_shard_plus,ON_PLAYER_TURN,50,BONUS_DMG_FLAT,ADD,0.30,ATK_RATIO,TRUE,AFTER_ATTACK,icy spike+ 50%
+se_ice_shard_p_fz,sk_ice_shard_plus,ON_PLAYER_TURN,12,STATUS_FREEZE,ADD,1,FLAT,TRUE,AFTER_ATTACK,freeze 12%
+se_bleed,sk_bleed,ON_PLAYER_TURN,40,STATUS_POISON,ADD,1,FLAT,TRUE,AFTER_ATTACK,poison on hit 40%
+se_rage_shuriken_n,sk_rage_shuriken,ON_RAGE,100,VOLLEY_COUNT,ADD,1,FLAT,TRUE,DAGGER,분노 수리검 1발
+se_rage_shuriken_r,sk_rage_shuriken,ON_RAGE,100,VOLLEY_RATIO,SET,0.45,ATK_RATIO,TRUE,DAGGER,발당 ATK45%
+se_firewave_n,sk_rage_firewave,ON_RAGE,100,VOLLEY_COUNT,ADD,2,FLAT,TRUE,FIREWAVE,화염파 2발
+se_firewave_r,sk_rage_firewave,ON_RAGE,100,VOLLEY_RATIO,SET,0.40,ATK_RATIO,TRUE,FIREWAVE,발당 ATK40%
+se_firewave_burn,sk_rage_firewave,ON_RAGE,25,STATUS_BURN,ADD,1,FLAT,TRUE,RAGE,burn 25%
+se_firewave_p_n,sk_rage_firewave_plus,ON_RAGE,100,VOLLEY_COUNT,ADD,2,FLAT,TRUE,FIREWAVE,화염파+ 2발
+se_firewave_p_r,sk_rage_firewave_plus,ON_RAGE,100,VOLLEY_RATIO,SET,0.55,ATK_RATIO,TRUE,FIREWAVE,발당 ATK55%
+se_firewave_p_burn,sk_rage_firewave_plus,ON_RAGE,35,STATUS_BURN,ADD,1,FLAT,TRUE,RAGE,burn 35%
+se_rage_shield,sk_rage_shield,ON_RAGE,100,SHIELD_FLAT,ADD,0.10,MAX_HP_PCT,TRUE,SHIELD,rage shield 10%
+se_rage_shield_p,sk_rage_shield_plus,ON_RAGE,100,SHIELD_FLAT,ADD,0.15,MAX_HP_PCT,TRUE,SHIELD,rage shield 15%
+se_flame_guard,sk_flame_shield,ON_HIT_CHANCE,30,BONUS_DMG_FLAT,ADD,0.40,ATK_RATIO,TRUE,ON_HIT,Fire Guard dmg
+se_flame_guard_burn,sk_flame_shield,ON_HIT_CHANCE,25,STATUS_BURN,ADD,1,FLAT,TRUE,ON_HIT,Fire Guard burn
+se_critical_shield,sk_critical_shield,ON_HP_FIRST_BELOW,30,SHIELD_FLAT,ADD,0.25,MAX_HP_PCT,TRUE,SHIELD,crit shield
+se_critical_shield_p,sk_critical_shield_plus,ON_HP_FIRST_BELOW,30,SHIELD_FLAT,ADD,0.35,MAX_HP_PCT,TRUE,SHIELD,crit shield+
+se_neartodeath,sk_neartodeath_recover,ON_HP_FIRST_BELOW,30,CRIT_RECOVER,SET,3,FLAT,TRUE,PASSIVE,3 rounds recover
+se_neartodeath_heal,sk_neartodeath_recover,ON_HP_FIRST_BELOW,30,HEAL_MAX_HP_PCT,ADD,0.10,RATIO,TRUE,PASSIVE,heal amt per round
+se_counter_n,sk_counter_light,ON_COUNTER,100,VOLLEY_COUNT,ADD,1,FLAT,TRUE,SPEAR,빛의 창 1발
+se_counter_r,sk_counter_light,ON_COUNTER,100,VOLLEY_RATIO,SET,0.30,ATK_RATIO,TRUE,SPEAR,발당 ATK30%
+se_counter_p_n,sk_counter_light_plus,ON_COUNTER,100,VOLLEY_COUNT,ADD,2,FLAT,TRUE,SPEAR,빛의 창 2발
+se_counter_p_r,sk_counter_light_plus,ON_COUNTER,100,VOLLEY_RATIO,SET,0.30,ATK_RATIO,TRUE,SPEAR,발당 ATK30%
+se_counter_base,sk_counter_light,ALWAYS,0,COUNTER_RATE,ADD,25,FLAT,TRUE,PASSIVE,base counter when owned
+se_counter_base_p,sk_counter_light_plus,ALWAYS,0,COUNTER_RATE,ADD,25,FLAT,TRUE,PASSIVE,counter rate with+
+se_firecracker,sk_firecracker,COMBAT_START,0,STATUS_STUN,ADD,1,FLAT,TRUE,START,stun round1
+se_ice_touch,sk_ice_touch,EVERY_N_ROUNDS,2,BONUS_DMG_FLAT,ADD,0.30,ATK_RATIO,TRUE,ACTIVE,frozen touch spike
+se_ice_touch_exe,sk_ice_touch,EVERY_N_ROUNDS,2,EXECUTE_PCT,ADD,8,FLAT,TRUE,ACTIVE,execute 8% normal
+se_revival,sk_revival,ALWAYS,0,REVIVE_HP_PCT,SET,0.30,RATIO,TRUE,PASSIVE,revive 30% meta
+se_indestructible_dr,sk_indestructible,ALWAYS,0,DMG_TAKEN_MULT,MUL,0.55,RATIO,TRUE,PASSIVE,파괴 불가 DR
+se_indestructible_out,sk_indestructible,ALWAYS,0,SKILL_DMG_MULT,ADD,-0.25,RATIO,TRUE,PASSIVE,파괴 불가 출력↓
+se_super_vit,sk_super_vitality,ALWAYS,0,MAX_HP_MULT,ADD,0.50,RATIO,TRUE,PASSIVE,슈퍼 생명력 HP+50%
+se_glass_cannon,sk_glass_cannon,ALWAYS,30,GLASS_CANNON,SET,1,FLAT,TRUE,PASSIVE,유리 대포 HP<=30

@@ -1,6 +1,0 @@
-currency_id,state_key,icon,label,always_show
-gold,gold,🪙,골드,TRUE
-star,starFragment,⭐,별조각,FALSE
-feed,feed,🍖,사료,FALSE
-flag,victoryFlag,🚩,승리의 깃발,FALSE
-succession,ancientSuccession,📜,고대 계승,FALSE

@@ -1,19 +1,27 @@
-reward_id,minigame_id,effect_id,weight,label,color,action
-mr_card_top,mg_card_match,e_gold10800,10,골드 x10800,#f5a623,NORMAL
-mr_card_big,mg_card_match,e_gold8000,30,큰 보물,#f0a93a,NORMAL
-mr_card_small,mg_card_match,e_star2,60,작은 보물,#5ac8e8,NORMAL
-mr_slot_angel,mg_slot,e_skill_myth,45,천사의 힘,#5ac8e8,NORMAL
-mr_slot_devil,mg_slot,e_skill_myth,45,악마의 아이,#e05555,NORMAL
-mr_slot_none,mg_slot,,10,꽝,#6a6a7a,NORMAL
-mr_square_atk,mg_square,e_atk7,20,공격력+7%,#5ed65e,NORMAL
-mr_square_hpmax,mg_square,e_maxhp7,20,최대HP+7%,#e0508a,NORMAL
-mr_square_def,mg_square,e_atk15,20,공격력+15%,#5ed65e,NORMAL
-mr_square_respin,mg_square,,10,룰렛 다시,#f0a93a,RESPIN
-mr_square_hp,mg_square,e_hp30,20,HP 30% 회복,#e05555,NORMAL
-mr_circle_atk10,mg_circle,e_atk10,20,공격력+10%,#5ed65e,NORMAL
-mr_circle_hpdown,mg_circle,e_hp_neg15,10,HP 15% 감소,#b06de0,NORMAL
-mr_circle_maxhp10,mg_circle,e_maxhp10,15,최대HP+10%,#e0508a,NORMAL
-mr_circle_respin,mg_circle,,10,룰렛 다시,#f0a93a,RESPIN
-mr_circle_exp,mg_circle,e_exp33,25,EXP +33,#ffd35a,NORMAL
-mr_circle_legend,mg_circle,e_skill_legend,10,전설 스킬,#f5a623,NORMAL
-mr_circle_gold,mg_circle,e_gold275,20,골드 +275,#f0a93a,NORMAL
+reward_id,minigame_id,effect_id,weight,label,color,action,side
+mr_card_top,mg_card_match,e_gold10800,10,골드 x10800,#f5a623,NORMAL,
+mr_card_big,mg_card_match,e_gold8000,30,큰 보물,#f0a93a,NORMAL,
+mr_card_small,mg_card_match,e_star2,60,작은 보물,#5ac8e8,NORMAL,
+mr_lucky_1,mg_lucky_treasure,e_gold275,35,골드 x1,#f0a93a,NORMAL,
+mr_lucky_2,mg_lucky_treasure,e_gold800,35,골드 x2,#f5a623,NORMAL,
+mr_lucky_3,mg_lucky_treasure,e_gold1500,20,골드 x3,#ffd35a,NORMAL,
+mr_lucky_jack,mg_lucky_treasure,e_gold8000,10,대박 골드,#f5a623,NORMAL,
+mr_slot_angel,mg_slot,e_skill_myth,40,천사의 힘,#5ac8e8,NORMAL,angel
+mr_slot_devil,mg_slot,e_skill_myth,40,악마의 아이,#e05555,NORMAL,devil
+mr_slot_none,mg_slot,,20,아무 일도 없었습니다,#6a6a7a,NORMAL,
+mr_square_atk,mg_square,e_atk7,18,공격력+7%,#5ed65e,NORMAL,
+mr_square_hpmax,mg_square,e_maxhp7,18,최대HP+7%,#e0508a,NORMAL,
+mr_square_def,mg_square,e_atk15,16,공격력+15%,#5ed65e,NORMAL,
+mr_square_respin,mg_square,,8,룰렛 다시,#f0a93a,RESPIN,
+mr_square_hp,mg_square,e_hp30,16,HP 30% 회복,#e05555,NORMAL,
+mr_square_skill,mg_square,e_skill_legend,12,전설 스킬,#f5a623,NORMAL,
+mr_square_myth,mg_square,e_skill_myth,8,신화 스킬,#b06de0,NORMAL,
+mr_square_upgrade,mg_square,e_skill_common_upgrade,4,스킬 강화,#5ac8e8,NORMAL,
+mr_circle_atk10,mg_circle,e_atk10,18,공격력+10%,#5ed65e,NORMAL,
+mr_circle_hpdown,mg_circle,e_hp_neg15,8,HP 15% 감소,#b06de0,NORMAL,
+mr_circle_maxhp10,mg_circle,e_maxhp10,12,최대HP+10%,#e0508a,NORMAL,
+mr_circle_respin,mg_circle,,8,룰렛 다시,#f0a93a,RESPIN,
+mr_circle_exp,mg_circle,e_exp33,20,EXP +33,#ffd35a,NORMAL,
+mr_circle_legend,mg_circle,e_skill_legend,14,전설 스킬,#f5a623,NORMAL,
+mr_circle_myth,mg_circle,e_skill_myth,10,신화 스킬,#b06de0,NORMAL,
+mr_circle_gold,mg_circle,e_gold275,10,골드 +275,#f0a93a,NORMAL,

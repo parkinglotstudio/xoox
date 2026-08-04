@@ -1,11 +1,23 @@
-branch_id,subtype,text_id,option_a_label,option_a_effect_id,option_a_prob,option_b_label,option_b_effect_id,option_b_prob,cost_effect_id
-b_wander,AVOID_CHALLENGE,t_wander,조용히 떠나기,,,전투,COMBAT_TRIGGER,,
-b_spirit,COST_CHOICE,t_spirit,생명력 바치기,e_skill_myth,,공격력 바치기,e_skill_myth,,e_hp_neg7
-b_devil,PREVIEW_DECLINE,t_devil,거절,,,계약하기,e_skill_renta_mastery,,e_hp_abs_neg6097
-b_medusa,PREVIEW_DECLINE,t_medusa,거절,,,응시하기,e_skill_common_upgrade,,e_maxhp_neg5
-b_stonegolem,PARTIAL_REVEAL,t_stonegolem_offer,기도,e_hp30,,제사 지내기,e_skill_common_upgrade,,e_maxhp_neg5
-b_arena,BETTING,t_arena,인간 검술사에게 베팅,e_skill_legend,30,늑대에게 베팅,e_atk15,70,e_maxhp_neg5
-b_darktower,SUCCESS_FAIL,t_darktower,떠나기,,,계승 터득,MINIGAME:mg_circle,50,
-b_angel,STAT_CHOICE,t_angel,고공격력,e_angel_atk,,HP 회복,e_angel_hp,,
-b_challenger,FINAL_CHALLENGE,t_challenger,거절,,,도전 응하기,COMBAT_TRIGGER:FINALBOSS,,
-b_goblin,SKILL_SWAP,t_goblin_merchant,떠나기,,,스킬 교체,SKILL_SWAP,,
+branch_id,subtype,text_id,option_a_label,option_a_effect_id,option_a_prob,option_b_label,option_b_effect_id,option_b_prob,cost_effect_id,option_a_cost_effect_id,option_b_cost_effect_id,weight
+b_wander,AVOID_CHALLENGE,t_wander,조용히 떠나기,,,전투,e_link_combat_normal,,,,6
+b_spirit,COST_CHOICE,t_spirit,생명력 바치기,e_skill_myth,,공격력 바치기,e_skill_myth,,,e_hp_neg7,e_atk_neg7,14
+b_devil,PREVIEW_DECLINE,t_devil,거절,,,거래하기,e_skill_renta_mastery,,,,e_hp_abs_neg6097,12
+b_medusa,PREVIEW_DECLINE,t_medusa,거절,,,응시하기,e_skill_common_upgrade,,,,e_maxhp_neg5,12
+b_stonegolem,PARTIAL_REVEAL,t_stonegolem_offer,지켜본다,e_hp30,,손을 얹어본다,e_skill_common_upgrade,,e_maxhp_neg5,,,12
+b_arena,BETTING,t_arena,정비공에게 힘을 보탠다,e_skill_legend,30,들짐승에게 힘을 보탠다,e_atk15,70,e_maxhp_neg5,,,10
+b_darktower,SUCCESS_FAIL,t_darktower,떠나기,,,신호 해독 시도,e_link_mg_circle,50,,,,10
+b_angel,STAT_CHOICE,t_angel,고공격력,e_angel_atk,,HP 회복,e_angel_hp,,,,,12
+b_challenger,FINAL_CHALLENGE,t_challenger,거절,,,도전 응하기,e_link_combat_final,,,,4
+b_goblin,SKILL_SWAP,t_goblin_merchant,떠나기,,,스킬 교체,e_link_skill_swap,,,,8
+b_mercenary,AVOID_CHALLENGE,t_mercenary_ask,조용히 떠나기,,,들어가기,e_link_loc_mercenary,,,,6
+b_wander_2,AVOID_CHALLENGE,t_wander_2,조용히 떠나기,,,전투,e_link_combat_normal,,,,6
+b_spirit_2,COST_CHOICE,t_spirit_2,생명력 바치기,e_skill_myth,,공격력 바치기,e_skill_myth,,,e_hp_neg7,e_atk_neg7,14
+b_devil_2,PREVIEW_DECLINE,t_devil_2,거절,,,거래하기,e_skill_renta_mastery,,,,e_hp_abs_neg6097,12
+b_medusa_2,PREVIEW_DECLINE,t_medusa_2,거절,,,응시하기,e_skill_common_upgrade,,,,e_maxhp_neg5,12
+b_stonegolem_2,PARTIAL_REVEAL,t_stonegolem_offer_2,지켜본다,e_hp30,,손을 얹어본다,e_skill_common_upgrade,,e_maxhp_neg5,,,12
+b_arena_2,BETTING,t_arena_2,정비공에게 힘을 보탠다,e_skill_legend,30,들짐승에게 힘을 보탠다,e_atk15,70,e_maxhp_neg5,,,10
+b_darktower_2,SUCCESS_FAIL,t_darktower_2,떠나기,,,신호 해독 시도,e_link_mg_circle,50,,,,10
+b_angel_2,STAT_CHOICE,t_angel_2,고공격력,e_angel_atk,,HP 회복,e_angel_hp,,,,,12
+b_challenger_2,FINAL_CHALLENGE,t_challenger_2,거절,,,도전 응하기,e_link_combat_final,,,,4
+b_goblin_2,SKILL_SWAP,t_goblin_merchant_2,떠나기,,,스킬 교체,e_link_skill_swap,,,,8
+b_mercenary_2,AVOID_CHALLENGE,t_mercenary_ask_2,조용히 떠나기,,,들어가기,e_link_loc_mercenary_2,,,,6

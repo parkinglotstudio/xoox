@@ -1,0 +1,13 @@
+entry_id,minigame_id,source_kind,source_id,note
+me_lucky_daily,mg_lucky_treasure,DAILY_POOL,p_luckybox,대박 일일 — 행운의 보물
+me_lucky_daily_2,mg_lucky_treasure,DAILY_POOL,p_luckybox_2,대박 일일(임시)
+me_lucky_gauge,mg_lucky_treasure,GAUGE,gz_jackpot,대박 게이지 풀(7)
+me_myth_daily,mg_slot,DAILY_POOL,p_mythslot,대박 일일 — 신화 스킬 룰렛
+me_myth_daily_2,mg_slot,DAILY_POOL,p_mythslot_2,대박 일일(임시)
+me_square_loc,mg_square,LOCATION,loc_luckyroulette,지역 발견 — 행운의 룰렛
+me_square_loc_2,mg_square,LOCATION,loc_luckyroulette_2,지역 발견(임시)
+me_square_gauge,mg_square,GAUGE,gz_mid,중박 게이지 풀(12)
+me_dig_loc,mg_card_match,LOCATION,loc_treasuremap,지역 — 보물지도→파내기
+me_dig_loc_2,mg_card_match,LOCATION,loc_treasuremap_2,지역(임시)
+me_circle_branch,mg_circle,BRANCH,b_darktower,분기 MINIGAME:mg_circle
+me_circle_branch_2,mg_circle,BRANCH,b_darktower_2,분기(임시)

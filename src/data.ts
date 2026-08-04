@@ -1,9 +1,38 @@
 import { loadCsv } from "./csv";
-import type { GameData } from "./types";
+import type { GameData, ItemDef, PassiveItemDef, CurrencyDef } from "./types";
 
 const num = (v: string, fallback = 0) => (v === "" ? fallback : Number(v));
 const numOrNull = (v: string) => (v === "" ? null : Number(v));
 const bool = (v: string) => v.trim().toUpperCase() === "TRUE";
+
+function deriveCurrencies(items: ItemDef[]): CurrencyDef[] {
+  return items
+    .filter((i) => i.category === "CURRENCY" || i.category === "EVENT_CURRENCY" || i.show_in_bar)
+    .filter((i) => i.category !== "SYSTEM" && i.category !== "PASSIVE")
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .map((i) => ({
+      currency_id: i.item_id,
+      item_id: i.item_id,
+      state_key: i.state_key === "inventory" ? `inv:${i.item_id}` : i.state_key,
+      icon: i.icon,
+      label: i.item_name,
+      always_show: i.always_show,
+    }));
+}
+
+function derivePassives(items: ItemDef[]): PassiveItemDef[] {
+  return items
+    .filter((i) => i.category === "PASSIVE")
+    .map((i) => ({
+      item_id: i.item_id,
+      item_name: i.item_name,
+      icon: i.icon,
+      effect_type: i.passive_effect_type,
+      effect_value: i.passive_effect_value,
+      owned_at_start: i.owned_at_start,
+      description: i.description,
+    }));
+}
 
 export async function loadGameData(): Promise<GameData> {
   const [
@@ -15,17 +44,44 @@ export async function loadGameData(): Promise<GameData> {
     locations,
     branches,
     minigames,
+    minigameEntries,
     minigameRewards,
     combats,
     levelups,
     skills,
+    skillTiers,
+    skillLevels,
+    skillEffects,
+    levelupRuleRows,
     gauges,
     phases,
     contentTypes,
     milestones,
-    currencies,
-    passives,
+    itemsRaw,
+    events,
+    scenarioSteps,
+    ungradedPool,
+    combatSchedule,
+    keywords,
     uiTextRows,
+    stageModes,
+    combatEnemies,
+    enemySkillsRaw,
+    enemyPatternsRaw,
+    combatTuningRows,
+    stageMaps,
+    playerBaseRows,
+    entitiesRaw,
+    skillPoolsRaw,
+    contentLinksRaw,
+    partyMemberRows,
+    dayEventRows,
+    rescueApproachRows,
+    rescueAnimalRows,
+    rescueReactionRows,
+    rescueStateRows,
+    commentaryRows,
+    cutsceneRows,
   ] = await Promise.all([
     loadCsv("effect_config"),
     loadCsv("grade_config"),
@@ -35,20 +91,65 @@ export async function loadGameData(): Promise<GameData> {
     loadCsv("location_config"),
     loadCsv("branch_config"),
     loadCsv("minigame_config"),
+    loadCsv("minigame_entry_config"),
     loadCsv("minigame_reward_pool"),
     loadCsv("combat_trigger_config"),
     loadCsv("levelup_config"),
     loadCsv("skill_config"),
+    loadCsv("skill_tier_config"),
+    loadCsv("skill_level_config"),
+    loadCsv("skill_effect_config"),
+    loadCsv("levelup_rule_config"),
     loadCsv("gauge_config"),
     loadCsv("progression_phase_config"),
     loadCsv("content_type_config"),
     loadCsv("milestone_config"),
-    loadCsv("currency_config"),
-    loadCsv("passive_item_config"),
+    loadCsv("item_config"),
+    loadCsv("event_config"),
+    loadCsv("scenario_step_config"),
+    loadCsv("ungraded_pool"),
+    loadCsv("combat_day_schedule"),
+    loadCsv("keyword_highlight_config"),
     loadCsv("ui_text_config"),
+    loadCsv("stage_mode_config"),
+    loadCsv("combat_enemy_config"),
+    loadCsv("enemy_skill_config"),
+    loadCsv("enemy_pattern_config"),
+    loadCsv("combat_tuning"),
+    loadCsv("stage_map_config"),
+    loadCsv("player_base_stat_config"),
+    loadCsv("entity_config"),
+    loadCsv("skill_pool_config"),
+    loadCsv("content_link_config"),
+    loadCsv("party_member_config"),
+    loadCsv("day_event_config"),
+    loadCsv("rescue_approach_config"),
+    loadCsv("rescue_animal_config"),
+    loadCsv("rescue_reaction_config"),
+    loadCsv("rescue_state_config"),
+    loadCsv("commentary_config"),
+    loadCsv("cutscene_config"),
   ]);
 
-  return {
+  const items: ItemDef[] = itemsRaw.map((r) => ({
+    item_id: r.item_id,
+    item_name: r.item_name,
+    icon: r.icon,
+    category: r.category,
+    effect_target: r.effect_target,
+    state_key: r.state_key,
+    stackable: bool(r.stackable),
+    show_in_bar: bool(r.show_in_bar),
+    always_show: bool(r.always_show),
+    event_id: r.event_id,
+    passive_effect_type: r.passive_effect_type,
+    passive_effect_value: r.passive_effect_value,
+    owned_at_start: bool(r.owned_at_start),
+    description: r.description,
+    sort_order: num(r.sort_order),
+  }));
+
+  const data: GameData = {
     effects: effects.map((r) => ({
       effect_id: r.effect_id,
       effect_type: r.effect_type as any,
@@ -67,12 +168,17 @@ export async function loadGameData(): Promise<GameData> {
       card_bg_color: r.card_bg_color,
       counter_cap: numOrNull(r.counter_cap),
       is_negative: bool(r.is_negative),
+      css_key: r.css_key || "",
+      banner_ms: num(r.banner_ms, 1400),
+      is_jackpot: bool(r.is_jackpot),
+      card_css_class: r.card_css_class || `grade-${r.grade_name}`,
     })),
     texts: texts.map((r) => ({
       text_id: r.text_id,
       category: r.category,
       grade_id: r.grade_id,
       body: r.body,
+      body_line2: r.body_line2 ?? "",
     })),
     dailyPool: dailyPool.map((r) => ({
       pool_id: r.pool_id,
@@ -80,6 +186,7 @@ export async function loadGameData(): Promise<GameData> {
       text_id: r.text_id,
       effect_id: r.effect_id,
       weight: num(r.weight),
+      linked_minigame_id: r.linked_minigame_id ?? "",
     })),
     poolBonusEffects: poolBonusEffects.map((r) => ({
       pool_id: r.pool_id,
@@ -95,6 +202,8 @@ export async function loadGameData(): Promise<GameData> {
       linked_effect_id: r.linked_effect_id,
       linked_minigame_id: r.linked_minigame_id,
       milestone_id: r.milestone_id,
+      scenario_id: r.scenario_id ?? "",
+      offer_leave: bool(r.offer_leave ?? ""),
     })),
     branches: branches.map((r) => ({
       branch_id: r.branch_id,
@@ -106,13 +215,25 @@ export async function loadGameData(): Promise<GameData> {
       option_b_label: r.option_b_label,
       option_b_effect_id: r.option_b_effect_id,
       option_b_prob: numOrNull(r.option_b_prob),
-      cost_effect_id: r.cost_effect_id,
+      cost_effect_id: r.cost_effect_id ?? "",
+      option_a_cost_effect_id: r.option_a_cost_effect_id ?? "",
+      option_b_cost_effect_id: r.option_b_cost_effect_id ?? "",
+      weight: num(r.weight, 10),
     })),
     minigames: minigames.map((r) => ({
       minigame_id: r.minigame_id,
       minigame_name: r.minigame_name,
       type: r.type,
       attempt_limit: numOrNull(r.attempt_limit),
+      angel_stack_cap: num(r.angel_stack_cap, 3),
+      devil_stack_cap: num(r.devil_stack_cap, 3),
+    })),
+    minigameEntries: minigameEntries.map((r) => ({
+      entry_id: r.entry_id,
+      minigame_id: r.minigame_id,
+      source_kind: r.source_kind,
+      source_id: r.source_id,
+      note: r.note ?? "",
     })),
     minigameRewards: minigameRewards.map((r) => ({
       reward_id: r.reward_id,
@@ -122,6 +243,7 @@ export async function loadGameData(): Promise<GameData> {
       label: r.label,
       color: r.color,
       action: r.action || "NORMAL",
+      side: (r.side || "").trim().toLowerCase(),
     })),
     combats: combats.map((r) => ({
       combat_id: r.combat_id,
@@ -147,7 +269,51 @@ export async function loadGameData(): Promise<GameData> {
       base_skill_id: r.base_skill_id,
       icon: r.icon,
       effect_text: r.effect_text,
+      skill_category: r.skill_category ?? "",
+      grant_source: r.grant_source ?? "",
+      description: r.description ?? r.effect_text ?? "",
     })),
+    skillTiers: skillTiers.map((r) => ({
+      tier_id: r.tier_id,
+      tier_name: r.tier_name,
+      sort_order: num(r.sort_order),
+      color: r.color,
+      description: r.description,
+    })),
+    skillLevels: skillLevels.map((r) => ({
+      skill_id: r.skill_id,
+      level: num(r.level, 1),
+      combat_power_scale: num(r.combat_power_scale, 1),
+      note: r.note ?? "",
+    })),
+    skillEffects: skillEffects.map((r) => ({
+      effect_row_id: r.effect_row_id,
+      skill_id: r.skill_id,
+      trigger: r.trigger,
+      trigger_value: num(r.trigger_value),
+      target: r.target,
+      op: r.op,
+      value: num(r.value),
+      value_type: r.value_type,
+      enabled: bool(r.enabled),
+      action_slot: (r.action_slot || "PASSIVE").toUpperCase(),
+      note: r.note ?? "",
+    })),
+    skillPools: skillPoolsRaw.map((r) => ({
+      pool_id: r.pool_id,
+      tier_name: r.tier_name,
+      want_upgrade: bool(r.want_upgrade),
+      note: r.note ?? "",
+    })),
+    levelupRules: (() => {
+      const map = Object.fromEntries(levelupRuleRows.map((r) => [r.key, r.value]));
+      return {
+        card_count: num(map.card_count, 3),
+        upgrade_offer_min: num(map.upgrade_offer_min, 1),
+        upgrade_first_in_list: (map.upgrade_first_in_list ?? "1") !== "0",
+        allow_same_skill_upgrade: (map.allow_same_skill_upgrade ?? "1") !== "0",
+      };
+    })(),
     gauges: gauges.map((r) => ({
       gauge_id: r.gauge_id,
       grade_id: r.grade_id,
@@ -168,25 +334,53 @@ export async function loadGameData(): Promise<GameData> {
       weight: num(r.weight),
     })),
     uiTexts: Object.fromEntries(uiTextRows.map((r) => [r.key, r.text])),
-    currencies: currencies.map((r) => ({
-      currency_id: r.currency_id,
-      state_key: r.state_key,
-      icon: r.icon,
-      label: r.label,
-      always_show: bool(r.always_show),
-    })),
-    passives: passives.map((r) => ({
+    items,
+    events: events.map((r) => ({
+      event_id: r.event_id,
+      event_name: r.event_name,
       item_id: r.item_id,
-      item_name: r.item_name,
-      icon: r.icon,
-      effect_type: r.effect_type,
-      effect_value: r.effect_value,
-      owned_at_start: bool(r.owned_at_start),
+      cap: num(r.cap),
+      milestone_id: r.milestone_id,
+      description: r.description,
+      active: bool(r.active),
+    })),
+    scenarioSteps: scenarioSteps.map((r) => ({
+      scenario_id: r.scenario_id,
+      step_order: num(r.step_order),
+      text_id: r.text_id,
+      grade_id: r.grade_id,
+      linked_effect_ids: (r.linked_effect_id || "")
+        .split("|")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      card_style: r.card_style || "NORMAL",
+      location_id: r.location_id,
+      branch_id: r.branch_id,
       description: r.description,
     })),
+    currencies: deriveCurrencies(items),
+    passives: derivePassives(items),
+    ungradedPool: ungradedPool.map((r) => ({
+      pool_id: r.pool_id,
+      text_id: r.text_id,
+      effect_id: r.effect_id,
+      weight: num(r.weight),
+    })),
+    combatSchedule: combatSchedule.map((r) => ({
+      day: num(r.day),
+      force_combat: bool(r.force_combat),
+      tier: r.tier,
+      marker: r.marker,
+      label: r.label,
+    })),
+    keywords: keywords
+      .map((r) => ({ keyword: r.keyword, color: r.color }))
+      .sort((a, b) => b.keyword.length - a.keyword.length),
     milestones: milestones.map((r) => ({
       milestone_id: r.milestone_id,
       milestone_name: r.milestone_name,
+      event_id: r.event_id ?? "",
+      item_id: r.item_id ?? "",
       currency: r.currency,
       cap: num(r.cap),
       tier1_effect: r.tier1_effect,
@@ -194,5 +388,163 @@ export async function loadGameData(): Promise<GameData> {
       tier2_effect: r.tier2_effect,
       tier2_at: num(r.tier2_at),
     })),
+    stageModes: stageModes.map((r) => ({
+      mode_id: r.mode_id,
+      title: r.title,
+      subtitle: r.subtitle,
+      icon: r.icon,
+      bg_class: r.bg_class,
+      show_enemy: bool(r.show_enemy),
+      note: r.note ?? "",
+    })),
+    entities: entitiesRaw.map((r) => ({
+      entity_id: r.entity_id,
+      display_name: r.display_name,
+      icon: r.icon,
+      side: (r.side === "PLAYER" ? "PLAYER" : "ENEMY") as "PLAYER" | "ENEMY",
+      combat_id: r.combat_id ?? "",
+      base_stat_profile: r.base_stat_profile ?? "",
+      note: r.note ?? "",
+    })),
+    combatEnemies: combatEnemies.map((r) => ({
+      combat_id: r.combat_id,
+      enemy_name: r.enemy_name,
+      enemy_icon: r.enemy_icon,
+      enemy_hp: num(r.enemy_hp),
+      enemy_atk: num(r.enemy_atk),
+      enemy_def: num(r.enemy_def),
+      pattern_id: r.pattern_id || "",
+      rage_max: num(r.rage_max, 100),
+      rage_per_turn: num(r.rage_per_turn, 12),
+      combat_mode: (r.combat_mode === "PURIFY" ? "PURIFY" : "ACTION") as "ACTION" | "PURIFY",
+      redeems_to_member_id: r.redeems_to_member_id || "",
+    })),
+    enemySkills: enemySkillsRaw.map((r) => ({
+      enemy_skill_id: r.enemy_skill_id,
+      skill_name: r.skill_name,
+      icon: r.icon || "✦",
+      action_slot: (r.action_slot || "BASIC").toUpperCase(),
+      effect_text: r.effect_text ?? "",
+      show_icon: bool(r.show_icon),
+      note: r.note ?? "",
+    })),
+    enemyPatterns: enemyPatternsRaw.map((r) => ({
+      pattern_id: r.pattern_id,
+      enemy_skill_id: r.enemy_skill_id,
+      chance_pct: num(r.chance_pct, 100),
+      value: num(r.value),
+      value_type: (r.value_type || "FLAT").toUpperCase(),
+      hp_below_pct: num(r.hp_below_pct, 100),
+      sort_order: num(r.sort_order),
+      enabled: bool(r.enabled),
+      note: r.note ?? "",
+    })),
+    contentLinks: contentLinksRaw.map((r) => ({
+      link_key: r.link_key,
+      link_type: r.link_type,
+      ref_id: r.ref_id ?? "",
+      note: r.note ?? "",
+    })),
+    combatTuning: Object.fromEntries(combatTuningRows.map((r) => [r.key, r.value])),
+    stageMaps: stageMaps.map((r) => ({
+      stage_map_id: r.stage_map_id,
+      map_order: num(r.map_order),
+      display_name: r.display_name,
+      day_start: num(r.day_start),
+      day_end: num(r.day_end),
+      enemy_hp_mult: num(r.enemy_hp_mult, 1),
+      enemy_atk_mult: num(r.enemy_atk_mult, 1),
+      enemy_def_mult: num(r.enemy_def_mult, 1),
+      drop_gold_mult: num(r.drop_gold_mult, 1),
+      drop_exp_mult: num(r.drop_exp_mult, 1),
+      balance_tag: r.balance_tag,
+      party_slots: num(r.party_slots, 3),
+      note: r.note ?? "",
+    })),
+    playerBaseStats: Object.fromEntries(playerBaseRows.map((r) => [r.key, r.value])),
+    partyMembers: partyMemberRows.map((r) => ({
+      member_id: r.member_id,
+      display_name: r.display_name,
+      icon: r.icon || "🐾",
+      effect_type: (r.effect_type === "PERIODIC_HEAL"
+        ? "PERIODIC_HEAL"
+        : r.effect_type === "EXECUTE_BURST"
+        ? "EXECUTE_BURST"
+        : r.effect_type === "FLAT_ATK"
+        ? "FLAT_ATK"
+        : "FLAT_HP") as "FLAT_HP" | "FLAT_ATK" | "PERIODIC_HEAL" | "EXECUTE_BURST",
+      effect_value: num(r.effect_value, 0),
+      trigger_value: num(r.trigger_value, 0),
+      description: r.description || "",
+      skill_id: r.skill_id || "",
+      roster_scope: (r.roster_scope === "PERMANENT" ? "PERMANENT" : "RESIDENT") as "PERMANENT" | "RESIDENT",
+      note: r.note ?? "",
+    })),
+    dayEvents: dayEventRows.map((r) => ({
+      day: num(r.day),
+      event_type: (r.event_type || "NARRATIVE") as "NARRATIVE" | "BUFF" | "DEBUFF" | "RECOVERY" | "CHOICE" | "TEAM_LOCK",
+      stat_field: r.stat_field || "",
+      value_pct: num(r.value_pct),
+      empathy_gain: num(r.empathy_gain),
+      flavor_text: r.flavor_text || "",
+    })),
+    rescueApproaches: rescueApproachRows.map((r) => ({
+      tag: r.tag,
+      label: r.label,
+      cluster: r.cluster || "",
+      note: r.note ?? "",
+    })),
+    rescueAnimals: rescueAnimalRows.map((r) => ({
+      animal_id: r.animal_id,
+      type: (r.type === "CAT" ? "CAT" : "DOG") as "DOG" | "CAT",
+      name: r.name,
+      icon: r.icon || "🐾",
+      stage_map_id: r.stage_map_id,
+      liked_tags: (r.liked_tags || "").split("|").map((s) => s.trim()).filter(Boolean),
+      disliked_tags: (r.disliked_tags || "").split("|").map((s) => s.trim()).filter(Boolean),
+      hint_text: r.hint_text || "",
+      purify_goal: num(r.purify_goal, 100),
+      max_turns: num(r.max_turns, 5),
+      reward_member_id: r.reward_member_id || "",
+      reencounter_chance: num(r.reencounter_chance, 30),
+      gold: num(r.gold, 150),
+      exp: num(r.exp, 50),
+      note: r.note ?? "",
+    })),
+    rescueReactions: rescueReactionRows.map((r) => ({
+      outcome: (r.outcome || "NEUTRAL").toUpperCase(),
+      text: r.text || "",
+    })),
+    rescueStates: rescueStateRows
+      .map((r) => ({
+        min_pct: num(r.min_pct),
+        label: r.label || "",
+        mood_icon: r.mood_icon || "",
+        note: r.note ?? "",
+      }))
+      .sort((a, b) => a.min_pct - b.min_pct),
+    commentary: commentaryRows.map((r) => ({
+      trigger: (r.trigger || "").toUpperCase(),
+      speaker: r.speaker || "",
+      icon: r.icon || "🐾",
+      line: r.line || "",
+    })),
+    cutscenes: cutsceneRows
+      .map((r) => ({
+        scene_id: r.scene_id || "",
+        order: num(r.order),
+        speaker: r.speaker || "",
+        icon: r.icon || "",
+        line: r.line || "",
+      }))
+      .sort((a, b) => a.order - b.order),
   };
+
+  const covered = new Set(data.minigameEntries.map((e) => e.minigame_id));
+  for (const mg of data.minigames) {
+    if (!covered.has(mg.minigame_id)) {
+      console.warn(`[minigame_entry] orphan (진입 경로 없음): ${mg.minigame_id}`);
+    }
+  }
+  return data;
 }

@@ -32,7 +32,7 @@ export function parseCsv(text: string): Row[] {
 }
 
 export async function loadCsv(name: string): Promise<Row[]> {
-  const res = await fetch(`/${name}.csv`);
+  const res = await fetch(`/${name}.csv?v=${Date.now()}`);
   const text = await res.text();
   return parseCsv(text);
 }

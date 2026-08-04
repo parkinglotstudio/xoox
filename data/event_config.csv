@@ -1,0 +1,2 @@
+event_id,event_name,item_id,cap,milestone_id,description,active
+ev_mercenary_pirate,용병과 해적,item_victory_flag,200,ms_mercenary_pirate,용병/해적 영지에서 승리의 깃발을 모아 마일스톤 보상,TRUE

@@ -1,5 +1,5 @@
-grade_id,grade_name,weight,banner_color,card_bg_color,counter_cap,is_negative
-g_jackpot,대박,20,#f5a623,#3a1a0a,7,FALSE
-g_mid,중박,42,#5ac8e8,#0d2b36,12,FALSE
-g_bad,운빨망함,28,#e05555,#241014,,TRUE
-g_bonus,보너스,10,#b06de0,#221033,,FALSE
+grade_id,grade_name,weight,banner_color,card_bg_color,counter_cap,is_negative,css_key,banner_ms,is_jackpot,card_css_class
+g_jackpot,대박,27,#f5a623,#3a1a0a,7,FALSE,grade-jp,3200,TRUE,grade-대박
+g_mid,중박,28,#5ac8e8,#0d2b36,12,FALSE,grade-mid,1400,FALSE,grade-중박
+g_bad,운빨망함,26,#e05555,#241014,,TRUE,grade-bad,1400,FALSE,grade-운빨망함
+g_bonus,보너스,19,#b06de0,#221033,,FALSE,grade-bonus,1400,FALSE,grade-보너스

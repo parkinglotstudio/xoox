@@ -1,34 +1,45 @@
-skill_id,skill_name,tier,is_upgrade,base_skill_id,icon,effect_text
-sk_lightning,천뢰,일반,FALSE,,⚡,하늘에서 번개가 내려친다
-sk_crown,왕관,전설,FALSE,,👑,공격력·방어력·HP 상승
-sk_dodge,빈사시 회피,전설,FALSE,,💨,HP 30% 미만 시 회피 상승
-sk_lightning_mastery,번개 마스터리,전설,FALSE,,⚡,번개 피해 증가
-sk_lightning_mastery_plus,번개 마스터리+,전설,TRUE,sk_lightning_mastery,⚡,번개 피해 추가 증가
-sk_firecracker,폭죽,신화,FALSE,,🎆,적에게 기절 부여
-sk_revival,부활,신화,FALSE,,✝️,사망 시 부활(영구 1회)
-sk_lifedeath,결사의 일전,신화,FALSE,,🩸,HP 10% 감소마다 흡혈·공격력 증가
-sk_comborush3,연속공격x3,신화,FALSE,,👊,3연속공격 시 추가타
-sk_combo2,콤보x2,신화,FALSE,,👊,연속공격 시 추가타
-sk_defense_max,방어 끝판왕,신화,FALSE,,🛡️,턴마다 피해감소 증가
-sk_skinharden,피부 경화,일반,FALSE,,🪨,피해감소
-sk_skinharden_plus,피부 경화+,일반,TRUE,sk_skinharden,🪨,피해감소 증가
-sk_rage_shield,분노 공격 보호막,일반,FALSE,,🛡️,분노 시전 시 보호막
-sk_rage_shield_plus,분노 공격 보호막+,일반,TRUE,sk_rage_shield,🛡️,보호막 값 증가
-sk_counter_light,반격 빛의 창,일반,FALSE,,🔆,반격 시 빛의 창 소환
-sk_counter_light_plus,반격 빛의 창+,일반,TRUE,sk_counter_light,🔆,빛의 창 2개 소환
-sk_neartodeath_recover,빈사시 회복,일반,FALSE,,💗,HP 낮을 때 회복
-sk_lightspear,빛의 창 숙련,일반,FALSE,,🔱,빛의 창 위력 증가
-sk_bleed,연속 출혈,일반,FALSE,,🩸,연속 공격 시 출혈
-sk_shuriken,수리검,일반,FALSE,,🌀,투척 공격 추가
-sk_orc,오크!,미확인,FALSE,,👹,고대 계승 처치 보상 스킬
-sk_ice_touch,얼음의 접촉,신화,FALSE,,❄️,적 즉시 처치 확률
-sk_renta_mastery,연타 마스터리,전설,FALSE,,👊,연타 확률·공격력 증가(악마계약 전용)
-sk_flame_shield,화염 방패,일반,FALSE,,🔥,화염 피해 흡수 방어막
-sk_normal_shield,일반 공격 보호막,일반,FALSE,,🛡️,평타 시전 시 보호막 생성
-sk_rage_shuriken,분노 수리검,일반,FALSE,,🌀,분노 시 수리검 투척 추가타
-sk_ice_shard_normal,일반 공격 얼음가시,일반,FALSE,,❄️,평타에 빙결 확률 추가
-sk_heal_boost,회복 강화,일반,FALSE,,💚,회복 효과량 증가
-sk_dodge_boost,회피 강화,일반,FALSE,,💨,회피 확률 증가
-sk_rage_firewave,분노 공격 화염파,일반,FALSE,,🔥,분노 시전 시 화염파 발사
-sk_renta,연타,일반,FALSE,,👊,일반 공격 연타 확률 상승
-sk_tough,강인,일반,FALSE,,💪,피격 시 피해 감소 확률
+skill_id,skill_name,tier,is_upgrade,base_skill_id,icon,effect_text,skill_category,grant_source,description
+sk_lightning,번개 슈레더,일반,FALSE,,⚡,매 턴 번개 1발(쌓인 발수만큼 한 발씩),ATTACK,LEVELUP,Round Bolt
+sk_crown,왕관,전설,FALSE,,👑,공격·방어·최대HP +15%,BUFF,LEVELUP,Royal Crown
+sk_dodge,빈사시 회피,전설,FALSE,,💨,HP 30% 이하 시 회피율 대폭 상승,DEFENSE,LEVELUP,Critical Dodge
+sk_lightning_mastery,번개 마스터리,전설,FALSE,,⚡,번개·스킬 피해 증가,ATTACK,LEVELUP,Bolt Mastery 근사
+sk_lightning_mastery_plus,번개 마스터리+,전설,TRUE,sk_lightning_mastery,⚡,번개·스킬 피해 추가 증가,ATTACK,UPGRADE,번개 마스터리 강화
+sk_firecracker,폭죽,신화,FALSE,,🎆,전투 시작 시 적 기절 1턴,CONTROL,MINIGAME,Firecracker
+sk_revival,부활,신화,FALSE,,✝️,사망 시 최대HP 30%로 1회 부활,DEFENSE,MINIGAME,Revive
+sk_lifedeath,결사의 일전,신화,FALSE,,🩸,생명력 감소마다 흡혈·공격 증가(근사: 빈사 시 피해↑),ATTACK,MINIGAME,Glass Cannon 근사
+sk_comborush3,연속공격x3,신화,FALSE,,👊,연타 성공 시 추가타,ATTACK,MINIGAME,연타 추가타
+sk_combo2,콤보 X2,신화,FALSE,,👊,연타율↑·연타 최대 2회·스킬피해↓,ATTACK,MINIGAME,Combo Spirit
+sk_defense_max,방어 끝판왕,신화,FALSE,,🛡️,라운드마다 피해감소 누적(상한 75%),DEFENSE,MINIGAME,Battle-Hardened
+sk_indestructible,파괴 불가,신화,FALSE,,🧱,받는 피해 대폭 감소·스킬 피해 감소,DEFENSE,MINIGAME,Indestructible
+sk_super_vitality,슈퍼 생명력,신화,FALSE,,💗,최대HP 대폭 증가,DEFENSE,MINIGAME,Super Vitality
+sk_glass_cannon,유리 대포,신화,FALSE,,💥,HP 30% 이하 시 주는·받는 피해 증가,ATTACK,MINIGAME,Glass Cannon
+sk_skinharden,피부 경화,일반,FALSE,,🪨,피해감소 10%,DEFENSE,LEVELUP,Hardened
+sk_skinharden_plus,피부 경화+,일반,TRUE,sk_skinharden,🪨,피해감소 15%,DEFENSE,UPGRADE,Hardened+
+sk_rage_shield,분노 공격 보호막,일반,FALSE,,🛡️,분노 시전 시 보호막(MaxHP 10%),DEFENSE,LEVELUP,Rage Shield
+sk_rage_shield_plus,분노 공격 보호막+,일반,TRUE,sk_rage_shield,🛡️,분노 보호막 MaxHP 15%,DEFENSE,UPGRADE,Rage Shield+
+sk_counter_light,반격 빛의 창,일반,FALSE,,🔆,반격 시 빛의 창 1발,ATTACK,LEVELUP,Counter Light Spear
+sk_counter_light_plus,반격 빛의 창+,일반,TRUE,sk_counter_light,🔆,반격 시 빛의 창 2발(한 발씩),ATTACK,UPGRADE,Counter Light Spear+
+sk_neartodeath_recover,빈사시 회복,일반,FALSE,,💗,HP 30% 최초 후 3라운드 회복,DEFENSE,LEVELUP,Critical Recovery
+sk_lightspear,빛의 창 숙련,일반,FALSE,,🔱,빛의 창 피해 +60%,ATTACK,LEVELUP,Light Spear Mastery
+sk_bleed,연속 출혈,일반,FALSE,,🩸,평타 시 확률로 출혈(독) 부여,ATTACK,LEVELUP,Poisoned Weapon 근사
+sk_shuriken,수리검,일반,FALSE,,🌀,평타 전 투척 1발(쌓이면 발수만큼),ATTACK,LEVELUP,Dagger
+sk_orc,야생의 포효!,미확인,FALSE,,🔥,치명↑·분노 충전 불가,SPECIAL,EVENT,Feral Roar!
+sk_ice_touch,얼음의 접촉,신화,FALSE,,❄️,2라운드마다 얼음가시·약적 즉사,ATTACK,MINIGAME,Frozen Touch
+sk_renta_mastery,연타 마스터리,전설,FALSE,,👊,연타율↑·연타당 ATK 스택,ATTACK,CONTRACT,Combo Mastery
+sk_flame_shield,화염 방패,일반,FALSE,,🔥,피격 시 확률로 화염파+화상,DEFENSE,LEVELUP,Fire Guard
+sk_normal_shield,일반 공격 보호막,일반,FALSE,,🛡️,평타 후 확률 보호막,DEFENSE,LEVELUP,Basic Attack Shield
+sk_critical_shield,빈사 보호막,일반,FALSE,,🛡️,HP 30% 최초 도달 시 보호막,DEFENSE,LEVELUP,Critical Shield
+sk_critical_shield_plus,빈사 보호막+,일반,TRUE,sk_critical_shield,🛡️,빈사 보호막 강화,DEFENSE,UPGRADE,Critical Shield+
+sk_rage_shuriken,분노 수리검,일반,FALSE,,🌀,분노 시 수리검 1발,ATTACK,LEVELUP,Rage Dagger
+sk_ice_shard_normal,일반 공격 얼음가시,일반,FALSE,,❄️,평타 후 확률 얼음가시+동결,CONTROL,LEVELUP,Basic Attack Icy Spikes
+sk_ice_shard_plus,일반 공격 얼음가시+,일반,TRUE,sk_ice_shard_normal,❄️,얼음가시 확률·동결↑,CONTROL,UPGRADE,Icy Spikes+
+sk_heal_boost,회복 강화,일반,FALSE,,💚,모든 회복량 +2%p,SUPPORT,LEVELUP,Enhanced Recovery
+sk_dodge_boost,회피 강화,일반,FALSE,,💨,회피율 +10%,DEFENSE,LEVELUP,Dodge
+sk_rage_firewave,분노 공격 화염파,일반,FALSE,,🔥,분노 시 화염파 2발(한 발씩)+화상,ATTACK,LEVELUP,Rage Fire Strike
+sk_renta,연타,일반,FALSE,,👊,연타율 +10%,ATTACK,LEVELUP,Combo
+sk_tough,강인,일반,FALSE,,💪,피해감소 5%,DEFENSE,LEVELUP,Hardened 약화
+sk_shuriken_plus,수리검+,일반,TRUE,sk_shuriken,🌀,투척 2발(한 발씩),ATTACK,UPGRADE,Dagger+
+sk_renta_plus,연타+,일반,TRUE,sk_renta,👊,연타율 +15%,ATTACK,UPGRADE,Combo+
+sk_normal_shield_plus,일반 공격 보호막+,일반,TRUE,sk_normal_shield,🛡️,평타 보호막 강화,DEFENSE,UPGRADE,Basic Attack Shield+
+sk_rage_firewave_plus,분노 공격 화염파+,일반,TRUE,sk_rage_firewave,🔥,분노 화염파 2발 강화(한 발씩),ATTACK,UPGRADE,Rage Fire Strike+
+sk_lightning_plus,번개 슈레더+,일반,TRUE,sk_lightning,⚡,매 턴 번개 2발(한 발씩),ATTACK,UPGRADE,Round Bolt+

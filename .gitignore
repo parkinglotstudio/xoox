@@ -5,3 +5,5 @@ dist/
 # 참고 영상 (대용량 바이너리 - GitHub 100MB 제한 초과)
 plan/
 *.mp4
+
+.vercel

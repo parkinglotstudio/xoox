@@ -2,3 +2,6 @@ pool_id,effect_id
 p_ruin,e_gold300
 p_waterblessing,e_gold300
 p_luckybox,e_star2
+p_ruin_2,e_gold300
+p_waterblessing_2,e_gold300
+p_luckybox_2,e_star2

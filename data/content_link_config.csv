@@ -1,0 +1,7 @@
+link_key,link_type,ref_id,note
+e_link_combat_normal,COMBAT,NORMAL,effect FK — 일반 전투
+e_link_combat_final,COMBAT,FINALBOSS,effect FK — 최종 보스
+e_link_mg_circle,MINIGAME,mg_circle,effect FK — 마왕 타워 룰렛
+e_link_loc_mercenary,LOCATION,loc_mercenary,effect FK — 용병 영지
+e_link_loc_mercenary_2,LOCATION,loc_mercenary_2,effect FK — 용병 영지(임시)
+e_link_skill_swap,SKILL_SWAP,,effect FK — 스킬 교체

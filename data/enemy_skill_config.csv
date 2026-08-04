@@ -1,0 +1,15 @@
+enemy_skill_id,skill_name,icon,action_slot,effect_text,show_icon,note
+es_basic,일반 공격,⚔️,BASIC,매턴 기본 공격,FALSE,내장 평타(아이콘 숨김)
+es_combo_light,연타,👊,COMBO,일반 공격 후 확률 추가타,TRUE,일반·정예 공통
+es_combo_heavy,광란 연타,🔥,COMBO,높은 확률의 추가타,TRUE,광전사·보스
+es_bolt,주술탄,🔮,THROW,평타 전 원거리 타격,TRUE,캐스터
+es_guard_start,방패 올리기,🛡️,START,전투 시작 시 보호막,TRUE,정예·보스
+es_guard_refresh,방패 재정비,🛡️,SHIELD,확률로 보호막 재생성,TRUE,정예
+es_wall,수호벽,🏰,START,두꺼운 시작 보호막,TRUE,보스
+es_wall_refresh,수호벽 재전개,🏰,SHIELD,페이즈·확률 보호막,TRUE,보스
+es_rage_slash,분노 참격,💢,RAGE,분노 게이지 풀 시 강공격,TRUE,오염 기사
+es_rage_smash,분노 강타,💥,RAGE,분노 풀 시 강타,TRUE,브루트·일반
+es_rage_hex,분노 저주,☠️,RAGE,분노 풀 시 주술 강타,TRUE,캐스터
+es_rage_guard,탐욕의 강타,👑,RAGE,보스 분노기,TRUE,탐욕의 근원
+es_rage_guard_p2,탐욕의 격노,👑,RAGE,페이즈2 강화 분노기,TRUE,보스 HP60%↓
+es_rage_guard_p3,탐욕의 파멸,👑,RAGE,페이즈3 최종 분노기,TRUE,보스 HP30%↓

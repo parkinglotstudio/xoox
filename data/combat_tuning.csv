@@ -1,0 +1,53 @@
+key,value,note
+max_turns,15,전투 최대 턴(이내 종료)
+atk_def_factor,0.35,피해 = atk - def×계수 (최소 1)
+dmg_variance_pct,18,피해 랜덤 ±%
+player_dmg_scale,0.38,플레이어 피해 배율(시간 내 킬 유도)
+enemy_dmg_scale,0.68,적 피해 배율(EDGE~EARLY 기본)
+enemy_hp_scale,1.0,적 HP 추가 배율
+forgiving_enemy_dmg_scale,0.38,스테이지1(CLEAR) 적 피해 완화
+turn_delay_ms,650,기본 로그 간격(ms)
+skill_delay_ms,520,스킬 발동 로그 간격
+shield_delay_ms,480,보호막 로그 간격
+hit_delay_ms,780,공격 타격 로그 간격
+turn_gap_ms,320,같은 라운드 내 짧은 여운
+side_gap_ms,720,모험가↔적 공격 전환 여운
+win_delay_ms,1000,승리/종료 연출
+player_icon,🪺,상단 주인공 아이콘
+skill_per_skill_base,0.02,스킬 1개당 기본 전투 배율
+skill_per_run_level,0.008,런레벨 1당 스킬 배율 추가
+bolt_atk_ratio,0.30,볼리 BOLT 기본 발당 ATK 비율
+dagger_atk_ratio,0.45,볼리 DAGGER 기본 발당 ATK 비율
+firewave_atk_ratio,0.40,볼리 FIREWAVE 기본 발당 ATK 비율
+spear_atk_ratio,0.30,볼리 SPEAR 기본 발당 ATK 비율
+volley_delay_ms,380,연속 발사(번개·화염파·창 등) 로그 간격
+rage_hit_gain,8,적: 기본 공격 적중 시 분노 충전
+player_rage_max,100,플레이어 분노 게이지 최대
+player_rage_per_turn,14,플레이어 턴당 분노 충전
+player_rage_hit_gain,10,플레이어 평타 적중 시 분노 충전
+player_rage_fallback_atk_ratio,1.35,분노기 미보유 시 기본 분노 공격 ATK 비율
+rage_delay_ms,620,분노기 로그 간격
+vs_intro_ms,1400,전투 전 VS 연출 시간(ms)
+edge_boss_hp_mult,1.35,EDGE 맵 막판 보스 HP 추가배율
+edge_boss_atk_mult,1.22,EDGE 맵 막판 보스 ATK 추가배율
+edge_boss_def_mult,1.12,EDGE 맵 막판 보스 DEF 추가배율
+edge_near_end_days,2,맵 종료 N일 전부터 보스 강화
+boss_phase2_hp_pct,60,보스 패턴 2페이즈 HP%
+boss_phase3_hp_pct,30,보스 패턴 3페이즈 HP%
+fallback_enemy_hp,6500,적 데이터 없을 때 HP
+fallback_enemy_atk,980,적 데이터 없을 때 ATK
+fallback_enemy_def,160,적 데이터 없을 때 DEF
+fallback_enemy_name,적,적 데이터 없을 때 이름
+fallback_enemy_icon,👾,적 데이터 없을 때 아이콘
+fallback_pattern_id,N_SWARM,기본 적 패턴
+revival_skill_id,sk_revival,부활 스킬 id
+final_challenge_min_day,55,최종 도전 분기 최소 일차
+jackpot_slot_ms,3200,대박 로그 슬롯 회전(ms)
+jackpot_slot_step_ms,44,대박 슬롯 스텝(ms)
+rescue_spawn_chance,30,구조 조우 스폰 확률(%) — 풀에 남은 동물이 있을 때 하루 진행 시
+rescue_guaranteed_day,2,첫 구조 조우 보장 일차(이 날 아직 구조 0마리면 100% 스폰) · 0=끄기
+rescue_good_purify,28,공략 적중(좋아하는 접근) 정화도 증가
+rescue_neutral_purify,10,무난한 접근 정화도 증가
+rescue_bad_purify,-8,싫어하는 접근 정화도 변화
+rescue_purify_variance,3,정화도 증감 랜덤 ±
+rescue_turn_delay_ms,620,구조 조우 반응 연출 간격(ms)

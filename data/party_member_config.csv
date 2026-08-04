@@ -1,0 +1,22 @@
+member_id,display_name,icon,effect_type,effect_value,trigger_value,description,skill_id,roster_scope,note
+mem_yeoldu,열두,🐕‍🦺,FLAT_HP,5000,0,체력 +5000,sk_boss_reward,PERMANENT,파이널보스 보상 — 영구 소장
+mem_r01,겁에 질린 강아지,🐕,FLAT_HP,1300,0,체력 +1300,sk_r01,RESIDENT,스테이지1 · 구조 보상
+mem_r02,굶주린 들개,🐶,FLAT_HP,1500,0,체력 +1500,sk_r02,RESIDENT,스테이지1 · 구조 보상
+mem_r11,예민한 길고양이,🐈,FLAT_ATK,220,0,공격력 +220,sk_r11,RESIDENT,스테이지1 · 구조 보상
+mem_r12,겁먹은 검은고양이,🐈‍⬛,FLAT_ATK,240,0,공격력 +240,sk_r12,RESIDENT,스테이지1 · 구조 보상
+mem_r03,장난꾸러기 강아지,🐩,FLAT_ATK,300,0,공격력 +300,sk_r03,RESIDENT,스테이지2 · 구조 보상
+mem_r04,도도한 순종견,🦮,FLAT_HP,2100,0,체력 +2100,sk_r04,RESIDENT,스테이지2 · 구조 보상
+mem_r07,갓 태어난 강아지,🐶,FLAT_HP,1800,0,체력 +1800,sk_r07,RESIDENT,스테이지2 · 구조 보상
+mem_r13,배고픈 아기고양이,🐱,FLAT_HP,1900,0,체력 +1900,sk_r13,RESIDENT,스테이지2 · 구조 보상
+mem_r14,호기심 많은 고양이,🐈,FLAT_ATK,320,0,공격력 +320,sk_r14,RESIDENT,스테이지2 · 구조 보상
+mem_r05,상처 입은 개,🐕‍🦺,FLAT_HP,2600,0,체력 +2600,sk_r05,RESIDENT,스테이지3 · 구조 보상
+mem_r06,늠름한 경비견,🐕,FLAT_ATK,410,0,공격력 +410,sk_r06,RESIDENT,스테이지3 · 구조 보상
+mem_r08,노련한 떠돌이개,🐕,FLAT_ATK,380,0,공격력 +380,sk_r08,RESIDENT,스테이지3 · 구조 보상
+mem_r15,도도한 페르시안,🐱,FLAT_ATK,390,0,공격력 +390,sk_r15,RESIDENT,스테이지3 · 구조 보상
+mem_r16,사나운 들고양이,🐈‍⬛,FLAT_HP,2900,0,체력 +2900,sk_r16,RESIDENT,스테이지3 · 구조 보상
+mem_r09,활발한 리트리버,🦮,FLAT_HP,3400,0,체력 +3400,sk_r09,RESIDENT,스테이지4 · 구조 보상
+mem_r10,늙은 개,🐕‍🦺,FLAT_ATK,460,0,공격력 +460,sk_r10,RESIDENT,스테이지4 · 구조 보상
+mem_r17,새끼 고양이,🐱,FLAT_HP,3200,0,체력 +3200,sk_r17,RESIDENT,스테이지4 · 구조 보상
+mem_r18,느긋한 뚱냥이,🐈,FLAT_HP,4000,0,체력 +4000,sk_r18,RESIDENT,스테이지4 · 구조 보상
+mem_r19,애교쟁이 고양이,🐱,FLAT_ATK,490,0,공격력 +490,sk_r19,RESIDENT,스테이지4 · 구조 보상
+mem_r20,영악한 치즈고양이,🐈,FLAT_ATK,520,0,공격력 +520,sk_r20,RESIDENT,스테이지4 · 구조 보상

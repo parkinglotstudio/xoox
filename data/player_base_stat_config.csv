@@ -1,0 +1,7 @@
+key,value,note
+base_hp,18000,풀장착 가정 시작 HP
+base_max_hp,18000,풀장착 가정 최대 HP
+base_atk,3200,풀장착 가정 공격력
+base_def,900,풀장착 가정 방어력
+base_purify_hp,80,XOOX 정화전투 팀 모드 — 플레이어 자신의 유닛 HP(액션 전투 hp와 별개 축)
+base_purify,18,XOOX 정화전투 — 플레이어 자신의 정화력

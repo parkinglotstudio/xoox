@@ -5,6 +5,7 @@ e_atk7,STAT_PCT,ATK,7,PERCENT,,⚔️,공격력 +7%
 e_maxhp7,STAT_PCT,MAX_HP,7,PERCENT,,❤️,최대HP +7%
 e_gold275,CURRENCY,GOLD,275,ABSOLUTE,,🪙,골드 +275
 e_gold1500,CURRENCY,GOLD,1500,ABSOLUTE,,🪙,골드 +1500
+e_gold800,CURRENCY,GOLD,800,ABSOLUTE,,🪙,골드 +800
 e_gold300,CURRENCY,GOLD,300,ABSOLUTE,,🪙,골드 +300
 e_star2,CURRENCY,STAR_FRAGMENT,2,ABSOLUTE,,⭐,별조각 +2
 e_atk21,STAT_PCT,ATK,21,PERCENT,,⚔️,공격력 +21%
@@ -16,6 +17,7 @@ e_maxhp_neg5,STAT_PCT,MAX_HP,-5,PERCENT,,💔,최대HP -5%
 e_hp_neg10,STAT_PCT,HP,-10,PERCENT,,💔,HP -10%
 e_hp_neg15,STAT_PCT,HP,-15,PERCENT,,💔,HP -15%
 e_flag3,CURRENCY,VICTORY_FLAG,3,ABSOLUTE,,🚩,승리의 깃발 +3
+e_arrow1,CURRENCY,ARROW,1,ABSOLUTE,,🏹,화살 +1
 e_gold8000,CURRENCY,GOLD,8000,ABSOLUTE,,🪙,골드 +8000
 e_gold10800,CURRENCY,GOLD,10800,ABSOLUTE,,🪙,골드 +10800
 e_atk15,STAT_PCT,ATK,15,PERCENT,,⚔️,공격력 +15%
@@ -42,3 +44,9 @@ e_def_neg5,STAT_PCT,DEF,-5,PERCENT,,🛡️,방어력 -5%
 e_atk_neg10,STAT_PCT,ATK,-10,PERCENT,,⚔️,공격력 -10%
 e_gold10100,CURRENCY,GOLD,10100,ABSOLUTE,,🪙,골드 +10100(마일스톤)
 e_gold40500,CURRENCY,GOLD,40500,ABSOLUTE,,🪙,골드 +40500(마일스톤)
+e_link_combat_normal,CONTENT_LINK,COMBAT,0,ABSOLUTE,NORMAL,⚔️,일반 전투 조우
+e_link_combat_final,CONTENT_LINK,COMBAT,0,ABSOLUTE,FINALBOSS,💀,최종 보스 조우
+e_link_mg_circle,CONTENT_LINK,MINIGAME,0,ABSOLUTE,mg_circle,🎡,마왕 타워 룰렛
+e_link_loc_mercenary,CONTENT_LINK,LOCATION,0,ABSOLUTE,loc_mercenary,🏠,용병 영지 입성
+e_link_loc_mercenary_2,CONTENT_LINK,LOCATION,0,ABSOLUTE,loc_mercenary_2,🏠,용병 영지 입성(임시)
+e_link_skill_swap,CONTENT_LINK,SKILL_SWAP,0,ABSOLUTE,,🔄,스킬 교체

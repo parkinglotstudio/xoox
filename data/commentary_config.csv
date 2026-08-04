@@ -1,0 +1,17 @@
+trigger,speaker,icon,line
+RESCUE_START,Piper,🐕‍🦺,냄새가 난다. 가까워.
+RESCUE_START,Olmas,🦉,신호가 약하게 잡힌다. 아직 완전히 물들지 않았어.
+RESCUE_START,Nashui,🐈,어머… 저 아이, 잔뜩 겁에 질렸네.
+RESCUE_WIN,Nashui,🐈,어머 귀여워. 이름이 뭐예요?
+RESCUE_WIN,Piper,🐕‍🦺,잘했어. 아직 갈 길이 멀지만.
+RESCUE_WIN,Olmas,🦉,제대로 정화됐다. 마음이 열렸어.
+RESCUE_FAIL,Piper,🐕‍🦺,놓쳤군. 조급하면 다 도망가.
+RESCUE_FAIL,Nashui,🐈,아… 가버렸어. 다음엔 천천히 해요.
+RESCUE_PASS,Piper,🐕‍🦺,지나친다고? …언젠가 다시 만나겠지.
+RESCUE_SWAP,Olmas,🦉,새 힘을 받아들였군. 선택엔 무게가 있어.
+COMBAT_START,Piper,🐕‍🦺,집중해. 이건 대화로는 안 돼.
+COMBAT_START,Olmas,🦉,움직임을 읽어라. 틈이 보인다.
+COMBAT_WIN,Piper,🐕‍🦺,끝났다. 다치진 않았고?
+COMBAT_WIN,Nashui,🐈,휴… 이제 좀 쉬어도 되죠?
+LEVELUP,Olmas,🦉,힘이 자라고 있어. 좋은 징조야.
+DAY_EVENT,Nashui,🐈,으, 이 냄새. 빨리 지나가요.

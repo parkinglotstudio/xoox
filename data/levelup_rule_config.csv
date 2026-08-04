@@ -1,0 +1,5 @@
+key,value,note
+card_count,3,스킬 선택 카드 수
+upgrade_offer_min,1,가능하면 업그레이드(+) 카드 최소 N장
+upgrade_first_in_list,1,1=업그레이드 카드를 앞에 배치
+allow_same_skill_upgrade,1,1=동일 베이스 배우면 + 로 승급

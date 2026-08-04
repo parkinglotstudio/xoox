@@ -1,0 +1,46 @@
+skill_id,level,combat_power_scale,note
+sk_lightning,1,1.0,base
+sk_lightning_plus,2,1.35,upgrade +
+sk_crown,1,1.0,base
+sk_dodge,1,1.0,base
+sk_lightning_mastery,1,1.0,base
+sk_lightning_mastery_plus,2,1.35,upgrade +
+sk_firecracker,1,1.0,base
+sk_revival,1,1.0,base
+sk_lifedeath,1,1.0,base
+sk_comborush3,1,1.0,base
+sk_combo2,1,1.0,base
+sk_defense_max,1,1.0,base
+sk_skinharden,1,1.0,base
+sk_skinharden_plus,2,1.35,upgrade +
+sk_rage_shield,1,1.0,base
+sk_rage_shield_plus,2,1.35,upgrade +
+sk_counter_light,1,1.0,base
+sk_counter_light_plus,2,1.35,upgrade +
+sk_neartodeath_recover,1,1.0,base
+sk_lightspear,1,1.0,base
+sk_bleed,1,1.0,base
+sk_shuriken,1,1.0,base
+sk_shuriken_plus,2,1.35,upgrade +
+sk_orc,1,1.0,base
+sk_ice_touch,1,1.0,base
+sk_renta_mastery,1,1.0,base
+sk_flame_shield,1,1.0,base
+sk_normal_shield,1,1.0,base
+sk_normal_shield_plus,2,1.35,upgrade +
+sk_critical_shield,1,1.0,base
+sk_critical_shield_plus,2,1.35,upgrade +
+sk_rage_shuriken,1,1.0,base
+sk_ice_shard_normal,1,1.0,base
+sk_ice_shard_plus,2,1.35,upgrade +
+sk_heal_boost,1,1.0,base
+sk_dodge_boost,1,1.0,base
+sk_rage_firewave,1,1.0,base
+sk_rage_firewave_plus,2,1.35,upgrade +
+sk_renta,1,1.0,base
+sk_renta_plus,2,1.35,upgrade +
+sk_tough,1,1.0,base
+sk_lightning_plus,2,1.35,upgrade +
+sk_indestructible,1,1.0,base
+sk_super_vitality,1,1.0,base
+sk_glass_cannon,1,1.0,base

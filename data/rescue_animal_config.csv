@@ -1,0 +1,21 @@
+animal_id,type,name,icon,stage_map_id,liked_tags,disliked_tags,hint_text,purify_goal,max_turns,reward_member_id,reencounter_chance,gold,exp,note
+a_dog_shy,DOG,겁에 질린 강아지,🐕,map_1,GENTLE|WAIT,BOLD|TOUCH,잔뜩 웅크린 채 떨고 있다 — 급하게 다가가면 달아날 것 같다,100,5,mem_r01,30,150,50,스테이지1
+a_dog_hungry,DOG,굶주린 들개,🐶,map_1,FEED|WAIT,PLAY|BOLD,갈비뼈가 드러날 만큼 말랐다 — 먼저 배를 채워 줘야 마음을 열 듯하다,100,5,mem_r02,30,150,50,스테이지1
+a_cat_wary,CAT,예민한 길고양이,🐈,map_1,WAIT|RETREAT,TOUCH|BOLD,귀를 납작 붙였다 — 손을 뻗으면 할퀸다,100,5,mem_r11,30,150,50,스테이지1
+a_cat_black,CAT,겁먹은 검은고양이,🐈‍⬛,map_1,GENTLE|WAIT,BOLD|PLAY,구석에서 눈만 빛낸다 — 천천히 다가가야 한다,100,5,mem_r12,30,150,50,스테이지1
+a_dog_playful,DOG,장난꾸러기 강아지,🐩,map_2,PLAY|CALL,WAIT|RETREAT,꼬리를 흔들며 폴짝댄다 — 같이 놀아 줘야 신이 날 듯하다,100,5,mem_r03,30,190,65,스테이지2
+a_dog_proud,DOG,도도한 순종견,🦮,map_2,CALL|GENTLE,FEED|BOLD,고개를 빳빳이 들고 있다 — 예의를 갖춰 불러 줘야 응할 듯하다,100,5,mem_r04,30,190,65,스테이지2
+a_dog_pup,DOG,갓 태어난 강아지,🐶,map_2,FEED|GENTLE,BOLD|CALL,낑낑대며 젖을 찾는다 — 큰 소리는 놀라게 한다,100,5,mem_r07,30,190,65,스테이지2
+a_cat_hungry,CAT,배고픈 아기고양이,🐱,map_2,FEED|GENTLE,BOLD|TOUCH,야옹거리며 앞발을 든다 — 먹이부터 줘야 할 듯하다,100,5,mem_r13,30,190,65,스테이지2
+a_cat_curious,CAT,호기심 많은 고양이,🐈,map_2,PLAY|CALL,RETREAT|WAIT,장난감을 힐끔댄다 — 흥미를 끌어야 다가온다,100,5,mem_r14,30,190,65,스테이지2
+a_dog_wounded,DOG,상처 입은 개,🐕‍🦺,map_3,GENTLE|RETREAT,TOUCH|PLAY,다리를 절뚝인다 — 함부로 만지면 으르렁댈 것 같다,100,5,mem_r05,30,230,80,스테이지3
+a_dog_guard,DOG,늠름한 경비견,🐕,map_3,BOLD|CALL,RETREAT|WAIT,당당히 버티고 섰다 — 우물쭈물하면 얕본다,100,5,mem_r06,30,230,80,스테이지3
+a_dog_stray,DOG,노련한 떠돌이개,🐕,map_3,WAIT|FEED,TOUCH|CALL,거리를 두고 이쪽을 살핀다 — 서두르면 다시 숨는다,100,5,mem_r08,30,230,80,스테이지3
+a_cat_proud,CAT,도도한 페르시안,🐱,map_3,CALL|RETREAT,FEED|TOUCH,우아하게 앉아 이쪽을 무시한다 — 재촉하면 등을 돌린다,100,5,mem_r15,30,230,80,스테이지3
+a_cat_feral,CAT,사나운 들고양이,🐈‍⬛,map_3,RETREAT|WAIT,CALL|BOLD,털을 곤두세우고 하악댄다 — 물러서서 진정시켜야 한다,100,5,mem_r16,30,230,80,스테이지3
+a_dog_hyper,DOG,활발한 리트리버,🦮,map_4,PLAY|TOUCH,WAIT|RETREAT,온몸으로 반긴다 — 가만있으면 시무룩해진다,100,5,mem_r09,30,270,95,스테이지4
+a_dog_old,DOG,늙은 개,🐕‍🦺,map_4,RETREAT|GENTLE,PLAY|BOLD,느릿느릿 눈을 껌뻑인다 — 격한 건 부담스러워한다,100,5,mem_r10,30,270,95,스테이지4
+a_cat_kitten,CAT,새끼 고양이,🐱,map_4,GENTLE|FEED,PLAY|BOLD,작게 떨며 삐약댄다 — 부드럽게 감싸야 안심한다,100,5,mem_r17,30,270,95,스테이지4
+a_cat_lazy,CAT,느긋한 뚱냥이,🐈,map_4,WAIT|FEED,PLAY|TOUCH,늘어져 하품한다 — 귀찮게 하면 자리를 뜬다,100,5,mem_r18,30,270,95,스테이지4
+a_cat_clingy,CAT,애교쟁이 고양이,🐱,map_4,TOUCH|CALL,WAIT|RETREAT,몸을 비비려 다가온다 — 무심하면 서운해한다,100,5,mem_r19,30,270,95,스테이지4
+a_cat_sly,CAT,영악한 치즈고양이,🐈,map_4,FEED|PLAY,GENTLE|RETREAT,간을 보며 빙빙 돈다 — 미적대면 관심을 끊는다,100,5,mem_r20,30,270,95,스테이지4
