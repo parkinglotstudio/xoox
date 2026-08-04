@@ -567,6 +567,53 @@ export interface GameData {
   rescueStates: RescueStateDef[];
   commentary: CommentaryDef[];
   cutscenes: CutsceneLineDef[];
+  areas: AreaDef[];
+  areaConnections: AreaConnectionDef[];
+  areaNpcs: AreaNpcDef[];
+}
+
+/**
+ * 탐방 지역 — 플레이어가 걸어다니는 한 화면.
+ * 배경 아트가 준비되기 전까지는 sky/ground 색으로 플레이스홀더를 그린다.
+ * (`background_asset`이 채워지면 그 이미지가 색보다 우선)
+ */
+export interface AreaDef {
+  area_id: string;
+  display_name: string;
+  sky_top: string;
+  sky_bottom: string;
+  ground_color: string;
+  /** 화면 아래에서 땅이 차지하는 비율(%) */
+  ground_h_pct: number;
+  background_asset: string;
+  stage_map_id: string;
+  note: string;
+}
+
+/** 지역 간 통로. bidirectional이면 반대 방향도 자동 성립. */
+export interface AreaConnectionDef {
+  connection_id: string;
+  from_area_id: string;
+  to_area_id: string;
+  /** 화면의 어느 가장자리로 나가는지 */
+  exit_point: "LEFT" | "RIGHT";
+  bidirectional: boolean;
+  unlock_condition: string;
+}
+
+/** 지역 안에 놓인 상호작용 지점(이벤트·구조 조우 등의 진입점) */
+export interface AreaNpcDef {
+  npc_id: string;
+  area_id: string;
+  /** 지역 가로폭 기준 위치(%) */
+  x_pct: number;
+  icon: string;
+  label: string;
+  /** MEMO=플레이버 텍스트만 · 이후 RESCUE/EVENT 등으로 확장 */
+  trigger_type: string;
+  trigger_ref: string;
+  appear_condition: string;
+  flavor_text: string;
 }
 
 export interface PlayerState {

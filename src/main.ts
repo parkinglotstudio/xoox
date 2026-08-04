@@ -55,6 +55,7 @@ import {
   rollCommentary,
 } from "./engine";
 import { scrambleReveal, rollCardTextSlot, sleep } from "./effects";
+import { ExploreView } from "./explore";
 import { randInt } from "./rng";
 import type { GameData, PlayerState, GradeDef, BranchDef, SkillDef, MinigameRewardRow, EnemySkillDef, PartyMemberDef, RescueAnimalDef } from "./types";
 
@@ -425,6 +426,8 @@ function ui(key: string, vars?: Record<string, string | number>): string {
 
 let data: GameData;
 let state: PlayerState;
+/** 탐방 뷰(Phase 2). 지역 데이터가 없으면 null로 남는다. */
+let explore: ExploreView | null = null;
 let lastDayShown = 0;
 let combatPending: { tier: string; combatId?: string } | null = null;
 let rescuePending: RescueAnimalDef | null = null;
@@ -691,8 +694,49 @@ function setStageMode(
     lastStageScene = { modeId, title, subtitle, icon };
   }
 
+  // 탐방 뷰는 대기 상태에서만 — 전투·구조·미니게임 연출과 겹치지 않게 한다
+  syncExploreVisibility(modeId);
+
   // 상단 창 높이 변경(전투 확대 등) 후 피드 하단 끝점 유지
   scrollFeedToBottom({ anticipatePx: 12 });
+}
+
+/** 탐방 뷰를 노출할 모드 화이트리스트 */
+const EXPLORE_MODES = new Set(["IDLE", "EVENT", "LOCATION_FIND", "LOCATION_ARRIVE"]);
+
+/**
+ * 탐방 뷰 초기화 — 무대 안쪽 레이어로 마운트한다.
+ * 지역 데이터가 비어 있으면(아직 CSV 미작성) 조용히 건너뛴다.
+ */
+function initExplore() {
+  if (!data.areas.length) return;
+  explore = new ExploreView(visualStage, data, {
+    log: (body) => void appendCard({ body }),
+  });
+  const startArea = data.areas.find((a) => a.stage_map_id === getStageMapForDay(data, state.day)?.stage_map_id)
+    ?? data.areas[0];
+  explore.enter(startArea.area_id, { silent: true });
+  (window as unknown as { __explore: () => void }).__explore = () => {
+    if (!explore) return;
+    if (explore.isOn()) {
+      explore.hide();
+      visualStage.classList.remove("explore-on");
+    } else {
+      explore.show();
+      visualStage.classList.add("explore-on");
+    }
+  };
+}
+
+function syncExploreVisibility(modeId: string) {
+  if (!explore) return;
+  if (EXPLORE_MODES.has(modeId)) {
+    explore.show();
+    visualStage.classList.add("explore-on");
+  } else {
+    explore.hide();
+    visualStage.classList.remove("explore-on");
+  }
 }
 
 /**
@@ -3874,6 +3918,7 @@ async function init() {
   await playCutscene("intro");
   state = createInitialState(data);
   bindStaticUi();
+  initExplore();
   ensureWandererHero();
   applyStageBackground();
   refreshStatbar();

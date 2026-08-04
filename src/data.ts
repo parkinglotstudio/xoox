@@ -82,6 +82,9 @@ export async function loadGameData(): Promise<GameData> {
     rescueStateRows,
     commentaryRows,
     cutsceneRows,
+    areaRows,
+    areaConnRows,
+    areaNpcRows,
   ] = await Promise.all([
     loadCsv("effect_config"),
     loadCsv("grade_config"),
@@ -129,6 +132,9 @@ export async function loadGameData(): Promise<GameData> {
     loadCsv("rescue_state_config"),
     loadCsv("commentary_config"),
     loadCsv("cutscene_config"),
+    loadCsv("area_config"),
+    loadCsv("area_connection_config"),
+    loadCsv("area_npc_config"),
   ]);
 
   const items: ItemDef[] = itemsRaw.map((r) => ({
@@ -538,6 +544,36 @@ export async function loadGameData(): Promise<GameData> {
         line: r.line || "",
       }))
       .sort((a, b) => a.order - b.order),
+    areas: areaRows.map((r) => ({
+      area_id: r.area_id,
+      display_name: r.display_name || r.area_id,
+      sky_top: r.sky_top || "#1d2a3c",
+      sky_bottom: r.sky_bottom || "#0e161f",
+      ground_color: r.ground_color || "#2a3648",
+      ground_h_pct: num(r.ground_h_pct, 34),
+      background_asset: r.background_asset || "",
+      stage_map_id: r.stage_map_id || "",
+      note: r.note || "",
+    })),
+    areaConnections: areaConnRows.map((r) => ({
+      connection_id: r.connection_id,
+      from_area_id: r.from_area_id,
+      to_area_id: r.to_area_id,
+      exit_point: (r.exit_point || "RIGHT").toUpperCase() === "LEFT" ? "LEFT" : "RIGHT",
+      bidirectional: bool(r.bidirectional),
+      unlock_condition: r.unlock_condition || "",
+    })),
+    areaNpcs: areaNpcRows.map((r) => ({
+      npc_id: r.npc_id,
+      area_id: r.area_id,
+      x_pct: num(r.x_pct, 50),
+      icon: r.icon || "❔",
+      label: r.label || "",
+      trigger_type: (r.trigger_type || "MEMO").toUpperCase(),
+      trigger_ref: r.trigger_ref || "",
+      appear_condition: (r.appear_condition || "ALWAYS").toUpperCase(),
+      flavor_text: r.flavor_text || "",
+    })),
   };
 
   const covered = new Set(data.minigameEntries.map((e) => e.minigame_id));

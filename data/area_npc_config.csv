@@ -1,1 +1,7 @@
-npc_id,area_id,trigger_type,trigger_ref,appear_condition
+npc_id,area_id,x_pct,icon,label,trigger_type,trigger_ref,appear_condition,flavor_text
+n_gate_sign,area_sewer_gate,62,🪧,낡은 이정표,MEMO,,ALWAYS,글씨는 지워졌지만 화살표만은 안쪽을 가리키고 있다.
+n_gate_pipe,area_sewer_gate,30,🚰,새는 배관,MEMO,,ALWAYS,물이 뚝뚝 떨어진다. 이 소리를 따라온 아이가 있었을까.
+n_main_paw,area_sewer_main,45,🐾,젖은 발자국,MEMO,,ALWAYS,작은 발자국이 안쪽으로 이어진다. 아직 마르지 않았다.
+n_main_box,area_sewer_main,72,📦,낡은 종이상자,MEMO,,ALWAYS,누군가 여기서 며칠은 버틴 흔적이 있다.
+n_scrap_tire,area_scrapyard,38,🛞,버려진 타이어 더미,MEMO,,ALWAYS,사람이 떠난 뒤에도 이런 것만 남았다.
+n_scrap_can,area_scrapyard,66,🥫,찌그러진 캔,MEMO,,ALWAYS,누군가 먹이통 대신 쓴 듯 안쪽이 닳아 있다.

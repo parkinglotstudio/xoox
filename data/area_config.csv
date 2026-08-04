@@ -1,1 +1,4 @@
-area_id,display_name,background_asset,stage_map_id,note
+area_id,display_name,sky_top,sky_bottom,ground_color,ground_h_pct,background_asset,stage_map_id,note
+area_sewer_gate,하수도 입구,#1d2a3c,#0e161f,#2a3648,34,,map_1,구역01 시작 지점(플레이스홀더 색)
+area_sewer_main,하수도 본관,#22303a,#0d1a1c,#263a3a,32,,map_1,구조 조우가 자주 일어나는 중심부
+area_scrapyard,폐자재 야적장,#3a2f22,#1a1410,#40342a,36,,map_1,인간이 남긴 잔재가 쌓인 곳

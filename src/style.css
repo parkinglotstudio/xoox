@@ -5770,3 +5770,278 @@ body {
 .main-area {
   padding-bottom: 0;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   탐방 뷰 (Phase 2) — 지역을 걸어다니는 화면
+   기획: docs/gdd/25 §4 · 27 · 26 §3 · 구현: src/explore.ts
+   애니메이션은 전부 CSS(전환/키프레임). rAF 금지 규칙 준수.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.explore-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* stage-sky 위, 무대 UI(캡션/로그) 아래 */
+  display: none;
+  overflow: hidden;
+}
+.explore-layer.on {
+  display: block;
+}
+
+.explore-sky {
+  position: absolute;
+  inset: 0;
+}
+
+/* 땅 — 탭하면 그 지점으로 걸어간다 */
+.explore-ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+.explore-ground::before {
+  /* 땅과 하늘 경계의 옅은 안개 */
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -14px;
+  height: 22px;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.05));
+}
+
+.explore-props {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.explore-props > * {
+  pointer-events: auto;
+}
+
+/* ── 이벤트 지점 ── */
+.explore-poi {
+  position: absolute;
+  bottom: 26%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #dbe6f2;
+}
+.explore-poi-icon {
+  font-size: 22px;
+  line-height: 1;
+  /* 상시 맥동 — "여기 뭔가 있다" 신호 */
+  animation: poi-pulse 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+}
+.explore-poi-label {
+  font-size: 8px;
+  letter-spacing: 0.02em;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(8, 6, 18, 0.6);
+  opacity: 0.85;
+  white-space: nowrap;
+}
+.explore-poi.found .explore-poi-icon {
+  animation: poi-found 0.7s ease-out;
+}
+
+@keyframes poi-pulse {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.06); }
+}
+@keyframes poi-found {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.35) rotate(-6deg); }
+  100% { transform: scale(1); }
+}
+
+/* ── 출구 ── */
+.explore-exit {
+  position: absolute;
+  bottom: 30%;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 9px;
+  border: 1px solid rgba(140, 210, 235, 0.4);
+  border-radius: 4px;
+  background: rgba(8, 14, 24, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: #cfe6f2;
+  font-size: 9px;
+  cursor: pointer;
+  animation: exit-breathe 2.8s ease-in-out infinite;
+}
+.explore-exit.left { left: 8px; }
+.explore-exit.right { right: 8px; }
+.explore-exit-arrow { font-size: 10px; opacity: 0.9; }
+.explore-exit:hover { border-color: rgba(180, 240, 255, 0.85); }
+
+@keyframes exit-breathe {
+  0%, 100% { opacity: 0.72; }
+  50% { opacity: 1; }
+}
+
+/* ── 배우(방랑자) ── */
+.explore-actor {
+  position: absolute;
+  bottom: 22%;
+  left: 22%;
+  width: 34px;
+  height: 44px;
+  margin-left: -17px;
+  /* 걷기 = left 전환. 시간은 거리에 비례해 JS가 넣는다. */
+  transition: left 600ms linear;
+  transform: scaleX(var(--facing, 1));
+  /* 방향 전환은 짧게 */
+  transition-property: left, transform;
+  transition-duration: 600ms, 180ms;
+  transition-timing-function: linear, ease-out;
+}
+.explore-actor.turning .explore-actor-inner {
+  animation: actor-turn 180ms ease-out;
+}
+
+.explore-actor-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 42% 42% 38% 38%;
+  background: linear-gradient(180deg, #e8c98a 0%, #c99a5c 62%, #a87a44 100%);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+  position: relative;
+  /* 서 있을 때 = 호흡 */
+  animation: actor-breathe 2.6s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+/* 눈 — 진행 방향을 보게 */
+.explore-actor-inner::before {
+  content: "";
+  position: absolute;
+  right: 8px;
+  top: 13px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #2a1c0c;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+/* 발밑 그림자 */
+.explore-actor::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 30px;
+  height: 8px;
+  margin-left: -15px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.38);
+  filter: blur(2px);
+  animation: shadow-breathe 2.6s ease-in-out infinite;
+}
+
+/* 걷는 중 — 통통 튀는 bob + 살짝 기울기 (호흡 대신) */
+.explore-actor.walking .explore-actor-inner {
+  animation: actor-walk 340ms ease-in-out infinite;
+}
+.explore-actor.walking::after {
+  animation: shadow-walk 340ms ease-in-out infinite;
+}
+
+/* 도착 — 살짝 눌렸다 펴짐 */
+.explore-actor-inner.landing {
+  animation: actor-land 260ms ease-out;
+}
+/* 이벤트 지점 반응 — 제자리 홉 */
+.explore-actor-inner.react {
+  animation: actor-react 520ms ease-out;
+}
+
+@keyframes actor-breathe {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.02, 0.98); }
+}
+@keyframes shadow-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.38; }
+  50% { transform: scale(0.96); opacity: 0.32; }
+}
+@keyframes actor-walk {
+  0%   { transform: translateY(0) rotate(0deg) scale(1, 1); }
+  25%  { transform: translateY(-5px) rotate(3deg) scale(0.97, 1.03); }
+  50%  { transform: translateY(0) rotate(0deg) scale(1.03, 0.97); }
+  75%  { transform: translateY(-4px) rotate(-3deg) scale(0.98, 1.02); }
+  100% { transform: translateY(0) rotate(0deg) scale(1, 1); }
+}
+@keyframes shadow-walk {
+  0%, 50%, 100% { transform: scale(1); opacity: 0.36; }
+  25%, 75% { transform: scale(0.78); opacity: 0.22; }
+}
+@keyframes actor-land {
+  0% { transform: scale(0.9, 1.1); }
+  45% { transform: scale(1.12, 0.88); }
+  100% { transform: scale(1, 1); }
+}
+@keyframes actor-react {
+  0% { transform: translateY(0); }
+  30% { transform: translateY(-14px) scale(0.94, 1.08); }
+  55% { transform: translateY(0) scale(1.1, 0.9); }
+  75% { transform: translateY(-5px) scale(0.98, 1.02); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+@keyframes actor-turn {
+  0% { transform: scaleX(0.72); }
+  100% { transform: scaleX(1); }
+}
+
+/* ── 지역 이름표 ── */
+.explore-name {
+  position: absolute;
+  left: 12px;
+  top: 10px;
+  padding: 3px 10px;
+  border-left: 2px solid rgba(140, 230, 235, 0.8);
+  background: rgba(6, 10, 20, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: #dff2f7;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  opacity: 0;
+}
+.explore-name.show {
+  animation: area-name-in 2.6s ease-out forwards;
+}
+@keyframes area-name-in {
+  0% { opacity: 0; transform: translateX(-8px); }
+  12% { opacity: 1; transform: translateX(0); }
+  75% { opacity: 1; }
+  100% { opacity: 0.35; }
+}
+
+/* ── 지역 전환 페이드 ── */
+.explore-fade {
+  position: absolute;
+  inset: 0;
+  background: #05040c;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms ease;
+}
+
+/* 탐방 중에는 기존 무대 배우(이모지 영웅/적)를 숨긴다 */
+.visual-stage.explore-on .stage-actors {
+  display: none;
+}
