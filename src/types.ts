@@ -573,30 +573,33 @@ export interface GameData {
 }
 
 /**
- * 탐방 지역 — 플레이어가 걸어다니는 한 화면.
- * 배경 아트가 준비되기 전까지는 sky/ground 색으로 플레이스홀더를 그린다.
- * (`background_asset`이 채워지면 그 이미지가 색보다 우선)
+ * 탐방 지역 — 위에서 내려다보는(탑뷰) 한 구역.
+ * 화면보다 세로로 긴 "월드"를 두고, 플레이어가 위로 전진하면 카메라가 따라 올라간다.
+ * 배경 아트 전까지는 색으로 플레이스홀더를 그린다(`background_asset`이 있으면 그쪽 우선).
  */
 export interface AreaDef {
   area_id: string;
   display_name: string;
-  sky_top: string;
-  sky_bottom: string;
-  ground_color: string;
-  /** 화면 아래에서 땅이 차지하는 비율(%) */
-  ground_h_pct: number;
+  /** 월드 위쪽(멀리) 색 */
+  ground_top: string;
+  /** 월드 아래쪽(가까이) 색 */
+  ground_bottom: string;
+  /** 가운데 길 색 */
+  path_color: string;
+  /** 월드 높이 = 화면 높이의 몇 % (200이면 두 화면 분량) */
+  world_h_pct: number;
   background_asset: string;
   stage_map_id: string;
   note: string;
 }
 
-/** 지역 간 통로. bidirectional이면 반대 방향도 자동 성립. */
+/** 지역 간 통로. 탑뷰이므로 위(다음 구역)/아래(이전 구역)로 이어진다. */
 export interface AreaConnectionDef {
   connection_id: string;
   from_area_id: string;
   to_area_id: string;
-  /** 화면의 어느 가장자리로 나가는지 */
-  exit_point: "LEFT" | "RIGHT";
+  /** 월드의 어느 끝으로 나가는지 — TOP=위로 전진, BOTTOM=아래로 후퇴 */
+  exit_point: "TOP" | "BOTTOM";
   bidirectional: boolean;
   unlock_condition: string;
 }
@@ -605,8 +608,10 @@ export interface AreaConnectionDef {
 export interface AreaNpcDef {
   npc_id: string;
   area_id: string;
-  /** 지역 가로폭 기준 위치(%) */
+  /** 월드 가로폭 기준 위치(%) */
   x_pct: number;
+  /** 월드 세로 기준 위치(%) — 0=맨 위, 100=맨 아래 */
+  y_pct: number;
   icon: string;
   label: string;
   /** MEMO=플레이버 텍스트만 · 이후 RESCUE/EVENT 등으로 확장 */

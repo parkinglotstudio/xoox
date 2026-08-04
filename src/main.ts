@@ -701,8 +701,12 @@ function setStageMode(
   scrollFeedToBottom({ anticipatePx: 12 });
 }
 
-/** 탐방 뷰를 노출할 모드 화이트리스트 */
-const EXPLORE_MODES = new Set(["IDLE", "EVENT", "LOCATION_FIND", "LOCATION_ARRIVE"]);
+/**
+ * 탐방 뷰를 노출할 모드 화이트리스트.
+ * MOVING은 **반드시 포함** — 하루를 넘길 때 걷는 연출이 나오는 자리다.
+ * (초기 구현에서 빠뜨려 "이동 연출이 아예 없다"는 문제가 있었음)
+ */
+const EXPLORE_MODES = new Set(["IDLE", "MOVING", "EVENT", "LOCATION_FIND", "LOCATION_ARRIVE"]);
 
 /**
  * 탐방 뷰 초기화 — 무대 안쪽 레이어로 마운트한다.
@@ -3437,7 +3441,10 @@ async function playMovingPhase() {
     clearLog: true,
     remember: false,
   });
-  await sleep(1200);
+  // 탐방 뷰가 켜져 있으면 실제로 걷는 연출을 보여준다(없으면 기존처럼 대기만)
+  const MOVE_MS = 1200;
+  if (explore?.isOn()) await explore.journey(MOVE_MS);
+  else await sleep(MOVE_MS);
 }
 
 async function resolveDirectReward() {

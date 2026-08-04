@@ -1,7 +1,19 @@
-npc_id,area_id,x_pct,icon,label,trigger_type,trigger_ref,appear_condition,flavor_text
-n_gate_sign,area_sewer_gate,62,🪧,낡은 이정표,MEMO,,ALWAYS,글씨는 지워졌지만 화살표만은 안쪽을 가리키고 있다.
-n_gate_pipe,area_sewer_gate,30,🚰,새는 배관,MEMO,,ALWAYS,물이 뚝뚝 떨어진다. 이 소리를 따라온 아이가 있었을까.
-n_main_paw,area_sewer_main,45,🐾,젖은 발자국,MEMO,,ALWAYS,작은 발자국이 안쪽으로 이어진다. 아직 마르지 않았다.
-n_main_box,area_sewer_main,72,📦,낡은 종이상자,MEMO,,ALWAYS,누군가 여기서 며칠은 버틴 흔적이 있다.
-n_scrap_tire,area_scrapyard,38,🛞,버려진 타이어 더미,MEMO,,ALWAYS,사람이 떠난 뒤에도 이런 것만 남았다.
-n_scrap_can,area_scrapyard,66,🥫,찌그러진 캔,MEMO,,ALWAYS,누군가 먹이통 대신 쓴 듯 안쪽이 닳아 있다.
+npc_id,area_id,x_pct,y_pct,icon,label,trigger_type,trigger_ref,appear_condition,flavor_text
+n_gate_pipe,area_sewer_gate,28,86,🚰,새는 배관,MEMO,,ALWAYS,물이 뚝뚝 떨어진다. 이 소리를 따라온 아이가 있었을까.
+n_gate_sign,area_sewer_gate,70,72,🪧,낡은 이정표,MEMO,,ALWAYS,글씨는 지워졌지만 화살표만은 안쪽을 가리키고 있다.
+n_gate_puddle,area_sewer_gate,34,58,💧,고인 웅덩이,MEMO,,ALWAYS,수면에 비친 얼굴이 낯설다. 며칠이나 씻지 못했을까.
+n_gate_bench,area_sewer_gate,66,44,🪑,부서진 벤치,MEMO,,ALWAYS,누군가 오래 앉아 있었던 자국이 남아 있다.
+n_gate_grate,area_sewer_gate,38,28,🕳️,벌어진 배수구,MEMO,,ALWAYS,안쪽에서 미지근한 바람이 올라온다.
+n_gate_light,area_sewer_gate,62,14,🔦,떨어진 손전등,MEMO,,ALWAYS,아직 희미하게 켜져 있다. 누가 급히 두고 간 걸까.
+n_main_paw,area_sewer_main,64,88,🐾,젖은 발자국,MEMO,,ALWAYS,작은 발자국이 안쪽으로 이어진다. 아직 마르지 않았다.
+n_main_box,area_sewer_main,30,74,📦,낡은 종이상자,MEMO,,ALWAYS,누군가 여기서 며칠은 버틴 흔적이 있다.
+n_main_bowl,area_sewer_main,70,60,🥣,빈 밥그릇,MEMO,,ALWAYS,누가 챙겨주던 흔적. 그 사람은 이제 오지 않는 모양이다.
+n_main_lamp,area_sewer_main,36,46,💡,깜빡이는 등,MEMO,,ALWAYS,아직 전기가 흐른다. 누가 아직 이곳을 쓰고 있다는 뜻일까.
+n_main_blanket,area_sewer_main,66,32,🧣,버려진 목도리,MEMO,,ALWAYS,작은 몸에 맞게 여러 번 접힌 자국이 있다.
+n_main_door,area_sewer_main,32,18,🚪,반쯤 열린 철문,MEMO,,ALWAYS,안쪽은 더 깊고 어둡다. 그래도 가야 한다.
+n_scrap_tire,area_scrapyard,34,88,🛞,버려진 타이어 더미,MEMO,,ALWAYS,사람이 떠난 뒤에도 이런 것만 남았다.
+n_scrap_can,area_scrapyard,68,74,🥫,찌그러진 캔,MEMO,,ALWAYS,누군가 먹이통 대신 쓴 듯 안쪽이 닳아 있다.
+n_scrap_cart,area_scrapyard,42,60,🛒,뒤집힌 손수레,MEMO,,ALWAYS,바퀴 하나가 아직 천천히 돌고 있다.
+n_scrap_tv,area_scrapyard,70,46,📺,깨진 브라운관,MEMO,,ALWAYS,화면에 아무것도 비치지 않는다. 오래전에 버려졌다.
+n_scrap_toy,area_scrapyard,32,32,🧸,흙 묻은 인형,MEMO,,ALWAYS,누군가의 손을 오래 탔던 것 같다. 여기 왜 있을까.
+n_scrap_gate,area_scrapyard,58,16,⛓️,녹슨 철망,MEMO,,ALWAYS,구멍이 하나 벌어져 있다. 작은 몸이라면 지나갈 수 있겠다.
