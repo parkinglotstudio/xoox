@@ -123,6 +123,31 @@
 
 ---
 
+## 2026-08-09 — 섹터 스케일·배경 아트 정리
+
+### 기획
+- **42** 재작성: 섬1km · 칸333m · 에디터(오버레이·리사이즈) SSoT
+- **44** 신설: 육지5칸 after/before 파이프라인 (옛 산재 `43_섹터배경_*` 삭제·번호 충돌 해소)
+- **40** §11 해결 반영 · INDEX·읽는 순서·`NEXT_AI_PROMPT` 갱신
+- **필러/옛루프(`43_옛루프_*`)는 미수정**
+
+### 구현·에셋 (동일 세션)
+- `sector_i{21,11,10,12,01}_{after|before}.png` · `sector_scale.json` · `area_config` 육지 연결
+- `sector-editor` 패널 리사이즈 · after/before 전환
+
+---
+
+## 2026-08-09 — 탐방 안개
+
+### 기획
+- **45** 신설: 시야≈10m 원 · 지나온 길 · 미탐방 노드 숨김 · `fog_vision_m` SSoT
+- INDEX·40·42 링크 갱신
+
+### 구현
+- `explore.ts` trail/lit 마스크 · `sector_scale.json` fog_* · `.fog-hidden`
+
+---
+
 ## 템플릿 (이후 추가)
 
 ```

@@ -1,5 +1,5 @@
 import { loadCsv } from "./csv";
-import type { GameData, ItemDef, PassiveItemDef, CurrencyDef } from "./types";
+import type { ArenaDef, GameData, ItemDef, PassiveItemDef, CurrencyDef } from "./types";
 
 const num = (v: string, fallback = 0) => (v === "" ? fallback : Number(v));
 const numOrNull = (v: string) => (v === "" ? null : Number(v));
@@ -85,7 +85,20 @@ export async function loadGameData(): Promise<GameData> {
     areaRows,
     areaConnRows,
     areaNpcRows,
+    areaZoneRows,
+    areaPropRows,
     tigonMemoryRows,
+    islandTaskRows,
+    islandSpotRows,
+    purifyCatalystRows,
+    purifyBlightRows,
+    memoryBattleRows,
+    dialogueRows,
+    chapterRows,
+    sectorBeatRows,
+    pathJudgmentRows,
+    arenaRows,
+    purifyAmmoCostRows,
   ] = await Promise.all([
     loadCsv("effect_config"),
     loadCsv("grade_config"),
@@ -136,7 +149,20 @@ export async function loadGameData(): Promise<GameData> {
     loadCsv("area_config"),
     loadCsv("area_connection_config"),
     loadCsv("area_npc_config"),
+    loadCsv("area_zone_config"),
+    loadCsv("area_prop_config"),
     loadCsv("tigon_memory_config"),
+    loadCsv("island_task_config"),
+    loadCsv("island_spot_config"),
+    loadCsv("purify_catalyst_config"),
+    loadCsv("purify_blight_config"),
+    loadCsv("memory_battle_config"),
+    loadCsv("dialogue_config"),
+    loadCsv("chapter_config"),
+    loadCsv("sector_beat_config"),
+    loadCsv("path_judgment_config"),
+    loadCsv("arena_config"),
+    loadCsv("purify_ammo_cost"),
   ]);
 
   const items: ItemDef[] = itemsRaw.map((r) => ({
@@ -555,16 +581,22 @@ export async function loadGameData(): Promise<GameData> {
       world_h_pct: num(r.world_h_pct, 240),
       background_asset: r.background_asset || "",
       stage_map_id: r.stage_map_id || "",
+      is_spawn: bool(r.is_spawn),
       note: r.note || "",
     })),
-    areaConnections: areaConnRows.map((r) => ({
-      connection_id: r.connection_id,
-      from_area_id: r.from_area_id,
-      to_area_id: r.to_area_id,
-      exit_point: (r.exit_point || "TOP").toUpperCase() === "BOTTOM" ? "BOTTOM" : "TOP",
-      bidirectional: bool(r.bidirectional),
-      unlock_condition: r.unlock_condition || "",
-    })),
+    areaConnections: areaConnRows.map((r) => {
+      const ep = (r.exit_point || "TOP").toUpperCase();
+      const exit_point =
+        ep === "BOTTOM" ? "BOTTOM" : ep === "LEFT" ? "LEFT" : ep === "RIGHT" ? "RIGHT" : "TOP";
+      return {
+        connection_id: r.connection_id,
+        from_area_id: r.from_area_id,
+        to_area_id: r.to_area_id,
+        exit_point: exit_point as "TOP" | "BOTTOM" | "LEFT" | "RIGHT",
+        bidirectional: bool(r.bidirectional),
+        unlock_condition: r.unlock_condition || "",
+      };
+    }),
     areaNpcs: areaNpcRows.map((r) => ({
       npc_id: r.npc_id,
       area_id: r.area_id,
@@ -576,6 +608,32 @@ export async function loadGameData(): Promise<GameData> {
       trigger_ref: r.trigger_ref || "",
       appear_condition: (r.appear_condition || "ALWAYS").toUpperCase(),
       flavor_text: r.flavor_text || "",
+      zone_id: (r.zone_id || "").trim() || undefined,
+    })),
+    areaZones: areaZoneRows.map((r) => ({
+      zone_id: r.zone_id,
+      area_id: r.area_id,
+      x_pct: num(r.x_pct, 50),
+      y_pct: num(r.y_pct, 50),
+      r_pct: num(r.r_pct, 8),
+      beat_id: (r.beat_id || "").trim(),
+      label: r.label || "",
+      note: r.note || "",
+    })),
+    areaProps: areaPropRows.map((r) => ({
+      prop_id: r.prop_id,
+      area_id: r.area_id,
+      kind: (r.kind || "crate").toLowerCase(),
+      x_pct: num(r.x_pct, 50),
+      y_pct: num(r.y_pct, 50),
+      yaw_deg: num(r.yaw_deg, 0),
+      h_m: num(r.h_m, 0),
+      group_id: r.group_id || "",
+      collide: r.collide === undefined || r.collide === "" ? true : bool(r.collide),
+      purify_target: bool(r.purify_target),
+      life_blight_id: (r.life_blight_id || "").trim(),
+      art: (r.art || "").trim(),
+      note: r.note || "",
     })),
     tigonMemories: tigonMemoryRows
       .map((r) => ({
@@ -588,6 +646,132 @@ export async function loadGameData(): Promise<GameData> {
         reaction_text: r.reaction_text || "",
       }))
       .sort((a, b) => a.order - b.order),
+    islandTasks: islandTaskRows.map((r) => ({
+      task_id: r.task_id,
+      liked_tag_hint: (r.liked_tag_hint || "").trim().toUpperCase(),
+      flavor_text: r.flavor_text || "%s가 섬에서 무언가를 해왔다",
+      gold: num(r.gold, 10),
+      exp: num(r.exp, 5),
+      note: r.note ?? "",
+    })),
+    islandSpots: islandSpotRows.map((r) => ({
+      spot_id: r.spot_id,
+      x_pct: num(r.x_pct, 50),
+      y_pct: num(r.y_pct, 50),
+      icon: r.icon || "📍",
+      label: r.label || "",
+      flavor_text: r.flavor_text || "",
+      action: (r.action || "GREET").toUpperCase(),
+      note: r.note ?? "",
+    })),
+    purifyCatalysts: purifyCatalystRows.map((r) => ({
+      catalyst_id: r.catalyst_id,
+      display_name: r.display_name || r.catalyst_id,
+      icon: r.icon || "💧",
+      flavor_text: r.flavor_text || "",
+      note: r.note ?? "",
+    })),
+    purifyBlights: purifyBlightRows.map((r) => {
+      const kind = (r.target_kind || "AREA").toUpperCase() === "LIFE" ? "LIFE" : "AREA";
+      return {
+        blight_id: r.blight_id,
+        display_name: r.display_name || r.blight_id,
+        icon: r.icon || "🌫️",
+        needs_catalyst_id: r.needs_catalyst_id || "",
+        target_kind: kind as "AREA" | "LIFE",
+        target_ref: r.target_ref || "",
+        success_flavor: r.success_flavor || "",
+        area_tint: num(r.area_tint, 0.5),
+        reveal_radius_pct: num(r.reveal_radius_pct, kind === "LIFE" ? 18 : 28),
+        purpose_text: r.purpose_text || "",
+        note: r.note ?? "",
+      };
+    }),
+    memoryBattleRounds: memoryBattleRows
+      .map((r) => ({
+        round_order: num(r.round_order, 0),
+        prompt: r.prompt || "",
+        opt_good: r.opt_good || "다가간다",
+        opt_bad: r.opt_bad || "밀어붙인다",
+        good_line: r.good_line || "",
+        bad_line: r.bad_line || "",
+        memory_boost_id: (r.memory_boost_id || "").trim(),
+        note: r.note ?? "",
+      }))
+      .sort((a, b) => a.round_order - b.round_order),
+    // 43 — 필러 대화(리더 채팅 · 방랑자 독백)
+    dialogues: dialogueRows
+      .map((r) => {
+        const st = (r.style || "BUBBLE").toUpperCase();
+        return {
+          dialogue_id: r.dialogue_id,
+          trigger: (r.trigger || "").trim().toUpperCase(),
+          trigger_ref: (r.trigger_ref || "").trim(),
+          step_order: num(r.step_order, 0),
+          speaker: r.speaker || "",
+          icon: r.icon || "",
+          style: (st === "ME" ? "ME" : st === "MONO" ? "MONO" : "BUBBLE") as "BUBBLE" | "ME" | "MONO",
+          line: r.line || "",
+        };
+      })
+      .sort((a, b) => a.step_order - b.step_order),
+    // 43 — 장(章) 헤더
+    chapters: chapterRows.map((r) => ({
+      chapter_id: r.chapter_id,
+      area_id: r.area_id || "",
+      title: r.title || "",
+      subtitle: r.subtitle || "",
+      note: r.note ?? "",
+    })),
+    // 43 S4 — 섹터 사이클 비트 (순서 고정 · 대상/횟수 랜덤)
+    sectorBeats: sectorBeatRows
+      .map((r) => ({
+        beat_order: num(r.beat_order, 0),
+        beat_id: r.beat_id || "",
+        label: r.label || r.beat_id || "",
+        node_types: (r.node_types || "")
+          .split("|")
+          .map((s) => s.trim().toUpperCase())
+          .filter(Boolean),
+        min_count: num(r.min_count, 1),
+        max_count: num(r.max_count, 1),
+        is_fork: bool(r.is_fork),
+        note: r.note ?? "",
+      }))
+      .sort((a, b) => a.beat_order - b.beat_order),
+    // 길 판정 — 등급이 곧 갈림길/자동랜덤
+    pathJudgments: pathJudgmentRows.map((r) => ({
+      grade_id: r.grade_id || "",
+      travel_mode: (r.travel_mode || "FORK_GOOD") as
+        | "FORK_GOOD"
+        | "FORK_COSTLY"
+        | "RANDOM_SAFE"
+        | "RANDOM_BAD",
+      body: r.body || "",
+      body_line2: r.body_line2 || "",
+      choice_cost_effect_id: (r.choice_cost_effect_id || "").trim(),
+      note: r.note ?? "",
+    })),
+    purifyAmmoCosts: purifyAmmoCostRows.map((r) => ({
+      sink_id: (r.sink_id || "").trim(),
+      need: num(r.need, 0),
+      label: r.label || r.sink_id || "",
+    })),
+    arenas: arenaRows.map((r) => ({
+      arena_id: r.arena_id,
+      display_name: r.display_name || r.arena_id,
+      rival_kind: ((r.rival_kind || "CLOCK").toUpperCase() as ArenaDef["rival_kind"]),
+      rival_icon: r.rival_icon || "⏳",
+      rival_label: r.rival_label || "",
+      goal: num(r.goal, 8),
+      duration_sec: num(r.duration_sec),
+      rival_speed: num(r.rival_speed),
+      reward_effect_id: (r.reward_effect_id || "").trim(),
+      flavor_text: r.flavor_text || "",
+      win_text: r.win_text || "",
+      lose_text: r.lose_text || "",
+      note: r.note ?? "",
+    })),
   };
 
   const covered = new Set(data.minigameEntries.map((e) => e.minigame_id));

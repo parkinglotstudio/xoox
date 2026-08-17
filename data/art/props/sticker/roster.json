@@ -1,0 +1,20 @@
+{
+  "note": "컨셉 청록 지붕 세움판. 집은 4종만. 나머지는 그룹 지울 수 있는 소품.",
+  "houses": [
+    { "id": "house_01", "file": "prop_sticker_house_01.png", "name": "박공 주거" },
+    { "id": "house_02", "file": "prop_sticker_house_02.png", "name": "작은 오두막" },
+    { "id": "house_03", "file": "prop_sticker_house_03.png", "name": "열린 공방" },
+    { "id": "house_04", "file": "prop_sticker_house_04.png", "name": "아치 창고" }
+  ],
+  "group": [
+    "prop_sticker_tree.png",
+    "prop_sticker_fence.png",
+    "prop_sticker_pole.png",
+    "prop_sticker_crate.png",
+    "prop_sticker_barrel.png",
+    "prop_sticker_sign.png",
+    "prop_sticker_bush.png",
+    "prop_sticker_debris.png",
+    "prop_sticker_tower.png"
+  ]
+}

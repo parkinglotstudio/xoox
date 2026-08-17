@@ -1,0 +1,9 @@
+beat_order,beat_id,label,node_types,min_count,max_count,is_fork,note
+1,B1,만나기,BLIGHT,1,1,FALSE,오염을 보고 정화제 필요량을 안다
+2,B2,채우기,FILL,2,3,FALSE,같은 날 정화체 줍기
+3,B3,해금,BLIGHT_APPLY,1,1,FALSE,주변 정화(AREA 파도)
+4,B3r,잔여칠,PROP_PURIFY,1,1,FALSE,스케치 잔여 오브 칼라 총
+5,B3b,뭉치,PROP_LIFE,1,1,FALSE,생명 뭉치 스케치→총→동반
+6,B3c,탐방,DAILY|MEMORY|SKILL,1,2,FALSE,해금·잔여 뒤 짧게
+7,B4,구조,RESCUE,1,2,FALSE,잔여 클리어 뒤 · 이번 구현 범위 밖
+8,B5,관문,MINIBOSS|BOSS,1,1,TRUE,선불 후 자동 연출 · 다음 지역

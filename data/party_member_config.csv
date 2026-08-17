@@ -20,3 +20,5 @@ mem_r17,새끼 고양이,🐱,FLAT_HP,3200,0,체력 +3200,sk_r17,RESIDENT,스테
 mem_r18,느긋한 뚱냥이,🐈,FLAT_HP,4000,0,체력 +4000,sk_r18,RESIDENT,스테이지4 · 구조 보상
 mem_r19,애교쟁이 고양이,🐱,FLAT_ATK,490,0,공격력 +490,sk_r19,RESIDENT,스테이지4 · 구조 보상
 mem_r20,영악한 치즈고양이,🐈,FLAT_ATK,520,0,공격력 +520,sk_r20,RESIDENT,스테이지4 · 구조 보상
+mem_mongchi,뭉치,🐕,FLAT_HP,15,0,정화 체력 +15 (고정),,RESIDENT,Wave1 정화 · 18 문서
+mem_haneuli,하늘이,🐈,PERIODIC_HEAL,15,3,3턴마다 체력 15% 회복,,RESIDENT,Wave2 정화 · 18 문서

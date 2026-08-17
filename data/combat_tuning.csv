@@ -46,8 +46,15 @@ jackpot_slot_ms,3200,대박 로그 슬롯 회전(ms)
 jackpot_slot_step_ms,44,대박 슬롯 스텝(ms)
 rescue_spawn_chance,30,구조 조우 스폰 확률(%) — 풀에 남은 동물이 있을 때 하루 진행 시
 rescue_guaranteed_day,2,첫 구조 조우 보장 일차(이 날 아직 구조 0마리면 100% 스폰) · 0=끄기
-rescue_good_purify,28,공략 적중(좋아하는 접근) 정화도 증가
-rescue_neutral_purify,10,무난한 접근 정화도 증가
-rescue_bad_purify,-8,싫어하는 접근 정화도 변화
+rescue_good_purify,30,공략 적중(좋아하는 접근) 정화도 증가 · 41 §5 재조정
+rescue_neutral_purify,15,무난한 접근 정화도 증가 · GOOD 불가 턴(20%)의 부당한 실패를 막는 하한
+rescue_bad_purify,-10,싫어하는 접근 정화도 변화
 rescue_purify_variance,3,정화도 증감 랜덤 ±
 rescue_turn_delay_ms,620,구조 조우 반응 연출 간격(ms)
+adventure_reward_mult,0.4,S5 모험(자동) 보상 배율 — 여정 하루보다 낮게【잠정】
+adventure_gold_base,90,S5 모험 기본 골드(맵 drop_gold_mult·reward_mult 적용 전)
+adventure_exp_base,28,S5 모험 기본 EXP(맵 drop_exp_mult·reward_mult 적용 전)
+voyage_days,60,39 §2 · 배가 오는 날(한 판 길이). 초과 시 귀환 화면
+skill_node_default_tier,일반,43 · SKILL 노드에 티어가 비었을 때 기본
+path_judge_mid_chance_pct,40,B3·B7 비트 종료 후 중간 길 판정(등급→갈림길/자동) 확률%
+path_force_random_pct,25,출구 2개+일 때에도 자동 랜덤(끌려감)이 되는 확률% · 나머지는 항상 갈림길 선택

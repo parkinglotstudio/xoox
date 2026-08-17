@@ -1,0 +1,12 @@
+task_id,liked_tag_hint,flavor_text,gold,exp,note
+it_gentle_nap,GENTLE,%s가 섬 그늘에서 낮잠을 자다가 반짝이는 조각을 물어왔다,18,8,온순
+it_gentle_groom,GENTLE,%s가 동생들 털을 고르다 떨어진 사료를 모아왔다,16,7,온순
+it_wait_watch,WAIT,%s가 부두에서 느긋이 바다를 보다가 부유물을 건져왔다,15,8,기다림
+it_wait_sun,WAIT,%s가 햇볕을 쬐다 굴러온 반짝이를 주워왔다,14,6,기다림
+it_bold_run,BOLD,%s가 섬을 한 바퀴 뛰어다니다가 쓸 만한 부품을 물어왔다,22,10,대담
+it_bold_dig,BOLD,%s가 흙을 파헤치다 숨겨둔 동전 주머니를 찾았다,24,9,대담
+it_feed_share,FEED,%s가 식량 창고를 정리하다 여분의 사료를 찾아냈다,20,8,먹이
+it_feed_cook,FEED,%s가 부엌을 돕다 간식을 조금 남겨두었다,17,7,먹이
+it_play_ball,PLAY,%s가 공놀이를 하다 구석의 반짝이를 건드렸다,16,9,놀이
+it_play_chase,PLAY,%s가 친구들과 술래잡기하다 떨어진 동전을 주웠다,18,8,놀이
+it_fallback,,%s가 섬을 거닐다 작은 선물을 들고 돌아왔다,12,6,폴백

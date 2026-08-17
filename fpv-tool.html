@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XOOX 3D 여정 뷰 프로토</title>
+    <style>
+      :root {
+        --bg: #12141a; --panel: #1c212b; --line: #3a4454; --text: #e8eef8;
+        --muted: #9aa8bc; --accent: #5ec8ff; --ok: #6ddea0; --warn: #ffd27a;
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0; height: 100%; background: var(--bg); color: var(--text);
+        font-family: "Pretendard", "Malgun Gothic", sans-serif;
+      }
+      body { display: grid; grid-template-rows: auto 1fr; }
+
+      .bar {
+        display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+        padding: 10px 14px; background: var(--panel); border-bottom: 1px solid var(--line);
+      }
+      .bar h1 { margin: 0; font-size: 15px; font-weight: 800; }
+      .bar .hint { color: var(--muted); font-size: 12px; }
+      .bar select, .bar button {
+        border: 1px solid var(--line); background: #11161f; color: var(--text);
+        border-radius: 8px; padding: 7px 12px; font-weight: 700; cursor: pointer;
+      }
+      .bar button.on, .bar button.primary {
+        background: #1a4a63; border-color: #2f7ea8; color: #dff4ff;
+      }
+      .status { font-size: 12px; color: var(--muted); margin-left: auto; }
+      .status.ok { color: var(--ok); }
+      .status.err { color: #ff8f8f; }
+
+      .workspace { display: grid; grid-template-columns: 1fr 290px; min-height: 0; }
+      .stage-col {
+        min-width: 0; min-height: 0; display: flex; flex-direction: column;
+        background: #06080c; padding: 12px; gap: 8px;
+      }
+      .stage-host {
+        flex: 1; min-height: 0; display: grid; place-items: center;
+        container-type: size; overflow: hidden;
+      }
+      .stage-frame {
+        position: relative;
+        width: min(100cqw, calc(100cqh * 16 / 9));
+        height: min(100cqh, calc(100cqw * 9 / 16));
+        border: 2px solid #2f7ea8; border-radius: 10px; overflow: hidden;
+        background: #000;
+      }
+      #fpvCanvas { display: block; width: 100%; height: 100%; }
+
+      /* 좌상단 미니맵 자리 — 본편 이식 후 explore가 들어올 칸 */
+      .mini {
+        position: absolute; left: 10px; top: 10px; z-index: 3;
+        width: 26%; aspect-ratio: 1 / 1;
+        border: 2px solid rgba(94, 200, 255, 0.7); border-radius: 8px;
+        background: rgba(4, 8, 14, 0.82); overflow: hidden;
+      }
+      .mini canvas { display: block; width: 100%; height: 100%; }
+      .mini .cap {
+        position: absolute; left: 6px; top: 4px; font-size: 10px; font-weight: 800;
+        color: #bfe8ff; text-shadow: 0 1px 2px #000; pointer-events: none;
+      }
+
+      .hud {
+        position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%);
+        z-index: 3; display: flex; gap: 8px; align-items: center;
+        padding: 7px 14px; border-radius: 999px;
+        background: rgba(6, 12, 18, 0.82); border: 1px solid rgba(94, 200, 255, 0.4);
+        font-size: 12px; font-weight: 700; color: #dff0ff; white-space: nowrap;
+      }
+      .hud .near { color: var(--warn); }
+      .keys { font-size: 11px; color: var(--muted); text-align: center; }
+      .keys b { color: var(--text); }
+
+      .side {
+        border-left: 1px solid var(--line); background: var(--panel);
+        padding: 12px; overflow: auto; display: flex; flex-direction: column; gap: 8px;
+      }
+      .side h2 {
+        margin: 6px 0 0; font-size: 11px; color: var(--muted);
+        text-transform: uppercase; letter-spacing: 0.06em;
+      }
+      /* 다이얼 마크업은 Journey3DTuner가 만든다 — 클래스 이름을 맞춰 둔다 */
+      .j3d-row { display: grid; gap: 3px; }
+      .j3d-row label {
+        font-size: 11px; color: var(--muted); display: flex;
+        justify-content: space-between; gap: 8px;
+      }
+      .j3d-row label b { color: var(--warn); font-variant-numeric: tabular-nums; }
+      .j3d-row input[type="range"] { width: 100%; accent-color: var(--accent); }
+      .j3d-row select, .j3d-row input[type="color"] {
+        border: 1px solid var(--line); background: #11161f; color: var(--text);
+        border-radius: 8px; padding: 6px 8px; width: 100%; font-weight: 700;
+      }
+      .j3d-row input[type="color"] { height: 32px; padding: 2px; }
+      #dials { display: flex; flex-direction: column; gap: 8px; }
+      #dials h2 {
+        margin: 6px 0 0; font-size: 11px; color: var(--muted);
+        text-transform: uppercase; letter-spacing: 0.06em;
+      }
+      .help {
+        font-size: 11px; line-height: 1.5; background: #11161f; border: 1px solid var(--line);
+        border-radius: 8px; padding: 8px 10px; color: var(--muted);
+      }
+      .help code { color: var(--warn); }
+    </style>
+  </head>
+  <body>
+    <div class="bar">
+      <h1>3D 여정 뷰 프로토</h1>
+      <span class="hint">항공 지도를 바닥에 눕히고 2D 빌보드를 세운다 (둠 방식)</span>
+      <select id="sectorSel" title="섹터"></select>
+      <select id="artSel" title="정화 전/후">
+        <option value="before" selected>before (오염)</option>
+        <option value="after">after (정화후)</option>
+      </select>
+      <button type="button" id="btnReset">위치 초기화</button>
+      <button type="button" id="btnDefaults">기본값</button>
+      <button type="button" id="btnRevert">되돌리기</button>
+      <button type="button" class="primary" id="btnSave">저장</button>
+      <span class="status" id="status">ready</span>
+    </div>
+
+    <div class="workspace">
+      <div class="stage-col">
+        <div class="stage-host">
+          <div class="stage-frame" id="stageFrame">
+            <canvas id="fpvCanvas"></canvas>
+            <div class="mini">
+              <span class="cap">미니맵</span>
+              <canvas id="miniCanvas" width="256" height="256"></canvas>
+            </div>
+            <div class="hud">
+              <span id="hudPos">—</span>
+              <span id="hudNear" class="near"></span>
+            </div>
+          </div>
+        </div>
+        <div class="keys">
+          <b>W/S</b> 전후 · <b>A/D</b> 게걸음 · <b>←/→</b> 회전 · <b>드래그</b> 시점 ·
+          <b>V</b> 1인칭↔3인칭 · <b>Enter</b> 노드 실행
+        </div>
+      </div>
+
+      <aside class="side">
+        <div id="dials"></div>
+        <div class="help">
+          <b>저장</b>하면 본편 3D 뷰에 그대로 반영된다 →
+          <code>data/ui/layout/journey3d_layout.json</code><br />
+          바닥 = <code>data/ui/journey/sector_*.png</code> (2048² 항공 지도)<br />
+          노드 = <code>data/area_npc_config.csv</code> 의 x_pct/y_pct<br />
+          구조물은 아트가 없어 <b>캔버스 절차 생성</b> 임시 프롭이다.<br />
+          같은 다이얼이 <code>/layout-editor.html</code> 씬 <b>journey3d</b> 에도 있다.
+        </div>
+      </aside>
+    </div>
+
+    <script type="module" src="/src/tools/fpvTool/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>시나리오 체인 툴 · XOOX · 연출 제외</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
+    <style>
+      :root {
+        --bg: #0f1613;
+        --panel: #1a2420;
+        --line: #2e3d36;
+        --text: #e8f0ea;
+        --muted: #8aa094;
+        --accent: #6dbf8c;
+        --accent-dim: #3d7a56;
+        --warn: #ffc857;
+        --bad: #ff8a7a;
+        --ok: #7fd4a0;
+        font-family: Pretendard, "Apple SD Gothic Neo", sans-serif;
+        color: var(--text);
+        background: var(--bg);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(ellipse 70% 45% at 15% 0%, #1a3028 0%, transparent 55%),
+          var(--bg);
+      }
+      header { padding: 14px 22px 10px; border-bottom: 1px solid var(--line); }
+      header h1 { margin: 0; font-size: 19px; letter-spacing: -0.02em; font-weight: 700; }
+      header p { margin: 6px 0 0; font-size: 12px; color: var(--muted); line-height: 1.5; max-width: 860px; }
+      header code { color: var(--accent); }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(320px, 460px) minmax(0, 1fr);
+        gap: 14px;
+        padding: 14px 22px 30px;
+        align-items: start;
+      }
+      @media (max-width: 1000px) { .layout { grid-template-columns: 1fr; } }
+
+      .panel { background: var(--panel); border: 1px solid var(--line); padding: 13px; }
+      .panel + .panel { margin-top: 12px; }
+      .panel h2 {
+        margin: 0 0 10px; font-size: 14px; color: var(--accent); font-weight: 600;
+        display: flex; align-items: center; gap: 8px;
+      }
+      .panel h2 .tag {
+        font-size: 10px; font-weight: 700; color: #0a100e; background: var(--accent);
+        padding: 1px 6px; border-radius: 2px;
+      }
+
+      label { display: block; font-size: 11px; color: var(--muted); margin-top: 9px; }
+      select, input[type="text"] {
+        width: 100%; margin-top: 4px; font-size: 12px; color: var(--text);
+        background: #121a17; border: 1px solid var(--line); padding: 6px 8px;
+      }
+      button {
+        font-size: 12px; padding: 6px 10px; cursor: pointer;
+        background: var(--accent-dim); color: var(--text); border: 1px solid var(--accent);
+      }
+      button:hover { background: var(--accent); color: #0a100e; }
+      button:disabled { opacity: .4; cursor: not-allowed; }
+      button.ghost { background: transparent; border-color: var(--line); color: var(--muted); }
+      button.ghost:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
+      button.danger { background: transparent; border-color: #6a3a34; color: var(--bad); }
+      button.danger:hover { background: #6a3a34; color: var(--text); }
+      .btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px; }
+
+      .chain-list { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; max-height: 210px; overflow-y: auto; }
+      .chain-item {
+        display: flex; align-items: center; gap: 8px; padding: 7px 9px;
+        background: #121a17; border: 1px solid var(--line); cursor: pointer; font-size: 12px;
+      }
+      .chain-item:hover { border-color: var(--accent-dim); }
+      .chain-item.on { border-color: var(--accent); background: #16241d; }
+      .chain-item .cid { color: var(--muted); font-size: 10px; }
+      .chain-item .steps { margin-left: auto; color: var(--muted); font-size: 10px; }
+
+      .step-row {
+        border: 1px solid var(--line); background: #121a17; padding: 9px; margin-top: 7px;
+      }
+      .step-head { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; }
+      .step-head .no {
+        width: 19px; height: 19px; border-radius: 50%; background: var(--accent-dim);
+        color: var(--text); font-size: 10px; display: grid; place-items: center; flex: 0 0 auto;
+      }
+      .step-head select.kind { width: auto; margin: 0; font-size: 11px; padding: 3px 5px; }
+      .step-head .sp { margin-left: auto; display: flex; gap: 4px; }
+      .step-head button { padding: 2px 7px; font-size: 11px; }
+      .fork-box { margin-top: 7px; padding: 7px; border-left: 2px solid var(--warn); background: #17201a; }
+      .fork-box .ft { font-size: 10px; color: var(--warn); font-weight: 700; margin-bottom: 3px; }
+
+      .checks { display: flex; flex-direction: column; gap: 5px; }
+      .chk { display: flex; gap: 8px; font-size: 12px; padding: 6px 8px; background: #121a17; border-left: 3px solid var(--line); line-height: 1.45; }
+      .chk.ok { border-left-color: var(--ok); }
+      .chk.warn { border-left-color: var(--warn); }
+      .chk.bad { border-left-color: var(--bad); }
+      .chk .ic { flex: 0 0 auto; }
+      .chk.ok .ic { color: var(--ok); }
+      .chk.warn .ic { color: var(--warn); }
+      .chk.bad .ic { color: var(--bad); }
+      .chk b { color: var(--text); }
+
+      .sim-hud { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 9px; }
+      .hud-chip {
+        font-size: 11px; padding: 4px 9px; background: #121a17;
+        border: 1px solid var(--line); color: var(--muted);
+      }
+      .hud-chip b { color: var(--text); font-weight: 700; }
+      .hud-chip.hold { border-color: var(--warn); color: var(--warn); }
+
+      #simLog {
+        background: #0c1210; border: 1px solid var(--line); padding: 10px;
+        font-size: 12px; line-height: 1.65; height: 340px; overflow-y: auto;
+        white-space: pre-wrap; color: #b8d4c2;
+      }
+      #simLog .d { color: var(--accent); font-weight: 700; }
+      #simLog .st { color: var(--warn); }
+      #simLog .fk { color: #9fd4ff; }
+      #simLog .fin { color: var(--ok); font-weight: 700; }
+      #simLog .er { color: var(--bad); }
+      #simLog .row { padding: 1px 0; }
+
+      .sim-choice { display: flex; gap: 7px; margin-top: 9px; }
+      .sim-choice button { flex: 1; padding: 10px; font-weight: 700; }
+
+      pre.out {
+        margin: 8px 0 0; padding: 9px; font-size: 10.5px; line-height: 1.5;
+        background: #0c1210; border: 1px solid var(--line); white-space: pre;
+        color: #b8d4c2; max-height: 230px; overflow: auto;
+      }
+      .hint { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+      .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(94px, 1fr)); gap: 7px; margin-top: 4px; }
+      .stat {
+        background: #121a17; border: 1px solid var(--line); padding: 7px 9px;
+      }
+      .stat .n { font-size: 17px; font-weight: 800; color: var(--accent); }
+      .stat .l { font-size: 10px; color: var(--muted); margin-top: 1px; }
+      .route-row {
+        display: grid; grid-template-columns: 1fr auto auto auto; gap: 9px; align-items: center;
+        padding: 7px 9px; background: #121a17; border-left: 3px solid var(--line);
+        font-size: 12px; margin-top: 5px;
+      }
+      .route-row.best { border-left-color: var(--ok); }
+      .route-row.tight { border-left-color: var(--warn); }
+      .route-row.over { border-left-color: var(--bad); opacity: .65; }
+      .route-row .d { font-weight: 800; color: var(--accent); white-space: nowrap; }
+      .route-row .p { color: var(--warn); white-space: nowrap; }
+      .route-row button { padding: 3px 9px; font-size: 11px; }
+      .ladder { margin-top: 11px; display: flex; flex-direction: column; gap: 4px; }
+      .ladder-row { display: flex; gap: 9px; font-size: 11px; padding: 5px 8px; background: #121a17; border-left: 2px solid var(--line); }
+      .ladder-row .lp { color: var(--muted); font-weight: 700; min-width: 40px; }
+      .tabs { display: flex; gap: 4px; margin-bottom: 9px; }
+      .tabs button { flex: 1; }
+      .tabs button.on { background: var(--accent); color: #0a100e; font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>시나리오 체인 툴 <span style="font-size:12px;color:#8aa094;font-weight:400">· 연출 제외 · 구조만</span></h1>
+      <p>
+        <code>docs/gdd/38_시나리오_작성룰.md</code> 검증용. 게임이 아니라 <b>저작·시뮬 툴</b>.
+        하루=노드 하나(규칙1) · 사건은 노드에 붙음(규칙2) · 체인으로 저작(규칙3) · 귀환도 하루(규칙4) · 노드 상시·정체 조건부(규칙5).
+        <b>연출·전투 연산·보상은 일부러 뺐습니다</b> — 걸음과 순서가 말이 되는지만 봅니다.
+      </p>
+    </header>
+
+    <div class="layout">
+      <aside>
+        <div class="panel">
+          <h2>① 구역 <span class="tag">CSV</span></h2>
+          <label>편집할 구역
+            <select id="areaSelect"></select>
+          </label>
+          <div class="stat-grid" id="areaStats"></div>
+          <p class="hint" id="loadHint">CSV 불러오는 중…</p>
+        </div>
+
+        <div class="panel">
+          <h2>② 체인 <span class="tag">규칙 3</span></h2>
+          <div class="chain-list" id="chainList"></div>
+          <div class="btns">
+            <button type="button" id="btnPreset" style="width:100%;padding:10px;font-weight:800">
+              ★ 현재 시나리오 불러오기 (4구역 전체)
+            </button>
+          </div>
+          <div class="btns">
+            <button type="button" id="btnAddChain">+ 체인 추가 (4걸음 템플릿)</button>
+            <button type="button" class="ghost" id="btnAutoFill">노드 자동 배정</button>
+          </div>
+          <p class="hint">
+            표준 체인 = <b>발단 → 조사 → 해결(A|B) → 귀환</b>.
+            조사가 단서 <b>둘</b>을 동시에 열어야 갈림길이 조사의 결과로 나옵니다.
+          </p>
+        </div>
+
+        <div class="panel" id="editorPanel">
+          <h2>③ 걸음 편집</h2>
+          <div id="chainEditor"></div>
+        </div>
+      </aside>
+
+      <main>
+        <div class="panel">
+          <h2>④ 규칙 검증 <span class="tag">자동</span></h2>
+          <div class="checks" id="checks"></div>
+        </div>
+
+        <div class="panel">
+          <h2>④-2 여정 갈래 <span class="tag">60일 예산</span></h2>
+          <p class="hint" style="margin-top:0">
+            섹터 이동도 <b>하루</b>. 십자 구조라 중앙을 계속 되돌아갑니다 —
+            그래서 <b>어디를 포기할지</b>가 예산 문제가 됩니다.
+          </p>
+          <div id="routeTable"></div>
+          <div id="purifyLadder"></div>
+        </div>
+
+        <div class="panel">
+          <h2>⑤ 걸음 시뮬 <span class="tag">연출 없음</span></h2>
+          <div class="sim-hud" id="simHud"></div>
+          <div id="simLog"></div>
+          <div class="sim-choice" id="simChoice"></div>
+          <div class="btns">
+            <button type="button" id="btnSimNext">▶ 다음 날</button>
+            <button type="button" class="ghost" id="btnSimRun">끝까지 진행</button>
+            <button type="button" class="ghost" id="btnSimReset">처음부터</button>
+          </div>
+          <p class="hint">
+            버튼 한 번 = 하루 = 노드 하나. 갈림길에서만 버튼이 둘로 갈립니다.
+            <b>여기서 읽히는 순서가 곧 시나리오</b>입니다.
+          </p>
+        </div>
+
+        <div class="panel">
+          <h2>⑥ 내보내기</h2>
+          <div class="tabs">
+            <button type="button" class="on" data-out="chain">chain CSV</button>
+            <button type="button" data-out="step">step CSV</button>
+            <button type="button" data-out="beat">비트시트 (MD)</button>
+          </div>
+          <pre class="out" id="outBox"></pre>
+          <div class="btns">
+            <button type="button" id="btnCopy">복사</button>
+            <button type="button" class="ghost" id="btnDownload">파일로 저장</button>
+            <button type="button" class="danger" id="btnWipe">작업 초기화</button>
+          </div>
+          <p class="hint">작업 내용은 브라우저에 자동 저장됩니다(localStorage). CSV는 <code>data/</code>에 넣으면 됩니다.</p>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="/src/tools/scenarioTool/main.ts"></script>
+  </body>
+</html>

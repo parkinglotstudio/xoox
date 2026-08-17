@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XOOX Layout Editor · 16:9 · 하단 기준</title>
+    <style>
+      :root {
+        --bg: #12141a;
+        --panel: #1c212b;
+        --line: #3a4454;
+        --text: #e8eef8;
+        --muted: #9aa8bc;
+        --accent: #5ec8ff;
+        --ok: #6ddea0;
+        --warn: #ffd27a;
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Pretendard", "Malgun Gothic", sans-serif;
+      }
+      body {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        min-height: 100%;
+      }
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        padding: 10px 14px;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+      }
+      .bar h1 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+      }
+      .bar .hint {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .bar button, .bar select {
+        border: 1px solid var(--line);
+        background: #11161f;
+        color: var(--text);
+        border-radius: 8px;
+        padding: 7px 12px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .bar button.primary {
+        background: #1a4a63;
+        border-color: #2f7ea8;
+        color: #dff4ff;
+      }
+      .bar button:disabled { opacity: 0.45; cursor: default; }
+      .status { font-size: 12px; color: var(--muted); margin-left: auto; }
+      .status.ok { color: var(--ok); }
+      .status.err { color: #ff8f8f; }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: 1fr 280px;
+        min-height: 0;
+        height: 100%;
+      }
+      .stage-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        min-height: 0;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 20% 10%, #1a2433 0%, transparent 45%),
+          #0c0e13;
+      }
+      .stage {
+        position: relative;
+        width: min(100%, calc((100vh - 110px) * 16 / 9));
+        max-width: 100%;
+        max-height: calc(100vh - 110px);
+        aspect-ratio: 16 / 9;
+        height: auto;
+        background: #203040;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+        touch-action: none;
+        user-select: none;
+      }
+      .stage-bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        pointer-events: none;
+      }
+      .stage-grid {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+        background-size: 10% 10%;
+        opacity: 0.55;
+      }
+      .stage-axis {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      .stage-axis::before,
+      .stage-axis::after {
+        content: "";
+        position: absolute;
+        background: rgba(94, 200, 255, 0.35);
+      }
+      .stage-axis::before { left: 0; right: 0; bottom: 0; height: 2px; }
+      .stage-axis::after { left: 0; top: 0; bottom: 0; width: 2px; }
+
+      .le-item {
+        position: absolute;
+        transform: translateX(-50%);
+        cursor: grab;
+        border: 1px dashed transparent;
+        padding: 0;
+        background: transparent;
+        z-index: 2;
+      }
+      .le-item.anchor-top {
+        /* top 앵커도 동일 transformX */
+      }
+      .le-item:active { cursor: grabbing; }
+      .le-item.selected {
+        border-color: var(--accent);
+        z-index: 5;
+        filter: drop-shadow(0 0 6px rgba(94, 200, 255, 0.55));
+      }
+      .le-item img {
+        display: block;
+        width: 100%;
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+      }
+      .le-item .tag {
+        position: absolute;
+        left: 50%;
+        bottom: 100%;
+        transform: translate(-50%, -4px);
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+        background: rgba(8, 12, 18, 0.78);
+        border: 1px solid rgba(255,255,255,0.18);
+        padding: 2px 7px;
+        border-radius: 999px;
+        pointer-events: none;
+      }
+
+      .side {
+        border-left: 1px solid var(--line);
+        background: var(--panel);
+        padding: 12px;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .side h2 {
+        margin: 0;
+        font-size: 13px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .field {
+        display: grid;
+        gap: 4px;
+        font-size: 12px;
+      }
+      .field label { color: var(--muted); }
+      .field input {
+        border: 1px solid var(--line);
+        background: #11161f;
+        color: var(--text);
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-weight: 700;
+      }
+      .list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .list button {
+        text-align: left;
+        border: 1px solid var(--line);
+        background: #11161f;
+        color: var(--text);
+        border-radius: 8px;
+        padding: 8px 10px;
+        cursor: pointer;
+      }
+      .list button.on {
+        border-color: var(--accent);
+        background: #152433;
+      }
+      .list button span {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .help {
+        font-size: 12px;
+        line-height: 1.45;
+        color: var(--muted);
+        border-top: 1px solid var(--line);
+        padding-top: 10px;
+      }
+      code { color: var(--warn); }
+      [hidden] { display: none !important; }
+
+      /* ── journey3d 씬 — 3D 여정 뷰 튜닝 ───────────────────────── */
+      .stage-3d {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        cursor: grab;
+      }
+      .stage-3d:active { cursor: grabbing; }
+      .stage-keys {
+        position: absolute;
+        left: 10px;
+        bottom: 10px;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.5;
+        color: var(--muted);
+        background: rgba(8, 12, 18, 0.72);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 6px 10px;
+        pointer-events: none;
+      }
+      .j3d-row {
+        display: grid;
+        gap: 4px;
+        font-size: 12px;
+      }
+      .j3d-row label {
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .j3d-row label b {
+        color: var(--accent);
+        font-variant-numeric: tabular-nums;
+      }
+      .j3d-row input[type="range"] {
+        width: 100%;
+        accent-color: var(--accent);
+      }
+      .j3d-row select,
+      .j3d-row input[type="color"] {
+        border: 1px solid var(--line);
+        background: #11161f;
+        color: var(--text);
+        border-radius: 8px;
+        padding: 6px 8px;
+        font-weight: 700;
+        width: 100%;
+      }
+      .j3d-row input[type="color"] { height: 32px; padding: 2px; }
+      #j3dDials h2 { margin: 10px 0 0; }
+      #j3dDials h2:first-child { margin-top: 0; }
+    </style>
+  </head>
+  <body>
+    <div class="bar">
+      <h1>Layout Editor</h1>
+      <span class="hint">16:9 · 하단 기준(y) · 로비/인게임 공용 툴</span>
+      <select id="sceneSelect" title="씬">
+        <option value="lobby">lobby · 무지개섬</option>
+        <option value="journey3d">journey3d · 여정 3D 뷰</option>
+      </select>
+      <select id="j3dSector" title="구역" hidden></select>
+      <button type="button" id="btnReload">다시 불러오기</button>
+      <button type="button" id="btnGrid">그리드</button>
+      <button type="button" id="btnJ3dPurified" hidden>정화 후 아트</button>
+      <button type="button" id="btnJ3dView" hidden>1인칭 전환</button>
+      <button type="button" id="btnJ3dReset" hidden>기본값</button>
+      <button type="button" class="primary" id="btnSave">저장</button>
+      <span class="status" id="status">ready</span>
+    </div>
+    <div class="workspace">
+      <div class="stage-wrap">
+        <div class="stage" id="stage">
+          <img class="stage-bg" id="stageBg" alt="" />
+          <div class="stage-grid" id="stageGrid"></div>
+          <div class="stage-axis" aria-hidden="true"></div>
+          <div id="stageItems"></div>
+        </div>
+        <div class="stage" id="stage3d" hidden>
+          <canvas class="stage-3d" id="j3dCanvas"></canvas>
+          <div class="stage-keys">
+            WASD · 방향키 이동<br />
+            드래그 · ←/→ 시선<br />
+            Shift 달리기
+          </div>
+        </div>
+      </div>
+      <aside class="side" id="side3d" hidden>
+        <div id="j3dDials"></div>
+        <div class="help">
+          조절 즉시 미리보기에 반영된다. <b>저장해야</b> 본편에 남는다.<br />
+          섹터·노드는 미리보기용 — 저장되는 건 튜닝 값뿐이다.<br />
+          저장 → <code>data/ui/layout/journey3d_layout.json</code>
+        </div>
+      </aside>
+      <aside class="side" id="sideLobby">
+        <h2>Items</h2>
+        <div class="list" id="itemList"></div>
+        <h2>Selected</h2>
+        <div class="field">
+          <label>id</label>
+          <input id="fId" readonly />
+        </div>
+        <div class="field">
+          <label>label</label>
+          <input id="fLabel" />
+        </div>
+        <div class="field">
+          <label>v_anchor</label>
+          <select id="fAnchor">
+            <option value="bottom">bottom · 하단(지면)</option>
+            <option value="top">top · 상단(HUD/푯말)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>x_pct (왼쪽→, 중심)</label>
+          <input id="fX" type="number" step="0.1" min="0" max="100" />
+        </div>
+        <div class="field">
+          <label id="fYLabel">y_pct (하단↑)</label>
+          <input id="fY" type="number" step="0.1" min="0" max="100" />
+        </div>
+        <div class="field">
+          <label>w_pct (가로 폭)</label>
+          <input id="fW" type="number" step="0.1" min="2" max="80" />
+        </div>
+        <div class="field">
+          <label>action</label>
+          <input id="fAction" />
+        </div>
+        <div class="help">
+          드래그로 위치 조절.<br />
+          <code>bottom</code> = 발/밑 고정 (배·캐릭·지면 표지판)<br />
+          <code>top</code> = 상단 고정 (무지개섬 등 HUD 푯말)<br />
+          저장 → <code>data/ui/layout/lobby_layout.json</code>
+        </div>
+      </aside>
+    </div>
+    <script type="module" src="/src/layoutEditor.ts"></script>
+  </body>
+</html>

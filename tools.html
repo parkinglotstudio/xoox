@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XOOX 툴 허브</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
+    <style>
+      :root {
+        --bg: #14110e;
+        --panel: #1e1a16;
+        --line: #3a3228;
+        --text: #f3ebe0;
+        --muted: #a89880;
+        --accent: #2a9a8a;
+        --wood: #c9893a;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Pretendard, "Malgun Gothic", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(ellipse 60% 40% at 20% 0%, #2a2418 0%, transparent 55%),
+          radial-gradient(ellipse 50% 35% at 90% 10%, #1a3028 0%, transparent 50%),
+          var(--bg);
+      }
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 28px 20px 48px;
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 22px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 900;
+        letter-spacing: 0.02em;
+      }
+      .sub {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+      .sub code {
+        color: #9fe8d8;
+        font-size: 12px;
+      }
+      .game-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 13px;
+        color: #1c1814;
+        background: linear-gradient(180deg, #ffd27a, #e0a04a);
+        border: 2px solid #8a5018;
+        box-shadow: 0 3px 0 #5a3414;
+      }
+      .hint {
+        margin: 0 0 18px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: rgba(42, 154, 138, 0.12);
+        border: 1px solid rgba(42, 154, 138, 0.35);
+        font-size: 12px;
+        line-height: 1.5;
+        color: #d8f0ea;
+      }
+      .group {
+        margin-bottom: 22px;
+      }
+      .group h2 {
+        margin: 0 0 10px;
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        color: var(--accent);
+        text-transform: uppercase;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 12px;
+      }
+      .card {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 14px 14px 12px;
+        border-radius: 14px;
+        background: linear-gradient(180deg, #26201a, var(--panel));
+        border: 1px solid var(--line);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+      }
+      .card h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 900;
+      }
+      .card p {
+        margin: 0;
+        flex: 1;
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+      .meta {
+        font-size: 11px;
+        color: #7a6a58;
+      }
+      .meta code { color: #c9b89a; }
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 4px;
+      }
+      .actions button,
+      .actions a {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 9px 10px;
+        border-radius: 10px;
+        font-weight: 800;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: none;
+        border: 1px solid transparent;
+      }
+      .actions button {
+        color: #fff8ee;
+        background: linear-gradient(180deg, #e0a04a, #8a5018);
+        border-color: #5a3414;
+      }
+      .actions a {
+        color: var(--text);
+        background: rgba(255, 248, 236, 0.06);
+        border-color: var(--line);
+      }
+      .empty {
+        color: var(--muted);
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap" id="hub"></div>
+    <script type="module" src="/src/tools/toolsHub.ts"></script>
+  </body>
+</html>

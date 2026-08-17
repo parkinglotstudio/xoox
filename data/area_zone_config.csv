@@ -1,0 +1,9 @@
+zone_id,area_id,x_pct,y_pct,r_pct,beat_id,label,note
+z_i21_dock,area_i21,50,88,10,B0,부두공터,시작·줍기
+z_i21_workshop,area_i21,28,78,9,B3c,공방앞,필터·초소
+z_i21_warehouse,area_i21,72,78,9,B3c,창고앞,하루·아레나
+z_i21_blight,area_i21,50,70,8,B1,웅덩이,만나기·해금
+z_i21_yard,area_i21,30,58,9,B3b,박공마당,쉼터·생명
+z_i21_east,area_i21,68,55,8,B3c,동편풀,떠돌이·하루
+z_i21_ne,area_i21,70,32,10,B4,북동마당,구조·라이벌
+z_i21_gate,area_i21,50,10,8,B5,돌계단,관문만

@@ -1,12 +1,13 @@
 # 카피바라고 채팅 로그 프로토타입 — 인수인계 문서
 
 > 다음 작업 AI·세션을 위한 핸드오프.  
+> ⚠️ **【2026-08-08】 다음 AI 붙여넣기 프롬프트:** [`NEXT_AI_PROMPT.md`](NEXT_AI_PROMPT.md)  
+> 현행 기획 입구: [`docs/gdd/33`](docs/gdd/33_시나리오_진행플로우.md) · [`34`](docs/gdd/34_로비_벤치시스템_연구.md) · [`35`](docs/gdd/35_개발순서_로비중심.md)  
+> 본 파일 §5 대기열은 2026-07-15 카피바라 분기점 기준(구버전).  
 > **기획 문서(축별):** [`docs/gdd/00_INDEX.md`](docs/gdd/00_INDEX.md)  
-> **데이터 허브:** Entity / Item / Skill / Effect — [`docs/gdd/06_DATA_TABLES.md`](docs/gdd/06_DATA_TABLES.md)  
-> **시작 프롬프트:** [`NEXT_AI_PROMPT.md`](NEXT_AI_PROMPT.md)  
-> **갱신:** 2026-07-15 (구조 스프린트 완료 · 분리용 분기점)  
-> **시작 프롬프트:** [`NEXT_AI_PROMPT.md`](NEXT_AI_PROMPT.md) — 새 채팅에 이 파일 블록 붙여넣기  
-> 백업: `backups/backup_20260715_155440` (진입 A) · `backups/backup_20260715_161110` (모달 스프린트)
+> **갱신 배너:** 2026-08-08 (전투 아트 시안 `data/ui/combat/` · 다음=연동 · [`40`](docs/gdd/40_인게임_비주얼_작업정리.md) §8)  
+> 상세는 `NEXT_AI_PROMPT.md` · 백업: `backups/backup_20260808_104943` (S4 직전) · `100049` (S3) · `095027` (S1)  
+> **작업 루트:** 오직 `C:\xoox` · **로컬 Agent만** (Cloud Agent 금지). 규칙: `.cursor/rules/local-only-workspace.mdc`
 
 ---
 

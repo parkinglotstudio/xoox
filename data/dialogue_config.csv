@@ -1,0 +1,31 @@
+dialogue_id,trigger,trigger_ref,step_order,speaker,icon,style,line
+dlg_arrive,JOURNEY_START,,1,Piper,🐕‍🦺,BUBBLE,냄새가 난다. 가까워.
+dlg_arrive,JOURNEY_START,,2,Nashui,🐈,BUBBLE,여기… 사람이 살던 곳이었네요.
+dlg_arrive,JOURNEY_START,,3,방랑자,🐾,ME,그럼 두고 간 것도 있겠지.
+dlg_arrive,JOURNEY_START,,4,,,MONO,가족을 잃고 며칠을 떠돌았다. 이제 남을 찾는 쪽이 되었다.
+dlg_first_rescue,FIRST_RESCUE,,1,Nashui,🐈,BUBBLE,어머 귀여워. 이름이 뭐예요?
+dlg_first_rescue,FIRST_RESCUE,,2,방랑자,🐾,ME,아직 없어. 천천히 붙여주자.
+dlg_first_rescue,FIRST_RESCUE,,3,Piper,🐕‍🦺,BUBBLE,이름은 데리고 나간 다음에 붙이는 거야.
+dlg_first_rescue,FIRST_RESCUE,,4,,,MONO,하나가 늘었다. 그만큼 잃을 것도 늘었다.
+dlg_crossroad,AREA_ENTER,area_i11,1,Olmas,🦉,BUBBLE,여기서부터는 네가 고르는 길이다.
+dlg_crossroad,AREA_ENTER,area_i11,2,방랑자,🐾,ME,어디로 가도 날짜는 똑같이 줄어들겠지.
+dlg_crossroad,AREA_ENTER,area_i11,3,Nashui,🐈,BUBBLE,그래도 고를 수 있는 게 어디예요.
+dlg_dock,AREA_ENTER,area_i21,1,,,MONO,배가 닿았다. 여기서부터다.
+dlg_dock_clear,AREA_PURIFY,area_i21,1,,,MONO,탁한 물이 걷힌다. 부두에 색이 돌아온다.
+dlg_dock_clear,AREA_PURIFY,area_i21,2,Nashui,🐈,BUBBLE,여기… 살던 냄새가 나요.
+dlg_dock_clear,AREA_PURIFY,area_i21,3,Piper,🐕‍🦺,BUBBLE,이제 길이 보인다. 아이를 찾을 수 있어.
+dlg_dock_clear,AREA_PURIFY,area_i21,4,방랑자,🐾,ME,이 물이 맑아져야 여기서 마시던 것들도 돌아온다.
+dlg_gate,NODE_KIND,MINIBOSS,1,Piper,🐕‍🦺,BUBBLE,집중해. 이건 대화로는 안 돼.
+dlg_gate,NODE_KIND,MINIBOSS,2,방랑자,🐾,ME,넘어야 안쪽으로 갈 수 있어.
+dlg_final,NODE_KIND,BOSS,1,Piper,🐕‍🦺,BUBBLE,마지막이야. 숨 고르고.
+dlg_final,NODE_KIND,BOSS,2,Nashui,🐈,BUBBLE,무서우면 무섭다고 해도 돼요.
+dlg_final,NODE_KIND,BOSS,3,방랑자,🐾,ME,무섭진 않아. 다시 잃는 게 무서운 거지.
+dlg_final,NODE_KIND,BOSS,4,Olmas,🦉,BUBBLE,그래서 우리가 같이 왔다.
+dlg_skill,NODE_KIND,SKILL,1,,,MONO,누군가 여기서 익힌 것을 적어두고 갔다.
+dlg_purify_half,PURIFY_PCT,50,1,Olmas,🦉,BUBBLE,섬의 절반이 색을 되찾았다. 신호가 선명해지고 있어.
+dlg_purify_half,PURIFY_PCT,50,2,방랑자,🐾,ME,…이런 게 쌓이면 정말 돌아오는 건가.
+dlg_purify_half,PURIFY_PCT,50,3,Nashui,🐈,BUBBLE,쌓여요. 반드시.
+dlg_purify_full,PURIFY_PCT,100,1,Olmas,🦉,BUBBLE,섬이 완전히 깨어났다.
+dlg_purify_full,PURIFY_PCT,100,2,방랑자,🐾,ME,여기 살던 것들이 돌아올 수 있겠네.
+dlg_boat,VOYAGE_END,,1,,,MONO,배가 오는 소리가 들린다.
+dlg_boat,VOYAGE_END,,2,방랑자,🐾,ME,데리고 온 것들을 세어본다.

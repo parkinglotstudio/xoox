@@ -8,6 +8,7 @@
 | [**NEXT_AI_PROMPT_ART_TOOLS.md**](./NEXT_AI_PROMPT_ART_TOOLS.md) | **새 세션 시작 프롬프트** — 이 아트 툴로 작업 시킬 때 붙여넣기 |
 | [**sprites/_guide/**](./sprites/_guide/README.md) | 다음 AI 입구 (원칙·파이프·툴·프롬프트·게임) |
 | [00_ANIM_LIST.md](./00_ANIM_LIST.md) | 애니 목록 확정 (원본 예시, A1/A2) |
+| [**10_XOOX_WANDERER_ANIM.md**](./10_XOOX_WANDERER_ANIM.md) | **XOOX 방랑자 여정 동작** — 번호·`000 동작 필요` 머리 위 규칙 |
 | [02_SPRITE_SPEC.md](./02_SPRITE_SPEC.md) | 캔버스·프레임·파츠·네이밍 |
 | [03_WORK_ORDER.md](./03_WORK_ORDER.md) | 작업 순서·배치 큐 |
 | [04_INGAME_RATIO.md](./04_INGAME_RATIO.md) | 인게임 고정 비율 (향아 기준) |

@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XOOX 맵·이동 프로토 · 필러/지역/이동</title>
+    <style>
+      :root {
+        --bg: #0e1116;
+        --panel: #171c24;
+        --line: #2c3542;
+        --text: #e8eef8;
+        --muted: #8b9aae;
+        --accent: #5ec8ff;
+        --ok: #6ddea0;
+        --warn: #ffd27a;
+        --bad: #ff8a7a;
+        --sea: #101a2a;
+        --sea-line: #1b2b42;
+        font-family: "Pretendard", "Malgun Gothic", sans-serif;
+        color: var(--text);
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; background: var(--bg); }
+
+      header {
+        display: flex; flex-wrap: wrap; gap: 14px; align-items: center;
+        padding: 10px 18px; background: var(--panel); border-bottom: 1px solid var(--line);
+      }
+      header h1 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: -.02em; }
+      header .sp { flex: 1 }
+      .stat {
+        font-size: 12px; color: var(--muted); background: #101620;
+        border: 1px solid var(--line); padding: 4px 10px;
+      }
+      .stat b { color: var(--text); font-weight: 800; }
+      .stat.warn b { color: var(--warn); }
+      .stat.ok b { color: var(--ok); }
+      button {
+        font-size: 12px; padding: 6px 11px; cursor: pointer;
+        background: #22303f; color: var(--text); border: 1px solid var(--line);
+      }
+      button:hover { border-color: var(--accent); color: var(--accent); }
+      button.primary { background: linear-gradient(180deg,#5ec8ff,#2f7fb0); color:#08131c; font-weight:800; border-color:#8fdcff; }
+      button.primary:hover { color:#08131c; }
+
+      .wrap {
+        display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 14px;
+        padding: 14px 18px 26px; align-items: start;
+      }
+      .primary { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+      @media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } }
+
+      .card {
+        background: var(--panel); border: 1px solid var(--line); padding: 12px;
+      }
+      .card + .card { margin-top: 12px; }
+      .card h2 {
+        margin: 0 0 9px; font-size: 13px; color: var(--accent); font-weight: 700;
+        display: flex; align-items: center; gap: 7px;
+      }
+      .card h2 small { color: var(--muted); font-weight: 400; font-size: 11px; }
+      .hint { font-size: 11px; color: var(--muted); line-height: 1.55; margin: 8px 0 0; }
+
+      /* ── 섬 전체 지도 (3×3) ── */
+      #island {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+        aspect-ratio: 1/1; background: var(--sea); padding: 4px; border: 1px solid var(--sea-line);
+        /* 단일 컬럼(좁은 화면)에서 지도가 화면을 다 먹지 않게 */
+        max-width: 280px; margin: 0;
+      }
+      .cell {
+        position: relative; border: 1px solid var(--line); cursor: pointer;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 2px; font-size: 10px; color: var(--muted); overflow: hidden;
+        transition: border-color .18s, transform .18s;
+      }
+      .cell.sea {
+        background: repeating-linear-gradient(135deg, #0d1626 0 6px, #101d31 6px 12px);
+        cursor: not-allowed; color: #3c4c63;
+      }
+      .cell.land { background: linear-gradient(180deg, #1d2a25, #16211d); }
+      .cell.land.purified { background: linear-gradient(180deg, #23402f, #1a3325); border-color: #3d7a56; }
+      .cell.here { border-color: var(--accent); transform: scale(1.03); z-index: 2; }
+      .cell.look { border-color: var(--warn); box-shadow: inset 0 0 0 1px var(--warn); }
+      .cell.adj { border-color: var(--ok); }
+      .cell.locked { border-color: #6a4a34; }
+      .cell .nm { font-weight: 700; color: var(--text); font-size: 11px; position: relative; z-index: 1; text-shadow: 0 1px 3px #000; }
+      .cell .cnt { font-size: 9px; position: relative; z-index: 1; text-shadow: 0 1px 2px #000; }
+      .cell .me {
+        position: absolute; top: 4px; right: 5px; font-size: 13px; z-index: 1;
+      }
+      .cell .lk { position: absolute; bottom: 3px; right: 4px; font-size: 10px; z-index: 1; }
+      .cell .floor {
+        position: absolute; inset: 0; pointer-events: none;
+        background-repeat: repeat; background-size: 28px 28px;
+      }
+      .cell .ring {
+        position: absolute; border-radius: 50%; pointer-events: none;
+        background: radial-gradient(circle, rgba(120,230,170,.42) 0%, rgba(120,230,170,0) 70%);
+      }
+
+      .legend { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 9px; font-size: 10px; color: var(--muted); }
+      .legend i { display: inline-block; width: 9px; height: 9px; margin-right: 4px; vertical-align: -1px; border: 1px solid; }
+
+      /* ── 폰 셸 16:9 ── */
+      .stagecol { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+      .phone {
+        width: 100%; max-width: none; aspect-ratio: 16/9;
+        border: 2px solid var(--line); border-radius: 12px; overflow: hidden;
+        background: #000; display: flex; flex-direction: column; position: relative;
+        box-shadow: 0 14px 44px rgba(0,0,0,.55);
+      }
+      /* 무대 */
+      #stage {
+        position: relative; flex: 1 1 auto; overflow: hidden;
+        background: linear-gradient(180deg, #1d2a25, #16211d);
+        transition: background .5s;
+      }
+      #islandFloor {
+        position: absolute; inset: 0; width: 100%; height: 100%;
+        pointer-events: none; z-index: 0; display: block;
+      }
+      #stage.island-3d { background: #0a1824; }
+      #stage.island-3d .tile { display: none; }
+      #stage .tile {
+        position: absolute; inset: 0;
+        background-size: 96px 96px;
+        background-repeat: repeat;
+        background-position: 0 0;
+        opacity: 0; transition: opacity .4s;
+        z-index: 0;
+      }
+      #stage .tile.on { opacity: 1; }
+      /* 정화 전 암막 + 스포트라이트 (40 §5-2) */
+      #dark {
+        position: absolute; inset: 0; pointer-events: none;
+        background: #000; opacity: .5; transition: opacity .5s;
+        z-index: 1;
+      }
+      #spot {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(circle 22% at var(--sx,50%) var(--sy,60%), rgba(255,240,200,.20) 0%, rgba(0,0,0,0) 70%);
+        z-index: 1;
+      }
+      .poi {
+        position: absolute; transform: translate(-50%,-50%);
+        display: flex; flex-direction: column; align-items: center; gap: 1px;
+        background: none; border: 0; cursor: pointer; padding: 0; z-index: 3;
+      }
+      .poi .ic {
+        font-size: 19px; filter: drop-shadow(0 2px 4px rgba(0,0,0,.7));
+        transition: transform .18s;
+      }
+      .poi:hover .ic { transform: scale(1.22); }
+      .poi .lb {
+        font-size: 9px; color: #dfe9f5; background: rgba(6,10,16,.72);
+        padding: 1px 5px; border-radius: 3px; white-space: nowrap;
+      }
+      .poi .pl {
+        font-size: 8px; font-weight: 800; padding: 0 4px; border-radius: 2px;
+      }
+      .pl-탐구 { background: #2b4a6b; color: #bfe4ff; }
+      .pl-도전 { background: #6b2f2b; color: #ffd0c8; }
+      .pl-정화 { background: #2b6b4a; color: #c8ffe0; }
+      .poi.done { opacity: .38; }
+      .poi.done .ic { filter: grayscale(1); }
+
+      #actor {
+        position: absolute; transform: translate(-50%,-100%);
+        font-size: 26px; z-index: 4; pointer-events: none;
+        transition: left .5s linear, top .5s linear;
+        filter: drop-shadow(0 3px 5px rgba(0,0,0,.8));
+      }
+      #actor.flip { transform: translate(-50%,-100%) scaleX(-1); }
+
+      /* 십자 패드 — 40 §4: 좌하단 (오른쪽은 필러) */
+      #pad {
+        position: absolute; left: 10px; bottom: 10px; z-index: 6;
+        display: grid; grid-template-columns: repeat(3, 30px); grid-template-rows: repeat(3, 26px);
+        gap: 3px;
+      }
+      #pad button {
+        padding: 0; font-size: 12px; background: rgba(14,20,28,.82);
+        border: 1px solid var(--line); border-radius: 4px;
+      }
+      #pad button.on { border-color: var(--ok); color: var(--ok); }
+      #pad button.lock { border-color: #6a4a34; color: var(--warn); }
+      #pad button.none { opacity: .18; cursor: default; }
+      #pad .c { grid-column: 2; grid-row: 2; display: grid; place-items: center; font-size: 9px; color: var(--muted); }
+      #pad .up { grid-column: 2; grid-row: 1; }
+      #pad .dn { grid-column: 2; grid-row: 3; }
+      #pad .lf { grid-column: 1; grid-row: 2; }
+      #pad .rt { grid-column: 3; grid-row: 2; }
+
+      #areaTag {
+        position: absolute; left: 12px; top: 10px; z-index: 5;
+        font-size: 12px; font-weight: 800; color: #eaf3ff;
+        background: rgba(6,10,16,.6); padding: 3px 9px; border-radius: 3px;
+      }
+
+      /* 필러 (로그) */
+      #filler {
+        flex: 0 0 var(--fh, 38%); background: linear-gradient(180deg,#141a22,#0e131a);
+        border-top: 1px solid var(--line); padding: 8px 10px; overflow-y: auto;
+        display: flex; flex-direction: column; gap: 6px;
+      }
+      .phone.overlap #filler {
+        position: absolute; left: 0; right: 0; bottom: 0; border-top: 0;
+        background: linear-gradient(180deg, rgba(14,19,26,0), rgba(14,19,26,.9) 22%);
+      }
+      .logcard {
+        background: #f2ead6; color: #23201a; font-size: 11.5px; line-height: 1.5;
+        padding: 6px 9px; border-radius: 5px; white-space: pre-wrap;
+        animation: rise .22s ease-out;
+      }
+      .logcard.sys { background: #22303f; color: #cfe4f5; }
+      .logcard .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+      .logcard .chip {
+        font-size: 10px; background: #d9cba6; color: #3a3222; padding: 1px 6px; border-radius: 3px;
+      }
+      .logcard.sys .chip { background: #2f4356; color: #bfe4ff; }
+      @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+      .ctrl { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; width: 100%; }
+      .route { font-size: 11px; color: var(--muted); line-height: 1.6; }
+      .route b { color: var(--text); }
+      .route .r { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; border-bottom: 1px dashed #232c38; }
+      table.nodes { width: 100%; border-collapse: collapse; font-size: 11px; }
+      table.nodes td { padding: 2px 4px; border-bottom: 1px solid #202832; color: var(--muted); }
+      table.nodes td.n { color: var(--text); }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>맵·이동 프로토 (구) <small style="color:#8b9aae;font-weight:400">· 실험 · NPC 배치·동선은 <a href="/sector-editor.html" style="color:#5ec8ff">맵 배치</a></small></h1>
+      <span class="sp"></span>
+      <span class="stat">Day <b id="sDay">1</b></span>
+      <span class="stat warn">배까지 <b id="sLeft">59</b>일</span>
+      <span class="stat ok">섬 정화도 <b id="sPur">0%</b></span>
+      <span class="stat">아이 <b id="sKid">0</b></span>
+      <label class="stat">바닥
+        <select id="floorPick" style="margin-left:6px;background:#101620;color:#e8eef8;border:1px solid #2c3542;padding:2px 4px">
+          <option value="auto">섹터 기본</option>
+          <option value="floor_grass.png">풀</option>
+          <option value="floor_grass_flower.png">꽃풀</option>
+          <option value="floor_dirt.png">흙길</option>
+          <option value="floor_cobble.png">판석</option>
+          <option value="floor_wood_plank.png">나무 덱</option>
+          <option value="floor_water_deep.png">물</option>
+          <option value="floor_trans_grass_dirt.png">풀↔흙</option>
+          <option value="floor_trans_grass_cobble.png">풀↔판석</option>
+          <option value="floor_trans_wood_grass.png">덱↔풀</option>
+          <option value="floor_trans_grass_water.png">풀↔물</option>
+        </select>
+      </label>
+      <button id="btnIslandView">섬 전체</button>
+      <button id="btnOverlap">필러 오버랩</button>
+      <button id="btnReset">처음부터</button>
+    </header>
+
+    <div class="wrap">
+      <div class="primary">
+        <div class="card">
+          <h2>섬 전체 <small>3×3 · 육지 십자만 보행</small></h2>
+          <div id="island"></div>
+          <div class="legend">
+            <span><i style="border-color:#2c3542;background:#1d2a25"></i>육지</span>
+            <span><i style="border-color:#1b2b42;background:#101a2a"></i>바다(보행 금지)</span>
+            <span><i style="border-color:#5ec8ff"></i>현재</span>
+            <span><i style="border-color:#ffd27a"></i>미리보기</span>
+            <span><i style="border-color:#6ddea0"></i>인접</span>
+            <span><i style="border-color:#6a4a34"></i>관문 필요</span>
+          </div>
+          <p class="hint">칸을 누르면 <b>그 섹터를 미리보기</b>합니다. 갈 수 있으면 이동(하루)도 합니다. 코너 4칸은 바다라 출구가 없습니다.</p>
+        </div>
+
+        <div class="stagecol">
+          <div class="phone" id="phone">
+            <div id="stage">
+              <canvas id="islandFloor"></canvas>
+              <div class="tile" id="tileImg"></div>
+              <div id="dark"></div>
+              <div id="spot"></div>
+              <div id="areaTag">—</div>
+              <div id="actor">🐾</div>
+              <div id="pad">
+                <button class="up" data-dir="TOP">▲</button>
+                <button class="lf" data-dir="LEFT">◀</button>
+                <div class="c">이동</div>
+                <button class="rt" data-dir="RIGHT">▶</button>
+                <button class="dn" data-dir="BOTTOM">▼</button>
+              </div>
+            </div>
+            <div id="filler"></div>
+          </div>
+          <div class="ctrl">
+            <button class="primary" id="btnDay">▶ 다음 날 (제자리)</button>
+            <button id="btnGate">관문 클리어(테스트)</button>
+            <button id="btnPurify">이 섹터 정화(테스트)</button>
+            <button id="btnKid">아이 구조(테스트)</button>
+          </div>
+          <p class="hint">
+            무대는 9칸을 이은 <b>평평한 섬</b>이다. 빈 곳을 누르면 <b>걸어갑니다</b>(하루 안 씀). 노드를 누르면 <b>접근</b>합니다(하루 씀).
+            좌하단 십자 패드로 <b>섹터 이동</b>(하루 씀). 위 지도 칸은 미리보기.
+          </p>
+        </div>
+      </div>
+
+      <aside>
+        <div class="card">
+          <h2>루트 예산 <small>완주 = 정확히 60일</small></h2>
+          <div class="route" id="routeBox"></div>
+        </div>
+
+        <div class="card">
+          <h2>이 섹터 노드</h2>
+          <table class="nodes" id="nodeTable"></table>
+        </div>
+      </aside>
+    </div>
+
+    <script>
+      // ─── 데이터 (data/*.csv 실측 반영 · 2026-08-09) ──────────────────────
+      const VOYAGE_DAYS = 60;
+
+      const AREAS = {
+        i00: { name: "북서", sea: true,  top: "#2a1424", bot: "#3d2038" },
+        i01: { name: "북부", sea: false, top: "#2a1424", bot: "#3d2038" },
+        i02: { name: "북동", sea: true,  top: "#2a1424", bot: "#3d2038" },
+        i10: { name: "서부", sea: false, top: "#241c14", bot: "#3a2f22" },
+        i11: { name: "중앙", sea: false, top: "#1a2420", bot: "#2a3830" },
+        i12: { name: "동부", sea: false, top: "#132a2e", bot: "#22383a" },
+        i20: { name: "남서", sea: true,  top: "#16202e", bot: "#26303f" },
+        i21: { name: "부두", sea: false, top: "#16202e", bot: "#26303f" },
+        i22: { name: "남동", sea: true,  top: "#16202e", bot: "#26303f" },
+      };
+      const GRID = [["i00","i01","i02"],["i10","i11","i12"],["i20","i21","i22"]];
+      const SPAWN = "i21", GOAL = "i01";
+
+      // from → to, 나가는 방향, 필요 노드
+      const CONNS = [
+        { a: "i21", b: "i11", dir: "TOP",    needs: "s1_gate" },
+        { a: "i01", b: "i11", dir: "BOTTOM", needs: null },
+        { a: "i10", b: "i11", dir: "RIGHT",  needs: null },
+        { a: "i11", b: "i12", dir: "RIGHT",  needs: null },
+      ];
+
+      const N = (id, area, x, y, icon, label, type) => ({ id, area, x, y, icon, label, type });
+      const NODES = [
+        // 부두 i21 (13)
+        N("s1_start","i21",50,94,"🚩","여정의 시작","MEMO"),
+        N("s1_rest","i21",26,84,"🏕️","안전 대피소","REST"),
+        N("s1_wander","i21",72,76,"🚶","떠돌이","NPC"),
+        N("s1_mercenary","i21",30,64,"🏚️","버려진 항만 초소","LOCATION"),
+        N("s1_memory1","i21",80,58,"✨","희미한 기억","MEMORY"),
+        N("s1_catalyst","i21",42,58,"💧","맑은 물방울","CATALYST"),
+        N("s1_blight_pool","i21",58,52,"🌫️","탁한 물웅덩이","BLIGHT"),
+        N("s1_goblin","i21",64,48,"🛍️","사치품 상인","NPC"),
+        N("s1_roulette","i21",26,40,"🎡","무지개 조각 룰렛","MINIGAME"),
+        N("s1_blight_life","i21",40,36,"🐾","오염에 잠긴 아이","BLIGHT"),
+        N("s1_memory2","i21",74,30,"✨","희미한 기억","MEMORY"),
+        N("s1_combat8","i21",50,20,"⚔️","오염된 잔재","COMBAT"),
+        N("s1_gate","i21",50,8,"♞","오염 기사","MINIBOSS"),
+        // 중앙 i11 (4)
+        N("i11_lookout","i11",50,34,"🔭","섬 전망대","MEMO"),
+        N("i11_rest","i11",34,74,"🏕️","십자로 쉼터","REST"),
+        N("i11_catalyst","i11",24,56,"💧","맑은 물방울","CATALYST"),
+        N("i11_blight","i11",72,50,"🌫️","메마른 우물","BLIGHT"),
+        // 동부 i12 (12)
+        N("s2_pirate","i12",30,86,"🚢","좌초된 화물선","LOCATION"),
+        N("s2_devil","i12",72,78,"😈","사치품 상인의 유혹","NPC"),
+        N("s2_memory3","i12",22,68,"✨","희미한 기억","MEMORY"),
+        N("s2_tower","i12",60,60,"📡","신호 중계탑","LOCATION"),
+        N("s2_catalyst","i12",22,58,"💧","맑은 물방울","CATALYST"),
+        N("s2_medusa","i12",28,50,"📷","감시 카메라 눈","NPC"),
+        N("s2_blight_pool","i12",78,48,"🌫️","소금 낀 웅덩이","BLIGHT"),
+        N("s2_treasure","i12",74,42,"🗺️","낡은 항해 일지","MINIGAME"),
+        N("s2_arena","i12",34,32,"🤼","생존자 무리의 갈등","NPC"),
+        N("s2_memory4","i12",78,26,"✨","희미한 기억","MEMORY"),
+        N("s2_combat23","i12",50,18,"⚔️","오염된 잔재","COMBAT"),
+        N("s2_boss","i12",50,7,"👑","탐욕의 근원","BOSS"),
+        // 서부 i10 (13)
+        N("s3_rest","i10",72,88,"🏕️","안전 대피소","REST"),
+        N("s3_mercenary","i10",28,80,"🏚️","버려진 항만 초소","LOCATION"),
+        N("s3_spirit","i10",66,70,"🕯️","흐릿한 정령","NPC"),
+        N("s3_memory5","i10",24,62,"✨","희미한 기억","MEMORY"),
+        N("s3_pirate","i10",58,52,"🚢","좌초된 화물선","LOCATION"),
+        N("s3_catalyst","i10",16,50,"💧","맑은 물방울","CATALYST"),
+        N("s3_golem","i10",26,44,"🗿","폐기물 거인","NPC"),
+        N("s3_blight_pool","i10",84,42,"🌫️","녹슨 수렁","BLIGHT"),
+        N("s3_roulette","i10",74,36,"🎡","무지개 조각 룰렛","MINIGAME"),
+        N("s3_angel","i10",36,28,"🕊️","온기의 조각","NPC"),
+        N("s3_memory6","i10",78,22,"✨","희미한 기억","MEMORY"),
+        N("s3_combat38","i10",50,16,"⚔️","오염된 잔재","COMBAT"),
+        N("s3_gate","i10",50,6,"♞","오염 기사","MINIBOSS"),
+        // 북부 i01 (12)
+        N("s4_tower","i01",30,88,"📡","신호 중계탑","LOCATION"),
+        N("s4_mercenary","i01",72,80,"🤝","오래된 승무원","NPC"),
+        N("s4_memory7","i01",24,70,"✨","희미한 기억","MEMORY"),
+        N("s4_treasure","i01",64,62,"🗺️","낡은 항해 일지","MINIGAME"),
+        N("s4_catalyst","i01",20,56,"💧","맑은 물방울","CATALYST"),
+        N("s4_darktower","i01",28,52,"🗼","낡은 신호탑 오르기","NPC"),
+        N("s4_rest","i01",74,44,"🏕️","결전 전 쉼터","REST"),
+        N("s4_blight_pool","i01",80,40,"🌫️","검은 샘","BLIGHT"),
+        N("s4_challenger","i01",34,34,"⚔️","마지막 도전자","NPC"),
+        N("s4_memory8","i01",76,28,"✨","희미한 기억","MEMORY"),
+        N("s4_combat52","i01",50,18,"⚔️","오염된 잔재","COMBAT"),
+        N("s4_final","i01",50,6,"👑","탐욕의 근원","BOSS"),
+      ];
+
+      // AREA 오염 5곳 = 섬 정화도 분모
+      const AREA_BLIGHTS = { s1_blight_pool: "i21", i11_blight: "i11", s2_blight_pool: "i12", s3_blight_pool: "i10", s4_blight_pool: "i01" };
+      const PURIFY_STEPS = [
+        { pct: 25, label: "섬이 숨을 쉰다" },
+        { pct: 50, label: "색이 반쯤 돌아온다" },
+        { pct: 75, label: "아이들이 경계를 풀다" },
+        { pct: 100, label: "섬이 완전히 깨어난다" },
+      ];
+      const PILLAR = (t) =>
+        ["COMBAT","MINIBOSS","BOSS","MINIGAME"].includes(t) ? "도전"
+        : ["BLIGHT","RESCUE"].includes(t) ? "정화" : "탐구";
+
+      // ─── 상태 ────────────────────────────────────────────────────────────
+      const S = { day: 1, area: SPAWN, look: SPAWN, x: 50, y: 88, flip: false, cleared: new Set(), purified: new Set(), kids: 0, held: [], busy: false, over: false };
+
+      const $ = (id) => document.getElementById(id);
+      const stage = $("stage"), actor = $("actor"), filler = $("filler"), island = $("island");
+
+      const FLOOR_DIR = "/art/tiles/floor/";
+      function floorFileFor(areaId) {
+        const pick = $("floorPick").value;
+        if (pick !== "auto") return pick;
+        const a = AREAS[areaId];
+        if (!a || a.sea) return "floor_water_deep.png";
+        if (areaId === "i21") return "floor_wood_plank.png";
+        return areaPurified(areaId) ? "floor_grass_flower.png" : "floor_grass.png";
+      }
+      function floorCss(areaId) {
+        return `url("${FLOOR_DIR}${floorFileFor(areaId)}")`;
+      }
+
+      function log(text, chips, sys) {
+        const d = document.createElement("div");
+        d.className = "logcard" + (sys ? " sys" : "");
+        d.textContent = text;
+        if (chips && chips.length) {
+          const c = document.createElement("div");
+          c.className = "chips";
+          chips.forEach((t) => { const s = document.createElement("span"); s.className = "chip"; s.textContent = t; c.appendChild(s); });
+          d.appendChild(c);
+        }
+        filler.appendChild(d);
+        filler.scrollTop = filler.scrollHeight;
+      }
+
+      function purifyPct() {
+        const total = Object.keys(AREA_BLIGHTS).length;
+        const done = Object.keys(AREA_BLIGHTS).filter((k) => S.purified.has(k)).length;
+        return { done, total, pct: Math.round((done / total) * 100) };
+      }
+
+      function areaPurified(a) {
+        return Object.entries(AREA_BLIGHTS).some(([k, v]) => v === a && S.purified.has(k));
+      }
+
+      /** 이 섹터에서 나갈 수 있는 방향 — 되돌아가는 쪽은 항상 열림 */
+      function exitsOf(a) {
+        const flip = { TOP: "BOTTOM", BOTTOM: "TOP", LEFT: "RIGHT", RIGHT: "LEFT" };
+        const out = [];
+        for (const c of CONNS) {
+          if (c.a === a) out.push({ to: c.b, dir: c.dir, needs: c.needs });
+          else if (c.b === a) out.push({ to: c.a, dir: flip[c.dir], needs: null });
+        }
+        return out;
+      }
+
+      function nodesOf(a) { return NODES.filter((n) => n.area === a); }
+
+      // ─── 렌더 ────────────────────────────────────────────────────────────
+      function renderHeader() {
+        const p = purifyPct();
+        $("sDay").textContent = S.day;
+        $("sLeft").textContent = Math.max(0, VOYAGE_DAYS - S.day);
+        $("sPur").textContent = p.pct + "%";
+        $("sKid").textContent = S.kids;
+      }
+
+      function renderIsland() {
+        island.innerHTML = "";
+        const ex = exitsOf(S.area);
+        GRID.flat().forEach((id) => {
+          const a = AREAS[id];
+          const el = document.createElement("div");
+          const conn = ex.find((e) => e.to === id);
+          const locked = conn && conn.needs && !S.cleared.has(conn.needs);
+          el.className = "cell " + (a.sea ? "sea" : "land")
+            + (areaPurified(id) ? " purified" : "")
+            + (id === S.area ? " here" : "")
+            + (id === S.look && id !== S.area ? " look" : "")
+            + (conn && !locked ? " adj" : "")
+            + (locked ? " locked" : "");
+          const total = nodesOf(id).length;
+          const done = nodesOf(id).filter((n) => S.cleared.has(n.id)).length;
+          el.innerHTML = `<div class="floor" style="background-image:${floorCss(id)}"></div>`
+            + (a.sea
+            ? `<span class="nm">바다</span><span class="cnt">${a.name}</span>`
+            : `<span class="nm">${a.name}</span><span class="cnt">${done}/${total} 노드</span>`
+              + (id === S.area ? `<span class="me">🐾</span>` : "")
+              + (locked ? `<span class="lk">🔒</span>` : "")
+              + (id === GOAL ? `<span class="lk">👑</span>` : ""));
+          if (areaPurified(id)) {
+            const r = document.createElement("div");
+            r.className = "ring";
+            r.style.cssText = "left:8%;top:8%;width:84%;height:84%";
+            el.appendChild(r);
+          }
+          if (!a.sea) el.addEventListener("click", () => {
+            lookAt(id);
+            if (id !== S.area) void tryTravelTo(id);
+          });
+          island.appendChild(el);
+        });
+      }
+
+      function renderPad() {
+        const ex = exitsOf(S.area);
+        document.querySelectorAll("#pad button").forEach((b) => {
+          const dir = b.dataset.dir;
+          const c = ex.find((e) => e.dir === dir);
+          b.className = b.className.replace(/\b(on|lock|none)\b/g, "").trim() + " ";
+          if (!c) { b.classList.add("none"); b.title = "바다"; return; }
+          const locked = c.needs && !S.cleared.has(c.needs);
+          b.classList.add(locked ? "lock" : "on");
+          b.textContent = locked ? "🔒" : { TOP: "▲", BOTTOM: "▼", LEFT: "◀", RIGHT: "▶" }[dir];
+          b.title = locked ? "관문 필요" : AREAS[c.to].name;
+        });
+      }
+
+      function islandFloor() { return window.__islandFloor; }
+
+      function viewId() { return S.look || S.area; }
+
+      function lookAt(id) {
+        if (!id || !AREAS[id] || AREAS[id].sea) return;
+        S.look = id;
+        islandFloor()?.setMode("sector");
+        syncIslandViewBtn();
+        renderStage();
+        renderIsland();
+        renderPad();
+        renderNodeTable();
+      }
+
+      function purifiedLandIds() {
+        return Object.keys(AREAS).filter((id) => !AREAS[id].sea && areaPurified(id));
+      }
+
+      function syncIslandFloor() {
+        const f = islandFloor();
+        if (!f) return;
+        const vid = viewId();
+        const here = vid === S.area;
+        f.setFocus(vid, here ? S.x : 50, here ? S.y : 50);
+        f.setPurified(purifiedLandIds());
+        const pick = $("floorPick").value;
+        f.setTileOverride(pick === "auto" ? "auto" : pick);
+      }
+
+      function stagePct(areaId, xPct, yPct) {
+        const f = islandFloor();
+        if (!f || !stage.classList.contains("island-3d")) return { x: xPct, y: yPct };
+        return f.worldToStagePct(areaId, xPct, yPct);
+      }
+
+      function renderStage() {
+        const vid = viewId();
+        const a = AREAS[vid];
+        const preview = vid !== S.area;
+        if (!stage.classList.contains("island-3d")) {
+          stage.style.background = `linear-gradient(180deg, ${a.top}, ${a.bot})`;
+        }
+        $("areaTag").textContent = preview
+          ? `무지개섬 · ${a.name} · 미리보기`
+          : `무지개섬 · ${a.name}`;
+        $("dark").style.opacity = areaPurified(vid) ? 0.08 : 0.5;
+        const t = $("tileImg");
+        t.style.backgroundImage = floorCss(vid);
+        t.classList.add("on");
+        syncIslandFloor();
+
+        stage.querySelectorAll(".poi").forEach((n) => n.remove());
+        const islandView = islandFloor()?.getMode() === "island";
+        if (!islandView) {
+          nodesOf(vid).forEach((n) => {
+            const b = document.createElement("button");
+            b.className = "poi" + (S.cleared.has(n.id) ? " done" : "");
+            const p = stagePct(n.area, n.x, n.y);
+            b.style.left = p.x + "%";
+            b.style.top = p.y + "%";
+            const pl = PILLAR(n.type);
+            b.innerHTML = `<span class="pl pl-${pl}">${pl}</span><span class="ic">${n.icon}</span><span class="lb">${n.label}</span>`;
+            if (preview) {
+              b.style.pointerEvents = "none";
+              b.style.opacity = "0.72";
+            } else {
+              b.addEventListener("click", (e) => { e.stopPropagation(); approach(n); });
+            }
+            stage.appendChild(b);
+          });
+        }
+        actor.style.visibility = preview ? "hidden" : "visible";
+        applyActor(false);
+      }
+
+      function renderNodeTable() {
+        const rows = nodesOf(viewId()).map((n) =>
+          `<tr><td>${n.icon}</td><td class="n">${n.label}</td><td>${PILLAR(n.type)}</td><td>${S.cleared.has(n.id) ? "✔" : "—"}</td></tr>`
+        ).join("");
+        $("nodeTable").innerHTML = rows || `<tr><td colspan="4">노드 없음</td></tr>`;
+      }
+
+      function renderRoutes() {
+        const opt = ["i12", "i10"];
+        const nodeDays = (list) => list.reduce((s, a) => s + nodesOf(a).length, 0);
+        const base = [SPAWN, "i11", GOAL];
+        const rows = [
+          { label: "갈래 생략", vis: [] },
+          { label: "동부만", vis: ["i12"] },
+          { label: "서부만", vis: ["i10"] },
+          { label: "동부 → 서부", vis: ["i12", "i10"] },
+        ].map((r) => {
+          const days = nodeDays([...base, ...r.vis]) + 1 + r.vis.length * 2 + 1;
+          const pur = Math.round(((3 + r.vis.length) / 5) * 100);
+          const over = days > VOYAGE_DAYS;
+          const slack = VOYAGE_DAYS - days;
+          return `<div class="r"><span>${r.label}</span><span><b style="color:${over ? "#ff8a7a" : slack <= 2 ? "#ffd27a" : "#6ddea0"}">${days}일</b> · 정화 ${pur}% · 여유 ${slack}</span></div>`;
+        }).join("");
+        $("routeBox").innerHTML = rows + `<p class="hint">노드 수 + 섹터 이동 수. 이동 = 1 + 2×선택 + 1.</p>`;
+      }
+
+      function renderAll() { renderHeader(); renderIsland(); renderPad(); renderStage(); renderNodeTable(); renderRoutes(); }
+
+      // ─── 움직임 ──────────────────────────────────────────────────────────
+      function applyActor(animate) {
+        actor.style.transitionDuration = animate ? "" : "0ms";
+        const p = stagePct(S.area, S.x, S.y);
+        actor.style.left = p.x + "%";
+        actor.style.top = p.y + "%";
+        actor.classList.toggle("flip", S.flip);
+        $("spot").style.setProperty("--sx", p.x + "%");
+        $("spot").style.setProperty("--sy", p.y + "%");
+        const vid = viewId();
+        const here = vid === S.area;
+        islandFloor()?.setFocus(vid, here ? S.x : 50, here ? S.y : 50);
+      }
+
+      /** 걷기 — 거리에 비례한 시간. rAF 금지(프로젝트 규칙) → CSS transition + setTimeout */
+      function walkTo(x, y) {
+        return new Promise((res) => {
+          const dx = x - S.x, dy = y - S.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 0.6) return res();
+          if (Math.abs(dx) > 1.5) S.flip = dx < 0;
+          const ms = Math.min(1400, Math.max(260, dist * 26));
+          actor.style.transitionDuration = ms + "ms";
+          S.x = x; S.y = y;
+          applyActor(true);
+          setTimeout(res, ms);
+        });
+      }
+
+      async function approach(n) {
+        if (S.busy || S.over) return;
+        S.busy = true;
+        try {
+          await walkTo(n.x, Math.min(94, n.y + 7));
+          spendDay();
+          if (n.id === "i11_lookout") {
+            const p = purifyPct();
+            const next = PURIFY_STEPS.find((s) => p.pct < s.pct);
+            islandFloor()?.setMode("island");
+            syncIslandViewBtn();
+            log(`[탐구] 🔭 ${n.label}\n여기서 섬 전체가 보인다.`, [
+              `💧 섬 정화도 ${p.pct}% (${p.done}/${p.total})`,
+              next ? `다음 ${next.pct}% — ${next.label}` : "완전 정화",
+              `🗓️ 배까지 ${Math.max(0, VOYAGE_DAYS - S.day)}일`,
+            ], true);
+          } else if (n.type === "CATALYST") {
+            S.held.push("맑은 물방울");
+            S.cleared.add(n.id);
+            log(`[탐구] 💧 ${n.label}\n반짝이는 물방울. 어딘가 탁한 곳에 쓸 수 있다.`, ["촉매 획득"]);
+          } else if (n.type === "BLIGHT") {
+            const i = S.held.indexOf("맑은 물방울");
+            if (i < 0) log(`[정화] 🌫️ ${n.label}\n씻어낼 무언가가 필요해.`, ["💧 촉매가 필요"]);
+            else {
+              S.held.splice(i, 1);
+              S.purified.add(n.id);
+              S.cleared.add(n.id);
+              if (AREA_BLIGHTS[n.id]) log(`[정화] ${n.label} — 맑아졌다. 색이 돌아온다.`, ["지역 정화", "촉매 사용"]);
+              else { S.kids += 1; log(`[정화] 오염이 걷히자 작은 존재가 눈을 떴다.`, ["아이 합류"]); }
+            }
+          } else {
+            S.cleared.add(n.id);
+            log(`[${PILLAR(n.type)}] ${n.icon} ${n.label}`, [n.type]);
+          }
+          renderAll();
+        } finally { S.busy = false; }
+      }
+
+      function spendDay() {
+        if (S.over) return;
+        S.day += 1;
+        if (S.day >= VOYAGE_DAYS) {
+          S.over = true;
+          const p = purifyPct();
+          log(`⛵ 배가 왔다. ${S.day}일 · 아이 ${S.kids}명 · 섬 정화도 ${p.pct}%`, ["항해 종료"], true);
+        }
+        renderHeader();
+      }
+
+      async function tryTravelTo(to) {
+        if (S.busy || S.over || to === S.area) return;
+        const c = exitsOf(S.area).find((e) => e.to === to);
+        if (!c) { log(`🚫 ${AREAS[to].name} 쪽으로는 바로 갈 수 없다. 중앙을 거쳐야 한다.`, null, true); return; }
+        if (c.needs && !S.cleared.has(c.needs)) {
+          const g = NODES.find((n) => n.id === c.needs);
+          log(`🔒 도전 — ${g ? g.label : "관문"}을(를) 넘지 않으면 이쪽으로는 갈 수 없다.`, null, true);
+          return;
+        }
+        S.busy = true;
+        try {
+          const edge = { TOP: [S.x, 8], BOTTOM: [S.x, 92], LEFT: [8, S.y], RIGHT: [92, S.y] }[c.dir];
+          await walkTo(edge[0], edge[1]);
+          S.area = to;
+          S.look = to;
+          const from = { TOP: "BOTTOM", BOTTOM: "TOP", LEFT: "RIGHT", RIGHT: "LEFT" }[c.dir];
+          S.x = from === "LEFT" ? 22 : from === "RIGHT" ? 78 : 50;
+          S.y = from === "TOP" ? 20 : from === "BOTTOM" ? 84 : 60;
+          renderStage(); renderIsland(); renderPad(); renderNodeTable();
+          spendDay();
+          log(`🚶 ${AREAS[to].name}에 들어섰다. (섹터 이동 = 하루)`, [`Day ${S.day}`], true);
+        } finally { S.busy = false; }
+      }
+
+      function eventNdc(e) {
+        const r = stage.getBoundingClientRect();
+        return {
+          x: ((e.clientX - r.left) / r.width) * 2 - 1,
+          y: -(((e.clientY - r.top) / r.height) * 2 - 1),
+        };
+      }
+
+      function syncIslandViewBtn() {
+        const f = islandFloor();
+        const on = f && f.getMode() === "island";
+        $("btnIslandView").textContent = on ? "이 섹터" : "섬 전체";
+      }
+
+      // ─── 입력 ────────────────────────────────────────────────────────────
+      stage.addEventListener("click", (e) => {
+        if (S.busy || S.over) return;
+        if (e.target.closest(".poi") || e.target.closest("#pad")) return;
+        const f = islandFloor();
+        if (f && stage.classList.contains("island-3d")) {
+          const ndc = eventNdc(e);
+          if (f.getMode() === "island") {
+            const w = f.screenToWorld(ndc.x, ndc.y);
+            const id = f.worldToAreaId(w.x, w.z);
+            if (id && AREAS[id] && !AREAS[id].sea) {
+              lookAt(id);
+              if (id !== S.area) void tryTravelTo(id);
+              return;
+            }
+          }
+          const pct = f.screenToAreaPct(ndc.x, ndc.y, S.area);
+          void walkTo(
+            Math.max(4, Math.min(96, pct.x)),
+            Math.max(4, Math.min(96, pct.y)),
+          );
+          return;
+        }
+        const r = stage.getBoundingClientRect();
+        void walkTo(((e.clientX - r.left) / r.width) * 100, ((e.clientY - r.top) / r.height) * 100);
+      });
+      document.querySelectorAll("#pad button").forEach((b) => {
+        b.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const c = exitsOf(S.area).find((x) => x.dir === b.dataset.dir);
+          if (c) tryTravelTo(c.to);
+        });
+      });
+      $("btnDay").addEventListener("click", () => { if (!S.busy) { spendDay(); log(`제자리에서 하루가 지났다.`, [`Day ${S.day}`], true); renderAll(); } });
+      $("btnGate").addEventListener("click", () => { nodesOf(S.area).filter((n) => n.type === "MINIBOSS" || n.type === "BOSS").forEach((n) => S.cleared.add(n.id)); log(`♞ 관문을 넘었다.`, ["테스트"], true); renderAll(); });
+      $("btnPurify").addEventListener("click", () => { Object.entries(AREA_BLIGHTS).filter(([, v]) => v === S.area).forEach(([k]) => { S.purified.add(k); S.cleared.add(k); }); log(`💧 이 섹터를 정화했다.`, ["테스트"], true); renderAll(); });
+      $("btnKid").addEventListener("click", () => { S.kids += 1; log(`🐾 아이를 구조했다.`, ["테스트"], true); renderHeader(); });
+      $("btnOverlap").addEventListener("click", () => $("phone").classList.toggle("overlap"));
+      $("btnIslandView").addEventListener("click", () => {
+        const f = islandFloor();
+        if (!f) return;
+        f.setMode(f.getMode() === "island" ? "sector" : "island");
+        syncIslandViewBtn();
+        renderStage();
+      });
+      $("floorPick").addEventListener("change", () => { renderStage(); renderIsland(); });
+      window.__mapProtoOnFloorReady = () => { renderStage(); syncIslandViewBtn(); };
+      $("btnReset").addEventListener("click", () => {
+        Object.assign(S, { day: 1, area: SPAWN, look: SPAWN, x: 50, y: 88, flip: false, cleared: new Set(), purified: new Set(), kids: 0, held: [], busy: false, over: false });
+        filler.innerHTML = "";
+        renderAll();
+        log(`부두에 내렸다. 배는 60일 뒤에 온다.`, ["Day 1"], true);
+      });
+
+      renderAll();
+      log(`부두에 내렸다. 배는 60일 뒤에 온다.`, ["Day 1"], true);
+      log(`무대를 눌러 걷고, 노드를 눌러 접근한다. 좌하단 십자 패드로 섹터를 옮긴다.`, null, true);
+    </script>
+    <script type="module" src="/src/tools/mapProto/islandFloorMain.ts"></script>
+  </body>
+</html>

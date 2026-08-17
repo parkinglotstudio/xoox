@@ -1,0 +1,965 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XOOX 필러 프로토 v2 · 카드 13종 · 60일 갈래</title>
+    <style>
+      :root {
+        --bg:#0b0d13; --panel:#141922; --line:#28303c; --text:#e7edf6; --muted:#8595a9;
+        --accent:#5ec8ff; --ok:#6ddea0; --warn:#ffd27a; --bad:#ff8a7a;
+        --paper:#f2ead6; --ink:#23201a;
+        font-family:"Pretendard","Malgun Gothic",sans-serif; color:var(--text);
+      }
+      *{box-sizing:border-box}
+      body{margin:0;min-height:100vh;background:var(--bg);overflow-x:hidden}
+
+      header{display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:8px 14px;
+        background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+      header h1{margin:0;font-size:14px;font-weight:800;letter-spacing:-.02em}
+      header .sp{flex:1}
+      .st{font-size:11px;color:var(--muted);background:#0f141c;border:1px solid var(--line);
+        padding:3px 8px;white-space:nowrap;transition:transform .18s,border-color .18s}
+      .st b{color:var(--text);font-weight:800}
+      .st.a b{color:var(--accent)} .st.w b{color:var(--warn)} .st.o b{color:var(--ok)}
+      .st.bump{transform:scale(1.16);border-color:var(--warn)}
+      button{font-size:12px;padding:6px 10px;cursor:pointer;background:#1f2a36;color:var(--text);border:1px solid var(--line)}
+      button:hover{border-color:var(--accent);color:var(--accent)}
+
+      /* 스트릭 게이지 (모노폴리고식 연속 보너스) */
+      #streakWrap{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--muted)}
+      #streakBar{width:74px;height:7px;background:#0f141c;border:1px solid var(--line);position:relative}
+      #streakFill{position:absolute;inset:0;width:0;background:linear-gradient(90deg,#ffd27a,#ff8a4a);transition:width .35s}
+      #streakWrap.hot #streakFill{box-shadow:0 0 9px rgba(255,170,80,.75)}
+
+      .wrap{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:13px;padding:13px 14px 30px;align-items:start}
+      @media (max-width:980px){.wrap{grid-template-columns:1fr}}
+      .box{background:var(--panel);border:1px solid var(--line);padding:11px}
+      .box+.box{margin-top:11px}
+      .box h2{margin:0 0 8px;font-size:12px;color:var(--accent);font-weight:700}
+      .hint{font-size:10.5px;color:var(--muted);line-height:1.55;margin:7px 0 0}
+
+      /* ══════ 필러 ══════ */
+      #filler{height:min(66vh,600px);overflow-y:auto;overflow-anchor:none;background:#08060f;
+        border:1px solid var(--line);padding:10px 8px 14px;display:flex;flex-direction:column;gap:7px;position:relative}
+      #filler::-webkit-scrollbar{width:6px}
+      #filler::-webkit-scrollbar-thumb{background:#26303c}
+
+      .day-header{align-self:center;font-size:10.5px;font-weight:800;color:#9fd0ff;background:#12243a;
+        border:1px solid #24425f;padding:2px 12px;border-radius:10px;margin:5px 0 2px}
+      .chapter{align-self:center;font-size:11px;font-weight:800;color:#ffd9a0;letter-spacing:.08em;
+        margin:9px 0 3px;padding:3px 16px;border-top:1px solid #3a2f22;border-bottom:1px solid #3a2f22}
+
+      /* 원작 실측(plan/_frames): 카드는 화면 전체 폭 · 오른쪽 정렬 아님 · 노란 테두리 */
+      .card{position:relative;align-self:stretch;background:var(--paper);color:var(--ink);
+        font-size:12.5px;line-height:1.6;padding:9px 12px 11px;border-radius:5px;
+        border:2px solid #e8c86a;animation:cin .2s ease-out}
+      .card::before{content:none}
+      @keyframes cin{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+      .card-line2{margin-top:4px;color:#4a4436;font-size:12px}
+      /* 등급 라벨 = 카드 우하단 리본 (원작) */
+      .card-tag{position:absolute;right:-2px;bottom:-9px;font-size:10px;font-weight:800;
+        padding:2px 9px;border-radius:3px;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+      /* 카드 사이 얇은 구분선 */
+      .sep{align-self:stretch;height:1px;background:#1c2430;margin:1px 0}
+
+      /* 등급 4종 — 원작은 카드 배경이 크림색 유지, 테두리 색으로 구분 */
+      .grade-대박{border-color:#ff6f8a;box-shadow:0 0 0 1px rgba(255,111,138,.5),0 0 18px rgba(255,90,120,.25)}
+      .tag-대박{background:#e0405f;color:#fff}
+      .grade-중박{border-color:#4fc3e0}
+      .tag-중박{background:#2f9dbd;color:#fff}
+      .grade-운빨망함{border-color:#9aa3ad}
+      .tag-운빨망함{background:#78828d;color:#fff}
+      .grade-보너스{border-color:#b06de0}
+      .tag-보너스{background:#8a4ad0;color:#fff}
+
+      .card.torn{clip-path:polygon(0 0,100% 0,100% calc(100% - 7px),92% 100%,78% calc(100% - 5px),64% 100%,50% calc(100% - 6px),36% 100%,22% calc(100% - 4px),8% 100%,0 calc(100% - 6px))}
+      .card.impact{animation:cin .2s ease-out, shake .34s ease-in-out .12s}
+      @keyframes shake{0%,100%{transform:none}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+      /* ── 신규 ① 슬픔 : 채도 낮춤 · 느리게 · 아래로 가라앉음 ── */
+      .card.sad{background:linear-gradient(158deg,#1b2028,#12151b);color:#a8b2c0;
+        border:1px solid #2b3340;animation:sadin .9s ease-out both;filter:saturate(.35)}
+      .card.sad::before{background:#4a5666;box-shadow:none}
+      @keyframes sadin{from{opacity:0;transform:translateY(-6px)}60%{opacity:.7}to{opacity:1;transform:none}}
+      .card.sad .card-line2{color:#77828f;font-style:italic}
+
+      /* ── 신규 ② 기쁨 : 밝은 테두리 · 튀어오름 · 반짝임 ── */
+      .card.joy{background:linear-gradient(158deg,#3d3a12,#2a2708);color:#fff6cf;
+        box-shadow:0 0 0 1px rgba(255,224,130,.5), 0 0 22px rgba(255,210,110,.28);animation:joyin .5s cubic-bezier(.2,1.5,.4,1) both}
+      .card.joy::before{background:linear-gradient(180deg,#ffe9a0,#ffb84a);box-shadow:0 0 10px rgba(255,200,90,.8)}
+      @keyframes joyin{0%{opacity:0;transform:translateY(10px) scale(.9)}70%{transform:translateY(0) scale(1.04)}100%{opacity:1;transform:none}}
+      .spark{position:absolute;font-size:11px;pointer-events:none;animation:sparkUp 1s ease-out forwards}
+      @keyframes sparkUp{0%{opacity:0;transform:translate(0,0) scale(.6)}30%{opacity:1}100%{opacity:0;transform:translate(var(--dx),-26px) scale(1.1)}}
+
+      /* ── 신규 ③ 정화 : 흑백 → 컬러 (Cozy 색 회복을 카드에서) ── */
+      .card.purify{background:linear-gradient(158deg,#16302a,#0c1c18);color:#cdf3e4;
+        filter:grayscale(1);transition:filter 1.5s ease-out}
+      .card.purify.bloom{filter:grayscale(0)}
+      .card.purify::before{background:linear-gradient(180deg,#7fe9c0,#2f9f7a);box-shadow:0 0 10px rgba(90,230,180,.6)}
+      .purify-meter{margin-top:7px;height:6px;background:rgba(0,0,0,.35);position:relative;overflow:hidden}
+      .purify-meter i{position:absolute;inset:0;width:0;background:linear-gradient(90deg,#5ee8b0,#9fffd8);transition:width 1.2s ease-out}
+      .purify-goal{font-size:10.5px;color:#8fd8bd;margin-top:5px;font-style:italic}
+
+      /* ── 신규 ④ 전투 : HP 바 2개 + 턴 로그 ── */
+      .card.battle{background:linear-gradient(158deg,#2a1418,#180a0e);color:#ffd9d2;max-width:96%}
+      .card.battle::before{background:linear-gradient(180deg,#ff8a7a,#b03a2a);box-shadow:0 0 9px rgba(255,120,100,.55)}
+      .bt-head{display:flex;justify-content:space-between;font-size:10.5px;font-weight:800;margin-bottom:5px}
+      .bt-bars{display:flex;flex-direction:column;gap:3px;margin-bottom:6px}
+      .bt-bar{height:7px;background:rgba(0,0,0,.4);position:relative}
+      .bt-bar i{position:absolute;inset:0;transition:width .35s}
+      .bt-bar.me i{background:linear-gradient(90deg,#6ddea0,#bff5d8)}
+      .bt-bar.foe i{background:linear-gradient(90deg,#e05555,#ff9a8a)}
+      .bt-log{font-size:11px;line-height:1.6;font-family:ui-monospace,Menlo,monospace}
+      .bt-log div{opacity:0;transform:translateX(-5px);transition:opacity .18s,transform .18s}
+      .bt-log div.in{opacity:1;transform:none}
+      .bt-log .hit{color:#ffd0a0} .bt-log .crit{color:#ffe36a;font-weight:800}
+      .bt-log .take{color:#ff9a8a} .bt-log .skill{color:#9fe8ff}
+
+      /* ── 신규 ⑤ 행운 : 3릴 슬롯 ── */
+      .card.luck{background:linear-gradient(158deg,#3a2a48,#1e142a);color:#ecd9ff}
+      .card.luck::before{background:linear-gradient(180deg,#e0a0ff,#8a4ad0);box-shadow:0 0 10px rgba(190,120,255,.6)}
+      .reels{display:flex;gap:6px;justify-content:center;margin:8px 0 4px}
+      .reel{width:44px;height:44px;background:rgba(0,0,0,.4);border:1px solid #5a3a72;
+        display:grid;place-items:center;font-size:22px;overflow:hidden}
+      .reel.spin{animation:reelSpin .12s linear infinite}
+      @keyframes reelSpin{from{transform:translateY(-6px)}to{transform:translateY(6px)}}
+      .reel.lock{border-color:#ffd27a;box-shadow:0 0 12px rgba(255,210,120,.55)}
+      .odds{font-size:10px;color:#c7a8e0;text-align:center}
+
+      /* ── 신규 ⑥ 방랑자 독백 : 박스 없음 ── */
+      .mono{align-self:center;max-width:82%;font-size:12px;font-style:italic;color:#9fb0c6;
+        line-height:1.7;text-align:center;padding:5px 12px;border-left:0;
+        animation:monoin .8s ease-out both;position:relative}
+      @keyframes monoin{from{opacity:0}to{opacity:1}}
+      .mono::before,.mono::after{content:"—";color:#4a5666;margin:0 6px}
+
+      /* ── 신규 ⑦ 채팅 : 리더 연속 대화 · 꼬리 ── */
+      .chat{align-self:flex-start;max-width:88%;display:flex;flex-direction:column;gap:4px}
+      .bub{position:relative;background:linear-gradient(158deg,rgba(30,42,62,.75),rgba(12,17,28,.95));
+        border:1px solid rgba(95,170,200,.35);border-radius:11px 11px 11px 3px;padding:7px 11px;
+        animation:cin .22s ease-out both}
+      .bub .who{font-size:10px;font-weight:800;color:#8fdbe6;display:block;margin-bottom:1px}
+      .bub .ln{font-size:12px;color:#c9d8ea;line-height:1.5}
+      .bub.right{border-radius:11px 11px 3px 11px;align-self:flex-end;
+        background:linear-gradient(158deg,rgba(58,44,26,.8),rgba(28,20,10,.95));border-color:rgba(210,170,95,.4)}
+      .bub.right .who{color:#ffd9a0}
+
+      /* 코멘터리(1줄) */
+      .card.cm{align-self:flex-start;background:linear-gradient(158deg,rgba(30,40,60,.6),rgba(12,16,28,.92));
+        border:1px solid rgba(95,170,200,.35);color:#c6d4e6;display:flex;flex-direction:column;gap:2px;clip-path:none}
+      .card.cm::before{background:linear-gradient(180deg,#7fe9df,#3a8fb0)}
+      .cm-who{font-size:10.5px;font-weight:800;color:#8fdbe6}
+      .cm-line{font-size:12px;font-style:italic;line-height:1.5}
+
+      /* 칩 · 스킬행 */
+      /* 효과 칩 — 원작: 원형 아이콘 배지 + 진한 알약 (카드 하단) */
+      .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+      .chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;
+        background:#2a2620;color:#ffe9a8;padding:2px 10px 2px 2px;border-radius:12px;
+        opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s}
+      .chip.in{opacity:1;transform:none}
+      .chip i{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;
+        font-size:11px;font-style:normal;background:radial-gradient(circle at 35% 30%,#ffe9a8,#c98a2a)}
+      .chip.neg{color:#ffd0c8}
+      .chip.neg i{background:radial-gradient(circle at 35% 30%,#ffb0a4,#b03a2a)}
+      .card.battle .chip,.card.luck .chip,.card.purify .chip,.card.joy .chip,.card.sad .chip{background:#1b2430;color:#bfe4ff}
+      .skill-row{display:flex;align-items:center;gap:8px;margin-top:7px;opacity:0;transform:scale(.9);
+        transition:opacity .25s,transform .25s}
+      .skill-row.in{opacity:1;transform:none}
+      .skill-kind{font-size:9px;font-weight:800;color:#8a8270;writing-mode:vertical-rl;letter-spacing:.1em}
+      .skill-ic{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:19px;
+        background:radial-gradient(circle at 34% 28%,#8fdcff,#2f7fb0);box-shadow:0 0 12px rgba(94,200,255,.5)}
+      .skill-chip{font-size:11px;font-weight:800;color:#0d2a16;background:#7fd4a0;padding:3px 10px;border-radius:11px}
+      .skill-chip.up{background:#ffd27a;color:#3a2a06}
+      .hl{font-weight:700}
+
+      /* 큰 보상 배너 (모노폴리고식) */
+      #banner{position:fixed;inset:0;display:none;place-items:center;z-index:40;pointer-events:none}
+      #banner.on{display:grid}
+      #banner .bn{font-size:34px;font-weight:900;letter-spacing:.06em;padding:14px 34px;
+        background:linear-gradient(180deg,#ffe9a0,#ffab3a);color:#2a1607;border-radius:8px;
+        box-shadow:0 0 60px rgba(255,180,60,.6);animation:bnIn .5s cubic-bezier(.2,1.6,.4,1) both}
+      @keyframes bnIn{0%{opacity:0;transform:scale(.6) rotate(-4deg)}100%{opacity:1;transform:none}}
+
+      /* 날아가는 아이콘 */
+      .fly{position:fixed;z-index:50;font-size:19px;pointer-events:none;transition:transform .62s cubic-bezier(.4,-.2,.6,1),opacity .62s}
+
+      /* ══════ 학습한 정기 아이콘 줄 (원작: 필드 상단 가로 배열) ══════ */
+      #skillRail{display:flex;gap:4px;flex-wrap:wrap;padding:6px 8px;background:#0d1119;
+        border:1px solid var(--line);border-bottom:0;min-height:34px;align-items:center}
+      #skillRail .si{width:26px;height:26px;border-radius:5px;display:grid;place-items:center;font-size:14px;
+        background:linear-gradient(180deg,#3a4a60,#1e2733);border:1px solid #566b85;
+        animation:cin .25s ease-out}
+      #skillRail .si.up{border-color:#ffd27a;box-shadow:0 0 8px rgba(255,210,120,.5)}
+      #skillRail .empty{font-size:10.5px;color:#4c5866}
+
+      /* ══════ 버튼 = [대박 게이지] (메인) [중박 게이지] ══════ */
+      #buttons{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+      .btnrow{display:grid;grid-template-columns:64px minmax(0,1fr) 64px;gap:9px;align-items:center}
+      .gauge{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;
+        background:none;border:0;padding:0;cursor:default}
+      .gauge .num{font-size:11px;font-weight:800;color:#cfe0f2}
+      .gauge .dial{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-size:21px;
+        border:3px solid #3a4a5c;background:#141c26;position:relative;overflow:hidden}
+      .gauge .dial::after{content:"";position:absolute;left:0;right:0;bottom:0;height:var(--fill,0%);
+        background:linear-gradient(0deg,rgba(255,190,80,.45),rgba(255,220,140,.15));transition:height .45s}
+      .gauge .lb{font-size:10px;font-weight:800}
+      .gauge.jp .lb{color:#ffcf6a} .gauge.jp .dial{border-color:#a8762a}
+      .gauge.mid .lb{color:#6fd8f0} .gauge.mid .dial{border-color:#2a7a94}
+      .gauge.full .dial{border-color:#ffd27a;box-shadow:0 0 16px rgba(255,210,120,.7);cursor:pointer;
+        animation:gpulse 1s ease-in-out infinite}
+      @keyframes gpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+      .mainbtn{width:100%;padding:15px;font-size:15px;font-weight:800;border-radius:26px;
+        background:linear-gradient(180deg,#5ec8ff,#2f7fb0);color:#06131c;border:2px solid #8fdcff}
+      .mainbtn:hover{color:#06131c}
+      .mainbtn.combat{background:linear-gradient(180deg,#e0574a,#8f2a1e);border-color:#ff9a88;color:#fff}
+      .mainbtn .dots{display:inline-block;width:16px;text-align:left}
+      .forks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+      .forks.three{grid-template-columns:repeat(3,1fr)}
+      .fork{padding:11px 10px;font-size:12.5px;font-weight:700;line-height:1.4;background:#1b2836;
+        border:1px solid #3a5570;color:#dcecff;text-align:left;position:relative}
+      .fork:hover{border-color:var(--accent);background:#22344a;color:#fff}
+      .fork small{display:block;font-size:10px;font-weight:400;color:#8aa4bd;margin-top:3px}
+      .fork .risk{position:absolute;right:7px;top:6px;font-size:9px;padding:1px 6px;border-radius:7px}
+      .risk.safe{background:#1e3a2a;color:#9fe8c0} .risk.mid{background:#3a3418;color:#ffe1a0}
+      .risk.hot{background:#3a1a18;color:#ffb0a4}
+      .prompt{font-size:12px;color:var(--warn);text-align:center;padding:3px}
+
+      /* 우측 */
+      .path{font-size:10.5px;line-height:1.7;color:var(--muted)}
+      .path .p{padding:2px 0;border-bottom:1px dashed #202832}
+      .path .p b{color:#9fd0ff}
+      .skills{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+      .sk{font-size:10px;background:#1e3a2a;color:#9fe8c0;border:1px solid #2f6146;padding:2px 7px;border-radius:9px}
+      .cmp table{width:100%;border-collapse:collapse;font-size:10.5px}
+      .cmp td{padding:3px 3px;border-bottom:1px solid #202832;color:var(--muted)}
+      .cmp td.h{color:var(--text);font-weight:700}
+      .kinds{display:flex;flex-wrap:wrap;gap:4px}
+      .kd{font-size:9.5px;padding:2px 7px;border-radius:8px;background:#1b222c;color:#9fb0c6;border:1px solid #2a3340}
+      .kd.on{border-color:var(--accent);color:var(--accent)}
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>필러 프로토 <b style="color:#5ec8ff">v2</b> <span style="font-size:10.5px;color:#8595a9;font-weight:400">· 카드 13종 · 60일 갈래</span></h1>
+      <span class="sp"></span>
+      <span id="streakWrap">연속 <b id="streakN" style="color:#ffd27a">0</b><span id="streakBar"><i id="streakFill"></i></span></span>
+      <span class="st a" id="wDay">Day <b id="hDay">0</b>/60</span>
+      <span class="st" id="wGold">🪙 <b id="hGold">0</b></span>
+      <span class="st" id="wStar">⭐ <b id="hStar">0</b></span>
+      <span class="st" id="wFeed">🍖 <b id="hFeed">0</b></span>
+      <span class="st o" id="wKid">🐾 <b id="hKid">0</b></span>
+      <span class="st w" id="wPur">💧 <b id="hPur">0%</b></span>
+      <span class="st" id="wHp">❤ <b id="hHp">100</b></span>
+      <button id="btnRestart">처음부터</button>
+    </header>
+
+    <div id="banner"><div class="bn" id="bannerText"></div></div>
+
+    <div class="wrap">
+      <main>
+        <div class="box">
+          <h2>필러 (시나리오 카드 로그)</h2>
+          <div id="skillRail"><span class="empty">학습한 정기 — 아직 없음</span></div>
+          <div id="filler"></div>
+          <div id="buttons"></div>
+        </div>
+      </main>
+      <aside>
+        <div class="box">
+          <h2>이번 판에 나온 카드</h2>
+          <div class="kinds" id="kindBox"></div>
+          <p class="hint">13종 — 등급 4 + 신규 7 + 헤더 2</p>
+        </div>
+        <div class="box"><h2>내가 고른 길</h2><div class="path" id="pathBox"><span class="hint">아직 없음</span></div></div>
+        <div class="box"><h2>획득한 정기</h2><div class="skills" id="skillBox"><span class="hint">아직 없음</span></div>
+          <p class="hint">귀환하면 전부 사라진다(39 §3)</p></div>
+        <div class="box"><h2>지난 판 비교</h2><div class="cmp" id="cmpBox"><span class="hint">한 판 끝내면 쌓입니다</span></div></div>
+      </aside>
+    </div>
+
+    <script>
+      // ════════ 공통 ════════
+      const KEYWORDS=[["탐욕의 근원","#e05555"],["오염 기사","#e8873a"],["폐기물","#e8873a"],["오염","#e8873a"],
+        ["정화","#5ac8e8"],["무지개","#b06de0"],["신호 중계탑","#5ac8e8"],["안전 대피소","#e8873a"],
+        ["스킬","#5ac8e8"],["정기","#5ac8e8"],["별조각","#f5a623"],["열두","#ffd27a"],["Tigon","#ffd27a"]];
+      const G={JP:"대박",MID:"중박",BAD:"운빨망함",BON:"보너스"};
+      const VOYAGE=60;
+      const $=id=>document.getElementById(id);
+      const filler=$("filler"), buttons=$("buttons");
+      const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+      const toBottom=()=>{filler.scrollTop=filler.scrollHeight};
+
+      function paint(t){
+        const hits=[];
+        KEYWORDS.forEach(([k,c])=>{let f=0;while(true){const a=t.indexOf(k,f);if(a<0)break;
+          if(!hits.some(h=>a<h.e&&a+k.length>h.s))hits.push({s:a,e:a+k.length,c});f=a+k.length}});
+        hits.sort((a,b)=>a.s-b.s);
+        const esc=s=>s.replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]));
+        let o="",i=0;
+        for(const h of hits){if(h.s>i)o+=esc(t.slice(i,h.s));
+          o+=`<span class="hl" style="color:${h.c}">${esc(t.slice(h.s,h.e))}</span>`;i=h.e}
+        return o+esc(t.slice(i));
+      }
+
+      // ════════ 모노폴리고식 연출 ════════
+      function bump(id){const e=$(id);e.classList.add("bump");setTimeout(()=>e.classList.remove("bump"),240)}
+
+      /** 숫자 카운트업 */
+      function countUp(el,from,to,ms=520){
+        const t0=Date.now(), d=to-from;
+        const tick=()=>{const p=Math.min(1,(Date.now()-t0)/ms);
+          el.textContent=Math.round(from+d*(1-Math.pow(1-p,3)));
+          if(p<1)setTimeout(tick,32)};
+        tick();
+      }
+
+      /** 아이콘이 카드에서 HUD로 날아간다 */
+      function flyIcon(icon,fromEl,toId){
+        const a=fromEl.getBoundingClientRect(), b=$(toId).getBoundingClientRect();
+        const e=document.createElement("div");
+        e.className="fly";e.textContent=icon;
+        e.style.left=(a.left+a.width*.5)+"px";e.style.top=(a.top+10)+"px";
+        document.body.appendChild(e);
+        requestAnimationFrame(()=>{
+          e.style.transform=`translate(${b.left+b.width*.5-(a.left+a.width*.5)}px,${b.top+8-(a.top+10)}px) scale(.55)`;
+          e.style.opacity="0.15";
+        });
+        setTimeout(()=>{e.remove();bump(toId)},640);
+      }
+
+      async function banner(text){
+        $("bannerText").textContent=text;$("banner").classList.add("on");
+        await sleep(1100);$("banner").classList.remove("on");
+      }
+
+      let usedKinds=new Set();
+      function markKind(k){usedKinds.add(k);
+        $("kindBox").innerHTML=["일차","장","등급 대박","등급 중박","등급 운빨망함","등급 보너스",
+          "전투","행운","슬픔","기쁨","정화","독백","채팅"]
+          .map(x=>`<span class="kd${usedKinds.has(x)?" on":""}">${x}</span>`).join("");
+      }
+      markKind("");
+
+      // ════════ 카드 렌더러 ════════
+      function dayHeader(d){const e=document.createElement("div");e.className="day-header";
+        e.textContent=`${d}일차`;filler.appendChild(e);toBottom();markKind("일차")}
+      function chapter(t){const e=document.createElement("div");e.className="chapter";
+        e.textContent=t;filler.appendChild(e);toBottom();markKind("장")}
+
+      /** 방랑자 독백 — 박스 없음 */
+      async function mono(line){
+        const e=document.createElement("div");e.className="mono";
+        e.innerHTML=paint(line);filler.appendChild(e);toBottom();markKind("독백");await sleep(700);
+      }
+
+      /** 리더 채팅 — 여러 줄 주고받기 (오른쪽=방랑자) */
+      async function chat(lines){
+        const w=document.createElement("div");w.className="chat";filler.appendChild(w);markKind("채팅");
+        for(const [who,icon,ln,side] of lines){
+          const b=document.createElement("div");
+          b.className="bub"+(side==="me"?" right":"");
+          b.innerHTML=`<span class="who">${icon} ${who}</span><span class="ln">${paint(ln)}</span>`;
+          w.appendChild(b);toBottom();await sleep(560);
+        }
+        await sleep(150);
+      }
+
+      function commentary(who,icon,line){
+        const e=document.createElement("div");e.className="card cm";
+        e.innerHTML=`<span class="cm-who">${icon} ${who}</span><span class="cm-line">${paint(line)}</span>`;
+        filler.appendChild(e);toBottom();
+      }
+
+      /** 전투 카드 — HP 바 + 턴 로그 */
+      async function battleCard(b){
+        markKind("전투");
+        const el=document.createElement("div");el.className="card battle";
+        el.innerHTML=
+          `<div class="bt-head"><span>🐾 방랑자</span><span>${b.foeIcon||"⚔️"} ${b.foe}</span></div>
+           <div class="bt-bars">
+             <div class="bt-bar me"><i style="width:100%"></i></div>
+             <div class="bt-bar foe"><i style="width:100%"></i></div>
+           </div>
+           <div style="font-size:11.5px;margin-bottom:5px">${paint(b.body)}</div>
+           <div class="bt-log"></div>`;
+        filler.appendChild(el);toBottom();
+        const meBar=el.querySelector(".bt-bar.me i"), foeBar=el.querySelector(".bt-bar.foe i");
+        const log=el.querySelector(".bt-log");
+        let meHp=100, foeHp=100;
+        for(const t of b.turns){
+          const d=document.createElement("div");
+          d.className=t.k; d.textContent=t.txt;
+          log.appendChild(d);await sleep(40);d.classList.add("in");
+          if(t.foe){foeHp=Math.max(0,foeHp-t.foe);foeBar.style.width=foeHp+"%"}
+          if(t.me){meHp=Math.max(0,meHp-t.me);meBar.style.width=meHp+"%"}
+          toBottom();await sleep(430);
+        }
+        await chipsOn(el,b.chips,b);
+        if(b.cm)commentary(...b.cm);
+        await sleep(120);return el;
+      }
+
+      /** 행운 카드 — 3릴 슬롯 */
+      async function luckCard(b){
+        markKind("행운");
+        const el=document.createElement("div");el.className="card luck";
+        el.innerHTML=`<div style="font-size:11.5px">${paint(b.body)}</div>
+          <div class="reels">${[0,1,2].map(()=>`<div class="reel spin">?</div>`).join("")}</div>
+          <div class="odds">${b.odds||""}</div>`;
+        filler.appendChild(el);toBottom();
+        const reels=[...el.querySelectorAll(".reel")];
+        const faces=["🪙","⭐","🍖","💧","✨","🌈"];
+        const spinner=reels.map(r=>setInterval(()=>{r.textContent=faces[Math.floor(Math.random()*faces.length)]},110));
+        for(let i=0;i<3;i++){
+          await sleep(700);
+          clearInterval(spinner[i]);
+          reels[i].classList.remove("spin");reels[i].classList.add("lock");
+          reels[i].textContent=b.result[i];
+        }
+        await sleep(260);
+        if(b.big)await banner(b.big);
+        await chipsOn(el,b.chips,b);
+        if(b.cm)commentary(...b.cm);
+        await sleep(120);return el;
+      }
+
+      /** 정화 카드 — 흑백→컬러 + 목적 한 줄 */
+      async function purifyCard(b,pctBefore,pctAfter){
+        markKind("정화");
+        const el=document.createElement("div");el.className="card purify";
+        el.innerHTML=`<div style="font-size:11.5px">${paint(b.body)}</div>
+          <div class="purify-meter"><i></i></div>
+          <div class="purify-goal">${b.why||"색이 돌아오면, 여기 살던 것들이 돌아온다."}</div>`;
+        filler.appendChild(el);toBottom();
+        await sleep(320);
+        el.classList.add("bloom");
+        el.querySelector(".purify-meter i").style.width=pctAfter+"%";
+        await sleep(1250);
+        await chipsOn(el,b.chips,b);
+        if(b.cm)commentary(...b.cm);
+        await sleep(120);return el;
+      }
+
+      /** 칩 순차 출현 + 스킬행 + HUD 날아가기 */
+      async function chipsOn(el,chips,b){
+        if(!chips||!chips.length)return;
+        const wrap=document.createElement("div");wrap.className="chips";el.appendChild(wrap);
+        for(const t of chips){
+          const sk=t.match(/^스킬\s+(.+?)\s+(학습|강화\(\+\))$/);
+          if(sk){
+            const row=document.createElement("div");row.className="skill-row";
+            const up=sk[2]!=="학습";
+            const icon=(b.gain&&b.gain.skill)?b.gain.skill[0]:"✦";
+            row.innerHTML=`<span class="skill-kind">스킬</span><span class="skill-ic">${icon}</span>`+
+              `<span class="skill-chip${up?" up":""}">${sk[1]} ${sk[2]}</span>`;
+            el.appendChild(row);await sleep(40);row.classList.add("in");toBottom();await sleep(400);continue;
+          }
+          const c=document.createElement("span");
+          c.className="chip"+(/[-−]/.test(t)?" neg":"");
+          // 원작: 맨 앞 아이콘을 원형 배지로 분리 · 큰 수는 K 표기
+          const m=t.match(/^(\S+)\s+(.+)$/u);
+          const kfmt=s=>s.replace(/([+-]?)(\d{4,})/g,(_,sg,n)=>sg+K(Number(n)));
+          if(m)c.innerHTML=`<i>${m[1]}</i>${kfmt(m[2])}`;
+          else c.innerHTML=`<i>·</i>${kfmt(t)}`;
+          wrap.appendChild(c);
+          await sleep(40);c.classList.add("in");toBottom();
+          // 재화 칩이면 HUD로 날아간다
+          if(t.includes("🪙"))flyIcon("🪙",el,"wGold");
+          else if(t.includes("⭐"))flyIcon("⭐",el,"wStar");
+          else if(t.includes("🍖"))flyIcon("🍖",el,"wFeed");
+          else if(t.includes("🐾")&&!t.includes("상실")&&!t.includes("놓"))flyIcon("🐾",el,"wKid");
+          await sleep(290);
+        }
+      }
+
+      /** 일반 카드 (등급 · 슬픔 · 기쁨 포함) */
+      async function card(b){
+        const isBad=b.g===G.BAD, isJP=b.g===G.JP;
+        const el=document.createElement("div");
+        el.className="card"+(b.g?` grade-${b.g}`:"")+(isBad?" torn impact":"")
+          +(b.mood==="sad"?" sad":"")+(b.mood==="joy"?" joy":"");
+        if(b.g)markKind("등급 "+b.g);
+        if(b.mood==="sad")markKind("슬픔"); if(b.mood==="joy")markKind("기쁨");
+        const body=document.createElement("div");el.appendChild(body);
+        if(b.g){const tag=document.createElement("div");tag.className=`card-tag tag-${b.g}`;
+          tag.textContent=b.g;el.appendChild(tag)}
+        filler.appendChild(el);toBottom();
+
+        if(isJP){
+          body.style.height="20px";body.style.overflow="hidden";
+          const pool=[];Object.values(BEATS).flat().forEach(x=>{if(x.body&&x.body!==b.body)pool.push(x.body.split("\n")[0])});
+          const t0=Date.now();
+          while(Date.now()-t0<1400){body.textContent=pool[Math.floor(Math.random()*pool.length)]||"…";await sleep(58)}
+          body.style.height="";body.style.overflow="";
+        }
+        body.innerHTML=`<div>${paint(b.body)}</div>`+(b.body2?`<div class="card-line2">${paint(b.body2)}</div>`:"");
+        if(isJP){el.style.animation="pop .36s ease-out";await sleep(360);el.style.animation=""}
+        if(b.mood==="joy"){
+          for(let i=0;i<7;i++){const s=document.createElement("span");s.className="spark";
+            s.textContent=["✨","🌟","·"][i%3];
+            s.style.left=(12+Math.random()*76)+"%";s.style.top="60%";
+            s.style.setProperty("--dx",(Math.random()*40-20)+"px");
+            el.appendChild(s);setTimeout(()=>s.remove(),1000)}
+        }
+        toBottom();
+        await chipsOn(el,b.chips,b);
+        if(b.big)await banner(b.big);
+        if(b.cm)commentary(...b.cm);
+        // 원작: 카드 사이 얇은 구분선
+        const sp=document.createElement("div");sp.className="sep";filler.appendChild(sp);
+        await sleep(120);return el;
+      }
+
+      // ════════ 비트 데이터 ════════
+      const c=(body,o={})=>({t:"card",body,...o});
+      const bt=(body,foe,turns,o={})=>({t:"battle",body,foe,turns,...o});
+      const lk=(body,result,o={})=>({t:"luck",body,result,...o});
+      const pf=(body,o={})=>({t:"purify",body,...o});
+      const mo=(line)=>({t:"mono",line});
+      const ch=(lines)=>({t:"chat",lines});
+      const f=(prompt,a,b)=>({t:"fork",prompt,a,b});
+
+      const BEATS={
+        i21:[
+          {t:"chapter",text:"제 1 장 · 부두"},
+          c("무너진 선착장에 배가 닿았다. 여기서부터다.",{g:G.BON,body2:"배는 60일 뒤에 다시 온다.",chips:["🗓️ 60일 남음"]}),
+          ch([["Piper","🐕‍🦺","냄새가 난다. 가까워."],
+              ["Nashui","🐈","여기… 사람 살던 곳이었네요."],
+              ["방랑자","🐾","그럼 두고 간 것도 있겠지.","me"]]),
+          mo("가족을 잃고 며칠을 떠돌았다. 이제 남을 찾는 쪽이 되었다."),
+          c("버려진 정비소에서 쓸 만한 부품을 주웠다.",{g:G.MID,chips:["🪙 골드 +180"],gain:{gold:180}}),
+          f("탁한 물웅덩이가 길을 막았다. 누가 이렇게 만들었을까.",
+            {label:"물길을 거슬러 올라간다",sub:"탐구 · 확실",risk:"safe",
+             body:"물길을 따라 올라가자 아직 살아 있는 물줄기를 만났다.",g:G.MID,chips:["💧 맑은 물방울 획득"],gain:{}},
+            {label:"버려진 초소를 뒤진다",sub:"도전 · 더 나올지도",risk:"mid",
+             body:"잠긴 사물함을 억지로 열었다. 낡은 정수 카트리지가 들어 있다.",g:G.BON,
+             chips:["💧 맑은 물방울 획득","⭐ 별조각 +2"],gain:{star:2}}),
+          pf("웅덩이에 물방울을 떨어뜨렸다. 탁한 물이 갈라지며 색이 돌아온다.",
+            {why:"이 물이 맑아지면, 여기서 물을 마시던 것들이 돌아온다.",
+             chips:["💧 지역 정화","🌈 섬 정화도 20%"],gain:{purify:1}}),
+          f("오염된 무언가가 웅크리고 떨고 있다.",
+            {label:"천천히 눈을 맞춘다",sub:"섭외 · 느리지만 안전",risk:"safe",
+             body:"한참을 기다리자 귀가 조금 풀렸다. 겁에 질린 강아지가 다가온다.",mood:"joy",
+             big:"가족이 늘었다",chips:["🐾 겁에 질린 강아지 합류","❤ 최대 체력 +1300"],gain:{kid:1},
+             cm:["Nashui","🐈","어머 귀여워. 이름이 뭐예요?"]},
+            {label:"먹이를 내밀고 손을 뻗는다",sub:"섭외 · 빠르지만 위험",risk:"hot",
+             body:"손을 뻗자 놀라 달아났다. 발톱에 팔이 긁혔다.",mood:"sad",
+             body2:"어둠 속에서 발소리가 멀어졌다.",chips:["❤ 체력 -8","🐾 놓쳤다"],gain:{hp:-8},
+             cm:["Piper","🐕‍🦺","조급하면 다 도망가."]}),
+          c("사치품을 파는 낯선 상인을 만났다.",{chips:[],cm:["Nashui","🐈","저런 눈빛은 믿지 마세요."]}),
+          f("상인이 손을 내민다.",
+            {label:"거절한다",sub:"아무 일도 없다",risk:"safe",body:"조용히 지나갔다.",chips:[]},
+            {label:"거래한다",sub:"체력을 내주고 정기를 받는다",risk:"hot",
+             body:"상인이 내민 조각을 삼켰다. 몸이 뜨거워진다.",g:G.JP,body2:"낯선 힘이 팔에 스며들었다.",
+             chips:["❤ 체력 -15","스킬 강인 학습"],gain:{hp:-15,skill:["💪","강인"]}}),
+          lk("무지개 조각 룰렛이 돌아간다. 돌려볼까.",["🪙","🪙","⭐"],
+            {odds:"대박 27% · 중박 28% · 망함 26% · 보너스 19%",big:"JACKPOT",
+             chips:["🪙 골드 +420","⭐ 별조각 +1"],gain:{gold:420,star:1}}),
+          c("오염 안갯속에서 방향을 잃고 헤매다 무언가에 부딪혀 다쳤다.",{g:G.BAD,chips:["❤ 체력 -12"],gain:{hp:-12}}),
+          c("희미한 기억 — 섬을 떠나기 전, Tigon은 문 앞에서 오래 서 있었다고 한다.",
+            {mood:"sad",body2:"무엇을 두고 가는지 아는 얼굴이었다고.",chips:["✨ 기억 1/8"],
+             cm:["Piper","🐕‍🦺","선장은 원래 뒤를 안 돌아봐. 그날만 빼고."]}),
+          bt("폐기물 병정이 길을 막고 있다.","폐기물 병정",[
+            {k:"hit",txt:"▸ 잔해를 밀어 병정의 다리를 찍었다  −22",foe:22},
+            {k:"take",txt:"◂ 병정의 팔이 어깨를 스쳤다  −9",me:9},
+            {k:"skill",txt:"✦ 강인 — 버티며 반격했다  −18",foe:18},
+            {k:"crit",txt:"★ 급소! 병정이 크게 휘청였다  −34",foe:34},
+            {k:"take",txt:"◂ 마지막 발버둥에 옆구리를 맞았다  −9",me:9},
+            {k:"hit",txt:"▸ 무너뜨렸다.",foe:26},
+          ],{foeIcon:"💀",chips:["🪙 골드 +260","✨ EXP +80","❤ 체력 -18"],gain:{gold:260,hp:-18},
+             cm:["Piper","🐕‍🦺","끝났다. 다치진 않았고?"]}),
+          f("오염 기사가 관문을 지키고 있다.",
+            {label:"정면으로 넘는다",sub:"체력을 크게 쓴다",risk:"hot",
+             body:"방패를 부수고 관문을 넘었다.",g:G.MID,chips:["♞ 관문 돌파","❤ 체력 -22"],gain:{hp:-22}},
+            {label:"사료로 유인한다",sub:"사료 2개를 쓴다",risk:"mid",
+             body:"사료 냄새에 기사가 자리를 비운 사이 지나갔다.",g:G.BON,
+             chips:["♞ 관문 통과","🍖 사료 -2"],gain:{feed:-2}}),
+        ],
+        i11:[
+          {t:"chapter",text:"제 2 장 · 십자로"},
+          c("사방으로 길이 갈리는 십자로에 섰다.",{cm:["Olmas","🦉","여기서부터는 네가 고르는 길이다."]}),
+          mo("어디로 가든 60일은 똑같이 줄어든다. 그게 무섭다."),
+          c("전망대에 올랐다. 섬 어디가 아직 어두운지 보인다.",{g:G.BON,chips:["🔭 섬 전체 조망"]}),
+          f("중앙 우물이 말라 있다.",
+            {label:"우물가 물방울을 받는다",sub:"탐구",risk:"safe",
+             body:"돌 틈에 맺힌 물방울을 모아 우물에 부었다.",chips:["💧 지역 정화","🌈 섬 정화도 40%"],
+             gain:{purify:1},purifyCard:true},
+            {label:"쉼터의 낡은 두레박을 뒤진다",sub:"탐구 · 더 나올지도",risk:"mid",
+             body:"두레박 밑에서 옛 승무원의 쪽지와 사료 주머니를 찾았다.",
+             chips:["💧 지역 정화","🌈 섬 정화도 40%","🍖 사료 +2"],gain:{purify:1,feed:2},purifyCard:true}),
+          ch([["Olmas","🦉","우물이 돌아왔다. 신호가 조금 선명해졌어."],
+              ["방랑자","🐾","…이런 게 쌓이면 섬이 돌아오는 건가.","me"],
+              ["Nashui","🐈","쌓여요. 반드시."]]),
+        ],
+        i12:[
+          {t:"chapter",text:"제 3 장 · 동부 항만"},
+          c("좌초된 화물선. 선실 안은 아직 어둡다.",{g:G.MID,chips:["🪙 골드 +240"],gain:{gold:240}}),
+          c("신호 중계탑에서 약한 신호가 잡힌다.",{g:G.BON,chips:["✨ 기억 3/8"],
+            cm:["Olmas","🦉","그 신호는 지금도 켜져 있다. 누군가 돌아오라고."]}),
+          f("오래된 감시 카메라가 이쪽을 향해 돌아간다.",
+            {label:"응시한다",sub:"대가가 있다",risk:"hot",
+             body:"렌즈가 붉게 빛나며 무언가를 쏘아보냈다. 대신 기록 하나를 빼냈다.",g:G.JP,
+             body2:"낡은 기록에 정기의 조각이 섞여 있었다.",
+             chips:["❤ 최대 체력 -5%","스킬 반사 학습"],gain:{hp:-10,skill:["🛡️","반사"]}},
+            {label:"눈을 피해 지나간다",sub:"안전",risk:"safe",
+             body:"고개를 숙이고 벽을 따라 걸었다.",chips:[]}),
+          pf("소금 낀 웅덩이에 물방울을 떨어뜨렸다. 항만의 물빛에 색이 돌아온다.",
+            {why:"항구가 숨을 쉬면, 배를 기다리던 것들도 숨을 쉰다.",
+             chips:["💧 지역 정화","🌈 섬 정화도 60%"],gain:{purify:1}}),
+          f("생존자 무리가 갈라져 다투고 있다.",
+            {label:"정비공 쪽을 돕는다",sub:"장비를 얻는다",risk:"safe",
+             body:"정비공이 고맙다며 낡은 보호구를 손봐줬다.",g:G.MID,
+             chips:["🛡️ 방어 +15","🪙 골드 +180"],gain:{gold:180}},
+            {label:"들짐승 쪽을 돕는다",sub:"동행이 늘 수도",risk:"mid",
+             body:"무리에 섞여 있던 작은 고양이가 뒤를 따라왔다.",mood:"joy",big:"가족이 늘었다",
+             chips:["🐾 예민한 길고양이 합류","⚔ 공격 +220"],gain:{kid:1}}),
+          lk("낡은 항해 일지의 좌표를 파보았다.",["⭐","⭐","🪙"],
+            {odds:"세 칸이 맞으면 크게 나온다",big:"BIG WIN",
+             chips:["🪙 골드 +520","⭐ 별조각 +2"],gain:{gold:520,star:2}}),
+          c("오염된 물을 잘못 마셔 온몸에 힘이 빠졌다.",{g:G.BAD,chips:["⚔ 공격 -10%","❤ 체력 -10"],gain:{hp:-10}}),
+          c("희미한 기억 — 처음 주운 아이는 이름이 없었다. Tigon은 사흘을 고민하다 그냥 「너」라고 불렀다.",
+            {mood:"sad",chips:["✨ 기억 4/8"],cm:["Piper","🐕‍🦺","함부로 못 지은 거였겠지."]}),
+          bt("더 강해진 오염 잔재가 길을 막는다.","오염 슬러지",[
+            {k:"hit",txt:"▸ 정면에서 갈라쳤다  −20",foe:20},
+            {k:"take",txt:"◂ 점액이 얼굴에 튀었다  −11",me:11},
+            {k:"skill",txt:"✦ 반사 — 튄 점액을 되돌려보냈다  −24",foe:24},
+            {k:"take",txt:"◂ 발이 점액에 붙었다  −13",me:13},
+            {k:"crit",txt:"★ 핵을 노렸다! 슬러지가 흩어진다  −40",foe:40},
+          ],{foeIcon:"🟢",chips:["🪙 골드 +340","❤ 체력 -24"],gain:{gold:340,hp:-24}}),
+          bt("탐욕의 근원이 구역 끝에 버티고 있다.","탐욕의 근원",[
+            {k:"take",txt:"◂ 근원이 먼저 덮쳐왔다  −16",me:16},
+            {k:"hit",txt:"▸ 버티며 안쪽을 노렸다  −18",foe:18},
+            {k:"crit",txt:"★ 균열! 오래된 기록이 드러났다  −30",foe:30},
+            {k:"take",txt:"◂ 마지막 반격  −14",me:14},
+            {k:"hit",txt:"▸ 근원이 흩어졌다.",foe:52},
+          ],{foeIcon:"👑",big:"구역 보스 격파",chips:["⭐ 별조각 +3","❤ 체력 -30"],gain:{star:3,hp:-30},
+             cm:["Olmas","🦉","기록을 회수했다. 조금 더 알게 됐어."]}),
+        ],
+        i10:[
+          {t:"chapter",text:"제 3 장 · 서부 폐자재"},
+          c("다시 찾은 안전 대피소. 그때보다 낡았다.",{g:G.MID,chips:["❤ 체력 +25"],gain:{hp:25}}),
+          mo("같은 자리를 두 번 지나면, 처음엔 못 본 것이 보인다."),
+          f("흐릿한 정령이 무언가를 내주면 답을 준다고 한다.",
+            {label:"생명력을 바친다",sub:"체력을 크게 잃는다",risk:"hot",
+             body:"가슴이 서늘해지더니 머릿속에 길이 그려졌다.",g:G.JP,body2:"정령이 잠든 힘 하나를 깨워주었다.",
+             chips:["❤ 체력 -25","스킬 재생 학습"],gain:{hp:-25,skill:["🌿","재생"]}},
+            {label:"공격력을 바친다",sub:"힘이 줄어든다",risk:"mid",
+             body:"팔에서 힘이 빠지는 대신 눈이 밝아졌다.",g:G.JP,body2:"정령이 잠든 힘 하나를 깨워주었다.",
+             chips:["⚔ 공격 -7%","스킬 통찰 학습"],gain:{skill:["👁️","통찰"]}}),
+          pf("녹슨 수렁에 물방울을 떨어뜨렸다. 폐자재 사이로 풀빛이 스민다.",
+            {why:"쇠가 삭은 자리에도 풀은 돌아온다.",
+             chips:["💧 지역 정화","🌈 섬 정화도 80%"],gain:{purify:1}}),
+          f("폐기물 거인이 길 위에 앉아 있다.",
+            {label:"지켜본다",sub:"안전하지만 얻는 게 적다",risk:"safe",
+             body:"한참 뒤 거인이 스스로 몸을 틀어 길을 비켰다.",g:G.MID,chips:["❤ 체력 +30"],gain:{hp:30}},
+            {label:"손을 얹어본다",sub:"위험하지만 강화될지도",risk:"hot",
+             body:"거인의 표면이 갈라지며 안쪽의 조각이 손에 붙었다.",g:G.JP,
+             body2:"가지고 있던 정기가 한 단계 단단해졌다.",
+             chips:["❤ 최대 체력 -5%","스킬 강화(+)"],gain:{hp:-12,upgrade:true}}),
+          c("무너진 고가도로에서 발을 헛디뎌 크게 굴러떨어졌다.",{g:G.BAD,chips:["❤ 체력 -20"],gain:{hp:-20}}),
+          lk("무지개 조각 룰렛이 여전히 돌아가고 있다.",["🍖","🪙","🪙"],
+            {odds:"같은 게 두 개만 맞아도 나온다",chips:["🪙 골드 +480","🍖 사료 +2"],gain:{gold:480,feed:2}}),
+          c("희미한 기억 — 섬을 띄운 건 도망치기 위해서가 아니라, 돌아올 곳을 만들기 위해서였다.",
+            {mood:"joy",chips:["✨ 기억 5/8"],cm:["Olmas","🦉","그 신호는 지금도 켜져 있다."]}),
+          c("희미한 기억 — 기억을 잃어가는 걸 가장 먼저 알아챈 건 Tigon 자신이었다.",
+            {mood:"sad",body2:"아무에게도 말하지 않았다.",chips:["✨ 기억 6/8"],
+             cm:["Nashui","🐈","왜 말을 안 했을까요. 우리가 걱정할까 봐?"]}),
+          bt("오염된 잔재가 또 길을 막는다. 아까보다 크다.","오염토 인형",[
+            {k:"hit",txt:"▸ 굳은 표면을 깨뜨렸다  −19",foe:19},
+            {k:"take",txt:"◂ 흙덩이가 정면으로 날아왔다  −14",me:14},
+            {k:"skill",txt:"✦ 재생 — 상처가 조금 아물었다  +8",me:-8},
+            {k:"crit",txt:"★ 중심을 부쉈다  −38",foe:38},
+          ],{foeIcon:"🗿",chips:["🪙 골드 +300","❤ 체력 -26"],gain:{gold:300,hp:-26}}),
+          f("두 번째 오염 기사가 관문을 지킨다.",
+            {label:"정면 돌파",sub:"체력을 크게 쓴다",risk:"hot",
+             body:"방패를 부수고 관문을 넘었다.",g:G.MID,chips:["♞ 관문 돌파","❤ 체력 -32"],gain:{hp:-32}},
+            {label:"사료로 유인한다",sub:"사료 2개",risk:"mid",
+             body:"사료 냄새에 기사가 자리를 비운 사이 지나갔다.",g:G.BON,
+             chips:["♞ 관문 통과","🍖 사료 -2"],gain:{feed:-2}}),
+        ],
+        i01:[
+          {t:"chapter",text:"마지막 장 · 북부 중심부"},
+          c("마지막 신호 중계탑. 신호가 가장 강하다.",{g:G.BON,chips:["✨ 기억 7/8"],
+            cm:["Olmas","🦉","여기다. 가장 가까워."]}),
+          mo("여기까지 왔다. 데리고 온 것들을 세어본다."),
+          c("여기까지 온 사람이 또 있었다. 오래된 승무원이 말없이 고개를 끄덕인다.",
+            {g:G.MID,chips:["🪙 골드 +280","🍖 사료 +1"],gain:{gold:280,feed:1}}),
+          f("검은 샘이 괴어 있다. 오염의 중심이다.",
+            {label:"마지막 한 방울을 쓴다",sub:"정화",risk:"safe",
+             body:"검은 물이 갈라지며 중심부가 숨을 고른다.",
+             why:"여기가 맑아지면 섬 전체가 달라진다. 그게 우리가 온 이유다.",
+             chips:["💧 지역 정화","🌈 섬 정화도 100%"],gain:{purify:1},purifyCard:true},
+            {label:"항해 일지의 좌표를 먼저 읽는다",sub:"보상 우선 · 정화는 미룬다",risk:"mid",
+             body:"좌표가 가리킨 자리에서 옛 보급함을 찾았다. 샘은 그대로 남았다.",g:G.JP,
+             chips:["🪙 골드 +700","⭐ 별조각 +3"],gain:{gold:700,star:3}}),
+          f("낡은 신호탑에 오르면 멀리까지 보인다. 떨어지면 크게 다친다.",
+            {label:"오른다",sub:"위험",risk:"hot",
+             body:"정상에서 섬 전체가 보였다.",g:G.JP,body2:"높은 곳의 바람이 정기를 하나 더 실어왔다.",
+             chips:["❤ 체력 -18","스킬 질풍 학습"],gain:{hp:-18,skill:["🌪️","질풍"]}},
+            {label:"쉼터에서 이야기를 듣는다",sub:"안전",risk:"safe",
+             body:"결전 전 마지막 쉼터에서 몸을 추슬렀다.",g:G.MID,chips:["❤ 체력 +40"],gain:{hp:40}}),
+          ch([["Piper","🐕‍🦺","마지막이야. 숨 고르고."],
+              ["Nashui","🐈","무서우면 무섭다고 해도 돼요."],
+              ["방랑자","🐾","무섭진 않아. 다시 잃는 게 무서운 거지.","me"],
+              ["Olmas","🦉","그래서 우리가 같이 왔다."]]),
+          c("희미한 기억 — 「내가 나를 잊어도, 너희가 기억하면 나는 아직 여기 있는 거야.」",
+            {mood:"sad",body2:"그게 마지막으로 남긴 말이었다.",chips:["✨ 기억 8/8"],
+             cm:["Olmas","🦉","그래서 우리가 이 조각들을 줍고 있는 것이다."]}),
+          bt("최종 오염원의 기척. 오염된 열두가 이를 드러낸다.","오염된 열두",[
+            {k:"skill",txt:"✦ 이름을 부드럽게 불렀다 — 귀가 살짝 접힌다",foe:12},
+            {k:"take",txt:"◂ 그래도 덮쳐왔다  −18",me:18},
+            {k:"skill",txt:"✦ 기다려준 아이들을 이야기했다 — 눈빛에 금이 간다",foe:22},
+            {k:"take",txt:"◂ 오염이 다시 끓어올랐다  −16",me:16},
+            {k:"hit",txt:"▸ 물러서지 않았다  −20",foe:20},
+          ],{foeIcon:"🐾",chips:["🐾 거의 돌아왔다","❤ 체력 -34"],gain:{hp:-34}}),
+          f("마지막 한마디를…",
+            {label:"「네가 기억하면 나는 여기 있어」",sub:"정화",risk:"safe",
+             body:"빛이 걷히고 열두가 숨을 고른다. 되찾았다.",mood:"joy",big:"열두를 되찾았다",
+             body2:"오래 찾던 얼굴이 눈을 떴다.",
+             chips:["🐾 열두 합류","👑 최종 정화 완료"],gain:{kid:1,final:true}},
+            {label:"쓰러뜨려 끝낸다",sub:"빠르지만…",risk:"hot",
+             body:"분노만이 남았다. 열두는 흩어졌다.",mood:"sad",g:G.BAD,
+             body2:"이름을 부를 기회는 다시 오지 않는다.",
+             chips:["👑 최종전 종료","🐾 열두를 잃었다"],gain:{hp:-20}}),
+          mo("배가 오는 소리가 들린다."),
+        ],
+      };
+      const SECTORS={i21:"부두",i11:"중앙",i12:"동부",i10:"서부",i01:"북부"};
+
+      // ════════ 상태 ════════
+      let S, runs=[];
+      const fresh=()=>({day:0,gold:0,star:0,feed:0,kid:0,purify:0,hp:100,skills:[],
+        path:[],seq:[],i:0,busy:false,over:false,final:false,streak:0,bestStreak:0,
+        jp:0,mid:0});   // 대박 0~7 · 중박 0~12 (원작 gauge_config)
+
+      function buildSeq(route){
+        const seq=[];const push=s=>BEATS[s].forEach(b=>seq.push({sid:s,b}));
+        const move=to=>seq.push({move:to});
+        push("i21");move("i11");push("i11");
+        route.forEach(s=>{move(s);push(s);move("i11")});
+        move("i01");push("i01");
+        return seq;
+      }
+
+      function applyGain(g){
+        if(!g)return;
+        const add=(k,hud,v)=>{if(!v)return;const el=$(hud),from=S[k];S[k]+=v;countUp(el,from,S[k])};
+        add("gold","hGold",g.gold);add("star","hStar",g.star);add("feed","hFeed",g.feed);
+        if(g.kid){S.kid+=g.kid;countUp($("hKid"),S.kid-g.kid,S.kid)}
+        if(g.purify){S.purify+=g.purify}
+        if(g.hp){S.hp=Math.max(0,Math.min(100,S.hp+g.hp))}
+        if(g.skill)S.skills.push({icon:g.skill[0],name:g.skill[1]});
+        if(g.upgrade&&S.skills.length)S.skills[S.skills.length-1].up=true;
+        if(g.final)S.final=true;
+        // 스트릭 — 체력을 잃지 않은 선택이 연속되면 달아오른다
+        if((g.hp||0)>=0){S.streak++;S.bestStreak=Math.max(S.bestStreak,S.streak)}else{S.streak=0}
+        hud();
+      }
+
+      /** 등급이 나오면 해당 게이지가 1 오른다 (원작 incrementGauge) */
+      function bumpGauge(grade){
+        if(grade===G.JP)S.jp=Math.min(7,S.jp+1);
+        else if(grade===G.MID)S.mid=Math.min(12,S.mid+1);
+      }
+
+      function hud(){
+        $("hDay").textContent=S.day;$("hHp").textContent=S.hp;
+        $("hPur").textContent=Math.round((S.purify/5)*100)+"%";
+        $("streakN").textContent=S.streak;
+        $("streakFill").style.width=Math.min(100,S.streak*20)+"%";
+        $("streakWrap").classList.toggle("hot",S.streak>=4);
+        $("skillBox").innerHTML=S.skills.length
+          ?S.skills.map(s=>`<span class="sk">${s.icon} ${s.name}${s.up?" +":""}</span>`).join("")
+          :`<span class="hint">아직 없음</span>`;
+        // 원작: 학습한 정기가 상단에 아이콘 줄로 쌓인다
+        $("skillRail").innerHTML=S.skills.length
+          ?S.skills.map(s=>`<span class="si${s.up?" up":""}" title="${s.name}${s.up?"+":""}">${s.icon}</span>`).join("")
+          :`<span class="empty">학습한 정기 — 아직 없음</span>`;
+        $("pathBox").innerHTML=S.path.length
+          ?S.path.map(p=>`<div class="p"><b>${p.day}일</b> ${p.pick}</div>`).join("")
+          :`<span class="hint">아직 없음</span>`;
+      }
+
+      // ════════ 진행 ════════
+      /** K 표기 (원작 FX-08) */
+      const K=n=>Math.abs(n)>=1000?(n/1000).toFixed(1).replace(/\.0$/,"")+"K":String(n);
+
+      /** 게이지 2개를 감싼 버튼 행 — 원작 [대박] (메인) [중박] */
+      function setB(inner){
+        const jpF=Math.round((S.jp/7)*100), midF=Math.round((S.mid/12)*100);
+        buttons.innerHTML=
+          `<div class="btnrow">
+             <button class="gauge jp${S.jp>=7?" full":""}" id="gJp">
+               <span class="num">${S.jp}/7</span>
+               <span class="dial" style="--fill:${jpF}%">🎁</span>
+               <span class="lb">대박</span>
+             </button>
+             <div id="mainSlot"></div>
+             <button class="gauge mid${S.mid>=12?" full":""}" id="gMid">
+               <span class="num">${S.mid}/12</span>
+               <span class="dial" style="--fill:${midF}%">🎡</span>
+               <span class="lb">중박</span>
+             </button>
+           </div>
+           <div id="forkSlot"></div>`;
+        $("mainSlot").innerHTML=inner.main||"";
+        $("forkSlot").innerHTML=inner.fork||"";
+        if(S.jp>=7)$("gJp").onclick=()=>fireGauge("jp");
+        if(S.mid>=12)$("gMid").onclick=()=>fireGauge("mid");
+        return {main:$("mainSlot"),fork:$("forkSlot")};
+      }
+
+      /** 게이지가 차면 미니게임이 열린다 (원작 대박=행운의 보물 / 중박=휠) */
+      async function fireGauge(which){
+        if(S.busy)return;S.busy=true;
+        const jp=which==="jp";
+        if(jp)S.jp=0;else S.mid=0;
+        setB({});
+        await luckCard({
+          body:jp?"대박 게이지가 가득 찼다. 행운의 보물 상자를 파본다.":"중박 게이지가 가득 찼다. 무지개 조각 룰렛을 돌린다.",
+          result:jp?["🪙","🪙","🪙"]:["⭐","🍖","⭐"],
+          odds:jp?"골드 3릴 — 같은 게 많을수록 크게":"휠 12칸",
+          big:jp?"JACKPOT":null,
+          chips:jp?["🪙 골드 +860","⭐ 별조각 +2"]:["🍖 사료 +2","🪙 골드 +240"],
+          gain:jp?{gold:860,star:2}:{feed:2,gold:240},
+        });
+        applyGain(jp?{gold:860,star:2}:{feed:2,gold:240});
+        S.busy=false;next();
+      }
+
+      let dotTimer=null;
+      function next(combat){
+        S.busy=false;
+        const slot=setB({main:`<button class="mainbtn${combat?" combat":""}" id="bNext">${
+          combat?'전투 중<span class="dots"></span>':"▶ 다음 날"}</button>`});
+        if(dotTimer){clearInterval(dotTimer);dotTimer=null}
+        if(combat){
+          // 원작 FX-06 — 「전투 중…」 점 애니메이션 (rAF 금지 · setInterval)
+          const d=slot.main.querySelector(".dots");let n=0;
+          dotTimer=setInterval(()=>{n=(n+1)%4;d.textContent=".".repeat(n)},380);
+        }
+        $("bNext").onclick=step;
+      }
+
+      async function playBeat(b){
+        if(b.t==="chapter"){chapter(b.text);return}
+        if(b.t==="mono"){await mono(b.line);return}
+        if(b.t==="chat"){await chat(b.lines);return}
+        if(b.t==="battle"){await battleCard(b);return}
+        if(b.t==="luck"){await luckCard(b);return}
+        if(b.t==="purify"){
+          const before=Math.round((S.purify/5)*100), after=Math.round(((S.purify+1)/5)*100);
+          await purifyCard(b,before,after);return}
+        await card(b);
+      }
+
+      async function step(){
+        if(S.busy||S.over)return;
+        S.busy=true;setB("");
+        try{
+          const cur=S.seq[S.i];
+          if(!cur)return endRun("배가 왔다");
+
+          if(cur.move){
+            S.day+=1;dayHeader(S.day);hud();S.i+=1;
+            await card({body:`🚶 ${SECTORS[cur.move]}로 넘어갔다.`,body2:"섹터 이동 = 하루",chips:[`Day ${S.day}`]});
+            if(S.day>=VOYAGE)return endRun("배가 왔다");
+            return next();
+          }
+          const b=cur.b;
+          // 장·독백·채팅은 하루를 쓰지 않는다(같은 날의 결)
+          const costsDay=!["chapter","mono","chat"].includes(b.t);
+          if(costsDay){S.day+=1;dayHeader(S.day);hud()}
+
+          if(b.t==="fork"){
+            await card({body:b.prompt});
+            return askFork(b);
+          }
+          await playBeat(b);
+          applyGain(b.gain); bumpGauge(b.g);
+          S.i+=1;
+          if(S.hp<=0)return endRun("쓰러졌다");
+          if(S.day>=VOYAGE)return endRun("배가 왔다");
+          const nb=S.seq[S.i];
+          next(nb&&nb.b&&nb.b.t==="battle");
+        }finally{S.busy=false}
+      }
+
+      function askFork(b){
+        S.busy=false;
+        if(dotTimer){clearInterval(dotTimer);dotTimer=null}
+        const rk=r=>r?`<span class="risk ${r}">${r==="safe"?"안전":r==="mid"?"보통":"위험"}</span>`:"";
+        setB({fork:`<div class="prompt">갈림길 — 어느 쪽으로?</div>
+          <div class="forks">
+            <button class="fork" data-p="a">${rk(b.a.risk)}${b.a.label}${b.a.sub?`<small>${b.a.sub}</small>`:""}</button>
+            <button class="fork" data-p="b">${rk(b.b.risk)}${b.b.label}${b.b.sub?`<small>${b.b.sub}</small>`:""}</button>
+          </div>`});
+        buttons.querySelectorAll("[data-p]").forEach(btn=>{
+          btn.onclick=async()=>{
+            if(S.busy)return;S.busy=true;setB("");
+            const p=btn.dataset.p==="a"?b.a:b.b;
+            S.path.push({day:S.day,pick:p.label});
+            if(p.purifyCard){
+              const before=Math.round((S.purify/5)*100), after=Math.round(((S.purify+1)/5)*100);
+              await purifyCard(p,before,after);
+            } else await card(p);
+            applyGain(p.gain); bumpGauge(p.g); S.i+=1; S.busy=false;
+            if(S.hp<=0)return endRun("쓰러졌다");
+            if(S.day>=VOYAGE)return endRun("배가 왔다");
+            const nb=S.seq[S.i];
+            next(nb&&nb.b&&nb.b.t==="battle");
+          };
+        });
+      }
+
+      async function endRun(why){
+        S.over=true;S.busy=false;
+        const pur=Math.round((S.purify/5)*100), fail=why==="쓰러졌다";
+        await card({
+          body:fail?`🌑 ${why}. 데리고 있던 아이 ${S.kid}명을 모두 잃었다.`
+                   :`⛵ ${why}. 아이 ${S.kid}명을 데리고 돌아간다.`,
+          g:fail?G.BAD:G.JP, mood:fail?"sad":"joy",
+          big:fail?null:"생환",
+          body2:fail?"섬은 다시 어두워졌다.":(S.final?"열두를 되찾아 함께 간다.":"열두는 아직 섬에 남았다."),
+          chips:[`🗓️ ${S.day}일`,`🐾 ${fail?"상실":"생환"} ${S.kid}명`,`💧 정화 ${pur}%`,`🪙 ${S.gold}`],
+        });
+        runs.push({day:S.day,kid:fail?0:S.kid,pur,gold:S.gold,sk:S.skills.length,fk:S.path.length,st:S.bestStreak,why});
+        $("cmpBox").innerHTML=
+          `<table><tr><td class="h">판</td><td class="h">일</td><td class="h">아이</td><td class="h">정화</td><td class="h">정기</td><td class="h">갈래</td><td class="h">연속</td></tr>`+
+          runs.map((r,i)=>`<tr><td class="h">${i+1}</td><td>${r.day}</td><td>${r.kid}</td><td>${r.pur}%</td><td>${r.sk}</td><td>${r.fk}</td><td>${r.st}</td></tr>`).join("")+
+          `</table><p class="hint">같은 60일인데 갈래마다 다릅니다.</p>`;
+        if(dotTimer){clearInterval(dotTimer);dotTimer=null}
+        setB({main:`<button class="mainbtn" id="bAgain">▶ 다른 길로 다시</button>`});
+        $("bAgain").onclick=start;
+      }
+
+      async function start(){
+        S=fresh();filler.innerHTML="";usedKinds=new Set();markKind("");hud();
+        await card({body:"무너진 선착장. 배가 60일 뒤에 온다.",body2:"어느 길로 60일을 쓸까?",g:G.BON,chips:["항해 시작"]});
+        setB({fork:`<div class="prompt">이번 판의 큰 갈래</div>
+          <div class="forks three">
+            <button class="fork" data-r="none">갈래 생략<small>31일 · 정화 60%</small></button>
+            <button class="fork" data-r="i12">동부만<small>45일 · 정화 80%</small></button>
+            <button class="fork" data-r="i10">서부만<small>46일 · 정화 80%</small></button>
+          </div>
+          <div class="forks">
+            <button class="fork" data-r="i12,i10">동부 → 서부<small>60일 · 정화 100% · 여유 0</small></button>
+            <button class="fork" data-r="i10,i12">서부 → 동부<small>60일 · 정화 100% · 여유 0</small></button>
+          </div>`});
+        buttons.querySelectorAll("[data-r]").forEach(b=>{
+          b.onclick=()=>{
+            const r=b.dataset.r==="none"?[]:b.dataset.r.split(",");
+            S.seq=buildSeq(r);
+            S.path.push({day:0,pick:"큰 갈래 — "+b.childNodes[0].textContent.trim()});
+            hud();next();
+          };
+        });
+      }
+
+      $("btnRestart").onclick=start;
+      start();
+    </script>
+  </body>
+</html>

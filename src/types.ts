@@ -570,7 +570,215 @@ export interface GameData {
   areas: AreaDef[];
   areaConnections: AreaConnectionDef[];
   areaNpcs: AreaNpcDef[];
+  /** 퀘스트 원 구역 — 비트·동선 */
+  areaZones: AreaZoneDef[];
+  /** 배경 오브(집·소품) 고정 배치 */
+  areaProps: AreaPropDef[];
   tigonMemories: TigonMemoryDef[];
+  /** 무지개섬 파견 작업 풀 — 슬롯 밖 동료 day tick */
+  islandTasks: IslandTaskDef[];
+  /** S8 — 로비 섬 탭무브 핫스팟 */
+  islandSpots: IslandSpotDef[];
+  /** 정화제 탄창 필요량 (해금·감옥·습격) */
+  purifyAmmoCosts: PurifyAmmoCostDef[];
+  /** 36 정화 촉매 */
+  purifyCatalysts: PurifyCatalystDef[];
+  /** 36 오염 지점(지역/생명) */
+  purifyBlights: PurifyBlightDef[];
+  /** S7 Memory Battle 라운드 */
+  memoryBattleRounds: MemoryBattleRoundDef[];
+  /** 43 — 필러 대화(리더 채팅 · 방랑자 독백) */
+  dialogues: DialogueLineDef[];
+  /** 43 — 장(章) 헤더 */
+  chapters: ChapterDef[];
+  /** 43 S4 — 섹터 사이클 비트 */
+  sectorBeats: SectorBeatDef[];
+  /** 길 판정 — 등급 → 이동 모드 */
+  pathJudgments: PathJudgmentDef[];
+  /** 3D 뷰 제자리 경쟁 미니게임 — 전투를 대신하는 콘텐츠 축 */
+  arenas: ArenaDef[];
+}
+
+/** S8 — 무지개섬 탭무브 지점 */
+export interface IslandSpotDef {
+  spot_id: string;
+  x_pct: number;
+  y_pct: number;
+  icon: string;
+  label: string;
+  flavor_text: string;
+  /** GREET | TERMINAL | DEPART | DISPATCH | PARTY | ADVENTURE | NONE */
+  action: string;
+  note: string;
+}
+
+/** S7 — 60일 결말 대화 정화 라운드 */
+export interface MemoryBattleRoundDef {
+  round_order: number;
+  prompt: string;
+  opt_good: string;
+  opt_bad: string;
+  good_line: string;
+  bad_line: string;
+  /** 보유 시 이 라운드 성공 시 추가 여운(선택 자체는 동일) */
+  memory_boost_id: string;
+  note: string;
+}
+
+/** 정화제 탄창 필요량 — purify_ammo_cost.csv */
+export interface PurifyAmmoCostDef {
+  sink_id: string;
+  need: number;
+  label: string;
+}
+
+/** 정화 촉매 — 탐구로 줍고 오염에 적용 (36) */
+export interface PurifyCatalystDef {
+  catalyst_id: string;
+  display_name: string;
+  icon: string;
+  flavor_text: string;
+  note: string;
+}
+
+/** 오염 지점 — AREA=지역 정화 · LIFE=생명 정화 (36) */
+export interface PurifyBlightDef {
+  blight_id: string;
+  display_name: string;
+  icon: string;
+  needs_catalyst_id: string;
+  /** AREA | LIFE */
+  target_kind: "AREA" | "LIFE";
+  target_ref: string;
+  success_flavor: string;
+  /** AREA일 때 맵 밝기 강도 0~1 (레거시/지도용) */
+  area_tint: number;
+  /** Cozy식 원형 색 회복 반지름 — 맵 짧은 변 기준 % */
+  reveal_radius_pct: number;
+  /** 43 — 왜 정화하는가. 정화 카드에 한 줄로 붙는다(목적이 안 보이면 그냥 청소가 된다) */
+  purpose_text: string;
+  note: string;
+}
+
+/**
+ * 43 — 필러 대화. 코멘터리(1줄)와 달리 **여러 줄이 주고받는다.**
+ * style: BUBBLE(리더 왼쪽) · ME(방랑자 오른쪽) · MONO(박스 없는 독백)
+ */
+export interface DialogueLineDef {
+  dialogue_id: string;
+  /**
+   * 43 S2 — 언제 나올지를 **데이터가** 정한다(코드에 ID를 박지 않는다).
+   * JOURNEY_START · FIRST_RESCUE · AREA_ENTER · NODE_KIND · PURIFY_PCT · VOYAGE_END
+   */
+  trigger: string;
+  /** AREA_ENTER=area_id · NODE_KIND=trigger_type · PURIFY_PCT=임계값(%) */
+  trigger_ref: string;
+  step_order: number;
+  speaker: string;
+  icon: string;
+  style: "BUBBLE" | "ME" | "MONO";
+  line: string;
+}
+
+/**
+ * 43 S4 — 섹터 사이클 비트. 시나리오·필러의 뼈대.
+ * 순서(order)는 고정, **안의 대상·횟수는 랜덤**이다(지시자 확정).
+ * `node_types`가 `BLIGHT_APPLY`면 B1에서 고른 오염 자리로 되돌아간다.
+ */
+export interface SectorBeatDef {
+  beat_order: number;
+  beat_id: string;
+  label: string;
+  /** `|` 구분 trigger_type 목록 */
+  node_types: string[];
+  min_count: number;
+  max_count: number;
+  /** 갈림길 비트 — 플레이어가 다음 섹터를 고른다 */
+  is_fork: boolean;
+  note: string;
+}
+
+/**
+ * 길 판정 — 등급이 곧 「갈림길(수동) vs 자동 랜덤」이다.
+ * 로그라이크 동선: 유저마다 길이 달라지게 하는 핵심 축.
+ */
+export type PathTravelMode = "FORK_GOOD" | "FORK_COSTLY" | "RANDOM_SAFE" | "RANDOM_BAD";
+
+export interface PathJudgmentDef {
+  grade_id: string;
+  travel_mode: PathTravelMode;
+  body: string;
+  body_line2: string;
+  /** FORK_COSTLY에서 선택 시 적용 (없으면 대가 없음) */
+  choice_cost_effect_id: string;
+  note: string;
+}
+
+/**
+ * 경쟁 미니게임의 상대 종류.
+ *
+ * 지시자 확정: **한 종류만 두지 않는다.** CLOCK·BLIGHT를 번갈아 주고,
+ * SCAVENGER를 간혹 스파이크로 섞는다. 그래서 상대를 코드에 박지 않고 데이터로 둔다.
+ * - CLOCK: 상대 없이 제한시간과 경쟁
+ * - BLIGHT: 퍼지는 오염 속도와 경쟁 (정화 톤과 가장 잘 붙는다)
+ * - SCAVENGER: 같은 걸 노리는 라이벌 수집꾼 NPC. 지면 그 자원을 빼앗긴다
+ */
+export type ArenaRivalKind = "CLOCK" | "BLIGHT" | "SCAVENGER";
+
+/** 3D 뷰 안에서 제자리 진행되는 경쟁 미니게임 정의 (arena_config.csv) */
+export interface ArenaDef {
+  arena_id: string;
+  display_name: string;
+  rival_kind: ArenaRivalKind;
+  rival_icon: string;
+  rival_label: string;
+  /** 이겨야 하는 수집 횟수 */
+  goal: number;
+  /** CLOCK 제한시간(초). 0이면 시간 제한 없음 */
+  duration_sec: number;
+  /** 상대가 초당 채우는 양 — BLIGHT는 확산 속도, SCAVENGER는 수집 속도 */
+  rival_speed: number;
+  /** 승리 보상 — 기존 effect_config를 그대로 쓴다 */
+  reward_effect_id: string;
+  flavor_text: string;
+  win_text: string;
+  lose_text: string;
+  note: string;
+}
+
+/** 43 S2 — 스폰 섹터를 코드가 아니라 데이터가 정한다 */
+export interface AreaSpawnFlag {
+  is_spawn: boolean;
+}
+
+/** 43 — 장(章) 헤더. 일차 헤더 위 단계로, 섹터에 들어설 때 한 번 */
+export interface ChapterDef {
+  chapter_id: string;
+  area_id: string;
+  title: string;
+  subtitle: string;
+  note: string;
+}
+
+/** 36 — 탐방 맵에 쌓인 색 회복 원(거점). 비주얼 SSoT. */
+export interface PurifyFocus {
+  blightId: string;
+  areaId: string;
+  xPct: number;
+  yPct: number;
+  radiusPct: number;
+}
+
+/** 파견 작업 한 줄 (island_task_config) */
+export interface IslandTaskDef {
+  task_id: string;
+  /** rescue liked_tags와 매칭. 비면 폴백 후보 */
+  liked_tag_hint: string;
+  /** %s = 펫 이름 */
+  flavor_text: string;
+  gold: number;
+  exp: number;
+  note: string;
 }
 
 /**
@@ -607,16 +815,18 @@ export interface AreaDef {
   world_h_pct: number;
   background_asset: string;
   stage_map_id: string;
+  /** 43 S2 — 외출 스폰 섹터. 코드에 "area_i21"을 박지 않는다 */
+  is_spawn: boolean;
   note: string;
 }
 
-/** 지역 간 통로. 탑뷰이므로 위(다음 구역)/아래(이전 구역)로 이어진다. */
+/** 지역 간 통로. 한 섬 3×3 격자 — TOP/BOTTOM/LEFT/RIGHT. */
 export interface AreaConnectionDef {
   connection_id: string;
   from_area_id: string;
   to_area_id: string;
-  /** 월드의 어느 끝으로 나가는지 — TOP=위로 전진, BOTTOM=아래로 후퇴 */
-  exit_point: "TOP" | "BOTTOM";
+  /** 월드의 어느 끝으로 나가는지 */
+  exit_point: "TOP" | "BOTTOM" | "LEFT" | "RIGHT";
   bidirectional: boolean;
   unlock_condition: string;
 }
@@ -636,6 +846,40 @@ export interface AreaNpcDef {
   trigger_ref: string;
   appear_condition: string;
   flavor_text: string;
+  /** 퀘스트 원 — area_zone_config.zone_id */
+  zone_id?: string;
+}
+
+/** 섹터 안 퀘스트 원 — 서로 안 겹치게 배치 */
+export interface AreaZoneDef {
+  zone_id: string;
+  area_id: string;
+  x_pct: number;
+  y_pct: number;
+  r_pct: number;
+  beat_id: string;
+  label: string;
+  note: string;
+}
+
+/** 배경 오브젝트(집·나무·소품) — NPC와 분리 */
+export interface AreaPropDef {
+  prop_id: string;
+  area_id: string;
+  kind: string;
+  x_pct: number;
+  y_pct: number;
+  yaw_deg: number;
+  h_m: number;
+  group_id: string;
+  collide: boolean;
+  /** AREA 파도 후에도 스케치로 남아 총으로 칠하는 타깃 */
+  purify_target: boolean;
+  /** 있으면 생명 뭉치 — 총 정화 후 동반 합류 (purify_blight LIFE) */
+  life_blight_id: string;
+  /** 스티커 PNG (/art/...) — 배경 제거본. 있으면 kind 폴백 대신 사용 */
+  art: string;
+  note: string;
 }
 
 export interface PlayerState {
@@ -675,6 +919,20 @@ export interface PlayerState {
   permanentPartyMembers: string[];
   /** 탐방 맵에서 주운 Tigon 기억 조각 memory_id 목록(스크랩북) */
   collectedMemories: string[];
+  /** 탐방 맵에서 클리어한 노드 npc_id 목록(관문 잠금·소진 표시용) */
+  clearedNodes: string[];
   /** 구조 조우로 정화 성공(구조 완료)한 animal_id 목록 — 스테이지 풀에서 제외됨 */
   rescuedAnimals: string[];
+  /** 정화제 탄창 — 해금·감옥·습격이 같이 씀 */
+  purifyAmmo: number;
+  /** 36 — 소지 중인 정화 촉매 catalyst_id */
+  heldCatalysts: string[];
+  /** 36 — 지역 정화된 area_id */
+  purifiedAreas: string[];
+  /** 36 — 적용 완료한 blight_id */
+  purifiedBlights: string[];
+  /** AREA 후에도 남은 스케치 오브 — 칼라 총으로 칠한 prop_id */
+  purifiedProps: string[];
+  /** 36 — Cozy식 원형 색 회복 거점(맵 마스크) */
+  purifyFoci: PurifyFocus[];
 }

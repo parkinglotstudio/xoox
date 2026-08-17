@@ -24,6 +24,6 @@ c_normal10_2,들짐승 잔재,🐺,8600,1220,200,N_SWARM,100,15,ACTION,
 c_miniboss_2,오염 기사,♞,18000,1750,420,E_KNIGHT,100,24,ACTION,
 c_finalboss_2,탐욕의 근원,👑,32000,2300,560,B_GUARDIAN,100,22,ACTION,
 c_purify_wave1,오염된 유기견,🐕,60,5,0,N_SWARM,100,12,PURIFY,mem_mongchi
-c_purify_wave2,오염된 길고양이,🐈‍⬛,90,6,0,N_SWARM,100,12,PURIFY,mem_haneuli
-c_purify_miniboss,오염 응축체,🟣,220,12,0,N_SWARM,100,12,PURIFY,
-c_purify_final,오염된 열두,🐺,400,15,0,N_SWARM,100,12,PURIFY,mem_yeoldu
+c_purify_wave2,오염된 길고양이,🐈,90,6,0,N_SWARM,100,12,PURIFY,mem_haneuli
+c_purify_miniboss,오염 응축체,🌑,220,12,0,N_SWARM,100,12,PURIFY,
+c_purify_final,오염된 열두,🐾,400,15,0,N_SWARM,100,12,PURIFY,mem_yeoldu

@@ -1,0 +1,5 @@
+grade_id,travel_mode,body,body_line2,choice_cost_effect_id,note
+g_jackpot,FORK_GOOD,길이 환하게 열린다.,어디로 갈지 내가 고른다. 양쪽 다 괜찮아 보인다.,,대박 → 갈림길(선택지 전부) + 등급 보상
+g_mid,FORK_COSTLY,갈림길이긴 하다.,고르긴 하는데 마음이 편하지 않다.,e_hp_neg7,중박 → 갈림길 + 선택 시 대가 + 등급 보상
+g_bonus,RANDOM_SAFE,발길이 저절로 안전한 쪽으로 기운다.,원하지 않아도 비교적 무난한 길이다.,,보너스 → 자동·안전 후보 + 등급 보상
+g_bad,RANDOM_BAD,발이 미끄러지듯 원치 않는 쪽으로 끌린다.,선택이 없다. 운이 길을 정한다.,,운빨망함 → 자동·험한 후보 + 등급 보상

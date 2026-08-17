@@ -1,9 +1,19 @@
 node_modules/
 dist/
 .DS_Store
+tsconfig.tsbuildinfo
+NUL.css
 
 # 참고 영상 (대용량 바이너리 - GitHub 100MB 제한 초과)
 plan/
+plan_old/
 *.mp4
 
 .vercel
+.cursor/
+docs/.cursor/
+backups/
+home/
+
+# 개발 플레이 로그 (세션마다 쌓임)
+data/dev_logs/

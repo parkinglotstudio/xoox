@@ -1,0 +1,8 @@
+sink_id,need,label
+AREA,3,지역 해금
+LIFE,5,생명 감옥
+COMBAT_NORMAL,4,일반 습격
+COMBAT_MINIBOSS,7,관문 습격
+COMBAT_FINALBOSS,7,보스 습격
+FILL,1,정화제
+CATALYST,2,맑은 물방울

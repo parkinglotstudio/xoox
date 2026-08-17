@@ -1,0 +1,4 @@
+tier,pattern_id,kind,hp,speed_mult,scale,cycle_sec,param_a,param_b,color_hex,note
+MINIBOSS,charge,moving,14,0.52,1.85,4.6,7.5,0,#ff5577,거점으로 돌진
+FINALBOSS,artillery,stationary_missile,20,0,2.2,2.9,3,10,#cc55ff,제자리 포격 후 쫄 유지
+BOSS,artillery,stationary_missile,20,0,2.2,2.9,3,10,#cc55ff,BOSS 티어 별칭

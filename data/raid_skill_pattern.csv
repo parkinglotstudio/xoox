@@ -1,0 +1,8 @@
+action_slot,fire_pattern,cooldown_sec,range_mult,count,spread_deg,dmg,status,stun_sec,note
+BOLT,chain,1.4,1.15,1,0,1,none,0,번개 슈레더
+DAGGER,homing,0,1,1,8,1,none,0,기본 공격에 수리검 추가
+FIREWAVE,spread,3.2,0.95,3,42,1,burn,0,거점 위기 시 부채
+SPEAR,homing,2.4,1.2,1,0,1,none,0,거점을 뜯는 적 반격
+COMBO,extra,0.45,1,1,0,1,none,0,연속 발사 추가타
+START,stun,0,0,0,0,0,stun,1.15,첫 웨이브 짧은 정지
+PASSIVE,mod,0,0,0,0,0,none,0,거점/탄약 배율은 skill_effect에서

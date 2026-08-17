@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XOOX 정화 습격 프로토</title>
+    <style>
+      :root {
+        --bg: #12141a; --panel: #1c212b; --line: #3a4454; --text: #e8eef8;
+        --muted: #9aa8bc; --accent: #5ec8ff; --ok: #6ddea0; --warn: #ffd27a;
+        --teal: #2de0d0; --blight: #c090ff;
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0; height: 100%; background: var(--bg); color: var(--text);
+        font-family: "Pretendard", "Malgun Gothic", sans-serif;
+      }
+      body { display: grid; grid-template-rows: auto 1fr; }
+      .bar {
+        display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+        padding: 10px 14px; background: var(--panel); border-bottom: 1px solid var(--line);
+      }
+      .bar h1 { margin: 0; font-size: 15px; font-weight: 800; }
+      .bar .hint { color: var(--muted); font-size: 12px; }
+      .bar select, .bar button {
+        border: 1px solid var(--line); background: #11161f; color: var(--text);
+        border-radius: 8px; padding: 7px 12px; font-weight: 700; cursor: pointer;
+      }
+      .bar button.primary { background: #1a4a63; border-color: #2f7ea8; color: #dff4ff; }
+      .bar button.go { background: #164a3a; border-color: #2de0d0; color: #d8fff6; }
+      .status { font-size: 12px; color: var(--muted); margin-left: auto; }
+      .status.ok { color: var(--ok); }
+      .status.err { color: #ff8f8f; }
+      .workspace { display: grid; grid-template-columns: 1fr 290px; min-height: 0; }
+      .stage-col {
+        min-width: 0; min-height: 0; display: flex; flex-direction: column;
+        background: #06080c; padding: 12px; gap: 8px;
+      }
+      .stage-host {
+        flex: 1; min-height: 0; display: grid; place-items: center;
+        container-type: size; overflow: hidden;
+      }
+      .stage-frame {
+        position: relative;
+        width: min(100cqw, calc(100cqh * 16 / 9));
+        height: min(100cqh, calc(100cqw * 9 / 16));
+        border: 2px solid #2f7ea8; border-radius: 10px; overflow: hidden;
+        background: #000;
+      }
+      #raidCanvas { display: block; width: 100%; height: 100%; }
+      .mini {
+        position: absolute; left: 10px; top: 10px; z-index: 3;
+        width: 22%; aspect-ratio: 1 / 1;
+        border: 2px solid rgba(94, 200, 255, 0.7); border-radius: 8px;
+        background: rgba(4, 8, 14, 0.82); overflow: hidden;
+      }
+      .mini canvas { display: block; width: 100%; height: 100%; }
+      .crosshair {
+        position: absolute; left: 50%; top: 50%; z-index: 4;
+        width: 14px; height: 14px; margin: -7px 0 0 -7px; pointer-events: none;
+        border: 1px solid rgba(255, 224, 138, 0.85);
+        border-radius: 50%;
+      }
+      .crosshair::after {
+        content: ""; position: absolute; left: 50%; top: 50%;
+        width: 2px; height: 2px; margin: -1px 0 0 -1px; background: #ffe08a;
+      }
+      .hud {
+        position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%);
+        z-index: 3; display: flex; gap: 10px; align-items: center;
+        padding: 7px 14px; border-radius: 999px;
+        background: rgba(6, 12, 18, 0.82); border: 1px solid rgba(45, 224, 208, 0.4);
+        font-size: 12px; font-weight: 700; color: #dff0ff; white-space: nowrap;
+      }
+      .hud .core { color: var(--blight); }
+      .hud .teal { color: var(--teal); }
+      .banner {
+        position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%);
+        z-index: 5; display: none; padding: 10px 22px; border-radius: 10px;
+        background: rgba(6, 12, 18, 0.88); border: 1px solid var(--line);
+        font-size: 22px; font-weight: 900; letter-spacing: 0.04em;
+      }
+      .banner.on { display: block; }
+      .banner.warn { color: var(--warn); }
+      .banner.won { color: var(--ok); }
+      .banner.lost { color: #ff8f8f; }
+      .ammo {
+        position: absolute; right: 22px; bottom: 132px; z-index: 6;
+        width: 76px; height: 8px; border-radius: 99px;
+        background: #11161f; border: 1px solid var(--line); overflow: hidden;
+      }
+      .ammo > i {
+        display: block; height: 100%; width: 0; background: var(--teal);
+      }
+      .fire {
+        position: absolute; right: 14px; bottom: 28px; z-index: 6;
+        width: 96px; height: 96px; border-radius: 50%;
+        border: 3px solid #7ff8e8;
+        background: radial-gradient(circle at 40% 32%, #3aefe0, #0d6a62 62%, #073a38);
+        color: #e8fffb;
+        font-size: 16px; font-weight: 900; letter-spacing: 0.04em;
+        cursor: pointer; user-select: none; touch-action: none;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45), 0 0 18px rgba(45, 224, 208, 0.35);
+      }
+      .fire:active, .fire.on {
+        transform: scale(0.96);
+        background: radial-gradient(circle at 40% 32%, #c8fff6, #2de0d0 58%, #0a5a54);
+        box-shadow: 0 0 28px rgba(45, 224, 208, 0.75);
+      }
+      .fire small {
+        display: block; font-size: 10px; font-weight: 700; opacity: 0.8;
+      }
+      .keys { font-size: 11px; color: var(--muted); text-align: center; }
+      .keys b { color: var(--text); }
+      .side {
+        border-left: 1px solid var(--line); background: var(--panel);
+        padding: 12px; overflow: auto; display: flex; flex-direction: column; gap: 8px;
+      }
+      .raid-row { display: grid; gap: 3px; }
+      .raid-row label {
+        font-size: 11px; color: var(--muted); display: flex;
+        justify-content: space-between; gap: 8px;
+      }
+      .raid-row label b { color: var(--warn); font-variant-numeric: tabular-nums; }
+      .raid-row input[type="range"] { width: 100%; accent-color: var(--accent); }
+      #dials { display: flex; flex-direction: column; gap: 8px; }
+      #dials h2 {
+        margin: 6px 0 0; font-size: 11px; color: var(--muted);
+        text-transform: uppercase; letter-spacing: 0.06em;
+      }
+      .help {
+        font-size: 11px; line-height: 1.5; background: #11161f; border: 1px solid var(--line);
+        border-radius: 8px; padding: 8px 10px; color: var(--muted);
+      }
+      .help code { color: var(--warn); }
+
+      .fps-compass {
+        position: absolute; left: 50%; top: 8px; transform: translateX(-50%);
+        z-index: 8; width: min(52%, 420px); height: 36px; pointer-events: none;
+      }
+      .fps-compass-window {
+        position: relative; height: 100%; overflow: hidden;
+        -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+        mask-image: linear-gradient(90deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+      }
+      .fps-compass-tape, .fps-compass-marks {
+        position: absolute; top: 0; left: 50%; height: 100%; width: 2800px;
+      }
+      .fps-compass-tick {
+        position: absolute; top: 18px; width: 0;
+        color: rgba(232, 247, 245, 0.55); font-size: 8px; font-weight: 800;
+      }
+      .fps-compass-tick i {
+        display: block; width: 1px; height: 6px; margin: 0 auto 1px;
+        background: rgba(232, 247, 245, 0.45);
+      }
+      .fps-compass-tick.major { top: 2px; color: #e8f7f5; font-size: 12px; }
+      .fps-compass-tick.major i { height: 10px; width: 2px; background: #2de0d0; }
+      .fps-compass-tick b { display: block; transform: translateX(-50%); font-weight: 900; }
+      .fps-compass-needle {
+        position: absolute; left: 50%; top: 0; width: 2px; height: 14px;
+        margin-left: -1px; background: #ffe08a;
+      }
+      .fps-compass-needle::after {
+        content: ""; position: absolute; left: 50%; top: 14px; width: 0; height: 0;
+        border-left: 4px solid transparent; border-right: 4px solid transparent;
+        border-top: 5px solid #ffe08a; transform: translateX(-50%);
+      }
+      .fps-compass-poi {
+        position: absolute; top: 0; transform: translateX(-50%);
+        font-size: 11px; line-height: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bar">
+      <h1>정화 습격 프로토</h1>
+      <a class="hint" href="/tools.html" style="color:var(--accent);text-decoration:none;font-weight:800">← 툴 허브</a>
+      <select id="sectorSel" title="섹터"></select>
+      <select id="artSel" title="정화 전/후">
+        <option value="before" selected>before (오염)</option>
+        <option value="after">after (정화후)</option>
+      </select>
+      <button type="button" class="go" id="btnStart">습격 시작</button>
+      <button type="button" id="btnReset">리셋</button>
+      <button type="button" id="btnDefaults">기본값</button>
+      <button type="button" class="primary" id="btnSave">저장</button>
+      <span class="status" id="status">ready</span>
+    </div>
+
+    <div class="workspace">
+      <div class="stage-col">
+        <div class="stage-host">
+          <div class="stage-frame" id="stageFrame">
+            <canvas id="raidCanvas"></canvas>
+            <div class="mini">
+              <canvas id="miniCanvas" width="256" height="256"></canvas>
+            </div>
+            <div class="crosshair" aria-hidden="true"></div>
+            <div class="banner" id="banner"></div>
+            <div class="hud">
+              <span id="hudWave">대기</span>
+              <span class="teal" id="hudTeal">청록 0%</span>
+              <span class="core" id="hudCore">거점 0%</span>
+            </div>
+            <div class="ammo" title="탄약"><i id="ammoFill"></i></div>
+            <button type="button" class="fire" id="btnFire">발사<small>유탄 · 홀드</small></button>
+          </div>
+        </div>
+        <div class="keys">
+          <b>W/S</b> 앞뒤 · <b>A/D</b> 시선 · <b>발사</b> 또는 <b>스페이스</b> 홀드 ·
+          미사일이 곡선으로 날아 착탄한다
+        </div>
+      </div>
+      <aside class="side">
+        <div id="dials"></div>
+        <div class="help">
+          본편 전투는 아직 안 붙인다. 여기서 손맛을 맞춘 뒤 이식한다.<br />
+          저장 → <code>data/ui/layout/purify_raid_layout.json</code>
+        </div>
+      </aside>
+    </div>
+    <script type="module" src="/src/tools/purifyRaidTool/main.ts"></script>
+  </body>
+</html>

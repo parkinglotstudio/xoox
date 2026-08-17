@@ -14,8 +14,46 @@ import type {
   RescueAnimalDef,
   RescueApproachDef,
   RescueStateDef,
+  PurifyBlightDef,
+  PurifyCatalystDef,
+  TigonMemoryDef,
 } from "./types";
 import { weightedPick, randInt } from "./rng";
+
+/** BLIGHT 노드에서 blight_id에 해당하는 맵 좌표를 찾는다. */
+export function findBlightNpc(
+  data: GameData,
+  blightId: string
+): { areaId: string; xPct: number; yPct: number } | undefined {
+  const npc = data.areaNpcs.find(
+    (n) => n.trigger_type.toUpperCase() === "BLIGHT" && n.trigger_ref === blightId
+  );
+  if (!npc) return undefined;
+  return { areaId: npc.area_id, xPct: npc.x_pct, yPct: npc.y_pct };
+}
+
+/** 세이브에 foci가 비어 있어도 purifiedBlights로부터 원을 복구 */
+export function rebuildPurifyFoci(data: GameData, state: PlayerState) {
+  if (!state.purifyFoci) state.purifyFoci = [];
+  for (const blightId of state.purifiedBlights) {
+    if (state.purifyFoci.some((f) => f.blightId === blightId)) continue;
+    const blight = data.purifyBlights.find((b) => b.blight_id === blightId);
+    if (!blight) continue;
+    const spot = findBlightNpc(data, blightId);
+    const areaId =
+      spot?.areaId ||
+      (blight.target_kind === "AREA" ? blight.target_ref : "") ||
+      "";
+    if (!areaId) continue;
+    state.purifyFoci.push({
+      blightId,
+      areaId,
+      xPct: spot?.xPct ?? 50,
+      yPct: spot?.yPct ?? 50,
+      radiusPct: blight.reveal_radius_pct || (blight.target_kind === "LIFE" ? 18 : 28),
+    });
+  }
+}
 
 export function createInitialState(data: GameData): PlayerState {
   const lvl1 = data.levelups.find((l) => l.level === 1);
@@ -56,7 +94,89 @@ export function createInitialState(data: GameData): PlayerState {
     joinedPartyMembers: [],
     permanentPartyMembers: [],
     collectedMemories: [],
+    clearedNodes: [],
     rescuedAnimals: [],
+    purifyAmmo: 0,
+    heldCatalysts: [],
+    purifiedAreas: [],
+    purifiedBlights: [],
+    purifiedProps: [],
+    purifyFoci: [],
+  };
+}
+
+/** 36 — 촉매 줍기 */
+export function collectCatalyst(data: GameData, state: PlayerState, catalystId: string): boolean {
+  const cat = data.purifyCatalysts.find((c) => c.catalyst_id === catalystId);
+  if (!cat) return false;
+  if (state.heldCatalysts.includes(catalystId)) return false;
+  state.heldCatalysts.push(catalystId);
+  return true;
+}
+
+export interface PurifyApplyResult {
+  ok: boolean;
+  reason?: "missing_blight" | "already" | "need_catalyst" | "wrong_catalyst";
+  blight?: PurifyBlightDef;
+  catalyst?: PurifyCatalystDef;
+  consumedId?: string;
+}
+
+/** 36 — 오염에 촉매 적용. 성공 시 촉매 1개 소모 · Cozy 원형 focus push. */
+export function tryApplyPurify(
+  data: GameData,
+  state: PlayerState,
+  blightId: string,
+  opts?: { skipCatalyst?: boolean },
+): PurifyApplyResult {
+  const blight = data.purifyBlights.find((b) => b.blight_id === blightId);
+  if (!blight) return { ok: false, reason: "missing_blight" };
+  if (state.purifiedBlights.includes(blightId)) return { ok: false, reason: "already", blight };
+
+  const need = blight.needs_catalyst_id;
+  let heldIdx = -1;
+  if (!opts?.skipCatalyst) {
+    heldIdx = state.heldCatalysts.indexOf(need);
+    if (heldIdx < 0) {
+      const hasAny = state.heldCatalysts.length > 0;
+      return {
+        ok: false,
+        reason: hasAny ? "wrong_catalyst" : "need_catalyst",
+        blight,
+        catalyst: data.purifyCatalysts.find((c) => c.catalyst_id === need),
+      };
+    }
+    state.heldCatalysts.splice(heldIdx, 1);
+  }
+  state.purifiedBlights.push(blightId);
+  if (blight.target_kind === "AREA" && blight.target_ref && !state.purifiedAreas.includes(blight.target_ref)) {
+    state.purifiedAreas.push(blight.target_ref);
+  }
+
+  // 맵 비주얼 SSoT — NPC 좌표에 원형 색 회복 거점
+  if (!state.purifyFoci) state.purifyFoci = [];
+  if (!state.purifyFoci.some((f) => f.blightId === blightId)) {
+    const spot = findBlightNpc(data, blightId);
+    const areaId =
+      spot?.areaId ||
+      (blight.target_kind === "AREA" ? blight.target_ref : "") ||
+      "";
+    if (areaId) {
+      state.purifyFoci.push({
+        blightId,
+        areaId,
+        xPct: spot?.xPct ?? 50,
+        yPct: spot?.yPct ?? 50,
+        radiusPct: blight.reveal_radius_pct || (blight.target_kind === "LIFE" ? 18 : 28),
+      });
+    }
+  }
+
+  return {
+    ok: true,
+    blight,
+    catalyst: data.purifyCatalysts.find((c) => c.catalyst_id === need),
+    consumedId: opts?.skipCatalyst ? undefined : need,
   };
 }
 
@@ -419,6 +539,83 @@ export function getCombatEnemy(data: GameData, combatId: string) {
   return data.combatEnemies.find((e) => e.combat_id === combatId);
 }
 
+/** 22 §2-3 — Memory Battle 직전, 마지막 기억 조각을 강제 언락 */
+export function forceUnlockFinaleMemory(
+  data: GameData,
+  state: PlayerState
+): TigonMemoryDef | null {
+  const mems = [...(data.tigonMemories ?? [])].sort((a, b) => a.order - b.order);
+  const last = mems[mems.length - 1];
+  if (!last) return null;
+  if (state.collectedMemories.includes(last.memory_id)) return null;
+  state.collectedMemories.push(last.memory_id);
+  return last;
+}
+
+export function memoryBattleWinsNeeded(data: GameData, state: PlayerState): number {
+  const rounds = data.memoryBattleRounds?.length ?? 3;
+  const got = state.collectedMemories.length;
+  const total = data.tigonMemories?.length ?? 8;
+  // 기억을 많이 모을수록 통과선이 살짝 낮아짐(2/3 → 기억 충분하면 2 유지, 적으면 3)
+  if (got >= total) return Math.max(2, rounds - 1);
+  if (got >= Math.ceil(total * 0.5)) return 2;
+  return Math.min(rounds, 3);
+}
+
+/**
+ * S5 모험 — 이미 지난 스테이지 맵만 (현재 맵보다 map_order가 작은 것).
+ * 스토리 day를 밀지 않음. 관문/정화/기억 없음.
+ */
+export function listAdventureMaps(data: GameData, state: PlayerState) {
+  const cur = getStageMapForDay(data, state.day);
+  const curOrder = cur?.map_order ?? 1;
+  return [...data.stageMaps]
+    .filter((m) => m.map_order < curOrder)
+    .sort((a, b) => a.map_order - b.map_order);
+}
+
+export interface AdventurePatrolResult {
+  stageMapId: string;
+  displayName: string;
+  gold: number;
+  exp: number;
+  flavor: string;
+}
+
+/** 로비 모험 1회 — 경량 파밍 롤(풀 전투 시뮬 생략). 골드/EXP만. */
+export function runAdventurePatrol(
+  data: GameData,
+  state: PlayerState,
+  stageMapId: string
+): AdventurePatrolResult | null {
+  const allowed = listAdventureMaps(data, state);
+  const map = allowed.find((m) => m.stage_map_id === stageMapId);
+  if (!map) return null;
+
+  const mult = tuningNum(data, "adventure_reward_mult", 0.4);
+  const baseG = tuningNum(data, "adventure_gold_base", 90);
+  const baseE = tuningNum(data, "adventure_exp_base", 28);
+  const gold = Math.max(1, Math.round(baseG * (map.drop_gold_mult || 1) * mult));
+  const exp = Math.max(1, Math.round(baseE * (map.drop_exp_mult || 1) * mult));
+  state.gold += gold;
+  state.exp += exp;
+
+  const flavors = [
+    `${map.display_name}을 다시 훑었다. 오염 잔재만 조금 걷어냈다.`,
+    `${map.display_name} 순찰. 싸울 일은 거의 없었고, 쓸 만한 조각만 주웠다.`,
+    `지난 ${map.display_name} 길. 익숙한 공기 속에서 소량 보급을 챙겼다.`,
+  ];
+  const flavor = flavors[Math.floor(Math.random() * flavors.length)]!;
+
+  return {
+    stageMapId: map.stage_map_id,
+    displayName: map.display_name,
+    gold,
+    exp,
+    flavor,
+  };
+}
+
 export function getStageMapForDay(data: GameData, day: number) {
   const maps = [...data.stageMaps].sort((a, b) => a.map_order - b.map_order);
   const hit = maps.find((m) => day >= m.day_start && day <= m.day_end);
@@ -565,6 +762,52 @@ export function resolveRescueChoice(data: GameData, animal: RescueAnimalDef, tag
 export function getPartySlots(data: GameData, day: number): number {
   const map = getStageMapForDay(data, day);
   return map?.party_slots ?? 3;
+}
+
+export interface IslandDispatchResult {
+  memberId: string;
+  name: string;
+  icon: string;
+  line: string;
+  gold: number;
+  exp: number;
+}
+
+/**
+ * 무지개섬 파견 day tick — 전투 슬롯을 넘는 합류 동료가 섬에서 소량 보상을 벌어온다.
+ * 기획: docs/gdd/23 · 33 · 34 · 35 S2
+ */
+export function runIslandDispatch(data: GameData, state: PlayerState): IslandDispatchResult[] {
+  const slots = getPartySlots(data, Math.max(1, state.day));
+  const overflowIds = state.joinedPartyMembers.slice(slots);
+  if (!overflowIds.length) return [];
+
+  const tasks = data.islandTasks ?? [];
+  const fallbacks = tasks.filter((t) => !t.liked_tag_hint);
+  const results: IslandDispatchResult[] = [];
+
+  for (const memberId of overflowIds) {
+    const member = data.partyMembers.find((m) => m.member_id === memberId);
+    if (!member) continue;
+    const animal = data.rescueAnimals.find((a) => a.reward_member_id === memberId);
+    const tags = animal?.liked_tags ?? [];
+    let pool = tasks.filter((t) => t.liked_tag_hint && tags.includes(t.liked_tag_hint));
+    if (!pool.length) pool = fallbacks.length ? fallbacks : tasks;
+    if (!pool.length) continue;
+    const task = pool[randInt(0, pool.length - 1)]!;
+    const line = task.flavor_text.replace(/%s/g, member.display_name);
+    state.gold += task.gold;
+    state.exp += task.exp;
+    results.push({
+      memberId,
+      name: member.display_name,
+      icon: member.icon,
+      line: `${member.icon} ${line}`,
+      gold: task.gold,
+      exp: task.exp,
+    });
+  }
+  return results;
 }
 
 /** 지금 활성 로스터가 준 전투 스탯 총합 */

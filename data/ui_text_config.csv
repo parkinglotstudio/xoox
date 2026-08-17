@@ -41,6 +41,8 @@ ui_btn_combat,전투
 ui_btn_combat_active,전투 중
 ui_btn_moving,이동 중
 ui_btn_pickup,줍기
+ui_btn_find,다가가기
+ui_find_hint,정화제 · {dir}
 ui_btn_learned_skills,학습한 스킬
 ui_learned_skills_title,학습한 스킬
 ui_learned_skills_empty,아직 학습한 스킬이 없습니다.

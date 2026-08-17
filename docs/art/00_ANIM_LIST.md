@@ -1,6 +1,7 @@
 # 캐릭터 애니메이션 목록 【확정】
 
-> **갱신:** 2026-07-23  
+> **갱신:** 2026-08-17  
+> **XOOX 여정 방랑자(뒷모습) 동작:** [10_XOOX_WANDERER_ANIM.md](./10_XOOX_WANDERER_ANIM.md) — 그림 없으면 머리 위 `000 동작 필요`  
 > **머리 모션 기획:** [05_HEAD_MOTION_PLAN.md](./05_HEAD_MOTION_PLAN.md)  
 > **슬롯 연출 SSoT (그리기 전 필독):** [sprites/_guide/](./sprites/_guide/README.md)  
 >   — idle [05](./sprites/_guide/05_INGAME_IDLE_PLAYBACK.md) · move [06](./sprites/_guide/06_INGAME_MOVE.md) · attack [07](./sprites/_guide/07_INGAME_ATTACK.md)  

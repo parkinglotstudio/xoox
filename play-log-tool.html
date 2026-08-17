@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XOOX 플레이 로그</title>
+    <style>
+      :root {
+        --bg: #12141a; --panel: #1c212b; --line: #3a4454; --text: #e8eef8;
+        --muted: #9aa8bc; --accent: #5ec8ff; --ok: #6ddea0; --warn: #ffd27a; --bad: #ff8f8f;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+        font-family: "Pretendard", "Malgun Gothic", sans-serif; }
+      body { display: grid; grid-template-rows: auto 1fr; }
+      .bar {
+        display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+        padding: 10px 14px; background: var(--panel); border-bottom: 1px solid var(--line);
+      }
+      .bar h1 { margin: 0; font-size: 15px; font-weight: 800; }
+      .bar .hint { color: var(--muted); font-size: 12px; }
+      .bar button, .bar input, .bar select {
+        border: 1px solid var(--line); background: #11161f; color: var(--text);
+        border-radius: 8px; padding: 7px 12px; font-weight: 700; cursor: pointer; font-size: 13px;
+      }
+      .bar input { cursor: text; min-width: 140px; font-weight: 600; }
+      .bar button.primary { background: #1a4a63; border-color: #2f7ea8; color: #dff4ff; }
+      .bar button.on { background: #3a2a12; border-color: #a8782f; color: var(--warn); }
+      .status { font-size: 12px; color: var(--muted); margin-left: auto; }
+      .status.ok { color: var(--ok); }
+      .status.err { color: var(--bad); }
+      .workspace { display: grid; grid-template-columns: 1fr 280px; min-height: 0; }
+      .log {
+        margin: 0; padding: 12px 16px; overflow: auto; font: 12px/1.45 ui-monospace, Consolas, monospace;
+        white-space: pre-wrap; word-break: break-word; background: #0c0e13;
+      }
+      .log .k-GAME { color: #c8b4ff; }
+      .log .k-SCENE { color: var(--muted); }
+      .log .k-STAGE { color: #9ed8ff; }
+      .log .k-AREA { color: #6ddea0; }
+      .log .k-NODE { color: var(--accent); }
+      .log .k-RAID { color: #2de0d0; }
+      .log .k-ARENA { color: var(--warn); }
+      .log .k-RESCUE { color: #ffb4d0; }
+      .log .k-BLIGHT { color: var(--bad); }
+      .log .k-COMBAT { color: #ff9a6a; }
+      .log .k-SKILL { color: #b8f08c; }
+      .log .k-DAY { color: #ffe08a; }
+      .log .k-FAIL { color: #ff8f8f; }
+      .log .k-AMMO { color: #7dffee; }
+      .side {
+        border-left: 1px solid var(--line); background: var(--panel);
+        padding: 12px; overflow: auto; display: flex; flex-direction: column; gap: 10px;
+      }
+      .side h2 {
+        margin: 0; font-size: 11px; color: var(--muted);
+        text-transform: uppercase; letter-spacing: 0.08em;
+      }
+      .meter { height: 8px; background: #11161f; border: 1px solid var(--line); border-radius: 99px; overflow: hidden; }
+      .meter > i { display: block; height: 100%; width: 0; background: var(--accent); }
+      .meter.hot > i { background: var(--warn); }
+      .files { display: flex; flex-direction: column; gap: 4px; }
+      .files button {
+        text-align: left; border: 1px solid var(--line); background: #11161f; color: var(--text);
+        border-radius: 8px; padding: 7px 8px; cursor: pointer; font-size: 11px; font-family: ui-monospace, Consolas, monospace;
+      }
+      .files button:hover { border-color: var(--accent); }
+      .help { font-size: 11px; line-height: 1.45; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; }
+      code { color: var(--warn); }
+    </style>
+  </head>
+  <body>
+    <div class="bar">
+      <h1>플레이 로그</h1>
+      <span class="hint">본편과 같은 포트에서 연다 · 5000자마다 다음 파일</span>
+      <input id="filter" type="search" placeholder="필터 (RAID, 노드명…)" />
+      <button type="button" id="btnPause">일시정지</button>
+      <button type="button" id="btnCopy">복사</button>
+      <button type="button" id="btnClear">로그 삭제</button>
+      <button type="button" class="primary" id="btnFlush">지금 저장</button>
+      <span class="status" id="status">게임 창을 기다리는 중</span>
+    </div>
+    <div class="workspace">
+      <pre class="log" id="log"></pre>
+      <aside class="side">
+        <h2>현재 파트</h2>
+        <div id="meta" class="hint">세션 없음</div>
+        <div class="meter" id="meter"><i></i></div>
+        <h2>저장된 파일</h2>
+        <button type="button" id="btnReload">목록 새로고침</button>
+        <div class="files" id="files"></div>
+        <div class="help">
+          본편(<code>localhost:5173</code>)을 켠 뒤 이 툴을 연다.<br />
+          한 줄은 <code>시각 KIND 내용</code>. 새로고침해도 유지된다.
+          <code>로그 삭제</code>로만 지운다. 5000자가 넘으면
+          <code>data/dev_logs/play_*.txt</code>로 넘긴다.
+        </div>
+      </aside>
+    </div>
+    <script type="module" src="/src/tools/playLogTool/main.ts"></script>
+  </body>
+</html>

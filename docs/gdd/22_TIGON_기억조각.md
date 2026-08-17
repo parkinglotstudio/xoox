@@ -115,7 +115,7 @@ Stray의 27개는 XOOX의 60일 스케일엔 과함. **스테이지(15일)당 2~
 
 | 항목 | 메모 |
 |---|---|
-| Memory Battle(60일 파이널보스) 연결 | 22번 §2-3의 "마지막 조각을 결전 직전 강제 언락" 미적용 — Memory Battle 자체가 미구현 |
+| Memory Battle(60일 파이널보스) 연결 | ✅ S7 — 진입 직전 `forceUnlockFinaleMemory`(tm_08) · 대화 정화 · 열두 PERMANENT |
 | `unlock_trigger` 다른 값 | MAP_FIND만 구현. DAY/STAGE 등은 스키마만 존재 |
 | 세이브/로드 | 프로젝트 전체가 세션 휘발성이라 조각도 새로고침 시 초기화 |
 | 조각 8개 → 최종 분량 | 초안은 8~12개 제안. 현재 8개는 잠정 |

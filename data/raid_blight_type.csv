@@ -1,0 +1,4 @@
+type_id,role,hp,speed_mult,eat_mult,scale,color_hex,note
+runner,runner,2,1.15,1,0.9,#7b48b8,빠른 러너
+tank,tank,5,0.7,1.4,1.25,#4a2878,거점 특화 탱크
+spitter,spitter,3,0.85,0.6,1.05,#c090ff,사거리 근처에서 멈추고 오염을 흘림

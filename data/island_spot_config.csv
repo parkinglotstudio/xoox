@@ -1,0 +1,2 @@
+spot_id,x_pct,y_pct,icon,label,flavor_text,action,note
+spot_legacy_unused,0,0,·,·,나무 표지판은 lobby.ts LOBBY_SIGNS 사용,NONE,deprecated — 표지판 PNG로 이전
