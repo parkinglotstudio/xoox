@@ -3,7 +3,9 @@ backups
 home
 plan_old
 docs
-scripts
+scripts/sprite_tool
+scripts/*.py
+scripts/*.ps1
 .claude
 .git
 dist
