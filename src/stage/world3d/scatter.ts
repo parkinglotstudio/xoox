@@ -4,7 +4,7 @@
  */
 import type { PropKind, WorldProp } from "./types";
 
-const KINDS: PropKind[] = ["crate", "barrel", "sign", "fence", "pole", "tree", "bush", "debris"];
+const KINDS: PropKind[] = ["crate", "barrel", "fence", "tree", "bush", "debris"];
 
 export type AvoidDisk = { xPct: number; yPct: number; rPct: number };
 

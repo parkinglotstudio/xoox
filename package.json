@@ -12,8 +12,11 @@
     "dev:hud": "vite --open /hud-layout-tool.html",
     "dev:map": "vite --open /sector-editor.html",
     "dev:sector": "vite --open /sector-editor.html",
+    "dev:mapmask": "vite --open /map-mask-tool.html",
     "dev:fpv": "vite --open /fpv-tool.html",
+    "dev:wanderer-anim": "vite --open /wanderer-anim.html",
     "dev:raid": "vite --open /purify-raid-tool.html",
+    "dev:culprit": "vite --open /culprit-cloud-tool.html",
     "dev:log": "vite --open /play-log-tool.html",
     "build": "tsc -b && vite build",
     "preview": "vite preview"

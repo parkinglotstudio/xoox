@@ -1,6 +1,10 @@
 # 다음 AI에게 붙여넣을 시작 프롬프트
 
-아래 `---` ~ `---` 블록을 **그대로 복사**해서 새 세션 첫 메시지로 붙여넣으세요.
+**게임 전체를 알아야 할 때**는 이쪽이 입구다 → [`docs/gdd/47_XOOX_전반소개_프롬프트.md`](docs/gdd/47_XOOX_전반소개_프롬프트.md)
+
+아래 `---` ~ `---` 블록은 **짧은 세션 이어하기**(셸 UI·작업 환경)용이다. 전반 소개는 47에 있다.
+
+아래 블록을 **그대로 복사**해서 새 세션 첫 메시지로 붙여넣으세요.
 
 ---
 
@@ -33,6 +37,7 @@ C:\xoox 프로젝트를 이어서 작업할 거야. Vite + 바닐라 TypeScript 
 - PNG 셸/금색 버튼/간판 **미사용** (스트레치·9-slice 금지)
 - 맵/explore/fog **비터치**
 - 로비 간판은 `lobby_title_sign.png` 유지
+- **아트 색·컨셉:** [`docs/art/11_XOOX_CYBERPET_PALETTE.md`](docs/art/11_XOOX_CYBERPET_PALETTE.md) — 로비·여정·아이콘은 이 색상표 + 키비주얼 PNG. GDD 37 오두막 톤은 초판.
 
 ### 샘플·에셋 (참고)
 - 샘플: `data/ui/shell/shell_layout_sample.html`

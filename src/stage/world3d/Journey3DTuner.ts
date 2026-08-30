@@ -10,7 +10,6 @@
 import { loadCsv, type Row } from "../../csv";
 import { pillarForTrigger } from "../../explore";
 import { JourneyStage3D } from "./JourneyStage3D";
-import { scatterProps } from "./scatter";
 import { spawnPctInArea } from "../spawnStart";
 import { loadActorSprite } from "./spriteSheet";
 import {
@@ -19,6 +18,8 @@ import {
   saveJourney3DConfig,
   type Journey3DConfig,
 } from "./journey3dConfig";
+import { loadPurifyRaidConfig } from "./purifyRaidConfig";
+import { csvRowToWorldProp } from "./propFromCsv";
 import type { Pillar, WorldNode } from "./types";
 
 interface SectorScale {
@@ -116,10 +117,13 @@ export class Journey3DTuner {
   private cfg: Journey3DConfig = { ...JOURNEY3D_DEFAULTS };
   private scale: SectorScale = {};
   private npcRows: Row[] = [];
+  private propRows: Row[] = [];
   private areaRows: Row[] = [];
   private areaId = "area_i21";
   private useAfterArt = false;
   private ready = false;
+  private stepPurifyBusy = false;
+  private stepPurifyDone = new Set<string>();
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -128,7 +132,10 @@ export class Journey3DTuner {
   ) {
     this.stage = new JourneyStage3D(canvas, {
       onMove: (x, y, yaw) => this.opts.onMove?.(x, y, yaw),
-      onNodeNear: (n) => this.opts.onNodeNear?.(n),
+      onNodeNear: (n) => {
+        this.opts.onNodeNear?.(n);
+        void this.tryStepPurify(n);
+      },
       onNodeActivate: (n) => this.opts.onNodeActivate?.(n),
       onViewModeChange: () => {
         this.cfg.view_mode = this.stage.getViewMode();
@@ -140,18 +147,22 @@ export class Journey3DTuner {
 
   /** 데이터·설정을 읽고 첫 구역을 세운다 */
   async init(): Promise<void> {
-    const [cfg, scale, npcRows, areaRows] = await Promise.all([
+    const [cfg, scale, npcRows, propRows, areaRows, raid] = await Promise.all([
       loadJourney3DConfig(),
       this.loadScale(),
       loadCsv("area_npc_config"),
+      loadCsv("area_prop_config"),
       loadCsv("area_config"),
+      loadPurifyRaidConfig().catch(() => null),
     ]);
     this.cfg = cfg;
     this.scale = scale;
     this.npcRows = npcRows;
+    this.propRows = propRows;
     this.areaRows = areaRows;
 
     this.stage.applyConfig(this.cfg);
+    if (raid) this.stage.applyStoneThrowConfig(raid);
     const sprite = await loadActorSprite("wanderer", "/ui/lobby/lobby_actor_idle.png");
     await this.stage.setPlayerSprite(sprite);
 
@@ -207,13 +218,18 @@ export class Journey3DTuner {
     this.areaId = areaId;
     const url = this.floorUrl();
     const nodes = this.nodesOf(areaId);
+    const spawn = this.spawnOf(areaId);
     try {
-      await this.stage.setFloor(url, { polluted: !this.useAfterArt });
+      const at = this.stage.pctToWorld(spawn.xPct, spawn.yPct);
+      const foci = this.useAfterArt
+        ? [{ x: at.x, z: at.z, r: this.stage.getWorldScale() * 0.34 }]
+        : [];
+      await this.stage.setFloor(url, { polluted: true, foci });
       this.stage.setNodes(nodes);
       this.stage.setNodeHeightMul(this.cfg.node_height_mul);
       this.refreshProps();
-      const spawn = this.spawnOf(areaId);
       this.stage.setPlayer(spawn.xPct, spawn.yPct, 0);
+      this.stage.syncSkyFromFoci(true);
       this.status(`${this.sectorLabel(areaId)} · 노드 ${nodes.length}개`, "ok");
       this.opts.onSectorApplied?.(areaId, url, nodes);
     } catch {
@@ -224,6 +240,10 @@ export class Journey3DTuner {
   private nodesOf(areaId: string): WorldNode[] {
     return this.npcRows
       .filter((r) => r.area_id === areaId && (r.appear_condition || "ALWAYS") === "ALWAYS")
+      .filter(
+        (r) =>
+          !((r.trigger_type || "").toUpperCase() === "PURIFY" && (this.stepPurifyDone.has(r.npc_id) || this.useAfterArt)),
+      )
       .map((r) => ({
         id: r.npc_id,
         icon: r.icon || "❔",
@@ -231,18 +251,48 @@ export class Journey3DTuner {
         xPct: Number(r.x_pct) || 50,
         yPct: Number(r.y_pct) || 60,
         pillar: pillarForTrigger(r.trigger_type || "") as Pillar,
+        noMarker: true,
       }));
   }
 
+  private async tryStepPurify(node: WorldNode | null): Promise<void> {
+    if (!node || this.stepPurifyBusy || this.stepPurifyDone.has(node.id) || this.useAfterArt) return;
+    const row = this.npcRows.find((r) => r.npc_id === node.id);
+    if ((row?.trigger_type || "").toUpperCase() !== "PURIFY") return;
+    this.stepPurifyBusy = true;
+    this.stage.setFrozen(true);
+    try {
+      this.stage.stampPurifyDiskPct(node.xPct, node.yPct);
+      const at = this.stage.pctToWorld(node.xPct, node.yPct);
+      const r = this.stage.getWorldScale() * 0.34;
+      await this.stage.playPurifyStandWave({
+        xPct: node.xPct,
+        yPct: node.yPct,
+        radiusM: r,
+        durationMs: 2600,
+        skyWave: true,
+        holdWave: true,
+      });
+      this.stepPurifyDone.add(node.id);
+      this.useAfterArt = true;
+      const me = this.stage.getPlayer();
+      await this.stage.setFloor(this.floorUrl(), { polluted: true, foci: [{ x: at.x, z: at.z, r }] });
+      this.stage.clearPurifyWaves();
+      this.stage.removeNode(node.id);
+      this.stage.setPlayer(me.xPct, me.yPct, me.yawDeg);
+      this.stage.syncSkyFromFoci(true);
+      this.status("정화 발판 · 들판이 되살아났다", "ok");
+    } finally {
+      this.stepPurifyBusy = false;
+      this.stage.setFrozen(false);
+    }
+  }
+
   private refreshProps(): void {
-    const nodes = this.nodesOf(this.areaId);
-    const avoid = nodes.map((n) => ({ xPct: n.xPct, yPct: n.yPct, rPct: 7 }));
-    this.stage.setProps([
-      ...this.stage.backgroundStickers(this.areaId).filter(
-        (p) => !avoid.some((a) => Math.hypot(p.xPct - a.xPct, p.yPct - a.yPct) < a.rPct),
-      ),
-      ...scatterProps(this.areaId, this.cfg.prop_density, avoid),
-    ]);
+    const props = this.propRows
+      .filter((r) => r.area_id === this.areaId)
+      .map((r) => csvRowToWorldProp(r));
+    this.stage.setProps(props);
   }
 
   // ── 패널 ──────────────────────────────────────────────────────

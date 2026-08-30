@@ -65,6 +65,8 @@ export function createInitialState(data: GameData): PlayerState {
   };
   const maxHp = base("base_max_hp", 18000);
   const hp = base("base_hp", maxHp);
+  const circles = data.areaNpcs.filter((n) => n.trigger_type.toUpperCase() === "PURIFY").length;
+  const cap = circles > 0 ? circles : (data.islandRun?.attempt_count ?? 2);
   return {
     day: 0,
     level: 1,
@@ -97,11 +99,20 @@ export function createInitialState(data: GameData): PlayerState {
     clearedNodes: [],
     rescuedAnimals: [],
     purifyAmmo: 0,
+    throwAdsorb: 0,
+    throwAdsorbCap: 0,
+    throwInhibit: 0,
+    throwInhibitCap: 0,
+    throwCulprit: 0,
+    throwCulpritCap: 0,
     heldCatalysts: [],
     purifiedAreas: [],
     purifiedBlights: [],
     purifiedProps: [],
     purifyFoci: [],
+    purifyAttemptCap: cap,
+    purifyAttemptsLeft: cap,
+    areaClearRecords: [],
   };
 }
 
@@ -1077,6 +1088,53 @@ export function getEffectiveCombatStats(data: GameData, state: PlayerState): {
     skillDmgMult: mods.skillDmgMult,
     dmgTakenMult: mods.dmgTakenMult,
     mods,
+  };
+}
+
+export type LoopHuntTune = {
+  rangeAdd: number;
+  speedMul: number;
+  splashMul: number;
+  eatMul: number;
+  invadeMul: number;
+};
+
+function playerBaseNum(data: GameData, key: string, fallback: number): number {
+  const v = data.playerBaseStats?.[key];
+  if (v === undefined || v === "") return fallback;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+/** 대박·운빨로 쌓인 HP/ATK/DEF → 원 루프용 숨·흡착·억제 배율 */
+export function loopStatMods(data: GameData, state: PlayerState): {
+  adsorb: number;
+  inhibit: number;
+  breath: number;
+} {
+  const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
+  const adsorb = clamp(state.atk / Math.max(1, playerBaseNum(data, "base_atk", 3200)), 0.72, 1.8);
+  const inhibit = clamp(state.def / Math.max(1, playerBaseNum(data, "base_def", 900)), 0.72, 1.8);
+  const fill = state.hp / Math.max(1, state.maxHp);
+  const breath = clamp(
+    (state.maxHp / Math.max(1, playerBaseNum(data, "base_max_hp", 18000))) * (0.5 + 0.5 * fill),
+    0.5,
+    1.8,
+  );
+  return { adsorb, inhibit, breath };
+}
+
+/** 원 스킬(보폭·거리·확산) × 숨·흡착·억제. 서로 곱해서 같이 간다. */
+export function composeLoopHuntTune(
+  skills: { range: boolean; stride: boolean; spread: boolean },
+  mods: { adsorb: number; inhibit: number; breath: number },
+): LoopHuntTune {
+  return {
+    rangeAdd: (skills.range ? 3.5 : 0) + (mods.adsorb - 1) * 5,
+    speedMul: (skills.stride ? 1.22 : 1) * (0.9 + mods.breath * 0.1),
+    splashMul: (skills.spread ? 1.35 : 1) * mods.adsorb,
+    eatMul: mods.inhibit * (0.65 + mods.breath * 0.35),
+    invadeMul: 1 / Math.max(0.55, mods.inhibit),
   };
 }
 

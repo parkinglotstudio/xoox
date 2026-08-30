@@ -1,47 +1,47 @@
 effect_id,effect_type,target,value,value_type,skill_id,icon,description
-e_hp30,STAT_PCT,HP,30,PERCENT,,❤️,HP 30% 회복
-e_atk_neg5,STAT_PCT,ATK,-5,PERCENT,,⚔️,공격력 -5%
-e_atk7,STAT_PCT,ATK,7,PERCENT,,⚔️,공격력 +7%
-e_maxhp7,STAT_PCT,MAX_HP,7,PERCENT,,❤️,최대HP +7%
+e_hp30,STAT_PCT,HP,30,PERCENT,,❤️,숨 30% 회복
+e_atk_neg5,STAT_PCT,ATK,-5,PERCENT,,⚔️,흡착 -5%
+e_atk7,STAT_PCT,ATK,7,PERCENT,,⚔️,흡착 +7%
+e_maxhp7,STAT_PCT,MAX_HP,7,PERCENT,,❤️,최대숨 +7%
 e_gold275,CURRENCY,GOLD,275,ABSOLUTE,,🪙,골드 +275
 e_gold1500,CURRENCY,GOLD,1500,ABSOLUTE,,🪙,골드 +1500
 e_gold800,CURRENCY,GOLD,800,ABSOLUTE,,🪙,골드 +800
 e_gold300,CURRENCY,GOLD,300,ABSOLUTE,,🪙,골드 +300
 e_star2,CURRENCY,STAR_FRAGMENT,2,ABSOLUTE,,⭐,별조각 +2
-e_atk21,STAT_PCT,ATK,21,PERCENT,,⚔️,공격력 +21%
-e_maxhp21,STAT_PCT,MAX_HP,21,PERCENT,,❤️,최대HP +21%
-e_hp60,STAT_PCT,HP,60,PERCENT,,❤️,HP 60% 회복
+e_atk21,STAT_PCT,ATK,21,PERCENT,,⚔️,흡착 +21%
+e_maxhp21,STAT_PCT,MAX_HP,21,PERCENT,,❤️,최대숨 +21%
+e_hp60,STAT_PCT,HP,60,PERCENT,,❤️,숨 60% 회복
 e_exp33,CURRENCY,EXP,33,ABSOLUTE,,✨,EXP +33
 e_exp22,CURRENCY,EXP,22,ABSOLUTE,,✨,EXP +22
-e_maxhp_neg5,STAT_PCT,MAX_HP,-5,PERCENT,,💔,최대HP -5%
-e_hp_neg10,STAT_PCT,HP,-10,PERCENT,,💔,HP -10%
-e_hp_neg15,STAT_PCT,HP,-15,PERCENT,,💔,HP -15%
+e_maxhp_neg5,STAT_PCT,MAX_HP,-5,PERCENT,,💔,최대숨 -5%
+e_hp_neg10,STAT_PCT,HP,-10,PERCENT,,💔,숨 -10%
+e_hp_neg15,STAT_PCT,HP,-15,PERCENT,,💔,숨 -15%
 e_flag3,CURRENCY,VICTORY_FLAG,3,ABSOLUTE,,🚩,승리의 깃발 +3
 e_arrow1,CURRENCY,ARROW,1,ABSOLUTE,,🏹,화살 +1
 e_gold8000,CURRENCY,GOLD,8000,ABSOLUTE,,🪙,골드 +8000
 e_gold10800,CURRENCY,GOLD,10800,ABSOLUTE,,🪙,골드 +10800
-e_atk15,STAT_PCT,ATK,15,PERCENT,,⚔️,공격력 +15%
-e_hp_abs_neg6097,STAT_ABS,MAX_HP,-6097,ABSOLUTE,,💔,최대HP -6097
-e_hp_neg7,STAT_PCT,HP,-7,PERCENT,,💔,생명력 -7%
-e_atk_neg7,STAT_PCT,ATK,-7,PERCENT,,⚔️,공격력 -7%
+e_atk15,STAT_PCT,ATK,15,PERCENT,,⚔️,흡착 +15%
+e_hp_abs_neg6097,STAT_ABS,MAX_HP,-6097,ABSOLUTE,,💔,최대숨 -6097
+e_hp_neg7,STAT_PCT,HP,-7,PERCENT,,💔,숨 -7%
+e_atk_neg7,STAT_PCT,ATK,-7,PERCENT,,⚔️,흡착 -7%
 e_feed1,CURRENCY,FEED,1,ABSOLUTE,,🍖,사료 +1
 e_gold_combat,CURRENCY,GOLD,200,ABSOLUTE,,🪙,골드 +200
 e_exp_combat,CURRENCY,EXP,60,ABSOLUTE,,✨,EXP +60
-e_lvup_hp5,STAT_PCT,HP,5,PERCENT,,❤️,HP 5% 회복
+e_lvup_hp5,STAT_PCT,HP,5,PERCENT,,❤️,숨 5% 회복
 e_skill_legend,SKILL_GRANT,SKILL,1,ABSOLUTE,POOL_LEGEND,🎁,전설 스킬 획득
 e_skill_renta_mastery,SKILL_GRANT,SKILL,1,ABSOLUTE,sk_renta_mastery,🎁,연타 마스터리 획득
 e_skill_myth,SKILL_GRANT,SKILL,1,ABSOLUTE,POOL_MYTH,🎁,신화 스킬 획득
 e_skill_common_upgrade,SKILL_UPGRADE,SKILL,1,ABSOLUTE,POOL_COMMON_PLUS,🎁,스킬 강화
 e_ancient_succession,CURRENCY,ANCIENT_SUCCESSION,1,ABSOLUTE,,📜,고대 계승 +1
-e_angel_atk,STAT_PCT,ATK,15,PERCENT,,⚔️,공격력 대폭 상승
-e_angel_hp,STAT_PCT,HP,50,PERCENT,,❤️,HP 대폭 회복
-e_atk10,STAT_PCT,ATK,10,PERCENT,,⚔️,공격력 +10%
-e_maxhp10,STAT_PCT,MAX_HP,10,PERCENT,,❤️,최대HP +10%
-e_def7,STAT_PCT,DEF,7,PERCENT,,🛡️,방어력 +7%
-e_def15,STAT_PCT,DEF,15,PERCENT,,🛡️,방어력 +15%
-e_hp45,STAT_PCT,HP,45,PERCENT,,❤️,HP 45% 회복
-e_def_neg5,STAT_PCT,DEF,-5,PERCENT,,🛡️,방어력 -5%
-e_atk_neg10,STAT_PCT,ATK,-10,PERCENT,,⚔️,공격력 -10%
+e_angel_atk,STAT_PCT,ATK,15,PERCENT,,⚔️,흡착 대폭 상승
+e_angel_hp,STAT_PCT,HP,50,PERCENT,,❤️,숨 대폭 회복
+e_atk10,STAT_PCT,ATK,10,PERCENT,,⚔️,흡착 +10%
+e_maxhp10,STAT_PCT,MAX_HP,10,PERCENT,,❤️,최대숨 +10%
+e_def7,STAT_PCT,DEF,7,PERCENT,,🛡️,억제 +7%
+e_def15,STAT_PCT,DEF,15,PERCENT,,🛡️,억제 +15%
+e_hp45,STAT_PCT,HP,45,PERCENT,,❤️,숨 45% 회복
+e_def_neg5,STAT_PCT,DEF,-5,PERCENT,,🛡️,억제 -5%
+e_atk_neg10,STAT_PCT,ATK,-10,PERCENT,,⚔️,흡착 -10%
 e_gold10100,CURRENCY,GOLD,10100,ABSOLUTE,,🪙,골드 +10100(마일스톤)
 e_gold40500,CURRENCY,GOLD,40500,ABSOLUTE,,🪙,골드 +40500(마일스톤)
 e_link_combat_normal,CONTENT_LINK,COMBAT,0,ABSOLUTE,NORMAL,⚔️,일반 전투 조우

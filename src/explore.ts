@@ -60,6 +60,31 @@ const FADE_MS = 320;
 /** 카메라가 배우를 화면 세로 어디에 두는지(0=위, 1=아래) */
 const CAM_ANCHOR = 0.66;
 
+export type ExitSide = "TOP" | "BOTTOM" | "LEFT" | "RIGHT";
+
+export function flipExitSide(s: ExitSide): ExitSide {
+  return s === "TOP" ? "BOTTOM" : s === "BOTTOM" ? "TOP" : s === "LEFT" ? "RIGHT" : "LEFT";
+}
+
+/** CSV 연결 — 3D 가장자리 이동과 탑뷰 출구가 같은 표를 쓴다 */
+export function areaExits(
+  data: GameData,
+  areaId: string,
+): { to: string; side: ExitSide; requires?: string }[] {
+  const out: { to: string; side: ExitSide; requires?: string }[] = [];
+  for (const c of data.areaConnections) {
+    const requires = c.unlock_condition.startsWith("NODE:")
+      ? c.unlock_condition.slice(5)
+      : undefined;
+    if (c.from_area_id === areaId) {
+      out.push({ to: c.to_area_id, side: c.exit_point as ExitSide, requires });
+    } else if (c.bidirectional && c.to_area_id === areaId) {
+      out.push({ to: c.from_area_id, side: flipExitSide(c.exit_point as ExitSide) });
+    }
+  }
+  return out;
+}
+
 /**
  * 맵 노드 종류 라벨.
  * `_2` 접미사 콘텐츠는 "같은 장소의 재방문"으로 묶여 후반 구역에 배치된다(30번 문서).
@@ -126,6 +151,7 @@ export class ExploreView {
   private actorInner!: HTMLElement;
   private fade!: HTMLElement;
   private nameTag!: HTMLElement;
+  private minimapTabBtn!: HTMLButtonElement;
   private navPad!: HTMLElement;
 
   private currentAreaId = "";
@@ -162,6 +188,10 @@ export class ExploreView {
   private busyGuard: number | null = null;
   /** 3D 뷰가 주연이면 탑뷰는 미니맵으로 내려간다 — 조작을 받지 않고 섹터 전체를 보여준다 */
   private minimapMode = false;
+  /** 자동이동 피크 전에 탭으로 접혀 있었는지 */
+  private minimapTravelFromDock = false;
+  /** 콘텐츠 피크 — 새 발동이 오면 타이머를 연장한다 */
+  private minimapPeekGen = 0;
 
   constructor(root: HTMLElement, data: GameData, hooks: ExploreHooks) {
     this.root = root;
@@ -450,6 +480,7 @@ export class ExploreView {
       <div class="explore-nav" aria-label="섹터 이동"></div>
       <div class="explore-name"></div>
       <div class="explore-fade"></div>
+      <button type="button" class="minimap-tab-btn" aria-label="지도" aria-expanded="false" hidden>지도</button>
     `;
     this.root.appendChild(layer);
 
@@ -467,7 +498,13 @@ export class ExploreView {
     this.navPad = layer.querySelector(".explore-nav")!;
     this.nameTag = layer.querySelector(".explore-name")!;
     this.fade = layer.querySelector(".explore-fade")!;
+    this.minimapTabBtn = layer.querySelector(".minimap-tab-btn")!;
     this.applyActorSprite(this.actorArt);
+
+    this.minimapTabBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.toggleMinimapShelf();
+    });
 
     // 월드를 탭하면 그 지점으로 걸어간다 · 가장자리면 인접 섹터로 이동
     this.world.addEventListener("click", (e) => {
@@ -753,6 +790,16 @@ export class ExploreView {
       if (npc.trigger_type === "MEMORY" && this.hooks.hasMemory(npc.trigger_ref)) continue;
       if ((npc.trigger_type === "CATALYST" || npc.trigger_type === "FILL") && this.hooks.isCatalystGone?.(npc.npc_id)) continue;
       if (npc.trigger_type === "BLIGHT" && this.hooks.isBlightPurified?.(npc.trigger_ref)) continue;
+      if (
+        npc.trigger_type.toUpperCase() === "PURIFY" &&
+        this.hooks.isNodeCleared(npc.npc_id)
+      ) {
+        continue;
+      }
+      /* START 스폰 좌표 — 미니맵에도 깃발 안 찍음 */
+      if (npc.trigger_type.toUpperCase() === "START") continue;
+      /* 정화 발판은 루프가 맡김 — 미니맵에 핀 안 찍음 */
+      if (npc.trigger_type.toUpperCase() === "PURIFY") continue;
       const el = document.createElement("button");
       el.type = "button";
       // 노드 타입별 외형 구분 — 전투/보스는 위협, 거점은 안전, NPC/지역은 평범
@@ -830,21 +877,8 @@ export class ExploreView {
    */
   private exitsOf(
     areaId: string
-  ): { to: string; side: "TOP" | "BOTTOM" | "LEFT" | "RIGHT"; requires?: string }[] {
-    const flip = (s: "TOP" | "BOTTOM" | "LEFT" | "RIGHT") =>
-      s === "TOP" ? "BOTTOM" : s === "BOTTOM" ? "TOP" : s === "LEFT" ? "RIGHT" : "LEFT";
-    const out: { to: string; side: "TOP" | "BOTTOM" | "LEFT" | "RIGHT"; requires?: string }[] = [];
-    for (const c of this.data.areaConnections) {
-      const requires = c.unlock_condition.startsWith("NODE:")
-        ? c.unlock_condition.slice(5)
-        : undefined;
-      if (c.from_area_id === areaId) {
-        out.push({ to: c.to_area_id, side: c.exit_point, requires });
-      } else if (c.bidirectional && c.to_area_id === areaId) {
-        out.push({ to: c.from_area_id, side: flip(c.exit_point) });
-      }
-    }
-    return out;
+  ): { to: string; side: ExitSide; requires?: string }[] {
+    return areaExits(this.data, areaId);
   }
 
   // ── 움직임 ────────────────────────────────────────────────────────────
@@ -1115,7 +1149,16 @@ export class ExploreView {
       this.cancelPendingWalk();
       this.camera.style.transitionDuration = "0ms";
       this.camera.style.transform = "none";
+      this.enableMinimapTabShelf();
     } else {
+      this.layer.classList.remove(
+        "minimap-tab-mode",
+        "minimap-docked",
+        "minimap-open",
+        "minimap-travel-active",
+        "minimap-travel-offscreen",
+      );
+      this.minimapTabBtn.hidden = true;
       this.applyCamera(false);
     }
     this.refreshFog();
@@ -1123,6 +1166,121 @@ export class ExploreView {
 
   isMinimapMode() {
     return this.minimapMode;
+  }
+
+  isMinimapSuppressed(): boolean {
+    return this.layer.classList.contains("minimap-suppressed");
+  }
+
+  /** 부두처럼 아직 원흉 원이 아니면 지도를 숨긴다. */
+  suppressMinimap(on: boolean): void {
+    this.layer.classList.toggle("minimap-suppressed", on);
+    if (on) this.layer.classList.remove("minimap-intro", "minimap-travel-active");
+  }
+
+  /** HUD 칸에 작은 미니맵을 둔다. */
+  showMinimapDocked(): void {
+    this.suppressMinimap(false);
+    this.layer.classList.remove("minimap-intro", "minimap-travel-active", "minimap-travel-offscreen");
+    this.enableMinimapTabShelf();
+  }
+
+  /** 원흉 원 첫 도달 — 가운데에 크게, 그다음 호출측에서 지역 알림. */
+  async playCulpritMapIntro(holdMs = 2200): Promise<void> {
+    if (!this.minimapMode) this.setMinimapMode(true);
+    this.suppressMinimap(false);
+    this.layer.classList.remove("minimap-docked", "minimap-travel-active", "minimap-travel-offscreen");
+    this.layer.classList.add("minimap-tab-mode", "minimap-intro");
+    this.minimapTabBtn.hidden = true;
+    await new Promise<void>((r) => window.setTimeout(r, holdMs));
+    this.layer.classList.remove("minimap-intro");
+  }
+
+  /** 미니맵/탐방 레이어 DOM — HUD 배치 시 폰으로 옮길 때 사용 */
+  getLayer(): HTMLElement {
+    return this.layer;
+  }
+
+  /**
+   * 탐방 레이어를 다른 루트에 붙인다.
+   * 세로 3D: 스테이지 overflow에 안 잘리게 폰으로 올린다.
+   */
+  setHost(root: HTMLElement): void {
+    if (this.root === root && this.layer.parentElement === root) return;
+    this.root = root;
+    if (this.layer.parentElement !== root) root.appendChild(this.layer);
+  }
+
+  /**
+   * 3D 주연일 때 지도는 접혀 숨긴다.
+   * 콘텐츠가 발동할 때만 오른쪽에서 잠깐 나온다(peekMinimapContent).
+   */
+  enableMinimapTabShelf(_opts?: { open?: boolean }): void {
+    if (!this.minimapMode) return;
+    this.layer.classList.add("minimap-tab-mode", "minimap-docked");
+    this.layer.classList.remove("minimap-open", "hud-layout-hidden");
+    this.minimapTabBtn.hidden = true;
+    this.minimapTabBtn.setAttribute("aria-expanded", "false");
+  }
+
+  /** 탭 클릭 — 펼침 ↔ 접힘 */
+  toggleMinimapShelf(): void {
+    if (!this.minimapMode || !this.layer.classList.contains("minimap-tab-mode")) return;
+    if (this.layer.classList.contains("minimap-travel-active")) return;
+    const open = !this.layer.classList.contains("minimap-open");
+    this.layer.classList.toggle("minimap-open", open);
+    this.layer.classList.toggle("minimap-docked", !open);
+    this.minimapTabBtn.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  isMinimapShelfOpen(): boolean {
+    return this.layer.classList.contains("minimap-open");
+  }
+
+  /**
+   * 오른쪽에서 슬라이드 인/아웃. 콘텐츠 발동 피크용.
+   * 이미 나와 있으면 인 연출은 건너뛴다.
+   */
+  async setMinimapTravelPeek(show: boolean): Promise<void> {
+    if (!this.minimapMode) return;
+    const SLIDE_MS = 480;
+    if (show) {
+      this.minimapTravelFromDock = true;
+      this.layer.classList.remove("hud-layout-hidden", "minimap-open");
+      this.layer.classList.add("minimap-tab-mode", "minimap-docked");
+      this.minimapTabBtn.hidden = true;
+      if (this.layer.classList.contains("minimap-travel-active") &&
+          !this.layer.classList.contains("minimap-travel-offscreen")) {
+        return;
+      }
+      this.layer.classList.add("minimap-travel-active", "minimap-travel-offscreen");
+      void this.layer.offsetWidth;
+      this.layer.classList.remove("minimap-travel-offscreen");
+      await new Promise<void>((r) => window.setTimeout(r, SLIDE_MS));
+      return;
+    }
+    if (!this.layer.classList.contains("minimap-travel-active")) return;
+    this.layer.classList.add("minimap-travel-offscreen");
+    await new Promise<void>((r) => window.setTimeout(r, SLIDE_MS));
+    this.layer.classList.remove("minimap-travel-active", "minimap-travel-offscreen");
+    this.layer.classList.add("minimap-docked");
+    this.layer.classList.remove("minimap-open");
+    this.minimapTabBtn.hidden = true;
+    this.minimapTabBtn.setAttribute("aria-expanded", "false");
+    this.layer.classList.remove("hud-layout-hidden");
+  }
+
+  /** 지도가 오른쪽에서 나와 3초 머물다 다시 들어간다. 연속 발동이면 타이머를 다시 잰다. */
+  peekMinimapContent(holdMs = 3000): void {
+    if (!this.minimapMode) return;
+    this.minimapPeekGen += 1;
+    const gen = this.minimapPeekGen;
+    void (async () => {
+      await this.setMinimapTravelPeek(true);
+      await new Promise<void>((r) => window.setTimeout(r, holdMs));
+      if (gen !== this.minimapPeekGen) return;
+      await this.setMinimapTravelPeek(false);
+    })();
   }
 
   /**

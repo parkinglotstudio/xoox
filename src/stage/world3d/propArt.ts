@@ -25,7 +25,7 @@ export const PROP_DEFAULTS: Record<PropKind, { hM: number; aspect: number; billb
   debris: { hM: 0.9, aspect: 1.89, billboard: true },
 };
 
-const V = "v=4";
+const V = "v=8";
 
 /** 컨셉 청록 지붕 · 세움판 스티커. 집은 4종만. 나무보다 크게. */
 export const HOUSE_STICKERS = [
@@ -48,7 +48,7 @@ export const PROP_STICKER: Record<PropKind, string> = {
   debris: `/art/props/sticker/prop_sticker_debris.png?${V}`,
 };
 
-const SMALL: PropKind[] = ["bush", "crate", "barrel", "pole", "sign", "debris"];
+const SMALL: PropKind[] = ["bush", "crate", "barrel", "debris"];
 
 /** 컨셉에서 뜯은 자리 → 스티커 종류. 집은 4종 순환. */
 export function stickerForDraft(
@@ -75,18 +75,106 @@ export function stickerForDraft(
 
 const cache = new Map<string, THREE.Texture>();
 const loader = new THREE.TextureLoader();
+const readyWait = new Map<string, Promise<void>>();
 
 export function stickerTexture(kind: PropKind): THREE.Texture {
-  const url = PROP_STICKER[kind];
+  return stickerArtTexture(PROP_STICKER[kind]);
+}
+
+/** PNG URL 공유 캐시 — 해안 나무를 장마다 새로 받지 않는다 */
+export function stickerArtTexture(url: string): THREE.Texture {
   const hit = cache.get(url);
   if (hit) return hit;
-  const tex = loader.load(url);
+  let settle = () => {};
+  readyWait.set(
+    url,
+    new Promise<void>((r) => {
+      settle = r;
+    }),
+  );
+  const tex = loader.load(
+    url,
+    (t) => {
+      const img = t.image as CanvasImageSource & { width?: number; height?: number };
+      const iw = img?.width ?? 0;
+      const ih = img?.height ?? 0;
+      const max = 512;
+      const s = iw > max || ih > max ? max / Math.max(iw, ih) : 1;
+      const c = document.createElement("canvas");
+      c.width = Math.max(1, Math.round(iw * s));
+      c.height = Math.max(1, Math.round(ih * s));
+      const ctx = c.getContext("2d")!;
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      punchPalePixels(ctx, c.width, c.height);
+      (t as THREE.Texture & { image: CanvasImageSource }).image = c;
+      t.generateMipmaps = true;
+      t.minFilter = THREE.LinearMipmapLinearFilter;
+      t.needsUpdate = true;
+      settle();
+    },
+    undefined,
+    () => settle(),
+  );
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.minFilter = THREE.LinearFilter;
   tex.magFilter = THREE.LinearFilter;
   tex.generateMipmaps = false;
   cache.set(url, tex);
   return tex;
+}
+
+export function stickerArtReady(url: string): Promise<void> {
+  stickerArtTexture(url);
+  return readyWait.get(url) ?? Promise.resolve();
+}
+
+const matCache = new Map<string, THREE.MeshBasicMaterial>();
+
+/** 흰 잔여를 뚫고, 투명 픽셀 RGB는 네이비로 — 밉맵 흰 테두리 방지 */
+function punchPalePixels(ctx: CanvasRenderingContext2D, w: number, h: number): void {
+  const img = ctx.getImageData(0, 0, w, h);
+  const p = img.data;
+  for (let i = 0; i < p.length; i += 4) {
+    const r = p[i]!;
+    const g = p[i + 1]!;
+    const b = p[i + 2]!;
+    const a = p[i + 3]!;
+    const luma = 0.299 * r + 0.587 * g + 0.114 * b;
+    const sat = Math.max(r, g, b) - Math.min(r, g, b);
+    const pale = (luma > 182 && sat < 48) || (r > 200 && g > 200 && b > 200);
+    if (pale || a < 10) {
+      p[i] = 7;
+      p[i + 1] = 23;
+      p[i + 2] = 38;
+      p[i + 3] = pale ? 0 : a;
+      continue;
+    }
+    if (a < 255) {
+      const t = a / 255;
+      p[i] = Math.round(r * t + 7 * (1 - t));
+      p[i + 1] = Math.round(g * t + 23 * (1 - t));
+      p[i + 2] = Math.round(b * t + 38 * (1 - t));
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+}
+
+/** 같은 PNG는 재질 한 장. 알파 가장자리는 살짝 살리고, 완전 빈 칸만 자른다. */
+export function stickerArtMaterial(url: string): THREE.MeshBasicMaterial {
+  const hit = matCache.get(url);
+  if (hit) return hit;
+  const mat = new THREE.MeshBasicMaterial({
+    map: stickerArtTexture(url),
+    transparent: true,
+    alphaTest: 0.1,
+    depthWrite: true,
+    side: THREE.DoubleSide,
+    fog: true,
+  });
+  matCache.set(url, mat);
+  return mat;
 }
 
 export function propTexture(kind: PropKind, tint?: string): THREE.Texture {
@@ -103,6 +191,9 @@ export function propTexture(kind: PropKind, tint?: string): THREE.Texture {
 }
 
 export function disposePropTextures(): void {
+  for (const m of matCache.values()) m.dispose();
+  matCache.clear();
+  readyWait.clear();
   for (const t of cache.values()) t.dispose();
   cache.clear();
 }

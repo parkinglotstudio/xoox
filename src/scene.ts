@@ -27,4 +27,8 @@ export function setAppScene(next: AppScene) {
   if (current !== next) playLog("SCENE", next);
   current = next;
   if (phoneEl) phoneEl.dataset.scene = next;
+  if (next !== "journey") {
+    document.getElementById("dayRoadmap")?.classList.remove("roadmap-suppressed");
+    document.getElementById("activityToast")?.classList.remove("show");
+  }
 }

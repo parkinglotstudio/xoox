@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import json
 import mimetypes
+import shutil
 import sys
 import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -110,7 +111,24 @@ class Handler(BaseHTTPRequestHandler):
                 offsets=offsets,
                 pad_bottom=int(pad) if pad is not None else None,
             )
-            result["message"] = f"{anim_id} 엔진 팩에 저장됨 (시트·frames·JSON)"
+            # wanderer: also push sheet+json into game publicDir
+            game_msg = ""
+            try:
+                char = self.engine_root.parent.name  # .../sprites/<char>/engine
+                if char == "wanderer":
+                    game = ROOT / "data" / "ui" / "actor" / "wanderer" / str(anim_id)
+                    game.mkdir(parents=True, exist_ok=True)
+                    sheet = result.get("sheet") or f"{anim_id}_sheet.png"
+                    src_sheet = anim_dir / sheet
+                    src_json = anim_dir / f"{anim_id}.json"
+                    if src_sheet.is_file():
+                        shutil.copy2(src_sheet, game / sheet)
+                    if src_json.is_file():
+                        shutil.copy2(src_json, game / f"{anim_id}.json")
+                    game_msg = f" · 게임 복사 → data/ui/actor/wanderer/{anim_id}/"
+            except Exception as copy_err:
+                game_msg = f" · 게임 복사 실패: {copy_err}"
+            result["message"] = f"{anim_id} 엔진 팩에 저장됨 (시트·frames·JSON){game_msg}"
             self._json(200, result)
         except Exception as e:
             traceback.print_exc()

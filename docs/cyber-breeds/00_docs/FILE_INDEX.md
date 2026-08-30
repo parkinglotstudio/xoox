@@ -3,6 +3,7 @@
 기준 경로: `C:\xoox\docs\cyber-breeds`
 
 ## 문서
+- `docs/art/11_XOOX_CYBERPET_PALETTE.md` ← **XOOX 게임 색·컨셉 SSoT** (로비 네온 + 정화 완료 키비주얼)
 - `00_docs/00_OVERVIEW.md`
 - `00_docs/01_ART_STYLE.md`
 - `00_docs/02_TAXONOMY.md`

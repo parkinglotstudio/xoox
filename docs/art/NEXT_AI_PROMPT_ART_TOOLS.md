@@ -10,6 +10,7 @@
 
 ## 먼저 읽을 파일 (순서)
 
+0. [`docs/art/11_XOOX_CYBERPET_PALETTE.md`](./11_XOOX_CYBERPET_PALETTE.md) — **색·세계 톤 SSoT. 새로 그리기 전에 이 표와 키비주얼 PNG를 연다.**
 1. [`docs/art/00_PORTED_FROM_MONOCAPIBARA.md`](./00_PORTED_FROM_MONOCAPIBARA.md) — **이 툴들이 어디서 왔는지, 뭘 가져오고 뭘 뺐는지** (2026-08-01 이식)
 2. [`docs/gdd/21_ART_STAGE_TOOL_이식.md`](../gdd/21_ART_STAGE_TOOL_이식.md) — 두 툴 사용법 + XOOX에 맞춰 뭘 바꿔야 하는지
 3. 배경 작업이면 → [`docs/art/stage/README.md`](./stage/README.md)

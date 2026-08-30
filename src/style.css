@@ -36,6 +36,14 @@ body {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  transition:
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease;
+}
+.xoox-tools-bar.is-hidden {
+  transform: translate(-50%, calc(-100% - 20px));
+  opacity: 0;
+  pointer-events: none;
 }
 .xoox-tools-hub,
 .xoox-tools-all,
@@ -4338,7 +4346,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  z-index: 50;
+  z-index: 220;
   padding: 24px 20px 72px;
 }
 
@@ -5831,6 +5839,197 @@ body {
   --chat-w: clamp(160px, 22%, 240px);
 }
 
+/* 세로 셸 (본편 기본) — 가로 보드는 _bak_pre_portrait_v1 + HUD 툴 보드로 보존 */
+.phone.shell-portrait {
+  width: min(100vw, calc(100vh * 9 / 16), 480px);
+  height: min(100vh, calc(100vw * 16 / 9), 960px);
+  aspect-ratio: 9 / 16;
+  --chat-w: 100%;
+  --stage-h: 60%;
+  --pillar-h: 40%;
+}
+
+.phone.shell-portrait .game-row {
+  flex: 0 0 var(--stage-h);
+  height: var(--stage-h);
+  max-height: var(--stage-h);
+  min-height: 0;
+}
+
+.phone.shell-portrait .visual-stage {
+  padding-right: 0;
+  height: 100%;
+}
+
+/*
+ * 세로 HUD: 파티/로그는 game-row 자식인데 폰 %로 아래 2/5에 둔다.
+ * game-row를 60%+overflow:hidden 으로 두면 필러가 전부 잘린다 → 풀높이 + 무대만 3/5.
+ */
+.phone.shell-portrait.hud-laid-out .game-row.shell-body {
+  position: absolute;
+  inset: 0;
+  flex: none;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  overflow: visible;
+  z-index: 1;
+}
+.phone.shell-portrait.hud-laid-out #mainArea {
+  height: var(--stage-h);
+  max-height: var(--stage-h);
+  width: 100%;
+  overflow: hidden;
+}
+/* mainArea가 이미 stage-h — visual-stage는 부모를 채운다(다시 60% 주면 36%로 중첩 축소).
+ * 반원 시임이 필러로 넘어가므로 mainArea overflow는 journey에서 visible. */
+.phone.shell-portrait.hud-laid-out .visual-stage {
+  height: 100%;
+  max-height: none;
+  overflow: hidden;
+}
+.phone.shell-portrait.hud-laid-out[data-scene="journey"] #mainArea {
+  overflow: visible;
+}
+
+.phone.shell-portrait.hud-laid-out .shell-log,
+.phone.shell-portrait #shellLog {
+  -webkit-mask-image: none;
+  mask-image: none;
+  width: auto;
+  max-width: none;
+  border-left: none;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.phone.shell-portrait[data-scene="journey"] .shell-log {
+  background: #040c12;
+  border-left: none;
+  border-top: none;
+  box-shadow: none; /* inset 시안 라인 제거 */
+}
+
+.phone.shell-portrait[data-scene="journey"] .shell-log-title {
+  display: none !important;
+}
+
+.phone.shell-portrait[data-scene="journey"] .feed {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 8px 10px 10px;
+  gap: 8px;
+}
+
+.phone.shell-portrait[data-scene="journey"] .feed .card,
+.phone.shell-portrait[data-scene="journey"] .feed .card:not(.commentary),
+.phone.shell-portrait[data-scene="journey"] .feed .card.commentary {
+  max-width: 100%;
+  overflow: visible;
+  max-height: none;
+}
+
+.phone.shell-portrait .feed .card {
+  max-width: 100%;
+}
+
+/* 세로: 로드맵이 폰 자식일 때 dock-bl 하단 고정 CSS를 끈다(HUD JSON이 자리 잡음) */
+.phone.shell-portrait.hud-laid-out .day-roadmap.dock-bl {
+  left: auto;
+  bottom: auto;
+  max-width: none;
+}
+
+/* 세로: 트랙이 칸보다 넓을 때 justify:center 가 파티 칸으로 넘침 → 왼쪽 정렬 + 클립 */
+.phone.shell-portrait.hud-laid-out .day-roadmap {
+  overflow: hidden;
+  justify-content: flex-start;
+  padding: 0 4px;
+}
+.phone.shell-portrait.hud-laid-out .day-roadmap .road-track {
+  justify-content: flex-start;
+  margin-left: 0;
+  margin-right: 0;
+  max-width: 100%;
+  overflow: hidden;
+  gap: 0;
+  padding: 3px 6px 2px;
+}
+.phone.shell-portrait.hud-laid-out .day-roadmap .road-node {
+  min-width: 30px;
+  gap: 0;
+}
+.phone.shell-portrait.hud-laid-out .day-roadmap .road-label {
+  font-size: 9px;
+}
+
+.phone.shell-portrait[data-scene="journey"] {
+  --chat-w: 100%;
+}
+
+/* 입장 베일 · 맵이름 타이포 */
+.journey-enter-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 420;
+  background: #05080d;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.journey-enter-veil.on {
+  opacity: 1;
+  pointer-events: all;
+}
+.journey-enter-veil.fade {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 칸 이동·첫 입장 — 검은 페이드. 로딩 문구 없음 */
+.journey-scene-fade {
+  position: absolute;
+  inset: 0;
+  z-index: 420;
+  background: #030d18;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.42s ease;
+}
+.journey-scene-fade.on {
+  opacity: 1;
+  pointer-events: all;
+}
+.journey-scene-fade.held {
+  transition: none;
+}
+.journey-enter-title {
+  display: none;
+}
+.journey-enter-title-text {
+  transform: translateX(110%);
+  opacity: 0;
+  padding: 0.4em 0.9em;
+  margin-right: 6%;
+  font-size: clamp(22px, 5.2vw, 36px);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: #f4f7ff;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.65), 0 0 24px rgba(94, 200, 255, 0.35);
+  white-space: nowrap;
+  transition: transform 0.75s cubic-bezier(0.22, 0.9, 0.28, 1), opacity 0.45s ease;
+}
+.journey-enter-title.in .journey-enter-title-text {
+  transform: translateX(0);
+  opacity: 1;
+}
+.journey-enter-title.out .journey-enter-title-text {
+  transform: translateX(-120%);
+  opacity: 0;
+}
+
 .feed {
   flex: 1 1 auto;
   width: 100%;
@@ -6054,18 +6253,17 @@ body {
 .stage3d-layer {
   position: absolute;
   inset: 0;
-  z-index: 1; /* explore-layer와 같은 층 · 미니맵(7)보다 아래 */
+  z-index: 5; /* visual-stage 장식보다 위 — 확인버튼이 아치/페이드에 안 가림 */
   display: none;
   overflow: hidden;
   background: #05080d;
 }
 .stage3d-layer.on {
   display: block;
-  animation: stage3d-in 420ms ease-out;
-}
-@keyframes stage3d-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  /* 페이드인 금지 — opacity 0 동안 아래 탐방/이전 UI·정화 타일이 비침 */
+  opacity: 1;
+  /* 캔버스가 채우므로 레이어 검정 판은 빼 — 나침반 뒤가 검은 띠로 안 보이게 */
+  background: transparent;
 }
 .stage3d-canvas {
   display: block;
@@ -6078,9 +6276,9 @@ body {
 .stage3d-prompt {
   position: absolute;
   left: 50%;
-  bottom: 22px;
+  bottom: 56px; /* 아치 보울 위로 — 하단이 검정에 짤리지 않게 */
   transform: translateX(-50%) translateY(8px);
-  z-index: 3;
+  z-index: 40; /* 아치 보울(seam)보다 위 — 검정에 가리지 않음 */
   display: none;
   padding: 9px 20px;
   border: 1px solid rgba(255, 210, 122, 0.65);
@@ -6096,12 +6294,18 @@ body {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
 }
 .stage3d-prompt.on {
-  display: block;
-  animation: stage3d-prompt-in 200ms ease-out forwards;
+  display: none;
 }
 @keyframes stage3d-prompt-in {
   from { opacity: 0; transform: translateX(-50%) translateY(8px); }
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.phone.hud-laid-out .stage3d-prompt.on {
+  animation: stage3d-prompt-in-laid 200ms ease-out forwards;
+}
+@keyframes stage3d-prompt-in-laid {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
 }
 .stage3d-prompt:hover {
   border-color: rgba(255, 232, 170, 0.95);
@@ -6266,11 +6470,15 @@ body {
   width: min(52%, 420px);
   height: 48px;
   pointer-events: none;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 .fps-compass-window {
   position: relative;
   height: 100%;
   overflow: hidden;
+  background: transparent;
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
   mask-image: linear-gradient(90deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
 }
@@ -6376,6 +6584,17 @@ body {
   pointer-events: none;
   background: linear-gradient(to bottom, rgba(4, 8, 12, 0.55) 0%, transparent 100%);
 }
+/* HUD JSON 도착 전 — 기본 view-3d 배치 FOUC 가림 */
+.phone.view-3d.hud-awaiting-layout .shell-header,
+.phone.view-3d.hud-awaiting-layout .controls.shell-footer,
+.phone.view-3d.hud-awaiting-layout .explore-layer.minimap,
+.phone.view-3d.hud-awaiting-layout .party-hud,
+.phone.view-3d.hud-awaiting-layout .fps-compass,
+.phone.view-3d.hud-awaiting-layout .day-roadmap,
+.phone.view-3d.hud-awaiting-layout .catalyst-hud,
+.phone.view-3d.hud-awaiting-layout .stage-filler {
+  visibility: hidden !important;
+}
 .phone.view-3d .shell-header > * {
   pointer-events: auto;
 }
@@ -6409,7 +6628,7 @@ body {
 .phone.view-3d .party-hud {
   top: 44px;
   bottom: auto;
-  max-height: 42%;
+  max-height: none;
 }
 
 /* ── 제자리 경쟁 미니게임 — 3D 뷰 안에서 겨룬다(별도 화면 없음) ─────────── */
@@ -6418,7 +6637,7 @@ body {
   inset: 0;
   z-index: 8;
   display: grid;
-  grid-template-rows: 1fr auto auto auto;
+  grid-template-rows: 1fr auto auto auto auto;
   justify-items: center;
   align-content: end;
   gap: 9px;
@@ -6513,24 +6732,36 @@ body {
   color: #eaf6ff;
 }
 
-.arena-act {
-  padding: 11px 34px;
-  border: 1px solid rgba(127, 240, 192, 0.6);
-  border-radius: 999px;
-  background: rgba(10, 24, 22, 0.9);
-  color: #d8fff0;
-  font-family: inherit;
-  font-size: 14px;
+.arena-hint {
+  margin: 0;
+  max-width: min(520px, 100%);
+  display: grid;
+  gap: 3px;
+  text-align: center;
+  pointer-events: none;
+  color: #eef6ff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+}
+.arena-hint[hidden] {
+  display: none;
+}
+.arena-hint b {
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.02em;
-  cursor: pointer;
+  color: #fff8d6;
 }
-.arena-act b {
-  font-size: 10px;
-  opacity: 0.7;
-  margin-left: 6px;
+.arena-hint span {
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.4;
+  color: rgba(220, 236, 250, 0.88);
 }
-.arena-act.pulse {
+
+.arena-act {
+  display: none !important;
+}
+.main-btn.arena-pulse {
   animation: arena-hit 140ms ease-out;
 }
 @keyframes arena-hit {
@@ -6574,13 +6805,25 @@ body {
   max-width: none;
   aspect-ratio: 1 / 1;
   z-index: 7; /* 3D 캔버스 위 · 방위 띠보다 아래 · 필러(5)보다 위 */
-  border: 2px solid rgba(94, 200, 255, 0.55);
+  border: none; /* 테두리는 ::after — 맵이 보더 위를 덮지 않게 */
   border-radius: 10px;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.55);
   background: #05080d;
   pointer-events: none;
+  overflow: hidden;
   /* 배우 스프라이트도 축소 — 72px 원본은 미니맵을 다 덮는다 */
   --map-actor-h: 14px;
+}
+/* 외곽 라인은 맵·월드보다 위 — 라운드가 각진 맵에 안 가림 */
+.explore-layer.minimap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  border-radius: inherit;
+  border: 2px solid rgba(94, 200, 255, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(160, 240, 255, 0.08);
+  pointer-events: none;
 }
 /* 3D 주연 — 헤더 칩 아래, 필러 바로 왼쪽에 정사각으로 */
 .phone.view-3d .explore-layer.minimap {
@@ -6592,10 +6835,14 @@ body {
 .explore-layer.minimap .explore-camera {
   transform: none !important;
   transition: none !important;
+  border-radius: inherit;
+  overflow: hidden;
 }
 .explore-layer.minimap .explore-world {
   height: 100% !important;
   cursor: default;
+  border-radius: inherit;
+  overflow: hidden;
 }
 /* 라벨·기둥 배지는 이 크기에서 글자가 뭉개지기만 한다 — 아이콘만 남긴다 */
 .explore-layer.minimap .explore-poi-label,
@@ -6617,6 +6864,192 @@ body {
 }
 .explore-layer.minimap .explore-actor::after {
   display: none; /* 그림자 타원이 배우보다 커진다 */
+}
+
+/* 미니맵 캐릭터 — 스프라이트 대신 시안 원점 */
+.explore-layer.minimap .explore-actor,
+.explore-layer.minimap .explore-actor.has-sprite {
+  width: 11px;
+  height: 11px;
+  margin-left: -5.5px;
+  margin-top: -5.5px;
+  --map-actor-h: 11px;
+  transform: none !important;
+  transition: left 80ms linear, top 80ms linear;
+}
+.explore-layer.minimap .explore-actor-inner,
+.explore-layer.minimap .explore-actor.has-sprite .explore-actor-inner {
+  border-radius: 50%;
+  background: #5ec8ff !important;
+  background-image: none !important;
+  box-shadow:
+    0 0 0 2px rgba(5, 12, 20, 0.85),
+    0 0 8px rgba(94, 200, 255, 0.9);
+  animation: none !important;
+}
+.explore-layer.minimap .explore-actor-inner::before,
+.explore-layer.minimap .explore-actor-inner::after,
+.explore-layer.minimap .explore-actor.has-sprite .explore-actor-inner::before,
+.explore-layer.minimap .explore-actor.has-sprite .explore-actor-inner::after {
+  display: none !important;
+}
+.explore-layer.minimap .explore-vision-cone,
+.explore-layer.minimap .explore-vision-boost {
+  display: none !important; /* 원점만 읽히게 */
+}
+.explore-layer.minimap .explore-vision-ring {
+  width: 22px;
+  height: 22px;
+  margin-left: -11px;
+  margin-top: -11px;
+  opacity: 0.45;
+  border-width: 1px;
+}
+
+/*
+ * 미니맵 탭 선반 — HUD에서 숨겨도 왼쪽 탭으로 남김.
+ * docked: 맵은 왼쪽으로 들어가고 탭만 보임 · open/travel: 전체 노출
+ * 좌표·크기는 hud-laid-out 이면 journeyHudLayoutCss(SSoT)가 이긴다.
+ */
+.phone.view-3d:not(.hud-laid-out) .explore-layer.minimap.minimap-tab-mode {
+  display: block !important;
+  position: absolute !important;
+  left: 1cqw !important;
+  top: 48.5cqh !important;
+  width: min(33cqw, 30cqh) !important;
+  height: min(33cqw, 30cqh) !important;
+  right: auto !important;
+  bottom: auto !important;
+  max-width: none !important;
+  max-height: none !important;
+  z-index: 20 !important;
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    transform 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease;
+  pointer-events: auto;
+  overflow: visible;
+}
+.phone.hud-laid-out.view-3d .explore-layer.minimap.minimap-tab-mode {
+  display: block !important;
+  position: absolute !important;
+  z-index: 20 !important;
+  opacity: 1;
+  pointer-events: auto;
+  overflow: visible;
+  transition:
+    transform 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease;
+}
+.phone.view-3d:not(.shell-portrait) .explore-layer.minimap.minimap-tab-mode.minimap-docked:not(.minimap-travel-active) {
+  transform: translateX(calc(100% + 10cqw));
+  opacity: 0;
+  pointer-events: none;
+}
+.phone.view-3d .explore-layer.minimap.minimap-tab-mode.minimap-open:not(.minimap-travel-active) {
+  transform: translateX(0);
+}
+/* 세로: HUD 칸에 작은 미니맵을 상시 둔다. 탭으로 밀어 숨기지 않는다 */
+.phone.shell-portrait.hud-laid-out.view-3d .explore-layer.minimap.minimap-tab-mode.minimap-docked:not(.minimap-travel-active) {
+  transform: none !important;
+  opacity: 1 !important;
+  pointer-events: auto;
+}
+.phone.shell-portrait.hud-laid-out.view-3d .explore-layer.minimap.minimap-tab-mode .minimap-tab-btn {
+  display: none !important;
+}
+.explore-layer.minimap .minimap-tab-btn {
+  display: none;
+  position: absolute;
+  right: -2px;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 32; /* 미니맵 외곽 ::after(30)보다 위 */
+  writing-mode: vertical-rl;
+  letter-spacing: 0.12em;
+  padding: 10px 6px;
+  border: 2px solid rgba(94, 200, 255, 0.65);
+  border-left: none;
+  border-radius: 0 10px 10px 0;
+  background: linear-gradient(180deg, #0c1822 0%, #071018 100%);
+  color: #9fe7ff;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 4px 0 14px rgba(0, 0, 0, 0.45);
+}
+.explore-layer.minimap.minimap-tab-mode .minimap-tab-btn {
+  display: none;
+}
+.explore-layer.minimap.minimap-tab-mode.minimap-open .minimap-tab-btn,
+.explore-layer.minimap.minimap-travel-active .minimap-tab-btn {
+  border-radius: 10px 0 0 10px;
+  right: auto;
+  left: -2px;
+  border-left: 2px solid rgba(94, 200, 255, 0.65);
+  border-right: none;
+}
+
+/*
+ * 콘텐츠 발동 — HUD 칸(오른쪽)에서 슬라이드 인 → 3초 후 오른쪽으로 나감.
+ * 좌표는 hud-laid-out 이 잡고, 여기선 transform만 바꾼다.
+ */
+.phone.view-3d:not(.shell-portrait) .explore-layer.minimap.minimap-travel-active {
+  display: block !important;
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    transform 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease;
+  pointer-events: none;
+}
+.phone.view-3d:not(.shell-portrait) .explore-layer.minimap.minimap-travel-active.minimap-travel-offscreen {
+  transform: translateX(calc(100% + 10cqw));
+  opacity: 0;
+}
+.phone.shell-portrait.hud-laid-out.view-3d .explore-layer.minimap.minimap-tab-mode.minimap-travel-active {
+  display: block !important;
+  left: auto !important;
+  right: 3cqw !important;
+  top: 7cqh !important;
+  width: min(36cqw, 22cqh) !important;
+  height: min(36cqw, 22cqh) !important;
+  max-width: none !important;
+  max-height: none !important;
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    transform 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease;
+  pointer-events: none;
+}
+.phone.shell-portrait.hud-laid-out.view-3d .explore-layer.minimap.minimap-tab-mode.minimap-travel-active.minimap-travel-offscreen {
+  transform: translateX(calc(100% + 12cqw));
+  opacity: 0;
+}
+
+.explore-layer.minimap.minimap-suppressed {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.phone.shell-portrait.view-3d .explore-layer.minimap.minimap-intro,
+.phone.view-3d .explore-layer.minimap.minimap-intro {
+  display: block !important;
+  position: absolute !important;
+  left: 50% !important;
+  top: 36% !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: min(70cqw, 40cqh) !important;
+  height: min(70cqw, 40cqh) !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 28 !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
 }
 
 /* 카메라 — 배우를 따라 월드를 세로로 밀어올린다.
@@ -7005,8 +7438,55 @@ body {
   color: #e8fff6;
   box-shadow: none;
 }
-.ammo-chip.full {
-  border-color: rgba(125, 255, 238, 0.75);
+.phone[data-scene="journey"] .ammo-chip {
+  min-width: 0;
+  width: 100%;
+  padding: 3px 7px 4px;
+  gap: 2px;
+  border-radius: 8px;
+}
+.phone[data-scene="journey"] .ammo-title {
+  font-size: 9px;
+}
+.phone[data-scene="journey"] .ammo-frac {
+  font-size: 9px;
+}
+.phone[data-scene="journey"] .ammo-bar {
+  height: 3px;
+}
+.ammo-chip.adsorb {
+  border-color: rgba(15, 190, 199, 0.65);
+}
+.ammo-chip.adsorb .ammo-bar > i {
+  background: linear-gradient(90deg, #0a8a90, #0FBEC7);
+}
+.ammo-chip.inhibit {
+  background: rgba(48, 16, 40, 0.88);
+  border-color: rgba(209, 88, 188, 0.55);
+  color: #ffe8f8;
+}
+.ammo-chip.inhibit .ammo-bar > i {
+  background: linear-gradient(90deg, #a04090, #D158BC);
+}
+.ammo-chip.culprit {
+  border-color: rgba(209, 197, 29, 0.45);
+}
+.culprit-pips {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.culprit-pip {
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 255, 246, 0.25);
+  color: rgba(232, 255, 246, 0.4);
+}
+.culprit-pip.on {
+  color: #0FBEC7;
+  border-color: rgba(15, 190, 199, 0.7);
+  background: rgba(15, 190, 199, 0.12);
 }
 .ammo-title {
   font-size: 12px;
@@ -7111,6 +7591,22 @@ body {
   inset: 0;
   background: none;
 }
+.pick-overlay.pick-head.actor-head-status {
+  pointer-events: none;
+}
+.pick-overlay.pick-head.actor-head-status.mash {
+  pointer-events: auto;
+}
+.pick-overlay.pick-head .pick-need.choice {
+  border-color: rgba(125, 255, 238, 0.75);
+  color: #d8fff6;
+  animation: none;
+}
+.pick-overlay.pick-head .pick-need:not(.mash-hint) {
+  animation: none;
+  border-color: rgba(180, 200, 210, 0.45);
+  color: #e8f0f4;
+}
 .pick-overlay.pick-head .pick-head-box {
   position: absolute;
   z-index: 12;
@@ -7118,21 +7614,26 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  min-width: 72px;
-  max-width: 120px;
+  gap: 5px;
+  min-width: 132px;
+  max-width: 200px;
   pointer-events: none;
 }
 .pick-overlay.pick-head .pick-need {
-  padding: 1px 6px;
-  border-radius: 6px;
-  background: rgba(8, 12, 16, 0.78);
-  border: 1px solid rgba(255, 210, 122, 0.45);
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(8, 12, 16, 0.88);
+  border: 1px solid rgba(255, 210, 122, 0.7);
   color: #ffe6b0;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.02em;
   white-space: nowrap;
+  animation: pick-need-pulse 0.9s ease-in-out infinite;
+}
+@keyframes pick-need-pulse {
+  0%, 100% { opacity: 0.72; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.04); }
 }
 .pick-overlay.pick-head .melt-label {
   position: static;
@@ -7143,7 +7644,7 @@ body {
   font-size: 9px;
   font-weight: 800;
   line-height: 1.2;
-  max-width: 120px;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -7475,7 +7976,7 @@ body {
   height: 12px;
   margin-left: -20px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.42);
+  background: rgba(0, 0, 0, 0.62);
   filter: blur(3px);
   z-index: -1;
   animation: shadow-breathe 2.6s ease-in-out infinite;
@@ -7606,17 +8107,19 @@ body {
   );
 }
 .visual-stage.explore-on .stage-bars,
-.visual-stage.explore-on .stage-skills,
-.visual-stage.explore-on .stage-enemy-skills,
 .visual-stage.explore-on .stage-log,
 .visual-stage.explore-on .purify-bars {
   position: relative;
   z-index: 9;
 }
+/* 여정 3D — 옛 턴제 스킬 아이콘은 필러·발밑에 흘리지 않는다 */
+.phone.view-3d[data-scene="journey"] .stage-skills,
+.phone.view-3d[data-scene="journey"] .stage-enemy-skills,
+.phone.view-3d[data-scene="journey"] .stage-skill-tip {
+  display: none !important;
+}
 .visual-stage.explore-on.stage-combat .stage-bars,
 .visual-stage.explore-on.stage-combat .stage-log,
-.visual-stage.explore-on.stage-combat .stage-skills,
-.visual-stage.explore-on.stage-combat .stage-enemy-skills,
 .visual-stage.explore-on.stage-combat .purify-bars {
   position: relative;
   z-index: 9;
@@ -8819,6 +9322,8 @@ body {
   pointer-events: none;
   transform: translateX(-50%) scaleX(var(--facing, 1));
   transform-origin: 50% 100%;
+  filter: none;
+  overflow: hidden;
 }
 .lobby-laid[data-v-anchor="top"] {
   /* 상단 고정 — bottom 대신 top 사용 (인라인 스타일) */
@@ -8839,6 +9344,23 @@ body {
   height: auto;
   user-select: none;
   pointer-events: none;
+}
+.lobby-actor-sheet {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 482 / 1020;
+  contain: paint;
+  filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.55));
+}
+.lobby-actor-strip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  max-width: none;
+  display: block;
+  pointer-events: none;
+  user-select: none;
 }
 .lobby-scene-mode .lobby-stage {
   position: absolute;
@@ -9187,9 +9709,11 @@ body {
   width: 148px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  align-items: flex-start;
+  gap: 4px;
   pointer-events: none;
-  overflow: auto;
+  overflow: visible;
+  min-width: 0;
 }
 .phone[data-scene="journey"] .party-card {
   display: grid;
@@ -9205,10 +9729,94 @@ body {
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   color: var(--shell-ink);
+  min-width: 0;
+}
+.phone.hud-laid-out[data-scene="journey"] #partyHud {
+  overflow: visible !important;
+}
+.phone.hud-laid-out[data-scene="journey"] #catalystHud {
+  overflow: hidden !important;
+  gap: 3px;
+}
+.phone[data-scene="journey"] .party-meta {
+  min-width: 0;
+  overflow: hidden;
+}
+.phone[data-scene="journey"] .party-self-wrap {
+  position: relative;
+  width: fit-content;
+  max-width: calc(100% - 22px);
 }
 .phone[data-scene="journey"] .party-card.self {
+  grid-template-columns: 30px max-content;
+  width: max-content;
+  max-width: 100%;
   border-color: var(--shell-teal);
   box-shadow: 0 0 12px rgba(45, 224, 208, 0.2);
+}
+.phone[data-scene="journey"] .party-record {
+  margin-top: 1px;
+  font-size: 8px;
+  font-weight: 800;
+  color: #0FBEC7;
+  white-space: nowrap;
+}
+.phone[data-scene="journey"] .party-ammo-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 2px;
+  align-items: center;
+}
+.phone[data-scene="journey"] .party-ammo {
+  font-size: 7px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 190, 199, 0.45);
+  color: #c8fff8;
+}
+.phone[data-scene="journey"] .party-ammo.inhibit {
+  border-color: rgba(209, 88, 188, 0.45);
+  color: #ffe8f8;
+}
+.phone[data-scene="journey"] .party-ammo.culprit {
+  border-color: rgba(209, 197, 29, 0.55);
+  color: #fff4b0;
+}
+.phone[data-scene="journey"] .party-skills {
+  display: none;
+}
+.phone[data-scene="journey"] .party-skill-ico {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 1px solid rgba(209, 197, 29, 0.45);
+  border-radius: 4px;
+  background: rgba(8, 20, 24, 0.72);
+  color: #D1C51D;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.phone[data-scene="journey"] .party-skill-ico.is-empty {
+  border-color: rgba(209, 197, 29, 0.32);
+  background: rgba(8, 20, 24, 0.55);
+  cursor: pointer;
+}
+.phone[data-scene="journey"] .party-skill-empty {
+  font-size: 7px;
+  color: rgba(232, 255, 246, 0.35);
+}
+.phone[data-scene="journey"] #catalystHud {
+  display: none !important;
+}
+.phone[data-scene="journey"] .gauge.jackpot,
+.phone[data-scene="journey"] .gauge.mid {
+  display: none !important;
 }
 .phone[data-scene="journey"] .party-face {
   width: 30px;
@@ -9253,16 +9861,37 @@ body {
 .activity-toast {
   display: none;
 }
+/* 일차 로드맵 ↔ 활동칸 교차 (동시 노출 금지) */
+.phone[data-scene="journey"] .day-roadmap {
+  transition:
+    opacity 0.38s ease,
+    transform 0.38s ease,
+    visibility 0.38s ease;
+}
+.phone[data-scene="journey"] .day-roadmap.roadmap-suppressed {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.phone[data-scene="journey"] .shell-header .day-roadmap.roadmap-suppressed {
+  transform: translateY(-10px);
+}
+.visual-stage .day-roadmap.dock-bl.roadmap-suppressed {
+  transform: translateY(12px);
+}
 .phone[data-scene="journey"] .activity-toast {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   position: absolute;
   left: 50%;
   top: 12px;
   transform: translateX(-50%) translateY(-130%);
   z-index: 8;
   width: min(440px, calc(100% - var(--chat-w) - 200px));
-  padding: 10px 18px 12px;
-  border-radius: 12px;
+  padding: 4px 10px 5px;
+  border-radius: 8px;
   text-align: center;
   background: rgba(4, 14, 22, 0.25);
   border: 1px solid var(--shell-line);
@@ -9280,22 +9909,38 @@ body {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
 }
+/* 세로 HUD: 좌표는 JSON, 세로 슬라이드만 유지 */
+.phone.shell-portrait.hud-laid-out[data-scene="journey"] .activity-toast {
+  transform: translateY(-120%);
+}
+.phone.shell-portrait.hud-laid-out[data-scene="journey"] .activity-toast.show {
+  transform: translateY(0);
+}
 .phone[data-scene="journey"] .activity-toast .tag {
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 900;
   color: var(--shell-teal);
   letter-spacing: 0.06em;
+  text-align: center;
+  width: 100%;
 }
 .phone[data-scene="journey"] .activity-toast .title {
-  margin-top: 2px;
-  font-size: 15px;
+  margin-top: 1px;
+  font-size: 11px;
   font-weight: 900;
   color: var(--shell-ink);
+  text-align: center;
+  width: 100%;
 }
 .phone[data-scene="journey"] .activity-toast .sub {
-  margin-top: 2px;
-  font-size: 11px;
+  margin-top: 1px;
+  font-size: 9px;
   color: var(--shell-ink-dim);
+  text-align: center;
+  width: 100%;
+}
+.phone[data-scene="journey"] .activity-toast .sub:empty {
+  display: none;
 }
 
 /* Log — 필러/구조 로그를 주 콘텐츠로 강조 */
@@ -9347,25 +9992,28 @@ body {
 
 .phone[data-scene="journey"] .feed .card,
 .phone[data-scene="journey"] .feed .card:not(.commentary),
-.phone[data-scene="journey"] .feed .card.commentary {
-  color: var(--shell-ink);
-  border: 1px solid rgba(45, 224, 208, 0.32);
-  border-left: 3px solid var(--shell-teal);
-  border-radius: 10px;
-  clip-path: none;
-  background: rgba(4, 14, 22, 0.42);
+.phone[data-scene="journey"] .feed .card.commentary,
+.phone[data-scene="journey"] .feed .card.skill-reward-card {
+  color: var(--cy-text);
+  border: 1.5px solid var(--cy-line);
+  border-radius: 5px;
+  clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+  background: linear-gradient(158deg, rgba(70, 44, 126, 0.55) 0%, rgba(22, 15, 46, 0.94) 46%, rgba(14, 10, 32, 0.96) 100%);
   box-shadow:
-    0 0 14px rgba(45, 224, 208, 0.1),
-    inset 0 0 12px rgba(45, 224, 208, 0.04);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 3px 16px rgba(120, 60, 220, 0.26),
+    inset 0 1px 0 rgba(185, 150, 255, 0.2);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
   font-size: 12.5px;
   line-height: 1.55;
-  padding: 11px 12px;
+  padding: 10px 12px 10px 14px;
   max-width: 100%;
 }
 
-.phone[data-scene="journey"] .feed .card::before,
+.phone[data-scene="journey"] .feed .card::before {
+  display: block;
+}
 .phone[data-scene="journey"] .feed .card::after {
   display: none;
 }
@@ -9374,7 +10022,7 @@ body {
 .phone[data-scene="journey"] .feed .card-line,
 .phone[data-scene="journey"] .feed .card-line2,
 .phone[data-scene="journey"] .feed .commentary-line {
-  color: var(--shell-ink);
+  color: var(--cy-text);
   text-shadow: none;
   font-size: 12.5px;
   line-height: 1.55;
@@ -9390,9 +10038,9 @@ body {
 }
 
 .phone[data-scene="journey"] .feed .card.commentary {
-  border-left-color: rgba(160, 200, 220, 0.65);
-  background: rgba(8, 22, 34, 0.78);
-  padding: 9px 11px;
+  border: 1.5px solid rgba(95, 170, 200, 0.4);
+  background: linear-gradient(158deg, rgba(20, 36, 52, 0.72) 0%, rgba(10, 16, 28, 0.94) 100%);
+  padding: 8px 11px;
 }
 
 .phone[data-scene="journey"] .feed .commentary-speaker,
@@ -9618,6 +10266,22 @@ body {
     0 3px 0 #0a3018,
     0 6px 14px rgba(0, 0, 0, 0.35);
 }
+.phone[data-scene="journey"] .main-btn.shell-btn.mash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+}
+.phone[data-scene="journey"] .main-btn.shell-btn.mash .btn-mash-hint {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  opacity: 0.88;
+}
 
 .phone[data-scene="journey"] .main-btn.shell-btn:disabled {
   filter: grayscale(0.35) brightness(0.85);
@@ -9669,4 +10333,626 @@ body {
   border: 1px solid rgba(45, 224, 208, 0.4);
   box-shadow: 0 0 10px rgba(45, 224, 208, 0.18);
   backdrop-filter: none;
+}
+.phone[data-scene="journey"] .ammo-chip.adsorb {
+  border-color: rgba(15, 190, 199, 0.7);
+}
+.phone[data-scene="journey"] .ammo-chip.inhibit {
+  border-color: rgba(209, 88, 188, 0.65);
+  box-shadow: 0 0 10px rgba(209, 88, 188, 0.2);
+}
+
+
+/* lobby-pan — 뷰포트 고정 · 월드(world_w_pct) 좌우 팬 */
+.lobby-scene-mode .lobby-stage {
+  overflow: hidden;
+  touch-action: pan-y;
+  cursor: grab;
+}
+.lobby-scene-mode .lobby-stage.lobby-pan-on:active {
+  cursor: grabbing;
+}
+.lobby-pan-world {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 155%;
+  height: 100%;
+  will-change: transform;
+}
+.lobby-pan-world .lobby-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 55%;
+  pointer-events: none;
+}
+
+/* 로비 팬 힌트 — 시안 ◀▶ + 가장자리 페이드 */
+.lobby-pan-hint {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+.lobby-pan-hint.lobby-pan-hint-dim {
+  opacity: 0.35;
+}
+.lobby-pan-fade {
+  position: absolute;
+  top: 0;
+  bottom: 18%;
+  width: 14%;
+  z-index: 1;
+}
+.lobby-pan-fade-l {
+  left: 0;
+  background: linear-gradient(90deg, rgba(4, 14, 22, 0.72), transparent);
+}
+.lobby-pan-fade-r {
+  right: 0;
+  background: linear-gradient(270deg, rgba(4, 14, 22, 0.72), transparent);
+}
+.lobby-pan-arrow {
+  position: absolute;
+  top: 42%;
+  z-index: 2;
+  width: 34px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid rgba(94, 220, 220, 0.55);
+  background: rgba(8, 22, 30, 0.55);
+  color: #9fefff;
+  font-size: 18px;
+  font-weight: 800;
+  text-shadow: 0 0 10px rgba(80, 220, 240, 0.55);
+  box-shadow: 0 0 16px rgba(40, 180, 200, 0.25);
+  animation: lobby-pan-pulse 2.4s ease-in-out infinite;
+}
+.lobby-pan-arrow-l { left: 8px; }
+.lobby-pan-arrow-r { right: 8px; animation-delay: 1.2s; }
+.lobby-pan-caption {
+  position: absolute;
+  left: 50%;
+  bottom: 22%;
+  z-index: 2;
+  transform: translateX(-50%);
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(94, 220, 220, 0.4);
+  background: rgba(6, 18, 24, 0.62);
+  color: #c8f6ff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+@keyframes lobby-pan-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+.lobby-pan-arrow-l { transform-origin: center; }
+.lobby-pan-arrow-r { transform-origin: center; }
+
+/* 로비 셸 톤 — 시안 쿨 나이트 */
+.phone[data-scene="lobby"] .lobby-layer.lobby-art {
+  --lobby-teal: #5ec8d8;
+  background: #050c12;
+}
+.phone[data-scene="lobby"] .lobby-meta {
+  border-color: rgba(94, 200, 216, 0.35);
+  background: rgba(6, 18, 26, 0.55);
+  color: #c8f6ff;
+}
+.phone[data-scene="lobby"] .lobby-day { color: #9fefff; }
+.phone[data-scene="lobby"] .lobby-zone { color: #a8d8e8; }
+.phone[data-scene="lobby"] .lobby-greet {
+  color: rgba(200, 246, 255, 0.92);
+}
+.phone[data-scene="lobby"] .lobby-dock {
+  background: linear-gradient(180deg, transparent, rgba(4, 12, 18, 0.55));
+}
+/* ══════════════════════════════════════════════
+ * 시안1 인게임 HUD (2026-08-27)
+ * 연출/필러 구분선 · 크롬 · 메인버튼 · 대박/중박 커버
+ * ══════════════════════════════════════════════ */
+
+/* 연출·필러 — 완만한 라인 아치 + 맵구멍 차단 */
+.phone.shell-portrait.hud-laid-out[data-scene="journey"] #mainArea {
+  position: relative;
+  overflow: visible;
+  z-index: 2;
+}
+.phone.shell-portrait.hud-laid-out[data-scene="journey"] .visual-stage {
+  /* 필러와 겹치지 않게 — 확장 없음 */
+  height: 100%;
+  max-height: none;
+  overflow: hidden;
+}
+/* 맵구멍은 seam 보울이 담당 — ::after 페이드/라인 제거 (확인버튼·필러 가림 원인) */
+.phone.shell-portrait.hud-laid-out[data-scene="journey"] .visual-stage::after {
+  content: none !important;
+  display: none !important;
+}
+.phone.shell-portrait .journey-seam,
+.phone.shell-portrait .journey-seam-line {
+  display: none;
+}
+.phone.shell-portrait.hud-laid-out[data-scene="journey"] .journey-seam {
+  display: block;
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  bottom: 0;
+  height: clamp(64px, 10vh, 96px);
+  /* 보울만 stage3d-layer 안 · 필러·확인버튼 아래 */
+  z-index: 4;
+  pointer-events: none;
+  transform: none;
+}
+/* 시안 아치 라인 — 필러(z45) 아래. 대사 위로 가로줄이 지나가지 않게 */
+.phone.shell-portrait.hud-laid-out[data-scene="journey"] .journey-seam-line {
+  display: block;
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  top: calc(var(--stage-h, 60%) - clamp(64px, 10vh, 96px));
+  height: clamp(64px, 10vh, 96px);
+  z-index: 4;
+  pointer-events: none;
+  transform: none;
+}
+.phone.shell-portrait.hud-laid-out[data-scene="journey"] .journey-seam-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.phone.shell-portrait.hud-laid-out[data-scene="journey"] #mainArea::after,
+.phone.shell-portrait.hud-laid-out[data-scene="journey"] #mainArea::before {
+  content: none !important;
+  display: none !important;
+}
+
+.phone.shell-portrait.hud-laid-out[data-scene="journey"] .shell-log,
+.phone.shell-portrait.hud-laid-out[data-scene="journey"] #shellLog {
+  background: #040c12;
+  border-top: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding-top: 10px;
+  /* 아치 보울·스테이지보다 위 — 필러 박스가 곡선에 짤리지 않게 */
+  z-index: 45 !important;
+}
+.phone.shell-portrait.hud-laid-out[data-scene="journey"] #shellLog .feed .card {
+  position: relative;
+  z-index: 46;
+}
+
+.phone.shell-portrait[data-scene="journey"] .shell-top-hp,
+.phone.shell-portrait[data-scene="journey"] .area-chip {
+  border-radius: 10px;
+  border: 1.5px solid rgba(120, 230, 245, 0.7);
+  background: rgba(6, 14, 22, 0.72);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.45),
+    0 0 14px rgba(60, 190, 220, 0.28),
+    inset 0 1px 0 rgba(180, 245, 255, 0.12);
+  backdrop-filter: blur(6px);
+}
+.phone.shell-portrait[data-scene="journey"] .area-chip .area-label {
+  color: rgba(120, 230, 245, 0.9);
+  letter-spacing: 0.08em;
+  font-weight: 800;
+}
+.phone.shell-portrait[data-scene="journey"] .party-hud {
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  overflow: visible;
+  gap: 3px;
+}
+.phone.shell-portrait[data-scene="journey"] .party-card {
+  border-radius: 8px;
+  border: 1px solid rgba(120, 230, 245, 0.65);
+  background: rgba(6, 14, 22, 0.72);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 0 10px rgba(60, 190, 220, 0.18),
+    inset 0 1px 0 rgba(180, 245, 255, 0.1);
+  backdrop-filter: blur(6px);
+  padding: 3px 6px;
+  gap: 6px;
+  min-width: 0;
+  grid-template-columns: 22px 1fr;
+}
+.phone.shell-portrait[data-scene="journey"] .party-card.self {
+  grid-template-columns: 22px max-content;
+  border-color: rgba(140, 240, 255, 0.85);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 0 18px rgba(80, 210, 235, 0.32),
+    inset 0 1px 0 rgba(180, 245, 255, 0.14);
+}
+.phone.shell-portrait[data-scene="journey"] .party-face {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid rgba(120, 230, 245, 0.7);
+  background: rgba(4, 12, 18, 0.85);
+  box-shadow: 0 0 8px rgba(60, 190, 220, 0.25);
+  overflow: hidden;
+}
+.phone.shell-portrait[data-scene="journey"] .party-face-wanderer {
+  font-size: 0;
+  background:
+    url("/ui/lobby/lobby_actor_front_mongchi.png") center 18% / 165% auto no-repeat,
+    rgba(4, 12, 18, 0.9);
+}
+.phone.shell-portrait[data-scene="journey"] .party-bar {
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(20, 40, 52, 0.9);
+  border: 1px solid rgba(94, 200, 216, 0.25);
+  overflow: hidden;
+}
+.phone.shell-portrait[data-scene="journey"] .party-bar > i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #3ec8d8, #9ef6ff);
+  box-shadow: 0 0 8px rgba(100, 230, 250, 0.55);
+}
+.phone.shell-portrait.view-3d .explore-layer.minimap {
+  border: none;
+  border-radius: 12px;
+  background: #050c12;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.45),
+    0 0 16px rgba(60, 190, 220, 0.3);
+  overflow: hidden;
+}
+.phone.shell-portrait.view-3d .explore-layer.minimap::after {
+  border: 1.5px solid rgba(120, 230, 245, 0.75);
+  box-shadow: inset 0 0 0 1px rgba(160, 240, 255, 0.08);
+}
+.phone.shell-portrait.view-3d .explore-layer.minimap .explore-world {
+  background: #071018;
+  border-radius: inherit;
+}
+/* 방위 띠 — 바탕 판 없이 눈금·방위만 맵 위에 띄움 */
+.phone.shell-portrait.view-3d .fps-compass,
+.phone.shell-portrait.view-3d .fps-compass-window {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.phone.shell-portrait[data-scene="journey"] .feed .card {
+  max-width: 100%;
+}
+
+.phone.shell-portrait[data-scene="journey"] .main-btn.shell-btn.idle {
+  border-radius: 999px;
+  border: 2px solid rgba(140, 245, 200, 0.85);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, transparent 38%),
+    linear-gradient(180deg, #45d986 0%, #1a8a48 48%, #0f5c32 100%);
+  box-shadow:
+    0 0 0 2px rgba(4, 12, 18, 0.85),
+    0 0 18px rgba(60, 220, 140, 0.4),
+    0 0 10px rgba(94, 200, 216, 0.25),
+    0 4px 0 #0a3a22,
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.1em;
+  z-index: 45;
+}
+
+.phone.shell-portrait[data-scene="journey"] .gauge.jackpot,
+.phone.shell-portrait[data-scene="journey"] .gauge.mid {
+  position: relative;
+  overflow: visible;
+}
+.phone.shell-portrait[data-scene="journey"] .gauge.jackpot > *,
+.phone.shell-portrait[data-scene="journey"] .gauge.mid > * {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+.phone.shell-portrait[data-scene="journey"] .gauge.jackpot::after,
+.phone.shell-portrait[data-scene="journey"] .gauge.mid::after {
+  content: "";
+  position: absolute;
+  inset: 6% 10%;
+  border-radius: 12px;
+  border: 1.5px solid rgba(120, 230, 245, 0.45);
+  background: linear-gradient(160deg, rgba(12, 28, 38, 0.95), rgba(6, 14, 22, 0.92));
+  box-shadow:
+    0 0 10px rgba(60, 180, 210, 0.18),
+    inset 0 0 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+.phone.shell-portrait[data-scene="journey"] .gauge.jackpot::before,
+.phone.shell-portrait[data-scene="journey"] .gauge.mid::before {
+  content: "";
+  position: absolute;
+  inset: 18% 22%;
+  z-index: 2;
+  border-radius: 8px;
+  border: 1px solid rgba(120, 230, 245, 0.28);
+  pointer-events: none;
+  box-shadow: 0 0 8px rgba(80, 200, 220, 0.15);
+}
+
+/* ══════════════════════════════════════════════
+ * 로비 허브 시안 (안 A) — 캐릭 없음 · 바텀 탭 · 로고
+ * ══════════════════════════════════════════════ */
+.lobby-hub-mode .lobby-hud,
+.lobby-hub-mode .lobby-dock:not(.lobby-dock-bar) {
+  display: none !important;
+}
+.lobby-hub-mode .lobby-island {
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  height: 100%;
+  background: #03080e;
+}
+/* 허브 부두 방랑자: 아트에 네온 림 — CSS는 발 그림자만 */
+.lobby-hub-mode .lobby-laid-actor {
+  z-index: 5;
+  /* 그림자는 클립된 시트에만. 8컷 스트립에 걸리면 통째로 깜빡임 */
+  filter: none;
+  overflow: hidden;
+}
+.lobby-hub-mode .lobby-stage {
+  position: relative;
+  min-height: 0;
+  grid-row: 1 / 3;
+  grid-column: 1;
+}
+.lobby-hub-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 10px 0;
+  pointer-events: none;
+}
+.lobby-hub-top > * { pointer-events: auto; }
+.lobby-brand {
+  flex: 0 0 auto;
+  color: #9ff0ff;
+  text-shadow: 0 0 12px rgba(80, 220, 240, 0.45);
+}
+.lobby-brand-xoox {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+.lobby-brand-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  color: rgba(160, 230, 240, 0.85);
+}
+.lobby-brand-sub span {
+  display: block;
+  width: 18px;
+  height: 1px;
+  background: rgba(120, 210, 230, 0.55);
+}
+.lobby-resources {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding-top: 4px;
+}
+.lobby-res-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(94, 200, 216, 0.45);
+  background: rgba(4, 14, 22, 0.72);
+  color: #dff9ff;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 0 12px rgba(40, 160, 180, 0.2);
+}
+.lobby-res-ico { color: #6ee0f0; font-size: 12px; }
+.lobby-res-plus {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(60, 180, 200, 0.25);
+  color: #9fefff;
+  font-size: 10px;
+}
+.lobby-settings {
+  width: 32px;
+  height: 32px;
+  margin-top: 2px;
+  border-radius: 8px;
+  border: 1px solid rgba(94, 200, 216, 0.5);
+  background: rgba(4, 14, 22, 0.7);
+  color: #8fe8f8;
+  font-size: 16px;
+  cursor: pointer;
+}
+.lobby-hub-meta {
+  position: absolute;
+  top: 52px;
+  right: 12px;
+  z-index: 48;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(4, 12, 18, 0.45);
+  border: 1px solid rgba(94, 200, 216, 0.25);
+  font-size: 10px;
+  color: #b8e8f4;
+  pointer-events: none;
+}
+.lobby-dock-bar {
+  position: relative;
+  z-index: 55;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  margin: 0 8px 10px;
+  padding: 10px 4px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(94, 200, 216, 0.45);
+  background: linear-gradient(180deg, rgba(8, 20, 28, 0.92), rgba(4, 12, 18, 0.96));
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    0 8px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(120, 220, 240, 0.12);
+}
+.lobby-dock-tab {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: rgba(170, 210, 220, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 2px 6px;
+  cursor: pointer;
+  border-radius: 12px;
+}
+.lobby-dock-tab.on {
+  color: #9ff4ff;
+  text-shadow: 0 0 10px rgba(80, 220, 240, 0.55);
+  background: rgba(40, 120, 140, 0.18);
+  box-shadow: inset 0 -2px 0 #5ec8d8;
+}
+.lobby-dock-ico {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
+  pointer-events: none;
+}
+.lobby-dock-tab.on .lobby-dock-ico {
+  filter: drop-shadow(0 0 8px rgba(94, 200, 216, 0.55)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  transform: translateY(-1px);
+}
+.lobby-dock-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+.lobby-hub-mode .lobby-pan-caption {
+  bottom: 132px;
+}
+.lobby-hub-mode .lobby-pan-arrow {
+  top: 46%;
+}
+.lobby-hub-mode.lobby-color-heal .lobby-brand-xoox {
+  color: #c8ffe8;
+  text-shadow: 0 0 14px rgba(120, 240, 180, 0.45);
+}
+
+/* 연출창 — 3D 상단 대사. 왼쪽 상대 / 오른쪽 방랑자. HUD에서 칸 위치 조절 */
+.stage-filler {
+  display: none;
+}
+.phone.view-3d[data-scene="journey"] .stage-filler {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  flex: none;
+  z-index: 20;
+  padding: 4px 2px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  overflow: hidden;
+  pointer-events: none;
+  color: #e8f6ff;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.85);
+  gap: 6px;
+  min-height: 0;
+}
+.phone.view-3d[data-scene="journey"] #stageFeedThem,
+.phone.view-3d[data-scene="journey"] #stageFeedMe {
+  display: none !important;
+}
+.phone.view-3d[data-scene="journey"] .stage-filler .card,
+.phone.view-3d[data-scene="journey"] .stage-filler .card.commentary {
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  max-width: 100%;
+  padding: 1px 3px;
+  gap: 1px;
+}
+.phone.view-3d[data-scene="journey"] .stage-filler .commentary-speaker {
+  font-size: 8px;
+}
+.phone.view-3d[data-scene="journey"] .stage-filler .commentary-line {
+  font-size: 10px;
+  line-height: 1.3;
+}
+.phone.view-3d[data-scene="journey"] .stage-filler .filler-bub {
+  padding: 3px 7px;
+  border-radius: 8px 8px 8px 2px;
+}
+.phone.view-3d[data-scene="journey"] .stage-filler .filler-bub .filler-bub-who {
+  font-size: 8px;
+}
+.phone.view-3d[data-scene="journey"] .stage-filler .filler-bub .filler-bub-line {
+  font-size: 10px;
+  line-height: 1.3;
+}
+.phone.view-3d[data-scene="journey"] .stage-filler .filler-mono {
+  font-size: 10px;
+  padding: 2px 6px;
+  line-height: 1.35;
+}
+.phone.view-3d[data-scene="journey"] #stageFeedThem .filler-chat {
+  max-width: 100%;
+  align-items: flex-start;
+}
+.phone.view-3d[data-scene="journey"] #stageFeedMe .filler-chat {
+  max-width: 100%;
+  align-items: flex-end;
+  margin-left: auto;
+}
+.phone.view-3d[data-scene="journey"] #stageFeedMe .filler-bub {
+  text-align: right;
+}
+.phone.view-3d[data-scene="journey"] #stageFeedMe .filler-mono {
+  align-self: flex-end;
+  text-align: right;
+  max-width: 100%;
 }

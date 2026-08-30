@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>XOOX Layout Editor · 16:9 · 하단 기준</title>
+    <title>XOOX Layout Editor · 보드 · 하단 기준</title>
     <style>
       :root {
         --bg: #12141a;
@@ -98,6 +98,54 @@
         touch-action: none;
         user-select: none;
       }
+      .stage.portrait {
+        width: min(100%, calc((100vh - 110px) * 9 / 16));
+        aspect-ratio: 9 / 16;
+      }
+      /* 팬 월드: 스테이지=전체 월드, 뷰포트 프레임이 비추는 화면 */
+      .stage.pan-world {
+        width: min(100%, calc((100vh - 110px) * 13.95 / 16));
+        max-width: 100%;
+        cursor: grab;
+      }
+      .stage.pan-world:active { cursor: grabbing; }
+      .stage-viewport {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        z-index: 8;
+        pointer-events: none;
+        border: 2px solid var(--accent);
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.48);
+        border-radius: 4px;
+      }
+      .stage-viewport .vp-tag {
+        position: absolute;
+        left: 6px;
+        top: 6px;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        color: #dff4ff;
+        background: rgba(8, 12, 18, 0.75);
+        padding: 2px 7px;
+        border-radius: 4px;
+        pointer-events: none;
+      }
+      .le-handle {
+        position: absolute;
+        top: 50%;
+        width: 10px;
+        height: 10px;
+        margin-top: -5px;
+        background: #dff4ff;
+        border: 1px solid #1a4a63;
+        border-radius: 1px;
+        z-index: 6;
+        pointer-events: auto;
+      }
+      .le-handle.w { left: -6px; cursor: ew-resize; }
+      .le-handle.e { right: -6px; cursor: ew-resize; }
       .stage-bg {
         position: absolute;
         inset: 0;
@@ -295,11 +343,17 @@
   <body>
     <div class="bar">
       <h1>Layout Editor</h1>
-      <span class="hint">16:9 · 하단 기준(y) · 로비/인게임 공용 툴</span>
+      <span class="hint">월드+뷰포트 · 픽 리사이즈 · 로비/인게임 공용</span>
       <select id="sceneSelect" title="씬">
         <option value="lobby">lobby · 무지개섬</option>
         <option value="journey3d">journey3d · 여정 3D 뷰</option>
       </select>
+      <label class="hint" style="display:inline-flex;align-items:center;gap:6px">보드
+        <select id="selAspect" title="보드 비율">
+          <option value="9:16">세로 9:16</option>
+          <option value="16:9">가로 16:9</option>
+        </select>
+      </label>
       <select id="j3dSector" title="구역" hidden></select>
       <button type="button" id="btnReload">다시 불러오기</button>
       <button type="button" id="btnGrid">그리드</button>
@@ -316,6 +370,9 @@
           <div class="stage-grid" id="stageGrid"></div>
           <div class="stage-axis" aria-hidden="true"></div>
           <div id="stageItems"></div>
+          <div class="stage-viewport" id="stageViewport" hidden>
+            <span class="vp-tag">비추는 화면</span>
+          </div>
         </div>
         <div class="stage" id="stage3d" hidden>
           <canvas class="stage-3d" id="j3dCanvas"></canvas>
@@ -369,11 +426,15 @@
           <label>action</label>
           <input id="fAction" />
         </div>
-        <div class="help">
+        <div class="field">
+          <label>world_w_pct (월드 폭 · 뷰포트=100)</label>
+          <input id="fWorldW" type="number" step="1" min="100" max="300" />
+        </div>
+        <div class="help" id="helpLobby">
           드래그로 위치 조절.<br />
           <code>bottom</code> = 발/밑 고정 (배·캐릭·지면 표지판)<br />
           <code>top</code> = 상단 고정 (무지개섬 등 HUD 푯말)<br />
-          저장 → <code>data/ui/layout/lobby_layout.json</code>
+          저장 → <code>data/ui/layout/lobby_layout_portrait.json</code>
         </div>
       </aside>
     </div>

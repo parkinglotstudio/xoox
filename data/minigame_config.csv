@@ -1,5 +1,5 @@
 minigame_id,minigame_name,type,attempt_limit,angel_stack_cap,devil_stack_cap
-mg_card_match,보물 파내기,CARD_MATCH,,,
+mg_card_match,보물 파내기(사용안함),CARD_MATCH,,,
 mg_lucky_treasure,행운의 보물,GOLD_SLOT,1,,
 mg_slot,신화 스킬,MYTH_SLOT,5,4,3
 mg_square,행운의 룰렛,SQUARE_ROULETTE,5,,

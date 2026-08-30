@@ -73,6 +73,20 @@ export class GroundPaint {
     this.placeStamp(x, z, kind);
   }
 
+  /** 그 자리의 오염 데칼을 남기지 않고 걷는다 */
+  eraseNear(x: number, z: number, radiusM?: number): void {
+    const r = Math.max(this.radiusM, radiusM ?? this.radiusM);
+    this.eraseCells(x, z, r);
+    for (const s of this.stamps) {
+      if (!s.used) continue;
+      if (Math.hypot(s.mesh.position.x - x, s.mesh.position.z - z) > r * 1.35) continue;
+      const mat = s.mesh.material as THREE.MeshBasicMaterial;
+      if (mat.map !== this.blightTex) continue;
+      s.used = false;
+      s.mesh.visible = false;
+    }
+  }
+
   /** 거점 주변 칸 중 청록 비율 0..1 */
   tealRatioNear(cx: number, cz: number, radiusM: number): number {
     const world = this.stage.getWorldScale();
@@ -129,6 +143,23 @@ export class GroundPaint {
       this.stage.getPaintGroup().remove(s.mesh);
     }
     this.stamps = [];
+  }
+
+  private eraseCells(x: number, z: number, r: number): void {
+    const world = this.stage.getWorldScale();
+    const cell = world / GRID;
+    const minX = Math.max(0, Math.floor(((x - r) / world) * GRID + GRID / 2));
+    const maxX = Math.min(GRID - 1, Math.floor(((x + r) / world) * GRID + GRID / 2));
+    const minZ = Math.max(0, Math.floor(((z - r) / world) * GRID + GRID / 2));
+    const maxZ = Math.min(GRID - 1, Math.floor(((z + r) / world) * GRID + GRID / 2));
+    for (let gz = minZ; gz <= maxZ; gz++) {
+      for (let gx = minX; gx <= maxX; gx++) {
+        const cx = (gx / GRID - 0.5) * world + cell / 2;
+        const cz = (gz / GRID - 0.5) * world + cell / 2;
+        if (Math.hypot(cx - x, cz - z) > r) continue;
+        this.cells[gz * GRID + gx] = 0;
+      }
+    }
   }
 
   private paintCells(x: number, z: number, kind: PaintKind, overwrite: number): void {

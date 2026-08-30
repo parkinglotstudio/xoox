@@ -1,17 +1,39 @@
 trigger,speaker,icon,line
-RESCUE_START,Piper,🐕‍🦺,냄새가 난다. 가까워.
-RESCUE_START,Olmas,🦉,신호가 약하게 잡힌다. 아직 완전히 물들지 않았어.
-RESCUE_START,Nashui,🐈,어머… 저 아이, 잔뜩 겁에 질렸네.
-RESCUE_WIN,Nashui,🐈,어머 귀여워. 이름이 뭐예요?
-RESCUE_WIN,Piper,🐕‍🦺,잘했어. 아직 갈 길이 멀지만.
-RESCUE_WIN,Olmas,🦉,제대로 정화됐다. 마음이 열렸어.
-RESCUE_FAIL,Piper,🐕‍🦺,놓쳤군. 조급하면 다 도망가.
-RESCUE_FAIL,Nashui,🐈,아… 가버렸어. 다음엔 천천히 해요.
-RESCUE_PASS,Piper,🐕‍🦺,지나친다고? …언젠가 다시 만나겠지.
-RESCUE_SWAP,Olmas,🦉,새 힘을 받아들였군. 선택엔 무게가 있어.
-COMBAT_START,Piper,🐕‍🦺,집중해. 이건 대화로는 안 돼.
-COMBAT_START,Olmas,🦉,움직임을 읽어라. 틈이 보인다.
-COMBAT_WIN,Piper,🐕‍🦺,끝났다. 다치진 않았고?
-COMBAT_WIN,Nashui,🐈,휴… 이제 좀 쉬어도 되죠?
-LEVELUP,Olmas,🦉,힘이 자라고 있어. 좋은 징조야.
-DAY_EVENT,Nashui,🐈,으, 이 냄새. 빨리 지나가요.
+LOOP_CATALYST,Olmas,🦉,정화된 자리에 맑은 방울이 남았다. 흡착 정화제야.
+LOOP_CATALYST,Piper,🐕‍🦺,통에 담자. 얼룩 쪽에 쓸 거다.
+LOOP_CATALYST,Nashui,🐈,시안 빛이에요. 땅에 붙는 쪽.
+LOOP_INHIBIT,Olmas,🦉,분홍 점이 맺혔다. 재오염을 누르는 미립이야.
+LOOP_INHIBIT,Piper,🐕‍🦺,벌레가 다시 먹을 때 이걸 던져.
+LOOP_INHIBIT,Nashui,🐈,흡착이랑 통이 달라요. 헷갈리지 말아요.
+LOOP_LIFE,Piper,🐕‍🦺,작은 숨소리가 난다. 버리지 마.
+LOOP_LIFE,Olmas,🦉,벌레처럼 보이지만 아이다. 던지지 마.
+LOOP_FILTER,Nashui,🐈,손으로 걸러 봐요. 탁한 것만 걸리면 돼요.
+LOOP_FILTER,Olmas,🦉,거르면 무엇이 남는가. 그게 단서야.
+LOOP_FILTER,Piper,🐕‍🦺,흙물에 섞인 걸 골라낸다. 서두르지 마.
+LOOP_TRACE,Olmas,🦉,누가 두고 간 흔적이다.
+LOOP_TRACE,Piper,🐕‍🦺,목줄 조각. 여기 아이가 지나갔다.
+LOOP_TRACE,Nashui,🐈,발자국이 끊겼어요. 천천히 봐요.
+LOOP_DAILY,Piper,🐕‍🦺,오늘 이 원에서만 일어나는 일이다.
+LOOP_DAILY,Olmas,🦉,작은 일에도 원의 숨이 보인다.
+LOOP_DAILY,Nashui,🐈,오늘만의 발견이에요.
+LOOP_COMMENTARY,Nashui,🐈,색이 조금 돌았어요. 아직 하늘은 그대로예요.
+LOOP_COMMENTARY,Olmas,🦉,1차는 땅만. 하늘은 나중에.
+LOOP_COMMENTARY,Piper,🐕‍🦺,숨은 쉬는데 멀리 산은 아직 흐리다.
+LOOP_BRANCH,Piper,🐕‍🦺,"해결책을 더 모을지, 이 자리에서 한 바퀴 더 돌지."
+LOOP_BRANCH,Olmas,🦉,원흉은 맨 마지막이다. 단서가 모자라면 가지 마.
+LOOP_SKILL,Olmas,🦉,여기 적힌 건 누가 남긴 요령이다.
+LOOP_SKILL,Piper,🐕‍🦺,보폭이든 투척이든, 죽이는 법이 아니다.
+LOOP_SKILL,Nashui,🐈,정화제를 아끼는 손이에요.
+LOOP_MEMORY,Olmas,🦉,선장의 기억이 한 조각 스친다.
+LOOP_MEMORY,Piper,🐕‍🦺,이 원이 예전에 맑았을 때의 냄새가 난다.
+LOOP_MEMO,Olmas,🦉,이 원에서 본 섬의 숨이다.
+LOOP_MEMO,Nashui,🐈,전망이 열려요. 아직 갈 길이 남았어요.
+LOOP_LOCATION,Nashui,🐈,이런 곳이 숨어 있었네요.
+LOOP_LOCATION,Olmas,🦉,가장자리 배수로. 옛 승무원 표시다.
+LOOP_NPC,Olmas,🦉,이 원 안에 남은 이야기까지 다 주웠다.
+LOOP_NPC,Piper,🐕‍🦺,아이 냄새도 난다. 천천히.
+LOOP_REST,Piper,🐕‍🦺,숨 고르고. 다음이 있다.
+LOOP_REST,Nashui,🐈,무릎을 꺾어요. 통은 아직 남았어요.
+LOOP_RESCUE,Nashui,🐈,저 아이, 다가갈지는 네가 정해.
+LOOP_RESCUE,Piper,🐕‍🦺,벌레 사이에 숨었다. 던지지 마.
+LOOP_RESCUE,Olmas,🦉,오염이 아이로 위장한 거다. 손으로 가자.

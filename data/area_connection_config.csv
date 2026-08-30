@@ -1,5 +1,5 @@
 connection_id,from_area_id,to_area_id,exit_point,bidirectional,unlock_condition
 c_i01_i11,area_i01,area_i11,BOTTOM,TRUE,
-c_i21_i11,area_i21,area_i11,TOP,TRUE,NODE:s1_gate
+c_i21_i11,area_i21,area_i11,TOP,TRUE,
 c_i10_i11,area_i10,area_i11,RIGHT,TRUE,
 c_i11_i12,area_i11,area_i12,RIGHT,TRUE,

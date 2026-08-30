@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<title>Sprite Engine Preview</title>
+<style>
+  :root { font-family: ui-sans-serif, system-ui, sans-serif; color: #1a1a1a; }
+  body { margin: 24px; background: #e8ece6; }
+  h1 { font-size: 18px; margin: 0 0 12px; }
+  .row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+  .stage {
+    width: 512px; height: 512px;
+    background:
+      linear-gradient(45deg, #d5d9d3 25%, transparent 25%),
+      linear-gradient(-45deg, #d5d9d3 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #d5d9d3 75%),
+      linear-gradient(-45deg, transparent 75%, #d5d9d3 75%);
+    background-size: 24px 24px;
+    background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+    background-color: #f2f4f0;
+    border: 1px solid #b8beb4;
+    image-rendering: auto;
+    position: relative;
+    overflow: hidden;
+  }
+  .stage canvas { display: block; width: 100%; height: 100%; }
+  .panel { min-width: 280px; background: #fff; border: 1px solid #c5cbc0; padding: 14px; }
+  label { display: block; font-size: 12px; margin-top: 10px; }
+  input[type="number"], input[type="range"], select { width: 100%; }
+  button { margin: 4px 4px 0 0; padding: 6px 10px; cursor: pointer; }
+  .frames { margin-top: 10px; max-height: 240px; overflow: auto; font-size: 12px; }
+  .frames div { display: flex; gap: 8px; align-items: center; margin: 4px 0; }
+  .frames input { width: 72px; }
+  code { font-size: 11px; }
+</style>
+</head>
+<body>
+  <h1>Sprite Engine Preview</h1>
+  <p style="font-size:12px;opacity:.75">시트: <code>move_back_sheet.png</code> · 매니페스트: <code>move_back.json</code> · 셀 512px · 16프레임</p>
+  <div class="row">
+    <div class="stage"><canvas id="cv" width="512" height="512"></canvas></div>
+    <div class="panel">
+      <button id="play">Play / Pause</button>
+      <button id="step">Step</button>
+      <button id="reset">Reset</button>
+      <label>배속 <span id="spdLabel">1.0×</span>
+        <input id="speed" type="range" min="0.1" max="3" step="0.1" value="1"/>
+      </label>
+      <label>기본 duration(ms) — 전체 일괄
+        <input id="bulk" type="number" min="16" step="10" value="120"/>
+      </label>
+      <button id="applyBulk">일괄 적용</button>
+      <button id="downloadManifest">매니페스트 JSON 다운로드</button>
+      <div class="frames" id="frameList"></div>
+      <p style="font-size:11px;margin-top:12px;opacity:.7">프레임 시간을 바꾼 뒤 JSON을 받아<br/>엔진에 <code>rebuild --manifest</code> 하면 반영됩니다.</p>
+    </div>
+  </div>
+<script>
+const CELL = 512;
+const SHEET_URL = "./move_back_sheet.png";
+const MANIFEST_URL = "./move_back.json";
+
+let manifest, sheet, idx = 0, playing = true, acc = 0, last = 0, speed = 1;
+const cv = document.getElementById("cv");
+const ctx = cv.getContext("2d");
+
+async function boot() {
+  manifest = await (await fetch(MANIFEST_URL)).json();
+  sheet = new Image();
+  sheet.src = SHEET_URL;
+  await sheet.decode();
+  buildList();
+  last = performance.now();
+  requestAnimationFrame(loop);
+}
+
+function buildList() {
+  const el = document.getElementById("frameList");
+  el.innerHTML = "";
+  manifest.frames.forEach((f, i) => {
+    const row = document.createElement("div");
+    row.innerHTML = `<span>#${i}</span><code>${f.name || f.src}</code>`;
+    const inp = document.createElement("input");
+    inp.type = "number";
+    inp.min = 16;
+    inp.value = f.duration_ms;
+    inp.addEventListener("change", () => { f.duration_ms = Number(inp.value) || 100; });
+    row.appendChild(inp);
+    el.appendChild(row);
+  });
+}
+
+function draw() {
+  const cols = manifest.cols || manifest.frames.length;
+  const col = idx % cols;
+  const row = Math.floor(idx / cols);
+  ctx.clearRect(0, 0, CELL, CELL);
+  ctx.drawImage(sheet, col * CELL, row * CELL, CELL, CELL, 0, 0, CELL, CELL);
+}
+
+function loop(t) {
+  const dt = t - last;
+  last = t;
+  if (playing && manifest?.frames?.length) {
+    acc += dt * speed;
+    const dur = manifest.frames[idx].duration_ms || 100;
+    while (acc >= dur) {
+      acc -= dur;
+      idx = (idx + 1) % manifest.frames.length;
+    }
+  }
+  draw();
+  requestAnimationFrame(loop);
+}
+
+document.getElementById("play").onclick = () => playing = !playing;
+document.getElementById("step").onclick = () => { playing = false; idx = (idx + 1) % manifest.frames.length; acc = 0; };
+document.getElementById("reset").onclick = () => { idx = 0; acc = 0; };
+document.getElementById("speed").oninput = (e) => {
+  speed = Number(e.target.value);
+  document.getElementById("spdLabel").textContent = speed.toFixed(1) + "×";
+};
+document.getElementById("applyBulk").onclick = () => {
+  const v = Number(document.getElementById("bulk").value) || 120;
+  manifest.frames.forEach(f => f.duration_ms = v);
+  buildList();
+};
+document.getElementById("downloadManifest").onclick = () => {
+  const blob = new Blob([JSON.stringify(manifest, null, 2)], {type: "application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "move_back.json";
+  a.click();
+};
+
+boot();
+</script>
+</body>
+</html>

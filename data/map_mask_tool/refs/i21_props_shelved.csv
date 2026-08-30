@@ -1,0 +1,16 @@
+prop_id,area_id,kind,x_pct,y_pct,yaw_deg,h_m,group_id,collide,purify_target,life_blight_id,art,note
+p_i21_fence_1,area_i21_shelved,fence,74,42,90,1.1,g_gable_e,TRUE,FALSE,,,타일우선으로 보관
+p_i21_fence_2,area_i21_shelved,fence,68,40,0,1.1,g_gable_e,TRUE,FALSE,,,타일우선으로 보관
+p_i21_fence_3,area_i21_shelved,fence,26,42,90,1.1,g_cabin,TRUE,FALSE,,,타일우선으로 보관
+p_i21_house_ws,area_i21_shelved,building,22,76,20,12.5,g_workshop,TRUE,FALSE,,,열린공방 · 타일우선으로 보관
+p_i21_house_wh,area_i21_shelved,building,78,76,340,14.0,g_warehouse,TRUE,FALSE,,,아치창고 · 타일우선으로 보관
+p_i21_house_g1,area_i21_shelved,building,24,56,15,13.0,g_gable_w,TRUE,FALSE,,,박공주거 · 타일우선으로 보관
+p_i21_house_cab,area_i21_shelved,building,22,38,10,12.0,g_cabin,TRUE,TRUE,,,잔여·뒤쪽 오두막 — 문이 닫혀 파도가 못 들어감 · 타일우선으로 보관
+p_i21_house_g2,area_i21_shelved,building,78,36,350,13.0,g_gable_e,TRUE,FALSE,,,북동박공 · 타일우선으로 보관
+p_i21_tower,area_i21_shelved,tower,48,48,0,11,g_hub,TRUE,FALSE,,,망루후보 · 타일우선으로 보관
+p_i21_lantern_1,area_i21_shelved,pole,50,84,0,2.6,g_dock,TRUE,FALSE,,,타일우선으로 보관
+p_i21_crate_2,area_i21_shelved,crate,76,82,40,0.7,g_warehouse,TRUE,FALSE,,,타일우선으로 보관
+p_i21_crate_3,area_i21_shelved,crate,26,82,15,0.7,g_workshop,TRUE,FALSE,,,타일우선으로 보관
+p_i21_sign_1,area_i21_shelved,sign,52,86,0,2.2,g_dock,TRUE,TRUE,,,잔여·길옆 간판 — 작은데 물감이 안 먹음 · 타일우선으로 보관
+p_i21_crate_4,area_i21_shelved,crate,46,82,5,0.65,g_dock,TRUE,FALSE,,,타일우선으로 보관
+p_i21_crate_5,area_i21_shelved,crate,54,82,25,0.65,g_dock,TRUE,FALSE,,,타일우선으로 보관

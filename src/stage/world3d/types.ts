@@ -23,6 +23,8 @@ export interface WorldNode {
   cleared?: boolean;
   /** 안개에 가려 아직 못 본 노드 */
   hidden?: boolean;
+  /** 마커(깃발)만 숨김 — 근접「확인」은 유지 (START 스폰 등) */
+  noMarker?: boolean;
   /** 이벤트 줍기 — 안개 너머에서도 실루엣이 보이게 */
   pierceFog?: boolean;
 }
@@ -69,6 +71,8 @@ export interface WorldProp {
   purifyTarget?: boolean;
   /** 생명 뭉치 — 칠하면 해당 blight 보상(동반) */
   lifeBlightId?: string;
+  /** area_prop_config.group_id — sea_wall 은 해안 방벽 */
+  groupId?: string;
 }
 
 /**
@@ -81,11 +85,27 @@ export interface SpriteAnimSheet {
   rows: number;
   frames: { index: number; durationMs: number }[];
   loop: boolean;
+  /** 셀 안 총구. 0..1, 왼쪽·위가 원점 */
+  muzzleUv?: [number, number];
 }
 
 export interface PlayerSprite {
   idle: SpriteAnimSheet | string;
   move?: SpriteAnimSheet | string;
+  /** 정화총 조준·사격 */
+  aimFire?: SpriteAnimSheet;
+  drawHolster?: SpriteAnimSheet;
+  holster?: SpriteAnimSheet;
+  aimWalkF?: SpriteAnimSheet;
+  aimWalkB?: SpriteAnimSheet;
+  aimWalkL?: SpriteAnimSheet;
+  aimWalkR?: SpriteAnimSheet;
+  /** 무총 던지기 (스킬용 시트) */
+  throw?: SpriteAnimSheet;
+  /** 무총 좌/우/뒤 걷기 */
+  walkL?: SpriteAnimSheet;
+  walkR?: SpriteAnimSheet;
+  moveBack?: SpriteAnimSheet;
 }
 
 /** 시트가 아니라 단일 PNG일 때 1프레임 시트로 감싼다 */

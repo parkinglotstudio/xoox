@@ -1,7 +1,8 @@
 blight_id,display_name,icon,needs_catalyst_id,target_kind,target_ref,success_flavor,area_tint,reveal_radius_pct,purpose_text,note
-blight_s1_pool,탁한 물웅덩이,🌫️,cat_clean_water,AREA,area_i21,물웅덩이가 맑아지며 부두에 색이 돌아온다.,0.55,34,이 물이 맑아지면 여기서 물을 마시던 것들이 돌아온다.,지역 정화 · 부두 섹터 · 데모용 원
+blight_s1_pool,탁한 물웅덩이,🌫️,cat_clean_water,AREA,area_i21,물웅덩이가 맑아지며 부두에 색이 돌아온다.,0.55,32,이 물이 맑아지면 여기서 물을 마시던 것들이 돌아온다.,들판 남 · 원 반지름 32 · 이웃과 58% 간격
+blight_i21_north,북편 들판,🌫️,cat_clean_water,AREA,area_i21,들판 북쪽이 되살아나 중앙과 원이 맞닿는다.,0.55,32,길을 열면 가운데와 이어진다.,들판 북 · 중앙과 맞닿음
 blight_s1_critter,오염에 잠긴 아이,🐾,cat_clean_water,LIFE,c_purify_wave1,오염이 걷히자 작은 존재가 눈을 떴다. 섬에서 기다려 줄지도…,,18,이 아이를 되돌리는 게 우리가 온 이유다.,생명 정화 · Wave1 · 작은 원
-blight_s2_pool,소금 낀 웅덩이,🌫️,cat_clean_water,AREA,area_i12,항만의 물빛에 색이 돌아온다.,0.5,28,항구가 숨을 쉬면 배를 기다리던 것들도 숨을 쉰다.,S8 색 회복 확장 · 구역02
-blight_s3_pool,녹슨 수렁,🌫️,cat_clean_water,AREA,area_i10,폐자재 사이로 풀빛이 스민다.,0.48,28,쇠가 삭은 자리에도 풀은 돌아온다.,S8 색 회복 확장 · 구역03
-blight_s4_pool,검은 샘,🌫️,cat_clean_water,AREA,area_i01,오염 중심부가 숨을 고른다.,0.6,30,여기가 맑아지면 섬 전체가 달라진다.,S8 색 회복 확장 · 구역04
-blight_i11_well,메마른 우물,🌫️,cat_clean_water,AREA,area_i11,우물에 물이 돌자 십자로 사방이 환해진다.,0.52,32,가운데가 살아나면 사방으로 번진다.,중앙 허브 · 41 갈래설계
+blight_s2_pool,소금 낀 웅덩이,🌫️,cat_clean_water,AREA,area_i12,항만의 물빛에 색이 돌아온다.,0.5,32,항구가 숨을 쉬면 배를 기다리던 것들도 숨을 쉰다.,동부 서단 · 중앙과 맞닿음
+blight_s3_pool,녹슨 수렁,🌫️,cat_clean_water,AREA,area_i10,폐자재 사이로 풀빛이 스민다.,0.48,32,쇠가 삭은 자리에도 풀은 돌아온다.,서부 동단 · 중앙과 맞닿음
+blight_s4_pool,검은 샘,🌫️,cat_clean_water,AREA,area_i01,오염 중심부가 숨을 고른다.,0.6,32,여기가 맑아지면 섬 전체가 달라진다.,북부 남단 · 중앙과 맞닿음
+blight_i11_well,메마른 우물,🌫️,cat_clean_water,AREA,area_i11,우물에 물이 돌자 십자로 사방이 환해진다.,0.52,32,가운데가 살아나면 사방으로 번진다.,중앙 허브 · 사방 원과 맞닿음

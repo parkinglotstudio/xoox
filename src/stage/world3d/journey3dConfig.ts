@@ -28,19 +28,21 @@ export interface Journey3DConfig {
   char_height_m: number;
 
   fog_vision_m: number;
-  /** fog_vision_m 대비 완전히 닫히는 거리의 배수 */
+  /** 시야 거리 대비 완전 안개 거리. 1이면 시야 끝에서 바로 닫힘 */
   fog_far_mul: number;
   fog_color: string;
   /** 오염 칸 — 안개(지평) */
   fog_color_polluted: string;
   /** 오염 칸 — 하늘 위 */
   fog_zenith_polluted: string;
-  /** 정화 칸 — 안개(지평, 노을) */
+  /** 정화 칸 — 안개(지평, 열린 시안) */
   fog_color_purified: string;
   /** 정화 칸 — 하늘 위 */
   fog_zenith_purified: string;
 
   move_speed_mps: number;
+  /** 걷기(후진·좌우·총 든 이동) = 뛰기 속도 비율 */
+  walk_speed_mul: number;
   turn_speed_deg: number;
   turn_mode: Journey3DTurnMode;
   view_mode: Journey3DViewMode;
@@ -78,14 +80,15 @@ export const JOURNEY3D_DEFAULTS: Journey3DConfig = {
   world_m: 70,
   fov_deg: 70,
   char_height_m: 1.7,
-  fog_vision_m: 14,
-  fog_far_mul: 3.2,
-  fog_color: "#c5c19e",
-  fog_color_polluted: "#c5c19e",
-  fog_zenith_polluted: "#726e56",
-  fog_color_purified: "#f7b65c",
-  fog_zenith_purified: "#f59954",
+  fog_vision_m: 30,
+  fog_far_mul: 1,
+  fog_color: "#6a7f88",
+  fog_color_polluted: "#6a7f88",
+  fog_zenith_polluted: "#2e3d48",
+  fog_color_purified: "#8eb0bc",
+  fog_zenith_purified: "#5a98ac",
   move_speed_mps: 4.6,
+  walk_speed_mul: 2 / 3,
   turn_speed_deg: 115,
   turn_mode: "turn",
   view_mode: "tps",
@@ -128,6 +131,7 @@ export function normalizeJourney3DConfig(raw: unknown): Journey3DConfig {
     fog_zenith_purified:
       typeof r.fog_zenith_purified === "string" ? r.fog_zenith_purified : d.fog_zenith_purified,
     move_speed_mps: num(r.move_speed_mps, d.move_speed_mps),
+    walk_speed_mul: num(r.walk_speed_mul, d.walk_speed_mul),
     turn_speed_deg: num(r.turn_speed_deg, d.turn_speed_deg),
     turn_mode: r.turn_mode === "turn" ? "turn" : "strafe",
     view_mode: r.view_mode === "fps" ? "fps" : "tps",

@@ -1,13 +1,1 @@
 scenario_id,step_order,text_id,grade_id,linked_effect_id,card_style,location_id,branch_id,description
-sc_mercenary,1,t_mercenary_discover,g_bonus,,NORMAL,loc_mercenary,b_mercenary,발견
-sc_mercenary,2,t_mercenary_guard,g_bonus,,NORMAL,loc_mercenary,b_mercenary,경계 관측
-sc_mercenary,3,t_mercenary_reward,g_bonus,e_flag3|e_arrow1,RESULT_GLOW,loc_mercenary,b_mercenary,대화 보상(깃발+화살)
-sc_pirate,1,t_pirate_discover,g_bonus,,NORMAL,loc_pirate,,발견
-sc_pirate,2,t_pirate_guard,g_bonus,,NORMAL,loc_pirate,,경계 관측
-sc_pirate,3,t_pirate_reward,g_bonus,e_flag3,RESULT_GLOW,loc_pirate,,대화 보상(깃발)
-sc_mercenary_2,1,t_mercenary_discover_2,g_bonus,,NORMAL,loc_mercenary_2,b_mercenary_2,발견(임시)
-sc_mercenary_2,2,t_mercenary_guard_2,g_bonus,,NORMAL,loc_mercenary_2,b_mercenary_2,경계 관측(임시)
-sc_mercenary_2,3,t_mercenary_reward_2,g_bonus,e_flag3|e_arrow1,RESULT_GLOW,loc_mercenary_2,b_mercenary_2,대화 보상(임시)
-sc_pirate_2,1,t_pirate_discover_2,g_bonus,,NORMAL,loc_pirate_2,,발견(임시)
-sc_pirate_2,2,t_pirate_guard_2,g_bonus,,NORMAL,loc_pirate_2,,경계 관측(임시)
-sc_pirate_2,3,t_pirate_reward_2,g_bonus,e_flag3,RESULT_GLOW,loc_pirate_2,,대화 보상(임시)

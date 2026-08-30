@@ -8,19 +8,33 @@
 import * as THREE from "three";
 import type { WorldProp } from "./types";
 import { stickerForDraft } from "./propArt";
+import {
+  analyzeConceptMesh,
+  paintSectorFloorFromImage,
+} from "./islandFloorSplat";
+import { conceptUrlFor, loadSectorScale, type SectorScaleConfig } from "../../island/islandMapShared";
+import { LAND_SECTOR_IDS, isLandSector, landNeighbors } from "./islandLoadOrder";
 
 export const SECTOR_M = 333;
-const LAND_IDS = ["i01", "i10", "i11", "i12", "i21"] as const;
+const LAND_IDS = LAND_SECTOR_IDS;
 /** 정화 전 — 타일 색을 죽이고 탁한 청회색으로. 흰색 곱하기는 풀색이 그대로 남는다 */
 const POLLUTED_TINT = 0xffffff;
 
-/** 컨셉 분류 해상도. 이 위에서 오브젝트 마스크·가중치를 만든다. */
-const SPLAT_SRC = 320;
-/** 타일 샘플을 찍어 내는 최종 텍스처. */
-const SPLAT_OUT = 768;
+/**
+ * 컨셉 분류·인페인트 해상도.
+ * 예전 320→768은 2048 섹터 PNG를 발밑에서 색면으로 만들었다(≈3px/m @ world_m 110).
+ * SRC=OUT=1024면 같은 스케일에서 ≈9px/m — 질감이 살아나고 인페인트 1회 비용은 수용 가능.
+ *
+ * 실제 타일 스플랫은 islandFloorSplat.ts 의 SRC/OUT/TILE 을 씀 (여기 SPLAT_* 는 레거시 상수).
+ * 육지 alpha 마스크만 MASK_SIZE 사용.
+ * 백업: MASK_SIZE=512 (2026-08-23 이전) → 1024 → 1536(OUT 3072) → 1024(OUT 2048, 현재)
+ */
+const SPLAT_SRC = 1024;
+/** 최종 육지 텍스처. SRC와 같게 둬 업샘플 뭉개짐을 없앤다. */
+const SPLAT_OUT = 1024;
 const TILE_SAMPLE = 128;
 const TILE_REPEAT = 16;
-const MASK_SIZE = 512;
+const MASK_SIZE = 1024;
 const INPAINT_PASSES = 28;
 const ROOF_DILATE = 16;
 
@@ -70,6 +84,16 @@ async function loadImage(src: string): Promise<HTMLImageElement> {
     img.onload = () => resolve(img);
     img.onerror = () => reject(new Error(`image load failed: ${src}`));
     img.src = src;
+  });
+}
+
+function yieldMain(): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof requestAnimationFrame === "function") {
+      requestAnimationFrame(() => resolve());
+    } else {
+      setTimeout(resolve, 0);
+    }
   });
 }
 
@@ -480,8 +504,16 @@ function maskFromSea(sea: Uint8Array, srcS: number, outS: number): THREE.Texture
     }
   }
   ctx.putImageData(img, 0, 0);
-  return canvasToMaskTex(c);
+  const soft = document.createElement("canvas");
+  soft.width = outS;
+  soft.height = outS;
+  const sctx = soft.getContext("2d")!;
+  sctx.filter = "blur(2.2px)";
+  sctx.drawImage(c, 0, 0);
+  return canvasToMaskTex(soft);
 }
+
+const MAX_PURIFY_FOCI = 8;
 
 function wirePolluteShader(mat: THREE.MeshBasicMaterial) {
   const uPolluted = { value: 0 };
@@ -489,17 +521,32 @@ function wirePolluteShader(mat: THREE.MeshBasicMaterial) {
   const uWaveCenter = { value: new THREE.Vector2(0, 0) };
   const uWaveR = { value: 0 };
   const uCellM = { value: 333 };
+  const uWorldOffset = { value: new THREE.Vector2(0, 0) };
+  const uFocusCount = { value: 0 };
+  const uFoci = { value: Array.from({ length: MAX_PURIFY_FOCI }, () => new THREE.Vector3()) };
+  const uFogPurified = { value: new THREE.Color(0x8eb0bc) };
+  const uColorAmt = { value: 1 };
   mat.userData.uPolluted = uPolluted;
   mat.userData.uWaveActive = uWaveActive;
   mat.userData.uWaveCenter = uWaveCenter;
   mat.userData.uWaveR = uWaveR;
   mat.userData.uCellM = uCellM;
+  mat.userData.uWorldOffset = uWorldOffset;
+  mat.userData.uFocusCount = uFocusCount;
+  mat.userData.uFoci = uFoci;
+  mat.userData.uFogPurified = uFogPurified;
+  mat.userData.uColorAmt = uColorAmt;
   mat.onBeforeCompile = (shader) => {
     shader.uniforms.uPolluted = uPolluted;
     shader.uniforms.uWaveActive = uWaveActive;
     shader.uniforms.uWaveCenter = uWaveCenter;
     shader.uniforms.uWaveR = uWaveR;
     shader.uniforms.uCellM = uCellM;
+    shader.uniforms.uWorldOffset = uWorldOffset;
+    shader.uniforms.uFocusCount = uFocusCount;
+    shader.uniforms.uFoci = uFoci;
+    shader.uniforms.uFogPurified = uFogPurified;
+    shader.uniforms.uColorAmt = uColorAmt;
     shader.fragmentShader = shader.fragmentShader
       .replace(
         "#include <common>",
@@ -508,38 +555,90 @@ uniform float uPolluted;
 uniform float uWaveActive;
 uniform vec2 uWaveCenter;
 uniform float uWaveR;
-uniform float uCellM;`,
+uniform float uCellM;
+uniform vec2 uWorldOffset;
+uniform float uFocusCount;
+uniform vec3 uFoci[8];
+uniform vec3 uFogPurified;
+uniform float uColorAmt;
+float purifyReveal = 0.0;`,
       )
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>
+        purifyReveal = 1.0 - step(0.5, uPolluted);
         if (uPolluted > 0.5) {
           vec3 baseColor = diffuseColor.rgb;
-          vec2 uv = vMapUv;
-          vec2 px = vec2(0.0016, 0.0016);
-          float g = dot(baseColor, vec3(0.30, 0.32, 0.22));
-          float l1 = dot(texture2D(map, uv + vec2(px.x, 0.0)).rgb, vec3(0.30, 0.32, 0.22));
-          float l2 = dot(texture2D(map, uv - vec2(px.x, 0.0)).rgb, vec3(0.30, 0.32, 0.22));
-          float l3 = dot(texture2D(map, uv + vec2(0.0, px.y)).rgb, vec3(0.30, 0.32, 0.22));
-          float l4 = dot(texture2D(map, uv - vec2(0.0, px.y)).rgb, vec3(0.30, 0.32, 0.22));
-          float edge = clamp(length(vec2(l1 - l2, l3 - l4)) * 3.4, 0.0, 1.0);
-          float inkAmt = clamp(edge + (1.0 - g) * 0.18, 0.0, 1.0);
-          vec3 paper = vec3(0.98, 0.97, 0.94);
-          vec3 ink = vec3(0.20, 0.20, 0.22);
-          vec3 sketch = mix(paper, ink, inkAmt);
-          if (uWaveActive > 0.5) {
-            vec2 local = vec2((uv.x - 0.5) * uCellM, (0.5 - uv.y) * uCellM);
-            float d = length(local - uWaveCenter);
-            float soft = max(1.5, uCellM * 0.012);
-            float reveal = 1.0 - smoothstep(uWaveR - soft, uWaveR + soft * 0.35, d);
-            diffuseColor.rgb = mix(sketch, baseColor, reveal);
-          } else {
-            diffuseColor.rgb = sketch;
+          float g = dot(baseColor, vec3(0.299, 0.587, 0.114));
+          vec3 veiled = mix(baseColor, vec3(g), 0.72);
+          veiled *= vec3(0.52, 0.62, 0.72);
+          veiled = mix(veiled, vec3(0.35, 0.55, 0.62), 0.14);
+          veiled = clamp(veiled * 0.88, 0.0, 1.0);
+          vec2 local = vec2((vMapUv.x - 0.5) * uCellM, (0.5 - vMapUv.y) * uCellM);
+          vec2 world = local + uWorldOffset;
+          float reveal = 0.0;
+          for (int i = 0; i < 8; i++) {
+            if (float(i) >= uFocusCount) break;
+            float d = length(world - uFoci[i].xy);
+            float rad = uFoci[i].z;
+            float soft = max(1.5, rad * 0.08);
+            reveal = max(reveal, 1.0 - smoothstep(rad - soft, rad + soft * 0.35, d));
           }
+          if (uWaveActive > 0.5) {
+            float d = length(world - uWaveCenter);
+            float soft = max(1.5, uCellM * 0.012);
+            reveal = max(reveal, 1.0 - smoothstep(uWaveR - soft, uWaveR + soft * 0.35, d));
+            float lineW = max(1.35, uCellM * 0.0048);
+            float rim = (1.0 - smoothstep(0.0, lineW, abs(d - uWaveR))) * step(0.45, uWaveR);
+            vec3 laser = vec3(0.059, 0.745, 0.780);
+            vec3 spark = vec3(0.820, 0.345, 0.737);
+            veiled = mix(veiled, baseColor, reveal * uColorAmt);
+            veiled += laser * rim * 1.55;
+            veiled += spark * (rim * rim) * 0.28;
+            diffuseColor.rgb = veiled;
+          } else {
+            diffuseColor.rgb = mix(veiled, baseColor, reveal * uColorAmt);
+          }
+          purifyReveal = reveal * uColorAmt;
         }`,
+      )
+      .replace(
+        "#include <fog_fragment>",
+        `#ifdef USE_FOG
+          vec3 groundFogColor = mix(fogColor, uFogPurified, clamp(purifyReveal, 0.0, 1.0));
+          #ifdef FOG_EXP2
+            float fogFactor = 1.0 - exp( - fogDensity * fogDensity * vFogDepth * vFogDepth );
+          #else
+            float fogFactor = smoothstep( fogNear * 0.45, fogFar, vFogDepth );
+            fogFactor = clamp(fogFactor * 1.22, 0.0, 1.0);
+          #endif
+          gl_FragColor.rgb = mix( gl_FragColor.rgb, groundFogColor, fogFactor );
+        #endif`,
       );
   };
-  mat.customProgramCacheKey = () => "island-pollute-v5-wave";
+  mat.customProgramCacheKey = () => "island-pollute-v17-coloramt";
+}
+
+export interface PurifyFocusWorld {
+  x: number;
+  z: number;
+  r: number;
+}
+
+export function purifyAmountAt(x: number, z: number, foci: readonly PurifyFocusWorld[]): number {
+  let a = 0;
+  for (const f of foci) {
+    const d = Math.hypot(x - f.x, z - f.z);
+    const soft = Math.max(1.5, f.r * 0.12);
+    const t = 1 - smoothstep01(f.r - soft, f.r + soft * 0.35, d);
+    if (t > a) a = t;
+  }
+  return a;
+}
+
+function smoothstep01(e0: number, e1: number, x: number): number {
+  const t = Math.max(0, Math.min(1, (x - e0) / Math.max(1e-5, e1 - e0)));
+  return t * t * (3 - 2 * t);
 }
 
 export interface IslandTerrainOpts {
@@ -547,6 +646,8 @@ export interface IslandTerrainOpts {
   anisotropy?: number;
   /** true면 현재 섹터가 원점에 오도록 그룹을 민다(본편). false면 절대 좌표(맵 프로토). */
   centerOnFocus?: boolean;
+  /** 먼저 깔 육지 칸. 기본은 남쪽 들판 스폰 i21. */
+  initialFocus?: string;
 }
 
 type TilePix = { data: Uint8ClampedArray; size: number };
@@ -567,15 +668,26 @@ export class IslandTerrain {
   private tileCache = new Map<string, HTMLImageElement>();
   private tilePix = new Map<string, TilePix>();
   private conceptCache = new Map<string, HTMLImageElement>();
+  private scaleConfig: SectorScaleConfig | null = null;
   private stickerDrafts = new Map<string, StickerDraft[]>();
   private disposed = false;
+  private landJobs = new Map<string, Promise<void>>();
+  private lastCullX = 0;
+  private lastCullZ = 0;
+  private lastCullKeepM = 80;
   /** 정화 파도 — 플레이어 주변에서 바깥으로 컬러 공개 */
   private wave: { x: number; z: number; r: number } | null = null;
+  private foci: PurifyFocusWorld[] = [];
+  private fogPurifiedHex = 0x8eb0bc;
+  /** 원 안 색이 열리는 세기 0..1 — 1차/2차/완료 3단 */
+  private colorAmt = 1;
 
   constructor(opts: IslandTerrainOpts = {}) {
     this.cellM = opts.cellSize ?? SECTOR_M;
     this.anisotropy = opts.anisotropy ?? 1;
     this.centerOnFocus = opts.centerOnFocus ?? false;
+    const focus = opts.initialFocus ? sectorIdOf(opts.initialFocus) : "i21";
+    this.focusId = isLandSector(focus) ? focus : "i21";
     this.ready = this.build();
   }
 
@@ -588,6 +700,19 @@ export class IslandTerrain {
   setFocus(areaId: string): void {
     this.focusId = sectorIdOf(areaId);
     this.layout();
+    void this.ensureLand(this.focusId);
+    void this.preloadNeighbors();
+  }
+
+  /**
+   * 안개 너머 육지 칸은 그리지 않는다. 5장 2048 투명 쿼드가 동시에 채워지면
+   * 발밑 한 칸만 보여도 GPU가 같이 돈다.
+   */
+  cullLandByView(worldX: number, worldZ: number, keepM: number): void {
+    this.lastCullX = worldX;
+    this.lastCullZ = worldZ;
+    this.lastCullKeepM = keepM;
+    this.applyLandCull();
   }
 
   setPurified(areaIds: string[]): void {
@@ -601,6 +726,26 @@ export class IslandTerrain {
     this.applyTints();
   }
 
+  /** 정착된 Cozy 원. 좌표는 플레이어와 같은 월드 xz(현재 섹터 원점). */
+  setPurifyFoci(foci: PurifyFocusWorld[]): void {
+    this.tintFromPurify = true;
+    this.foci = foci.slice(0, MAX_PURIFY_FOCI);
+    this.applyTints();
+  }
+
+  getPurifyFoci(): PurifyFocusWorld[] {
+    return this.foci;
+  }
+
+  setPurifyColorAmt(amt: number): void {
+    this.colorAmt = Math.max(0, Math.min(1, amt));
+    this.applyTints();
+  }
+
+  getPurifyColorAmt(): number {
+    return this.colorAmt;
+  }
+
   /**
    * 정화 파도(미터). focus 섹터 로컬 xz(= 플레이어 world xz, centerOnFocus 시).
    * null이면 파도 종료.
@@ -610,22 +755,31 @@ export class IslandTerrain {
     this.applyTints();
   }
 
+  /** 바닥 거리 포그가 정화후 하늘과 같이 바뀌도록 */
+  setFogPurifiedColor(hex: number): void {
+    this.fogPurifiedHex = hex;
+    this.applyTints();
+  }
+
   backgroundProps(areaId: string): WorldProp[] {
     const id = sectorIdOf(areaId);
     const drafts = this.stickerDrafts.get(id) ?? [];
-    return drafts.map((d, i) => {
+    return drafts.flatMap((d, i) => {
       const pick = stickerForDraft(d, i);
-      return {
-        id: `bg_${id}_${i}`,
-        xPct: d.xPct,
-        yPct: d.yPct,
-        kind: pick.kind,
-        hM: pick.hM,
-        aspect: pick.aspect,
-        art: pick.art,
-        billboard: true,
-        collide: true,
-      };
+      if (pick.kind === "sign" || pick.kind === "pole") return [];
+      return [
+        {
+          id: `bg_${id}_${i}`,
+          xPct: d.xPct,
+          yPct: d.yPct,
+          kind: pick.kind,
+          hM: pick.hM,
+          aspect: pick.aspect,
+          art: pick.art,
+          billboard: true,
+          collide: true,
+        },
+      ];
     });
   }
 
@@ -659,9 +813,31 @@ export class IslandTerrain {
     });
   }
 
+  private applyLandCull(): void {
+    const half = this.cellM * 0.5;
+    const gx = this.group.position.x;
+    const gz = this.group.position.z;
+    const keep = this.lastCullKeepM;
+    const px = this.lastCullX;
+    const pz = this.lastCullZ;
+    for (const id of LAND_IDS) {
+      const mesh = this.land[id];
+      if (!mesh) continue;
+      if (id === this.focusId) {
+        mesh.visible = true;
+        continue;
+      }
+      const cx = mesh.position.x + gx;
+      const cz = mesh.position.z + gz;
+      const dx = Math.max(Math.abs(px - cx) - half, 0);
+      const dz = Math.max(Math.abs(pz - cz) - half, 0);
+      mesh.visible = Math.hypot(dx, dz) < keep;
+    }
+  }
+
   private layout(): void {
     const cell = this.cellM;
-    const waterSpan = cell * 8;
+    const waterSpan = cell * 4;
     if (this.water) {
       this.water.scale.set(waterSpan, waterSpan, 1);
     }
@@ -678,33 +854,56 @@ export class IslandTerrain {
     } else {
       this.group.position.set(0, 0, 0);
     }
+    this.applyLandCull();
   }
 
   private applyTints(): void {
     const waveOn = this.wave != null;
+    const focusO = sectorOrigin(this.focusId, this.cellM);
     for (const id of LAND_IDS) {
       const mesh = this.land[id];
       if (!mesh) continue;
       const mat = mesh.material as THREE.MeshBasicMaterial;
-      const polluted = this.tintFromPurify && !this.purified.has(id);
-      const focusWave = waveOn && id === this.focusId;
+      const o = sectorOrigin(id, this.cellM);
+      const ox = this.centerOnFocus ? o.x - focusO.x : o.x;
+      const oz = this.centerOnFocus ? o.z - focusO.z : o.z;
       mat.color.setHex(POLLUTED_TINT);
-      if (mat.userData.uPolluted) mat.userData.uPolluted.value = polluted || focusWave ? 1 : 0;
-      if (mat.userData.uWaveActive) mat.userData.uWaveActive.value = focusWave ? 1 : 0;
+      const useFoci = this.foci.length > 0 || waveOn;
+      if (mat.userData.uPolluted) {
+        mat.userData.uPolluted.value = useFoci
+          ? this.tintFromPurify
+            ? 1
+            : 0
+          : this.tintFromPurify && !this.purified.has(id)
+            ? 1
+            : 0;
+      }
+      if (mat.userData.uWaveActive) mat.userData.uWaveActive.value = waveOn ? 1 : 0;
       if (mat.userData.uCellM) mat.userData.uCellM.value = this.cellM;
+      if (mat.userData.uWorldOffset) mat.userData.uWorldOffset.value.set(ox, oz);
       if (mat.userData.uWaveCenter && this.wave) {
         mat.userData.uWaveCenter.value.set(this.wave.x, this.wave.z);
       }
       if (mat.userData.uWaveR) mat.userData.uWaveR.value = this.wave?.r ?? 0;
+      if (mat.userData.uFogPurified) mat.userData.uFogPurified.value.setHex(this.fogPurifiedHex);
+      if (mat.userData.uColorAmt) mat.userData.uColorAmt.value = this.colorAmt;
+      if (mat.userData.uFocusCount) mat.userData.uFocusCount.value = this.foci.length;
+      const arr = mat.userData.uFoci?.value as THREE.Vector3[] | undefined;
+      if (arr) {
+        for (let i = 0; i < MAX_PURIFY_FOCI; i++) {
+          const f = this.foci[i];
+          if (f) arr[i].set(f.x, f.z, f.r);
+          else arr[i].set(0, 0, 0);
+        }
+      }
     }
     if (this.water) {
-      const focusDirty =
-        (this.tintFromPurify && !this.purified.has(this.focusId)) || waveOn;
-      (this.water.material as THREE.MeshBasicMaterial).color.setHex(focusDirty ? 0xe8e4dc : 0xffffff);
+      (this.water.material as THREE.MeshBasicMaterial).color.setHex(this.tintFromPurify ? 0xb8c4c8 : 0x6e8490);
     }
   }
 
   private async build(): Promise<void> {
+    this.scaleConfig = await loadSectorScale();
     const waterImg = await this.tileImage("floor_water_deep.png");
     const waterTex = new THREE.Texture(waterImg);
     waterTex.colorSpace = THREE.SRGBColorSpace;
@@ -723,19 +922,55 @@ export class IslandTerrain {
     this.group.add(this.water);
 
     await this.preloadTiles();
-    await Promise.all(LAND_IDS.map((id) => this.addLand(id)));
+    await this.ensureLand(this.focusId);
     this.layout();
     this.applyTints();
+    this.applyLandCull();
+    void this.preloadNeighbors();
+  }
+
+  /** 지금 칸 옆만 미리 찍는다. 섬 전체를 한꺼번에 올리면 들판에서 VRAM이 먼저 나간다. */
+  private async preloadNeighbors(): Promise<void> {
+    for (const id of landNeighbors(this.focusId)) {
+      if (this.disposed) return;
+      if (this.land[id]) continue;
+      await yieldMain();
+      if (this.disposed) return;
+      await this.ensureLand(id);
+    }
+  }
+
+  /** 해당 육지 칸이 없으면 찍고, 찍는 중이면 그 작업을 기다린다. */
+  async ensureLand(areaId: string): Promise<void> {
+    const id = sectorIdOf(areaId);
+    if (!isLandSector(id) || this.disposed) return;
+    if (this.land[id]) return;
+    const hit = this.landJobs.get(id);
+    if (hit) return hit;
+    const job = (async () => {
+      try {
+        await this.addLand(id);
+        if (!this.disposed) {
+          this.layout();
+          this.applyTints();
+        }
+      } finally {
+        this.landJobs.delete(id);
+      }
+    })();
+    this.landJobs.set(id, job);
+    return job;
   }
 
   private async addLand(areaId: string): Promise<void> {
+    if (this.disposed || this.land[areaId]) return;
     const painted = await this.paintLand(areaId);
     painted.map.anisotropy = this.anisotropy;
     const mat = new THREE.MeshBasicMaterial({
       map: painted.map,
       alphaMap: painted.mask,
       transparent: true,
-      alphaTest: 0.35,
+      alphaTest: 0.12,
       depthWrite: false,
       fog: true,
     });
@@ -756,62 +991,25 @@ export class IslandTerrain {
     }
     const concept = await this.conceptImage(areaId);
     if (!concept) {
-      const file = this.purified.has(areaId)
-        ? "floor_grass_flower.png"
-        : areaId === "i21"
-          ? "floor_wood_plank.png"
-          : "floor_grass.png";
+      const file = this.purified.has(areaId) ? "floor_grass_flower.png" : "floor_grass.png";
       return { map: this.stampUniform(await this.tileImage(file)), mask: this.fallbackMask() };
     }
     return this.splatFromConcept(areaId, concept);
   }
 
-  private splatFromConcept(areaId: string, concept: HTMLImageElement): { map: THREE.Texture; mask: THREE.Texture } {
-    const src = drawToSize(concept, SPLAT_SRC);
-    const waterish = new Uint8Array(SPLAT_SRC * SPLAT_SRC);
-    for (let i = 0; i < waterish.length; i++) {
-      const o = i * 4;
-      waterish[i] = looksLikeWater(src.data[o], src.data[o + 1], src.data[o + 2]) ? 1 : 0;
-    }
-    const sea = floodSea(waterish, SPLAT_SRC);
-    keepLargestLand(sea, SPLAT_SRC);
-    const obj = objectMask(src.data, sea, SPLAT_SRC);
-    const rgb = inpaintFloor(src.data, sea, obj, SPLAT_SRC);
-    this.stickerDrafts.set(areaId, extractStickerDrafts(concept, obj, SPLAT_SRC));
-
-    const c = document.createElement("canvas");
-    c.width = SPLAT_OUT;
-    c.height = SPLAT_OUT;
-    const ctx = c.getContext("2d")!;
-    const out = ctx.createImageData(SPLAT_OUT, SPLAT_OUT);
-    const p = out.data;
-    const scale = SPLAT_SRC / SPLAT_OUT;
-    for (let y = 0; y < SPLAT_OUT; y++) {
-      const sy = Math.min(SPLAT_SRC - 1, ((y + 0.5) * scale) | 0);
-      for (let x = 0; x < SPLAT_OUT; x++) {
-        const sx = Math.min(SPLAT_SRC - 1, ((x + 0.5) * scale) | 0);
-        const i = sy * SPLAT_SRC + sx;
-        const o = (y * SPLAT_OUT + x) * 4;
-        p[o] = rgb[i * 3];
-        p[o + 1] = rgb[i * 3 + 1];
-        p[o + 2] = rgb[i * 3 + 2];
-        p[o + 3] = 255;
-      }
-    }
-    ctx.putImageData(out, 0, 0);
-    return { map: canvasColorTex(c), mask: maskFromSea(sea, SPLAT_SRC, MASK_SIZE) };
+  private async splatFromConcept(
+    areaId: string,
+    concept: HTMLImageElement,
+  ): Promise<{ map: THREE.Texture; mask: THREE.Texture }> {
+    const canvas = await paintSectorFloorFromImage(concept);
+    const { sea, srcSize, objectMask } = analyzeConceptMesh(concept);
+    this.stickerDrafts.set(areaId, extractStickerDrafts(concept, objectMask, srcSize));
+    return { map: canvasColorTex(canvas), mask: maskFromSea(sea, srcSize, MASK_SIZE) };
   }
 
   private maskFromConcept(img: HTMLImageElement): THREE.Texture {
-    const src = drawToSize(img, SPLAT_SRC);
-    const waterish = new Uint8Array(SPLAT_SRC * SPLAT_SRC);
-    for (let i = 0; i < waterish.length; i++) {
-      const o = i * 4;
-      waterish[i] = looksLikeWater(src.data[o], src.data[o + 1], src.data[o + 2]) ? 1 : 0;
-    }
-    const sea = floodSea(waterish, SPLAT_SRC);
-    keepLargestLand(sea, SPLAT_SRC);
-    return maskFromSea(sea, SPLAT_SRC, MASK_SIZE);
+    const { sea, srcSize } = analyzeConceptMesh(img);
+    return maskFromSea(sea, srcSize, MASK_SIZE);
   }
 
   private stampUniform(tile: HTMLImageElement): THREE.Texture {
@@ -850,6 +1048,7 @@ export class IslandTerrain {
     const files = [
       "floor_grass.png",
       "floor_grass_flower.png",
+      "floor_forest.png",
       "floor_dirt.png",
       "floor_cobble.png",
       "floor_wood_plank.png",
@@ -878,11 +1077,16 @@ export class IslandTerrain {
   }
 
   private async conceptImage(areaId: string): Promise<HTMLImageElement | null> {
-    const hit = this.conceptCache.get(areaId);
+    // 타일 스플랫은 항상 정화후(map) 기준. 오염 연출은 shader만 (맵배치 타일과 동기화)
+    if (!this.scaleConfig) this.scaleConfig = await loadSectorScale();
+    const url = conceptUrlFor(this.scaleConfig, areaId, true);
+    if (!url) return null;
+    const key = `${areaId}:after:${url}`;
+    const hit = this.conceptCache.get(key);
     if (hit) return hit;
     try {
-      const img = await loadImage(`/ui/journey/sector_${areaId}_after.png`);
-      this.conceptCache.set(areaId, img);
+      const img = await loadImage(url);
+      this.conceptCache.set(key, img);
       return img;
     } catch {
       return null;

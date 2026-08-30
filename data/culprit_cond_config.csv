@@ -1,0 +1,4 @@
+culprit_id,cond_id,hud_label,fill_kind,note
+culprit_i21_thirst,stain,침출,stain,얼룩만 채우면 됨
+culprit_i11_well,stain,침출,stain,얼룩
+culprit_i11_well,memory,우물,memory,메마른 기억

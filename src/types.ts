@@ -591,12 +591,28 @@ export interface GameData {
   dialogues: DialogueLineDef[];
   /** 43 — 장(章) 헤더 */
   chapters: ChapterDef[];
+  /** 지역 퀘스트 — CSV로 넣고 뺌 */
+  questChains: QuestChainDef[];
+  questSteps: QuestStepDef[];
+  questSpots: QuestSpotDef[];
   /** 43 S4 — 섹터 사이클 비트 */
   sectorBeats: SectorBeatDef[];
   /** 길 판정 — 등급 → 이동 모드 */
   pathJudgments: PathJudgmentDef[];
   /** 3D 뷰 제자리 경쟁 미니게임 — 전투를 대신하는 콘텐츠 축 */
   arenas: ArenaDef[];
+  /** 섹터 원흉 — 대화 통과 후 물질 제거 */
+  culprits: CulpritDef[];
+  culpritConds: CulpritCondDef[];
+  culpritTalks: CulpritTalkDef[];
+  /** 한 판 — 원 수 = 도전 횟수 */
+  islandRun: IslandRunDef;
+}
+
+export interface IslandRunDef {
+  run_id: string;
+  circle_count: number;
+  attempt_count: number;
 }
 
 /** S8 — 무지개섬 탭무브 지점 */
@@ -610,6 +626,36 @@ export interface IslandSpotDef {
   /** GREET | TERMINAL | DEPART | DISPATCH | PARTY | ADVENTURE | NONE */
   action: string;
   note: string;
+}
+
+/** 섹터 원흉 — 대화로 열고 정화제로 걷는다 */
+export interface CulpritDef {
+  culprit_id: string;
+  area_id: string;
+  display_name: string;
+  first_line: string;
+  fail_kind: "talk_retry" | "circle_reset";
+  difficulty: "easy" | "hard";
+  loop_npc_id: string;
+  talk_fail_line: string;
+}
+
+export interface CulpritCondDef {
+  culprit_id: string;
+  cond_id: string;
+  hud_label: string;
+  fill_kind: "stain" | "rescue" | "memory";
+}
+
+export interface CulpritTalkDef {
+  culprit_id: string;
+  step_order: number;
+  prompt: string;
+  pass_label: string;
+  fail_label: string;
+  need_cond_id: string;
+  pass_line: string;
+  fail_line: string;
 }
 
 /** S7 — 60일 결말 대화 정화 라운드 */
@@ -757,6 +803,61 @@ export interface ChapterDef {
   area_id: string;
   title: string;
   subtitle: string;
+  note: string;
+}
+
+/** 퀘스트 체인 한 지역. 넣고 빼기는 step.enabled */
+export interface QuestChainDef {
+  chain_id: string;
+  area_id: string;
+  title: string;
+  active: boolean;
+  note: string;
+}
+
+export type QuestStepKind =
+  | "FILLER"
+  | "SEARCH"
+  | "CONTENT"
+  | "BRANCH"
+  | "APPLY_STAINS"
+  | "TINT"
+  | "INVADE"
+  | "CULPRIT";
+
+/** 한 칸 정화 퀘스트 스텝. stage는 나중에 1·2·3으로 나눈다. */
+export interface QuestStepDef {
+  step_id: string;
+  chain_id: string;
+  stage: number;
+  sort_order: number;
+  enabled: boolean;
+  kind: QuestStepKind;
+  content_kind: string;
+  tint_step: number;
+  /** south west east center north. 빈 값이면 안 걷는다 */
+  place: string;
+  /** INVADE 마리 수. 0이면 기본 2 */
+  hunt_count: number;
+  title: string;
+  hud_label: string;
+  receive_text_id: string;
+  prep_text_id: string;
+  reward_text_id: string;
+  tip_dialogue_id: string;
+  note: string;
+}
+
+/** SEARCH 가짜/진짜 후보. 진짜는 스텝당 최소 1 */
+export interface QuestSpotDef {
+  spot_id: string;
+  step_id: string;
+  sort_order: number;
+  is_real: boolean;
+  content_kind: string;
+  flavor_text_id: string;
+  weight: number;
+  place: string;
   note: string;
 }
 
@@ -925,6 +1026,15 @@ export interface PlayerState {
   rescuedAnimals: string[];
   /** 정화제 탄창 — 해금·감옥·습격이 같이 씀 */
   purifyAmmo: number;
+  /** 들판 루프 투척 — 흡착(얼룩) */
+  throwAdsorb: number;
+  throwAdsorbCap: number;
+  /** 들판 루프 투척 — 억제(벌레) */
+  throwInhibit: number;
+  throwInhibitCap: number;
+  /** 들판 루프 투척 — 원흉 처치제(희소 재산) */
+  throwCulprit: number;
+  throwCulpritCap: number;
   /** 36 — 소지 중인 정화 촉매 catalyst_id */
   heldCatalysts: string[];
   /** 36 — 지역 정화된 area_id */
@@ -935,4 +1045,19 @@ export interface PlayerState {
   purifiedProps: string[];
   /** 36 — Cozy식 원형 색 회복 거점(맵 마스크) */
   purifyFoci: PurifyFocus[];
+  /** 한 판 도전 남은 횟수 · 상한(원 수) */
+  purifyAttemptsLeft: number;
+  purifyAttemptCap: number;
+  /** 칸 클리어 기록 — 스크랩·도감과 다른 칸 */
+  areaClearRecords: AreaClearRecord[];
+}
+
+/** 한 칸을 닫은 시간 어택. 낮을수록 빠르다. */
+export interface AreaClearRecord {
+  areaId: string;
+  days: number;
+  unlucky: number;
+  mashOk: number;
+  mashSlow: number;
+  bestDays: number;
 }

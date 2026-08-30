@@ -4,6 +4,7 @@
 
 ## 읽는 순서
 
+0. **[XOOX 게임 색 SSoT](../../art/11_XOOX_CYBERPET_PALETTE.md)** — 로비·여정 아트는 여기 색상표 + 이 폴더 키비주얼
 1. [00_OVERVIEW.md](./00_OVERVIEW.md) — 시리즈 총괄
 2. [01_ART_STYLE.md](./01_ART_STYLE.md) — 톤·그림체
 3. [02_TAXONOMY.md](./02_TAXONOMY.md) — 종류별 분류

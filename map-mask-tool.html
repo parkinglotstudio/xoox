@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XOOX 맵 마스크 · Phase</title>
+    <style>
+      :root {
+        --bg: #0a0c10;
+        --panel: #141a22;
+        --line: #2a3544;
+        --text: #e8eef8;
+        --muted: #8a9bb0;
+        --accent: #2de0d0;
+        --ok: #6ddea0;
+        --err: #ff8f8f;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: "Pretendard", "Malgun Gothic", sans-serif; }
+      body { display: grid; grid-template-rows: auto auto 1fr; }
+      .bar {
+        display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+        padding: 10px 14px; background: var(--panel); border-bottom: 1px solid var(--line);
+      }
+      .bar h1 { margin: 0; font-size: 15px; font-weight: 800; letter-spacing: -0.02em; }
+      .bar .hint { color: var(--muted); font-size: 12px; max-width: 360px; }
+      .bar button, .bar select, .bar label {
+        border: 1px solid var(--line); background: #0e141c; color: var(--text);
+        border-radius: 8px; padding: 7px 12px; font-weight: 700; cursor: pointer; font-size: 12px;
+      }
+      .bar button.primary { background: #123a3a; border-color: #2de0d0; color: #dffcf8; }
+      .status { font-size: 12px; color: var(--muted); margin-left: auto; }
+      .status.ok { color: var(--ok); }
+      .status.err { color: var(--err); }
+      .phase-bar {
+        display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+        padding: 8px 14px; background: #0e141c; border-bottom: 1px solid var(--line);
+      }
+      .phase-bar::before {
+        content: "Phase";
+        font-size: 11px; font-weight: 800; color: var(--muted);
+        letter-spacing: 0.08em; text-transform: uppercase; margin-right: 4px;
+      }
+      .phase-btn {
+        border: 1px solid var(--line); background: #141a22; color: var(--text);
+        border-radius: 999px; padding: 6px 12px; font-weight: 700; cursor: pointer; font-size: 12px;
+      }
+      .phase-btn.on { border-color: var(--accent); background: #102828; color: #dffcf8; }
+      .workspace {
+        display: grid;
+        grid-template-columns: 220px 1fr 1fr 260px;
+        min-height: 0; height: 100%;
+      }
+      .col {
+        border-right: 1px solid var(--line); padding: 12px; overflow: auto;
+        display: flex; flex-direction: column; gap: 10px; min-width: 0;
+      }
+      .col h2 { margin: 0; font-size: 12px; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
+      .layer-btn {
+        display: flex; align-items: center; gap: 8px; width: 100%;
+        border: 1px solid var(--line); background: #0e141c; color: var(--text);
+        border-radius: 8px; padding: 8px 10px; font-weight: 700; cursor: pointer; text-align: left;
+      }
+      .layer-btn.on { border-color: var(--accent); background: #102828; }
+      .swatch { width: 14px; height: 14px; border-radius: 3px; flex: 0 0 auto; }
+      .stage {
+        background: #05080d; border: 1px solid var(--line); border-radius: 10px;
+        display: grid; place-items: center; padding: 10px; flex: 1; min-height: 280px;
+      }
+      canvas {
+        width: min(100%, 720px); height: auto; aspect-ratio: 1;
+        image-rendering: auto; background: #000; border-radius: 6px;
+        touch-action: none; cursor: crosshair;
+      }
+      #preview { cursor: default; }
+      .ref img {
+        width: 100%; border-radius: 8px; border: 1px solid var(--line); display: block;
+      }
+      .ref p { margin: 0; font-size: 11px; color: var(--muted); line-height: 1.45; }
+      #phaseChecklist {
+        margin: 0; padding-left: 18px; font-size: 11px; color: var(--text); line-height: 1.5;
+      }
+      #phaseChecklist li { margin-bottom: 4px; }
+      #cellGuide { font-size: 11px; color: var(--muted); line-height: 1.45; }
+      .cell-row { margin-bottom: 4px; }
+      .cell-row b { color: var(--accent); font-family: monospace; margin-right: 4px; }
+      input[type="range"] { width: 120px; }
+      label.chk { display: inline-flex; align-items: center; gap: 6px; }
+    </style>
+  </head>
+  <body>
+    <header class="bar">
+      <h1>맵 마스크</h1>
+      <a class="hint" href="/tools.html" style="color:var(--accent);text-decoration:none;font-weight:800">← 툴 허브</a>
+      <span class="hint" id="toolHint">walk = 작업 구역(타일). 밖 = 미니맵·숲/산. Phase로 순서 확인.</span>
+      <select id="sectorId" title="범위"></select>
+      <select id="previewMode" title="정화 톤 미리보기">
+        <option value="after">정화후 · 인상주의</option>
+        <option value="before_neon">정화전 1 · 네온</option>
+        <option value="before_veil">정화전 3 · 물빛 베일</option>
+      </select>
+      <label>브러시 <input id="brushSize" type="range" min="4" max="96" value="28" /> <span id="brushVal">28</span></label>
+      <label class="chk"><input id="erase" type="checkbox" /> 지우개</label>
+      <button type="button" id="btnLand">육지 레이어</button>
+      <button type="button" id="btnFillLand">선→면 채움</button>
+      <button type="button" id="btnClear">활성 레이어 비우기</button>
+      <button type="button" id="btnPreview">미리보기 갱신</button>
+      <button type="button" id="btnLoad">불러오기</button>
+      <button type="button" class="primary" id="btnSave">저장</button>
+      <span id="status" class="status">준비</span>
+    </header>
+    <div class="phase-bar" id="phaseBar" aria-label="마스크 Phase"></div>
+    <div class="workspace">
+      <aside class="col">
+        <h2>레이어</h2>
+        <div id="layerList"></div>
+        <p class="hint" id="layerHint" style="font-size:11px;color:var(--muted);margin:8px 0 0">
+          Phase에 맞는 레이어만 표시
+        </p>
+        <h2 style="margin-top:12px">이 Phase 체크</h2>
+        <ul id="phaseChecklist"></ul>
+      </aside>
+      <section class="col">
+        <h2>마스크 페인팅</h2>
+        <div class="stage"><canvas id="paint" width="1536" height="1536"></canvas></div>
+      </section>
+      <section class="col">
+        <h2>미리보기</h2>
+        <div class="stage"><canvas id="preview" width="1536" height="1536"></canvas></div>
+      </section>
+      <aside class="col ref">
+        <h2>9칸 구역 가이드</h2>
+        <div id="cellGuide"></div>
+        <h2 style="margin-top:12px">컨셉 참고 (선택 비교)</h2>
+        <img id="conceptRef" src="/map_mask_tool/refs/after_island_master_v4.png" alt="concept reference" />
+        <p id="conceptRefCap">
+          정화후 v4. 미리보기 드롭다운으로 전1·전3 전환. 나중에 하나로 확정.
+        </p>
+      </aside>
+    </div>
+    <script type="module" src="/src/mapMaskTool/main.ts"></script>
+  </body>
+</html>

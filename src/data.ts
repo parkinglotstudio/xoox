@@ -1,5 +1,5 @@
 import { loadCsv } from "./csv";
-import type { ArenaDef, GameData, ItemDef, PassiveItemDef, CurrencyDef } from "./types";
+import type { ArenaDef, GameData, ItemDef, PassiveItemDef, CurrencyDef, QuestStepKind } from "./types";
 
 const num = (v: string, fallback = 0) => (v === "" ? fallback : Number(v));
 const numOrNull = (v: string) => (v === "" ? null : Number(v));
@@ -99,6 +99,13 @@ export async function loadGameData(): Promise<GameData> {
     pathJudgmentRows,
     arenaRows,
     purifyAmmoCostRows,
+    culpritRows,
+    culpritCondRows,
+    culpritTalkRows,
+    islandRunRows,
+    questChainRows,
+    questStepRows,
+    questSpotRows,
   ] = await Promise.all([
     loadCsv("effect_config"),
     loadCsv("grade_config"),
@@ -163,6 +170,13 @@ export async function loadGameData(): Promise<GameData> {
     loadCsv("path_judgment_config"),
     loadCsv("arena_config"),
     loadCsv("purify_ammo_cost"),
+    loadCsv("culprit_config"),
+    loadCsv("culprit_cond_config"),
+    loadCsv("culprit_talk_config"),
+    loadCsv("island_run_config"),
+    loadCsv("quest_chain_config"),
+    loadCsv("quest_step_config"),
+    loadCsv("quest_spot_config"),
   ]);
 
   const items: ItemDef[] = itemsRaw.map((r) => ({
@@ -772,6 +786,93 @@ export async function loadGameData(): Promise<GameData> {
       lose_text: r.lose_text || "",
       note: r.note ?? "",
     })),
+    culprits: culpritRows.map((r) => ({
+      culprit_id: r.culprit_id,
+      area_id: r.area_id,
+      display_name: r.display_name || r.culprit_id,
+      first_line: r.first_line || "",
+      fail_kind: r.fail_kind === "circle_reset" ? "circle_reset" : "talk_retry",
+      difficulty: r.difficulty === "hard" ? "hard" : "easy",
+      loop_npc_id: r.loop_npc_id || "",
+      talk_fail_line: r.talk_fail_line || "",
+    })),
+    culpritConds: culpritCondRows.map((r) => ({
+      culprit_id: r.culprit_id,
+      cond_id: r.cond_id,
+      hud_label: r.hud_label || r.cond_id,
+      fill_kind: (r.fill_kind || "stain") as "stain" | "rescue" | "memory",
+    })),
+    culpritTalks: culpritTalkRows
+      .map((r) => ({
+        culprit_id: r.culprit_id,
+        step_order: num(r.step_order, 1),
+        prompt: r.prompt || "",
+        pass_label: r.pass_label || "",
+        fail_label: r.fail_label || "",
+        need_cond_id: (r.need_cond_id || "").trim(),
+        pass_line: r.pass_line || "",
+        fail_line: r.fail_line || "",
+      }))
+      .sort((a, b) => a.step_order - b.step_order),
+    islandRun: {
+      run_id: islandRunRows[0]?.run_id || "island_rainbow",
+      circle_count: Math.max(1, num(islandRunRows[0]?.circle_count, 10)),
+      attempt_count: Math.max(1, num(islandRunRows[0]?.attempt_count, 10)),
+    },
+    questChains: questChainRows.map((r) => ({
+      chain_id: r.chain_id || "",
+      area_id: r.area_id || "",
+      title: r.title || r.chain_id || "",
+      active: bool(r.active),
+      note: r.note ?? "",
+    })),
+    questSteps: questStepRows
+      .map((r) => {
+        const kind = (r.kind || "FILLER").trim().toUpperCase();
+        const known =
+          kind === "SEARCH" ||
+          kind === "CONTENT" ||
+          kind === "BRANCH" ||
+          kind === "APPLY_STAINS" ||
+          kind === "TINT" ||
+          kind === "INVADE" ||
+          kind === "CULPRIT"
+            ? kind
+            : "FILLER";
+        return {
+          step_id: r.step_id || "",
+          chain_id: r.chain_id || "",
+          stage: num(r.stage, 1),
+          sort_order: num(r.sort_order, 0),
+          enabled: (r.enabled || "").trim() === "" ? true : bool(r.enabled),
+          kind: known as QuestStepKind,
+          content_kind: (r.content_kind || "").trim(),
+          tint_step: num(r.tint_step, 0),
+          place: (r.place || "").trim().toLowerCase(),
+          hunt_count: Math.max(0, num(r.hunt_count, 0)),
+          title: r.title || r.step_id || "",
+          hud_label: r.hud_label || r.title || "",
+          receive_text_id: (r.receive_text_id || "").trim(),
+          prep_text_id: (r.prep_text_id || "").trim(),
+          reward_text_id: (r.reward_text_id || "").trim(),
+          tip_dialogue_id: (r.tip_dialogue_id || "").trim(),
+          note: r.note ?? "",
+        };
+      })
+      .sort((a, b) => a.sort_order - b.sort_order),
+    questSpots: questSpotRows
+      .map((r) => ({
+        spot_id: r.spot_id || "",
+        step_id: r.step_id || "",
+        sort_order: num(r.sort_order, 0),
+        is_real: bool(r.is_real),
+        content_kind: (r.content_kind || "").trim(),
+        flavor_text_id: (r.flavor_text_id || "").trim(),
+        weight: Math.max(1, num(r.weight, 1)),
+        place: (r.place || "").trim().toLowerCase(),
+        note: r.note ?? "",
+      }))
+      .sort((a, b) => a.sort_order - b.sort_order),
   };
 
   const covered = new Set(data.minigameEntries.map((e) => e.minigame_id));

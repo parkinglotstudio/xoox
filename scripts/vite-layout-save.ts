@@ -1,7 +1,7 @@
 /**
  * Vite dev middleware:
  * - POST /__layout_save  { path?, json } → data/ui/layout/*.json
- * - POST /__data_save     { path, text }  → data/*.csv (allowlist)
+ * - POST /__data_save     { path, text }  → data/*.csv (allowlist) · masks JSON
  * - POST /__play_log_save { file, text }  → data/dev_logs/play_*.txt
  * - POST /__play_log_wipe                 → play_*.txt 전부 삭제
  * - GET  /__play_log_list                 → 저장된 플레이 로그 목록
@@ -84,9 +84,19 @@ export function layoutSavePlugin(): Plugin {
             const rel = (body.path || "").replace(/^\/+/, "");
             const allowed =
               rel === "data/area_npc_config.csv" ||
-              (rel.startsWith("data/ui/layout/") && rel.endsWith(".json"));
+              rel === "data/area_prop_config.csv" ||
+              (rel.startsWith("data/ui/layout/") && rel.endsWith(".json")) ||
+              (rel.startsWith("data/map_mask_tool/masks/") && rel.endsWith(".json")) ||
+              (rel.startsWith("data/map_mask_tool/master/") && rel.endsWith(".json"));
             if (!allowed || rel.includes("..") || typeof body.text !== "string") {
               sendJson(res, 400, { ok: false, error: "path not allowed" });
+              return;
+            }
+            if (
+              (rel.startsWith("data/map_mask_tool/masks/") || rel.startsWith("data/map_mask_tool/master/")) &&
+              body.text.length > 40_000_000
+            ) {
+              sendJson(res, 400, { ok: false, error: "mask too large" });
               return;
             }
             const abs = resolve(server.config.root, rel);

@@ -36,6 +36,7 @@ export function clonePlayerState(s: PlayerState): PlayerState {
     purifiedBlights: [...s.purifiedBlights],
     purifiedProps: [...(s.purifiedProps ?? [])],
     purifyFoci: s.purifyFoci.map((f) => ({ ...f })),
+    areaClearRecords: (s.areaClearRecords ?? []).map((r) => ({ ...r })),
   };
 }
 

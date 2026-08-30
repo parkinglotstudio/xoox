@@ -107,9 +107,8 @@
         background: radial-gradient(circle at 40% 32%, #c8fff6, #2de0d0 58%, #0a5a54);
         box-shadow: 0 0 28px rgba(45, 224, 208, 0.75);
       }
-      .fire small {
-        display: block; font-size: 10px; font-weight: 700; opacity: 0.8;
-      }
+      .fire.hidden { display: none; }
+      .ammo.hidden { display: none; }
       .keys { font-size: 11px; color: var(--muted); text-align: center; }
       .keys b { color: var(--text); }
       .side {
@@ -174,14 +173,14 @@
   </head>
   <body>
     <div class="bar">
-      <h1>정화 습격 프로토</h1>
+      <h1>정화 습격 · 찾기 연습</h1>
       <a class="hint" href="/tools.html" style="color:var(--accent);text-decoration:none;font-weight:800">← 툴 허브</a>
       <select id="sectorSel" title="섹터"></select>
       <select id="artSel" title="정화 전/후">
         <option value="before" selected>before (오염)</option>
         <option value="after">after (정화후)</option>
       </select>
-      <button type="button" class="go" id="btnStart">습격 시작</button>
+      <button type="button" class="go" id="btnStart">찾기 시작</button>
       <button type="button" id="btnReset">리셋</button>
       <button type="button" id="btnDefaults">기본값</button>
       <button type="button" class="primary" id="btnSave">저장</button>
@@ -200,22 +199,22 @@
             <div class="banner" id="banner"></div>
             <div class="hud">
               <span id="hudWave">대기</span>
-              <span class="teal" id="hudTeal">청록 0%</span>
-              <span class="core" id="hudCore">거점 0%</span>
+              <span class="teal" id="hudTeal">정화 0</span>
+              <span class="core" id="hudCore">남은 0</span>
             </div>
-            <div class="ammo" title="탄약"><i id="ammoFill"></i></div>
-            <button type="button" class="fire" id="btnFire">발사<small>유탄 · 홀드</small></button>
+            <div class="ammo hidden" title="탄약"><i id="ammoFill"></i></div>
+            <button type="button" class="fire hidden" id="btnFire">발사<small>유탄 · 홀드</small></button>
           </div>
         </div>
         <div class="keys">
-          <b>W/S</b> 앞뒤 · <b>A/D</b> 시선 · <b>발사</b> 또는 <b>스페이스</b> 홀드 ·
-          미사일이 곡선으로 날아 착탄한다
+          <b>찾기 시작</b> 후 자동으로 다가가 던진다 · 사거리 기본 10m<br />
+          착탄 원(데칼 반지름) 안의 오염은 전부 정화된다
         </div>
       </div>
       <aside class="side">
         <div id="dials"></div>
         <div class="help">
-          본편 전투는 아직 안 붙인다. 여기서 손맛을 맞춘 뒤 이식한다.<br />
+          지금은 1단계: 제자리 오염을 자동으로 찾아 던진다. 맞추기는 자동.<br />
           저장 → <code>data/ui/layout/purify_raid_layout.json</code>
         </div>
       </aside>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XOOX 원흉 점구름</title>
+    <style>
+      :root {
+        --bg: #12141a; --panel: #1c212b; --line: #3a4454; --text: #e8eef8;
+        --muted: #9aa8bc; --accent: #5ec8ff; --ok: #6ddea0; --warn: #ffd27a;
+        --cyan: #0fbec7; --mag: #d158bc;
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0; height: 100%; background: var(--bg); color: var(--text);
+        font-family: "Pretendard", "Malgun Gothic", sans-serif;
+      }
+      body { display: grid; grid-template-rows: auto 1fr; }
+      .bar {
+        display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+        padding: 10px 14px; background: var(--panel); border-bottom: 1px solid var(--line);
+      }
+      .bar h1 { margin: 0; font-size: 15px; font-weight: 800; }
+      .bar .hint { color: var(--muted); font-size: 12px; }
+      .bar a { color: var(--accent); text-decoration: none; font-weight: 800; }
+      .status { font-size: 12px; color: var(--muted); margin-left: auto; }
+      .workspace { display: grid; grid-template-columns: 1fr 280px; min-height: 0; }
+      .stage-col {
+        min-width: 0; min-height: 0; display: flex; flex-direction: column;
+        background: #06080c; padding: 12px; gap: 8px;
+      }
+      .stage-host {
+        flex: 1; min-height: 0; display: grid; place-items: center;
+        container-type: size; overflow: hidden;
+      }
+      .stage-frame {
+        position: relative;
+        width: min(100cqw, calc(100cqh * 16 / 9));
+        height: min(100cqh, calc(100cqw * 9 / 16));
+        border: 2px solid #2f7ea8; border-radius: 10px; overflow: hidden;
+        background: #030d18;
+      }
+      #cloudCanvas { display: block; width: 100%; height: 100%; }
+      .hud {
+        position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%);
+        z-index: 3; padding: 7px 14px; border-radius: 999px;
+        background: rgba(6, 12, 18, 0.82); border: 1px solid rgba(15, 190, 199, 0.4);
+        font-size: 12px; font-weight: 700; color: #dff0ff; white-space: nowrap;
+      }
+      .keys { font-size: 11px; color: var(--muted); text-align: center; }
+      .keys b { color: var(--text); }
+      .side {
+        border-left: 1px solid var(--line); background: var(--panel);
+        padding: 12px; overflow: auto; display: flex; flex-direction: column; gap: 8px;
+      }
+      .side h2 {
+        margin: 6px 0 0; font-size: 11px; color: var(--muted);
+        text-transform: uppercase; letter-spacing: 0.06em;
+      }
+      .side button {
+        border: 1px solid var(--line); background: #11161f; color: var(--text);
+        border-radius: 8px; padding: 9px 12px; font-weight: 800; cursor: pointer;
+      }
+      .side button.primary { background: #1a4a63; border-color: #2f7ea8; color: #dff4ff; }
+      .side button.go { background: #164a3a; border-color: #0fbec7; color: #d8fff6; }
+      .side button.mag { background: #3a1834; border-color: #d158bc; color: #ffd6f4; }
+      .row { display: grid; gap: 3px; }
+      .row label {
+        font-size: 11px; color: var(--muted); display: flex;
+        justify-content: space-between; gap: 8px;
+      }
+      .row label b { color: var(--warn); font-variant-numeric: tabular-nums; }
+      .row input[type="range"] { width: 100%; accent-color: var(--accent); }
+      .help {
+        font-size: 11px; line-height: 1.5; background: #11161f; border: 1px solid var(--line);
+        border-radius: 8px; padding: 8px 10px; color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="bar">
+      <h1>원흉 점구름</h1>
+      <span class="hint">원 · 세모 · 네모 · 네 박자</span>
+      <a href="/tools.html">← 툴 허브</a>
+      <span class="status" id="status"></span>
+    </header>
+    <div class="workspace">
+      <div class="stage-col">
+        <div class="stage-host">
+          <div class="stage-frame">
+            <canvas id="cloudCanvas"></canvas>
+            <div class="hud" id="hudState">모임 — · 정화 —</div>
+          </div>
+        </div>
+        <p class="keys">마우스 <b>드래그</b> 회전 · <b>휠</b> 줌</p>
+      </div>
+      <aside class="side">
+        <h2>도형</h2>
+        <button type="button" id="btnCircle">동그라미 · 얼룩</button>
+        <button type="button" id="btnTriangle">세모 · 벌레</button>
+        <button type="button" id="btnSquare">네모 · 원흉</button>
+        <h2>연출 4박자</h2>
+        <button type="button" class="primary" id="btnGather">1 모으기</button>
+        <button type="button" class="mag" id="btnBlight">2 정화전</button>
+        <button type="button" class="go" id="btnPurify">3 정화후</button>
+        <button type="button" id="btnScatter">4 퍼지기</button>
+        <button type="button" id="btnRise">땅에서 올라오기</button>
+        <h2>점</h2>
+        <div class="row">
+          <label>개수 <b id="countVal">2400</b></label>
+          <input id="dialCount" type="range" min="200" max="12000" step="200" value="2400" />
+        </div>
+        <div class="row">
+          <label>크기 <b id="sizeVal">0.10</b></label>
+          <input id="dialSize" type="range" min="0.04" max="0.22" step="0.01" value="0.10" />
+        </div>
+        <p class="help">
+          동그라미=얼룩, 세모=벌레, 네모=원흉.
+          본편도 이 네 박자: 모으기 → 정화전 → 정화후 → 퍼지기.
+        </p>
+      </aside>
+    </div>
+    <script type="module" src="/src/tools/culpritCloudTool/main.ts"></script>
+  </body>
+</html>

@@ -11,5 +11,6 @@
     "noEmit": true,
     "strict": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/_bak_pre_portrait_v1"]
 }

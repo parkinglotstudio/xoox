@@ -1,6 +1,6 @@
 /**
  * 외출 시작 좌표.
- * 「여정의 시작」NPC가 있으면 그 자리. 없으면 부두 기본 스폰(코드 폴백).
+ * 「여정의 시작」NPC가 있으면 그 자리. 없으면 들판 기본 스폰(코드 폴백).
  */
 export type SpawnNpc = {
   npc_id: string;
@@ -10,9 +10,9 @@ export type SpawnNpc = {
   trigger_type: string;
 };
 
-/** area_i21 부두 공터 — 시작 NPC를 두지 않을 때 */
+/** area_i21 들판 남단 — 시작 NPC를 두지 않을 때 */
 const DEFAULT_SPAWN: Record<string, { xPct: number; yPct: number }> = {
-  area_i21: { xPct: 50, yPct: 92 },
+  area_i21: { xPct: 51.3, yPct: 75.9 },
 };
 
 export function startNpcInArea(npcs: SpawnNpc[], areaId: string): SpawnNpc | null {

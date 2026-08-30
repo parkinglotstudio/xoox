@@ -13,13 +13,13 @@ ui_combat_win,전투 승리
 ui_chip_exp,✨ EXP +{exp}
 ui_chip_gold,🪙 골드 +{gold}
 ui_levelup,Lv.{lv}로 상승했습니다.
-ui_levelup_heal,레벨업 시 HP 회복
-ui_chip_hp_heal,❤️ HP +{pct}%
+ui_levelup_heal,레벨업 시 숨 회복
+ui_chip_hp_heal,❤️ 숨 +{pct}%
 ui_miniboss_chest,정예를 처치하고 황금 보물상자를 발견했습니다.
 ui_chest_title,획득 성공
 ui_revive_down,격전 끝에 체력이 모두 소진되어 쓰러졌습니다...
 ui_revive_up,신화 스킬 [부활]이 발동하여 체력을 모두 회복하고 다시 일어섰습니다!
-ui_chip_full_heal,❤️ HP 100% 회복
+ui_chip_full_heal,❤️ 숨 100% 회복
 ui_finalboss_reward,탐욕의 근원을 정화해 오래된 기록을 회수했습니다.
 ui_branch_pick,“{label}” 선택
 ui_bet_win,{mine}이(가) 정확한 공격으로 {other}을(를) 쓰러뜨렸습니다. 당신이 베팅에서 이겼습니다.
@@ -36,11 +36,14 @@ ui_skill_sub,아래에서 기술을 선택하세요
 ui_btn_blessing,축복 선택
 ui_angel_title,천사의 축복
 ui_angel_sub,아래에서 하나를 선택하세요
-ui_btn_next,다음날
+ui_btn_next,정화 지역 찾기
+ui_btn_next_purify_area,정화 지역 찾기
 ui_btn_combat,전투
 ui_btn_combat_active,전투 중
 ui_btn_moving,이동 중
-ui_btn_pickup,줍기
+ui_btn_pickup,모으기
+ui_mash_press,연속으로 누르세요
+ui_mash_until,게이지가 끝날 때까지 모으셔야 됩니다.
 ui_btn_find,다가가기
 ui_find_hint,정화제 · {dir}
 ui_btn_learned_skills,학습한 스킬
@@ -71,7 +74,7 @@ ui_devil_banner,낯선 상인을 만났다!
 ui_devil_ask,거래하여 {hl}하시겠습니까?
 ui_devil_ask_hl,스킬 획득
 ui_devil_cost_max,MAX
-ui_devil_cost_hp,{n} HP 최대치 감소
+ui_devil_cost_hp,{n} 숨 최대치 감소
 ui_preview_refuse,거절
 ui_preview_accept,응하기
 ui_medusa_banner,녹슨 감시 카메라를 발견했다
@@ -89,10 +92,10 @@ ui_skillswap_title,스킬 선택
 ui_skillswap_none,교체할 스킬이 없습니다.
 ui_restart_btn,새 챕터 시작
 ui_stat_lv,LV
-ui_stat_atk,ATK
-ui_stat_def,DEF
+ui_stat_atk,흡착
+ui_stat_def,억제
 ui_stat_gold,GOLD
-ui_stat_hp_format,HP {hp}/{max}
+ui_stat_hp_format,숨 {hp}/{max}
 ui_reward_modal_title,보상
 ui_stage_turn,턴 {turn}
 ui_stage_player_hit,{name}에게 {dmg} 피해!
@@ -116,7 +119,7 @@ ui_stage_shield,SHD {cur}/{max}
 ui_stage_shield_gain,보호막 +{n}
 ui_stage_shield_absorb,보호막이 {n} 피해를 흡수!
 ui_stage_shield_break,보호막이 깨졌습니다!
-ui_stage_skill_heal,HP +{n}
+ui_stage_skill_heal,숨 +{n}
 ui_stage_enemy_blocked,{name}의 공격을 막았다!
 ui_stage_counter_hit,반격! {name}에게 {dmg} 피해
 ui_stage_turn_banner,— 턴 {turn} —

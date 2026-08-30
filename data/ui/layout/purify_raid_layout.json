@@ -1,7 +1,7 @@
 {
   "version": 1,
   "weapon_type": "missile",
-  "gun_range_m": 10,
+  "gun_range_m": 16,
   "gun_spread_deg": 8,
   "gun_ammo_per_sec": 2.4,
   "gun_ammo_max": 24,

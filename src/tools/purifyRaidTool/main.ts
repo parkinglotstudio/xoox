@@ -17,8 +17,8 @@ import {
   savePurifyRaidConfig,
   type PurifyRaidConfig,
 } from "../../stage/world3d/purifyRaidConfig";
-import { scatterProps } from "../../stage/world3d/scatter";
 import { loadActorSprite } from "../../stage/world3d/spriteSheet";
+import { csvRowToWorldProp } from "../../stage/world3d/propFromCsv";
 import type { Pillar, WorldNode } from "../../stage/world3d/types";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -85,6 +85,7 @@ let raidCfg: PurifyRaidConfig = { ...PURIFY_RAID_DEFAULTS };
 let viewCfg: Journey3DConfig | null = null;
 let scale: SectorScale = {};
 let npcRows: Row[] = [];
+let propRows: Row[] = [];
 let areaRows: Row[] = [];
 let areaId = "area_i21";
 let useAfterArt = false;
@@ -221,7 +222,7 @@ function applyHud(h: RaidHud) {
   if (h.phase === "warn") {
     hudWave.textContent = `예고 ${h.warnLeft.toFixed(1)}초`;
   } else if (h.phase === "fight") {
-    hudWave.textContent = `파 ${h.wave}/${h.waves} · ${h.alive}기`;
+    hudWave.textContent = `자동 · ${h.alive}기`;
   } else if (h.phase === "won") {
     hudWave.textContent = "승리";
   } else if (h.phase === "lost") {
@@ -229,8 +230,8 @@ function applyHud(h: RaidHud) {
   } else {
     hudWave.textContent = "대기";
   }
-  hudTeal.textContent = `청록 ${Math.round(h.tealPct)}%`;
-  hudCore.textContent = `거점 ${Math.round(h.core * 100)}%`;
+  hudTeal.textContent = `정화 ${h.purified}`;
+  hudCore.textContent = `남은 ${h.alive}`;
   ammoFill.style.width = `${Math.round(h.ammo * 100)}%`;
   compass.setMarks(raid?.blightBearings() ?? []);
   drawMini();
@@ -238,7 +239,11 @@ function applyHud(h: RaidHud) {
 
 function showBanner(phase: RaidPhase) {
   banner.classList.remove("on", "warn", "won", "lost");
-  if (phase === "warn") {
+  if (phase === "fight") {
+    banner.textContent = "자동으로 찾아 던진다 · 사거리 10m · 더 가까워도 던진다";
+    banner.classList.add("on", "warn");
+    window.setTimeout(() => banner.classList.remove("on"), 1600);
+  } else if (phase === "warn") {
     banner.textContent = "오염이 온다";
     banner.classList.add("on", "warn");
     window.setTimeout(() => {
@@ -262,6 +267,7 @@ function attachRaid() {
       onPhase: showBanner,
     },
     raidCfg,
+    { mode: "stillHunt" },
   );
   applyHud(raid.getHud());
 }
@@ -275,14 +281,9 @@ async function applySector(id: string) {
     stage.setNodes(nodes);
     if (viewCfg) {
       stage.setNodeHeightMul(viewCfg.node_height_mul);
-      stage.setProps([
-        ...stage.backgroundStickers(id),
-        ...scatterProps(
-          id,
-          viewCfg.prop_density,
-          nodes.map((n) => ({ xPct: n.xPct, yPct: n.yPct, rPct: 7 })),
-        ),
-      ]);
+      stage.setProps(
+        propRows.filter((r) => r.area_id === id).map((r) => csvRowToWorldProp(r)),
+      );
     }
     stage.setPlayer(50, 88, 0);
     lastX = 50;
@@ -348,17 +349,19 @@ function resize() {
 }
 
 async function boot() {
-  const [cfg, view, sc, npc, area] = await Promise.all([
+  const [cfg, view, sc, npc, props, area] = await Promise.all([
     loadPurifyRaidConfig(),
     loadJourney3DConfig(),
     loadScale(),
     loadCsv("area_npc_config"),
+    loadCsv("area_prop_config"),
     loadCsv("area_config"),
   ]);
   raidCfg = cfg;
   viewCfg = view;
   scale = sc;
   npcRows = npc;
+  propRows = props;
   areaRows = area;
 
   stage.applyConfig(view);
@@ -387,7 +390,7 @@ async function boot() {
     lastYaw = 0;
     compass.setYaw(0);
     raid?.start();
-    setStatus("습격 시작");
+    setStatus("찾기 · 제자리 오염");
   });
   $("btnReset").addEventListener("click", () => {
     raid?.reset();
@@ -447,17 +450,6 @@ async function boot() {
   fireBtn.addEventListener("lostpointercapture", () => fireOn(false));
   fireBtn.addEventListener("contextmenu", (e) => e.preventDefault());
 
-  window.addEventListener("keydown", (e) => {
-    const t = e.target as HTMLElement | null;
-    if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT")) return;
-    if (e.code !== "Space" && e.key !== " ") return;
-    e.preventDefault();
-    if (!e.repeat) fireOn(true);
-  });
-  window.addEventListener("keyup", (e) => {
-    if (e.code === "Space" || e.key === " ") fireOn(false);
-  });
-  window.addEventListener("blur", () => fireOn(false));
 
   await applySector(areaId);
   resize();

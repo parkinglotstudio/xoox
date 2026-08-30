@@ -11,6 +11,7 @@ import { BlightDirector } from "./BlightDirector";
 import { BlightWave } from "./BlightWave";
 import { GroundPaint } from "./GroundPaint";
 import type { JourneyStage3D } from "./JourneyStage3D";
+import { THROW_FORWARD_DEG } from "./StoneThrow";
 import { PurifyGun } from "./PurifyGun";
 import type { PurifyRaidConfig } from "./purifyRaidConfig";
 import { PURIFY_RAID_DEFAULTS } from "./purifyRaidConfig";
@@ -40,14 +41,27 @@ export interface PurifyRaidHooks {
   onPhase?: (phase: RaidPhase) => void;
 }
 
+export type RaidMode = "raid" | "stillHunt";
+
 export interface PurifyRaidOptions {
   /** true면 카메라·사거리·발사가 자동. 본편 기본. 툴은 끈다. */
   auto?: boolean;
+  /** stillHunt = 제자리 리젠 · 찾아서 던지기. raid = 기존 웨이브 */
+  mode?: RaidMode;
   learnedSkills?: string[];
   skillEffects?: SkillEffectRow[];
   tables?: RaidTables;
   tier?: string;
 }
+
+const STILL_HUNT = {
+  count: 8,
+  minR: 7,
+  maxR: 20,
+  regenSec: 1.05,
+  rangeM: 10,
+  walkMps: 2.8,
+};
 
 const CORE_R = 3.4;
 
@@ -70,9 +84,13 @@ export class PurifyRaid {
   private ring: THREE.Mesh;
   private bound = false;
   private auto = false;
+  private mode: RaidMode = "raid";
   private tables: RaidTables;
   private tier = "NORMAL";
   private coreHitAcc = 0;
+  private regenLeft = 0;
+  private huntTarget = STILL_HUNT.count;
+  private huntLock: { id: number } | null = null;
 
   constructor(
     private readonly stage: JourneyStage3D,
@@ -82,6 +100,7 @@ export class PurifyRaid {
   ) {
     this.cfg = cfg;
     this.auto = !!opts.auto;
+    this.mode = opts.mode ?? "raid";
     this.tables = opts.tables ?? emptyRaidTables();
     this.tier = opts.tier || "NORMAL";
     const spawn = stage.getPlayerWorld();
@@ -116,6 +135,7 @@ export class PurifyRaid {
     this.paint.setRadius(cfg.paint_radius_m);
     this.gun.applyConfig(cfg);
     this.wave.applyConfig(cfg);
+    this.stage.applyStoneThrowConfig(cfg);
   }
 
   setFiring(on: boolean): void {
@@ -128,8 +148,22 @@ export class PurifyRaid {
     this.coreX = p.x;
     this.coreZ = p.z;
     this.ring.position.set(this.coreX, 0.03, this.coreZ);
+    this.ring.visible = this.mode !== "stillHunt";
     this.wave.setCore(this.coreX, this.coreZ);
     this.pilot?.setCore(this.coreX, this.coreZ);
+    this.stage.applyStoneThrowConfig(this.cfg);
+    if (this.mode === "stillHunt") {
+      this.stage.setFrozen(true);
+      this.stage.setOnStoneLand((x, z) => this.onThrowLand(x, z));
+      this.wave.scatterAround(STILL_HUNT.count, STILL_HUNT.minR, STILL_HUNT.maxR);
+      this.regenLeft = 0;
+      this.huntTarget = STILL_HUNT.count;
+      this.huntLock = null;
+      this.phase = "fight";
+      this.hooks.onPhase?.("fight");
+      this.emit();
+      return;
+    }
     this.paint.stamp(this.coreX, this.coreZ, "teal", 1);
     this.phase = "warn";
     this.warnLeft = this.cfg.warn_sec;
@@ -138,6 +172,9 @@ export class PurifyRaid {
   }
 
   stop(): void {
+    this.stage.setOnStoneLand(null);
+    this.stage.setFrozen(false);
+    this.huntLock = null;
     this.wave.clear();
     this.phase = "idle";
     this.hooks.onPhase?.("idle");
@@ -145,12 +182,16 @@ export class PurifyRaid {
   }
 
   reset(): void {
+    this.stage.setOnStoneLand(null);
+    this.stage.setFrozen(false);
+    this.huntLock = null;
     this.wave.clear();
     this.paint.clear();
     this.gun.ammo = this.cfg.gun_ammo_max;
     this.gun.clear();
     this.core = 0;
     this.purified = 0;
+    this.regenLeft = 0;
     this.phase = "idle";
     this.hooks.onPhase?.("idle");
     this.emit();
@@ -182,6 +223,8 @@ export class PurifyRaid {
 
   dispose(): void {
     this.bindTick(false);
+    this.stage.setOnStoneLand(null);
+    this.stage.setFrozen(false);
     this.gun.onLaunch = null;
     this.wave.dispose();
     this.paint.dispose();
@@ -209,6 +252,10 @@ export class PurifyRaid {
 
   private tick(dt: number): void {
     this.vfx.tick(dt);
+    if (this.mode === "stillHunt") {
+      this.tickStillHunt(dt);
+      return;
+    }
     if (this.phase === "warn") {
       this.warnLeft -= dt;
       if (this.warnLeft <= 0) {
@@ -273,6 +320,64 @@ export class PurifyRaid {
     this.emit();
   }
 
+  private tickStillHunt(dt: number): void {
+    if (this.phase !== "fight") {
+      this.emit();
+      return;
+    }
+    this.wave.tick(dt);
+    if (this.wave.aliveCount < this.huntTarget) {
+      this.regenLeft -= dt;
+      if (this.regenLeft <= 0) {
+        const pos = this.wave.pickScatterPos(STILL_HUNT.minR, STILL_HUNT.maxR);
+        this.wave.spawnStationaryAt(pos.x, pos.z);
+        this.regenLeft = STILL_HUNT.regenSec;
+      }
+    } else {
+      this.regenLeft = STILL_HUNT.regenSec;
+    }
+    this.autoHunt(dt);
+    this.emit();
+  }
+
+  private autoHunt(dt: number): void {
+    if (this.stage.isThrowBusy()) return;
+    const units = this.wave.units;
+    if (!units.length) {
+      this.huntLock = null;
+      return;
+    }
+    const me = this.stage.getPlayerWorld();
+    if (!this.huntLock || !units.some((u) => u.id === this.huntLock?.id)) {
+      const next = nearestBlight(units, me.x, me.z);
+      if (!next) return;
+      this.huntLock = { id: next.id };
+    }
+    const lock = this.huntLock;
+    const target = lock ? units.find((u) => u.id === lock.id) : undefined;
+    if (!lock || !target) return;
+    this.stage.turnToward(target.x, target.z, dt);
+    const reach = Math.max(0.5, this.cfg.gun_range_m || STILL_HUNT.rangeM);
+    const dist = Math.hypot(target.x - me.x, target.z - me.z);
+    if (dist > reach) {
+      this.stage.nudgeToward(target.x, target.z, dt, STILL_HUNT.walkMps);
+      return;
+    }
+    if (!this.stage.inForwardCone(target.x, target.z, THROW_FORWARD_DEG)) return;
+    if (!this.stage.isThrowing()) this.stage.throwAt(target.x, target.z);
+  }
+
+  private onThrowLand(x: number, z: number): void {
+    if (this.mode !== "stillHunt" || this.phase !== "fight") return;
+    const r = Math.max(0.4, this.cfg.paint_radius_m);
+    const n = this.wave.hitSplash(x, z, r, 1, { stamp: false });
+    this.purified += n;
+    for (const d of this.wave.lastDeaths) this.vfx.play("death", d.x, d.z);
+    this.huntLock = null;
+    this.regenLeft = STILL_HUNT.regenSec;
+    this.emit();
+  }
+
   private emit(): void {
     this.hooks.onHud?.(this.snapshot());
   }
@@ -281,8 +386,8 @@ export class PurifyRaid {
     return {
       phase: this.phase,
       warnLeft: Math.max(0, this.warnLeft),
-      wave: this.director.currentWave,
-      waves: this.director.totalWaves,
+      wave: this.mode === "stillHunt" ? 0 : this.director.currentWave,
+      waves: this.mode === "stillHunt" ? 0 : this.director.totalWaves,
       alive: this.wave.units.length,
       core: this.core,
       tealPct: this.paint.tealRatioNear(this.coreX, this.coreZ, CORE_R) * 100,
@@ -291,6 +396,22 @@ export class PurifyRaid {
       firing: this.gun.isFiring(),
     };
   }
+}
+
+function nearestBlight(
+  units: { id: number; x: number; z: number }[],
+  x: number,
+  z: number,
+): { id: number; x: number; z: number } | null {
+  let best: { id: number; x: number; z: number } | null = null;
+  let bestD = Infinity;
+  for (const u of units) {
+    const d = Math.hypot(u.x - x, u.z - z);
+    if (d >= bestD) continue;
+    bestD = d;
+    best = u;
+  }
+  return best;
 }
 
 function makeCoreRing(): THREE.Mesh {

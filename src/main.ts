@@ -1,4 +1,4 @@
-﻿import "./style.css";
+import "./style.css";
 import { loadGameData } from "./data";
 import { installPlayLog, playLog } from "./dev/playLog";
 import {
@@ -10,7 +10,8 @@ import {
   type FailKind,
 } from "./dev/failFlow";
 import { mountToolsBar } from "./tools/mountToolsBar";
-import { applyJourneyHudLayout, clearJourneyHudLayout, loadJourneyHudLayout } from "./hud/journeyHudLayout";
+import { applyJourneyHudLayout, clearJourneyHudLayout, getCachedJourneyHudLayout, loadJourneyHudLayout, preloadJourneyHudLayout, RUNTIME_HUD_ASPECT } from "./hud/journeyHudLayout";
+import { shutterHold, shutterOpen } from "./stage/world3d/journeyEnterFx";
 import {
   createInitialState,
   rollIsCombat,
@@ -57,6 +58,8 @@ import {
   tuningStr,
   getStageMapForDay,
   getEffectiveCombatStats,
+  loopStatMods,
+  composeLoopHuntTune,
   getReviveHpPct,
   applyDayEvent,
   getDayEvent,
@@ -90,15 +93,21 @@ import {
   ammoSpendMsg,
   currentAmmoNeed,
   fillAmountForNode,
+  grantThrowMag,
+  refillThrowMags,
   spendPurifyAmmo,
+  spendThrowMag,
 } from "./dev/purifyAmmo";
 import { ExploreView, pillarForTrigger } from "./explore";
 import { Journey3DView } from "./stage/world3d/Journey3DView";
+import type { LoopContentKind } from "./stage/world3d/SectorPurifyLoop";
+import { listQuestSteps } from "./quest/questFlow";
+import { commitAreaClear, loopRunLive, loopRunNoteMash, loopRunNoteSkill, loopRunCanSkill } from "./quest/loopRun";
 import type { RaidHud } from "./stage/world3d/PurifyRaid";
 import { LobbyView } from "./lobby";
 import { setAppScene, bindSceneHost } from "./scene";
 import { randInt } from "./rng";
-import type { GameData, PlayerState, GradeDef, BranchDef, SkillDef, MinigameRewardRow, EnemySkillDef, PartyMemberDef, RescueAnimalDef, AreaNpcDef, PathJudgmentDef, PathTravelMode } from "./types";
+import type { GameData, PlayerState, GradeDef, BranchDef, SkillDef, MinigameRewardRow, EnemySkillDef, PartyMemberDef, RescueAnimalDef, AreaNpcDef, PathJudgmentDef, PathTravelMode, QuestStepDef } from "./types";
 import type { CombatSimResult } from "./engine";
 
 const app = document.getElementById("app")!;
@@ -117,9 +126,9 @@ app.innerHTML = `
       </div>
       <div class="day-roadmap" id="dayRoadmap"></div>
       <div class="shell-top-res" id="shellTopRes">
-        <div class="shell-top-chip shell-top-hp">
-          <span class="shell-top-ico" aria-hidden="true">❤</span>
-          <span class="shell-top-val" id="shellTopHp">0/0</span>
+        <div class="shell-top-chip shell-top-hp" title="섬 정화">
+          <span class="shell-top-ico" aria-hidden="true">◎</span>
+          <span class="shell-top-val" id="shellTopHp">0%</span>
         </div>
         <div class="shell-top-chip shell-top-gold">
           <span class="shell-top-ico" aria-hidden="true">💎</span>
@@ -129,6 +138,16 @@ app.innerHTML = `
     </header>
     <div class="game-row shell-body" id="gameRow">
     <div class="main-area" id="mainArea">
+    <div class="journey-seam" id="journeySeam" aria-hidden="true">
+      <svg class="journey-seam-svg" viewBox="0 0 200 72" preserveAspectRatio="none">
+        <!-- 아치 아래 완전 불투명 — 맵 구멍 차단 (stage3d-layer 안, 필러 아래) -->
+        <path
+          class="journey-seam-bowl"
+          d="M0,10 Q100,58 200,10 L200,72 L0,72 Z"
+          fill="#040c12"
+        />
+      </svg>
+    </div>
     <div class="visual-stage" id="visualStage">
       <div class="stage-sky" id="stageSky"></div>
       <div class="stage-skills" id="stageSkills"></div>
@@ -201,10 +220,41 @@ app.innerHTML = `
       <div class="title" id="shellActivityTitle"></div>
       <div class="sub" id="shellActivitySub"></div>
     </div>
+    <aside class="stage-filler feed" id="stageFeedThem" aria-label="상대 대사"></aside>
+    <aside class="stage-filler feed" id="stageFeedMe" aria-label="방랑자 대사"></aside>
     <aside class="shell-log" id="shellLog" aria-label="구조 로그">
-      <div class="shell-log-title">구조 로그</div>
       <div class="feed" id="feed"></div>
     </aside>
+    <!-- 시안 아치 라인 — shellLog와 같은 스택 · 필러(z45) 위 -->
+    <div class="journey-seam-line" id="journeySeamLine" aria-hidden="true">
+      <svg class="journey-seam-svg" viewBox="0 0 200 72" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="seamStroke" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="rgba(94,200,216,0)" />
+            <stop offset="14%" stop-color="rgba(94,200,216,0.85)" />
+            <stop offset="50%" stop-color="rgba(230,255,255,1)" />
+            <stop offset="86%" stop-color="rgba(94,200,216,0.85)" />
+            <stop offset="100%" stop-color="rgba(94,200,216,0)" />
+          </linearGradient>
+          <filter id="seamGlow" x="-10%" y="-80%" width="120%" height="260%">
+            <feGaussianBlur stdDeviation="1.4" result="b" />
+            <feMerge>
+              <feMergeNode in="b" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        <path
+          class="journey-seam-arc"
+          d="M2,12 Q100,56 198,12"
+          fill="none"
+          stroke="url(#seamStroke)"
+          stroke-width="3.2"
+          stroke-linecap="round"
+          filter="url(#seamGlow)"
+        />
+      </svg>
+    </div>
     </div>
     <div class="banner-overlay" id="bannerOverlay" style="display:none">
       <div class="banner-text" id="bannerText"></div>
@@ -411,6 +461,8 @@ const PET_HEAD_SVG = `<svg viewBox="0 0 44 40" class="intro-pet-svg" aria-hidden
 })();
 
 const feedEl = document.getElementById("feed")!;
+const stageFeedThemEl = document.getElementById("stageFeedThem")!;
+const stageFeedMeEl = document.getElementById("stageFeedMe")!;
 const dayRoadmap = document.getElementById("dayRoadmap")!;
 const currencyBar = document.getElementById("currencyBar")!;
 const bannerOverlay = document.getElementById("bannerOverlay")!;
@@ -547,6 +599,8 @@ let explore: ExploreView | null = null;
  */
 let journey3d: Journey3DView | null = null;
 let use3dView = true;
+/** 원흉 원에 처음 닿았을 때만 큰 미니맵 인트로 */
+const culpritMapIntroDone = new Set<string>();
 /** 무지개섬 로비 — docs/gdd/35 S1 */
 let lobby: LobbyView | null = null;
 /** 최상위 모드: 로비(집) / 여정(지금 메인 루프) */
@@ -564,9 +618,16 @@ let lastDayShown = 0;
 let combatPending: { tier: string; combatId?: string } | null = null;
 /** 3D 정화 습격 중 — 메인 버튼은 발사, 다음날 진행은 막는다 */
 let raidLive = false;
+/** 겨루기 연타 — 하단 필러 「모으기」에 붙인다 */
+let arenaMash: (() => void) | null = null;
 /** 여정 하단 버튼 — 다음날 / 다가가기 / 줍기 */
 type JourneyIdleAction = "next" | "find" | "pick";
 let journeyAction: JourneyIdleAction = "next";
+/** 정화 루프 후 — 룰렛 대신 다음 정화 노드로 걷는다 */
+let pendingNextPurifyArea = false;
+/** 이번 원 원흉 id · 조건 채움 (루프 한 판) */
+let loopCulpritId = "";
+const loopConds = new Set<string>();
 let rescuePending: RescueAnimalDef | null = null;
 /** 연출 화면 배경 이미지(data/xoox_stage_bg.png) 로드 성공 여부 — 성공 시 스테이지 배경으로 사용 */
 let stageBgLoaded = false;
@@ -786,6 +847,61 @@ function stageHeadline(text: string, max = 26): string {
 }
 
 let activityToastTimer = 0;
+let activityShowTimer = 0;
+const ROADMAP_FADE_MS = 380;
+const ACTIVITY_FADE_MS = 420;
+
+function isJourneyActivityShell(): boolean {
+  return phoneEl.dataset.scene === "journey";
+}
+
+function hideActivityToastCrossfade(toast: HTMLElement) {
+  window.clearTimeout(activityToastTimer);
+  window.clearTimeout(activityShowTimer);
+  toast.classList.remove("show");
+  const tag = toast.querySelector(".tag");
+  if (tag && tag.textContent !== "현재 활동") tag.textContent = "현재 활동";
+  if (isJourneyActivityShell()) {
+    activityToastTimer = window.setTimeout(() => {
+      dayRoadmap.classList.remove("roadmap-suppressed");
+    }, ACTIVITY_FADE_MS);
+  }
+}
+
+function showActivityToastCrossfade(toast: HTMLElement, duration: number) {
+  window.clearTimeout(activityToastTimer);
+  window.clearTimeout(activityShowTimer);
+
+  if (!isJourneyActivityShell()) {
+    toast.classList.add("show");
+    activityToastTimer = window.setTimeout(() => hideActivityToastCrossfade(toast), duration);
+    return;
+  }
+
+  toast.classList.remove("show");
+  dayRoadmap.classList.add("roadmap-suppressed");
+  activityShowTimer = window.setTimeout(() => {
+    toast.classList.add("show");
+    activityToastTimer = window.setTimeout(() => hideActivityToastCrossfade(toast), duration);
+  }, ROADMAP_FADE_MS);
+}
+
+function journeyAreaLabel(areaId?: string): string {
+  const id = areaId || explore?.areaId || journey3d?.areaId || spawnAreaId();
+  return data.areas.find((a) => a.area_id === id)?.display_name ?? "무지개섬";
+}
+
+/** 원흉 원 첫 도달: 가운데 큰 미니맵. 부두 입장에서는 안 띄운다. */
+async function playCulpritArriveSequence(areaId: string): Promise<void> {
+  if (!explore) return;
+  if (culpritMapIntroDone.has(areaId)) {
+    explore.showMinimapDocked();
+    return;
+  }
+  culpritMapIntroDone.add(areaId);
+  await explore.playCulpritMapIntro();
+  explore.showMinimapDocked();
+}
 
 function syncShellActivity(title?: string | null, subtitle?: string | null) {
   const actTitle = document.getElementById("shellActivityTitle");
@@ -805,28 +921,75 @@ function syncShellActivity(title?: string | null, subtitle?: string | null) {
     actSub.textContent = subtitle;
   }
   if (toast && (title != null || subtitle != null)) {
-    toast.classList.add("show");
-    window.clearTimeout(activityToastTimer);
-    activityToastTimer = window.setTimeout(() => toast.classList.remove("show"), changed ? 3200 : 2200);
+    toast.classList.remove("show");
+    const tagEl = toast.querySelector(".tag");
+    if (tagEl) tagEl.textContent = "현재 활동";
+    const duration = changed ? 3200 : 2200;
+    if (toast.classList.contains("show")) {
+      window.clearTimeout(activityToastTimer);
+      activityToastTimer = window.setTimeout(() => hideActivityToastCrossfade(toast), duration);
+    } else {
+      showActivityToastCrossfade(toast, duration);
+    }
   }
 }
 
 function syncPartyHud() {
   const hud = document.getElementById("partyHud");
   if (!hud) return;
-  const hpPct = Math.round((state.hp / Math.max(1, state.maxHp)) * 100);
+  const p = islandPurifyPct();
+  const left = state.purifyAttemptsLeft ?? 0;
+  const cap = state.purifyAttemptCap ?? data.islandRun?.attempt_count ?? 10;
+  const adsorb =
+    (state.throwAdsorbCap ?? 0) > 0 ? `${state.throwAdsorb ?? 0}/${state.throwAdsorbCap}` : "";
+  const inhibit =
+    (state.throwInhibitCap ?? 0) > 0 ? `${state.throwInhibit ?? 0}/${state.throwInhibitCap}` : "";
+  const culprit =
+    (state.throwCulpritCap ?? 0) > 0 ? `${state.throwCulprit ?? 0}/${state.throwCulpritCap}` : "";
+  const ammoBits = [
+    adsorb ? `<span class="party-ammo adsorb">흡착 ${adsorb}</span>` : "",
+    inhibit ? `<span class="party-ammo inhibit">퇴치 ${inhibit}</span>` : "",
+    culprit ? `<span class="party-ammo culprit">원흉 ${culprit}</span>` : "",
+    !adsorb && !inhibit && !culprit && (state.purifyAmmo ?? 0) > 0
+      ? `<span class="party-ammo">정화제 ${state.purifyAmmo}</span>`
+      : "",
+  ]
+    .filter(Boolean)
+    .join("");
+  const pipHtml = loopCulpritId
+    ? data.culpritConds
+        .filter((x) => x.culprit_id === loopCulpritId)
+        .map((cd) => {
+          const on = loopConds.has(cd.cond_id);
+          return `<span class="culprit-pip${on ? " on" : ""}">${cd.hud_label}</span>`;
+        })
+        .join("")
+    : "";
+  const PARTY_SKILL_SLOTS = 5;
+  const skills = state.learnedSkills
+    .map((id) => data.skills.find((s) => s.skill_id === id))
+    .filter((s): s is SkillDef => !!s)
+    .slice(0, PARTY_SKILL_SLOTS);
+  const skillHtml = Array.from({ length: PARTY_SKILL_SLOTS }, (_, i) => {
+    const s = skills[i];
+    if (!s) return `<span class="party-skill-ico is-empty" aria-hidden="true"></span>`;
+    return `<button type="button" class="party-skill-ico" title="${s.skill_name}">${s.icon || "✦"}</button>`;
+  }).join("");
   const mates = state.joinedPartyMembers
     .map((id) => data.partyMembers.find((m) => m.member_id === id))
     .filter((m): m is PartyMemberDef => !!m)
     .slice(0, 3);
   const selfCard = `
-    <div class="party-card self">
-      <div class="party-face">🦫</div>
-      <div class="party-meta">
-        <div class="party-name">모험가 (나)</div>
-        <div class="party-bar"><i style="width:${hpPct}%"></i></div>
-        <div class="party-stats">ATK ${formatStat(state.atk)} · DEF ${formatStat(state.def)}</div>
+    <div class="party-self-wrap">
+      <div class="party-card self">
+        <div class="party-face party-face-wanderer" aria-hidden="true"></div>
+        <div class="party-meta">
+          <div class="party-name">방랑자</div>
+          <div class="party-record">정화 ${p.done}/${p.total} · 도전 ${left}/${cap}</div>
+          <div class="party-ammo-row">${ammoBits}${pipHtml ? `<span class="culprit-pips">${pipHtml}</span>` : ""}</div>
+        </div>
       </div>
+      <div class="party-skills" title="배운 스킬" aria-label="배운 스킬">${skillHtml}</div>
     </div>`;
   const mateCards = mates
     .map(
@@ -835,13 +998,13 @@ function syncPartyHud() {
       <div class="party-face">${m.icon || "🐾"}</div>
       <div class="party-meta">
         <div class="party-name">${m.display_name}</div>
-        <div class="party-bar"><i style="width:100%"></i></div>
         <div class="party-stats">${m.description || m.note || ""}</div>
       </div>
     </div>`
     )
     .join("");
   hud.innerHTML = selfCard + mateCards;
+  hud.querySelector(".party-skills")?.addEventListener("click", () => openLearnedSkillsModal());
 }
 
 function syncShellAreaChip() {
@@ -1023,6 +1186,33 @@ function areaUnlocked(areaId: string): boolean {
   return !!areaId && state.purifiedAreas.includes(areaId);
 }
 
+const MAP_PEEK_TRIGGERS = new Set([
+  "PURIFY",
+  "BLIGHT",
+  "ARENA",
+  "NPC",
+  "MEMORY",
+  "MEMO",
+  "RESCUE",
+  "LOCATION",
+  "FILTER",
+  "DAILY",
+  "SKILL",
+  "TRACE",
+  "COMBAT",
+  "MINIBOSS",
+  "BOSS",
+  "REST",
+]);
+
+function peekJourneyMap(triggerType: string): void {
+  if (triggerType.toUpperCase() === "PURIFY") return;
+  if (!MAP_PEEK_TRIGGERS.has(triggerType.toUpperCase())) return;
+  if (!journey3d?.isOn() || !explore?.isMinimapMode()) return;
+  if (explore.isMinimapSuppressed()) return;
+  explore.peekMinimapContent(3000);
+}
+
 async function grantFillPickup(npc: {
   npc_id: string;
   label: string;
@@ -1034,27 +1224,57 @@ async function grantFillPickup(npc: {
   x_pct?: number;
   y_pct?: number;
 }): Promise<void> {
-  if (state.clearedNodes.includes(npc.npc_id)) return;
-  if (journey3d?.isOn()) {
+  const loopPickup = npc.npc_id.startsWith("loop_");
+  if (!loopPickup && state.clearedNodes.includes(npc.npc_id)) return;
+  if (!loopPickup) state.clearedNodes.push(npc.npc_id);
+  journey3d?.dismissPickup(npc.npc_id);
+  if (journey3d?.isOn() && !loopPickup) {
     const row = data.areaNpcs.find((n) => n.npc_id === npc.npc_id);
-    await journey3d.playPickupGather({
+    const mash = await journey3d.playPickupGather({
       label: `${npc.icon} ${npc.label}`,
       lookXPct: row?.x_pct ?? npc.x_pct ?? 50,
       lookYPct: row?.y_pct ?? npc.y_pct ?? 80,
     });
+    loopRunNoteMash(mash.sluggish);
   }
   const amount = fillAmountForNode(data, npc.trigger_type, npc.trigger_ref);
-  addPurifyAmmo(state, amount);
-  const areaId = npcAreaId(npc);
-  const have = state.purifyAmmo ?? 0;
-  const need = currentAmmoNeed(data, state, areaId);
-  const full = need > 0 && have >= need;
-  playLog("AMMO", "획득", ammoHaveMsg(have, need), `+${amount}`, npc.npc_id);
-  if (full) playLog("AMMO", "완료", ammoFullMsg(), `${have}/${need}`);
+  const kind = npc.trigger_type.toUpperCase();
+  let effectLines: string[];
+  if (kind === "CATALYST_ADSORB" || kind === "CATALYST_INHIBIT" || kind === "CATALYST_CULPRIT") {
+    const sink =
+      kind === "CATALYST_ADSORB" ? "THROW_ADSORB" : kind === "CATALYST_INHIBIT" ? "THROW_INHIBIT" : "THROW_CULPRIT";
+    const cap = ammoCost(data, sink, kind === "CATALYST_CULPRIT" ? 4 : 100);
+    grantThrowMag(state, sink, amount || (kind === "CATALYST_CULPRIT" ? 1 : Math.max(8, Math.round(cap * 0.4))), cap);
+    if (kind !== "CATALYST_CULPRIT") addPurifyAmmo(state, ammoCost(data, "CATALYST", 2));
+    const have =
+      kind === "CATALYST_ADSORB"
+        ? state.throwAdsorb
+        : kind === "CATALYST_INHIBIT"
+          ? state.throwInhibit
+          : state.throwCulprit;
+    const haveCap =
+      kind === "CATALYST_ADSORB"
+        ? state.throwAdsorbCap
+        : kind === "CATALYST_INHIBIT"
+          ? state.throwInhibitCap
+          : state.throwCulpritCap;
+    const label = kind === "CATALYST_ADSORB" ? "흡착 정화제" : kind === "CATALYST_INHIBIT" ? "억제 미립" : "원흉 처치제";
+    playLog("AMMO", "획득", label, `${have}/${haveCap}`, npc.npc_id);
+    effectLines = [`${label} ${have}/${haveCap} · 통에 쌓임`];
+  } else {
+    addPurifyAmmo(state, amount);
+    const areaId = npcAreaId(npc);
+    const have = state.purifyAmmo ?? 0;
+    const need = currentAmmoNeed(data, state, areaId);
+    const full = need > 0 && have >= need;
+    playLog("AMMO", "획득", ammoHaveMsg(have, need), `+${amount}`, npc.npc_id);
+    if (full) playLog("AMMO", "완료", ammoFullMsg(), `${have}/${need}`);
+    effectLines = full ? [ammoFullMsg(), `${have}/${need}`] : [ammoHaveMsg(have, need), `+${amount}`];
+  }
   renderCatalystHud();
   await appendCard({
     body: `[정화] ${npc.icon} ${npc.label}\n${npc.flavor_text || "정화제를 주웠다."}`,
-    effectLines: full ? [ammoFullMsg(), `${have}/${need}`] : [ammoHaveMsg(have, need), `+${amount}`],
+    effectLines,
     syncStage: false,
   });
 }
@@ -1091,6 +1311,7 @@ async function runMapNode(npc: {
   const ref = npc.trigger_ref;
   let cleared = false;
   playLog("NODE", "시작", npc.trigger_type, npc.npc_id, ref || "-", npc.label);
+  peekJourneyMap(npc.trigger_type);
 
   try {
     switch (npc.trigger_type) {
@@ -1261,6 +1482,127 @@ async function runMapNode(npc: {
         cleared = true;
         break;
       }
+      case "PURIFY": {
+        const areaId = npcAreaId(npc);
+        const row = data.areaNpcs.find((n) => n.npc_id === npc.npc_id);
+        const loopRow = data.culprits.find((c) => c.loop_npc_id === npc.npc_id);
+        if (loopRow && journey3d?.isOn()) {
+          if ((state.purifyAttemptsLeft ?? 0) <= 0) {
+            await appendCard({
+              body: "도전 횟수가 없다. 이번 판의 정화는 여기까지다.",
+              bodyLine2: `기록 ${islandPurifyPct().pct}%`,
+              mood: "sad",
+            });
+            cleared = false;
+            break;
+          }
+          state.purifyAttemptsLeft -= 1;
+          playLog("PURIFY", "원흉루프", npc.npc_id, loopRow.difficulty, `도전${state.purifyAttemptsLeft}`);
+          loopCulpritId = loopRow.culprit_id;
+          loopConds.clear();
+          renderCatalystHud();
+          await playCulpritArriveSequence(areaId || loopRow.area_id);
+          const loopArea = areaId || loopRow.area_id;
+          const loop = await journey3d.runSectorLoop({
+            questSteps: listQuestSteps(data, loopArea),
+            questSpots: data.questSpots,
+            onQuestText: (id) => appendQuestText(id),
+            onFiller: (id) => appendDialogue(id),
+            onContent: (kind, at) => playSectorLoopContent(kind, at),
+            onStainCleared: () => playStainPurifyFiller(),
+            onThrowSpend: (kind) => spendLoopThrow(kind),
+            huntTune: () => loopHuntTune(),
+            onCulprit: () => runCulpritTalk(),
+            onCondFill: (kind) => fillLoopCond(kind),
+            onBranch: (id) => playQuestBranch(id),
+            onActionReward: (step) => grantLoopActionReward(step),
+            onMashCollect: async (label, at) => {
+              if (!journey3d?.isOn()) return;
+              const me = journey3d.getPlayer();
+              const mash = await journey3d.playPickupGather({
+                label,
+                lookXPct: at?.xPct ?? me.xPct,
+                lookYPct: at?.yPct ?? me.yPct,
+              });
+              loopRunNoteMash(mash.sluggish);
+            },
+            onRunEnd: async (rec, line) => {
+              if (!state.areaClearRecords) state.areaClearRecords = [];
+              commitAreaClear(state.areaClearRecords, loopArea, rec);
+              playLog("LOOP", "기록", line);
+              await appendCard({ body: `[기록] ${line}`, bodyLine2: rec.unlucky ? `꽝 ${rec.unlucky}` : undefined });
+            },
+          });
+          loopCulpritId = "";
+          loopConds.clear();
+          renderCatalystHud();
+          if (!loop.won) {
+            cleared = false;
+            break;
+          }
+          if (areaId && !state.purifiedAreas.includes(areaId)) {
+            state.purifiedAreas.push(areaId);
+          }
+          if (!state.purifyFoci) state.purifyFoci = [];
+          if (areaId && !state.purifyFoci.some((f) => f.blightId === npc.npc_id)) {
+            const blight = data.purifyBlights.find((b) => b.blight_id === (row?.trigger_ref || ref));
+            state.purifyFoci.push({
+              blightId: npc.npc_id,
+              areaId,
+              xPct: row?.x_pct ?? 50,
+              yPct: row?.y_pct ?? 50,
+              radiusPct: blight?.reveal_radius_pct || 32,
+            });
+          }
+          if (journey3d?.isOn()) {
+            await journey3d.playPurifyRevealWave({
+              xPct: row?.x_pct ?? 50,
+              yPct: row?.y_pct ?? 50,
+            });
+          }
+          armNextPurifyButton(npc.npc_id);
+          renderCatalystHud();
+          explore?.refreshCurrentArea();
+          cleared = true;
+          break;
+        }
+        if (areaId && !state.purifiedAreas.includes(areaId)) {
+          state.purifiedAreas.push(areaId);
+        }
+        if (!state.purifyFoci) state.purifyFoci = [];
+        if (areaId && !state.purifyFoci.some((f) => f.blightId === npc.npc_id)) {
+          const blight = data.purifyBlights.find((b) => b.blight_id === (row?.trigger_ref || ref));
+          state.purifyFoci.push({
+            blightId: npc.npc_id,
+            areaId,
+            xPct: row?.x_pct ?? 50,
+            yPct: row?.y_pct ?? 50,
+            radiusPct: blight?.reveal_radius_pct || 32,
+          });
+        }
+        playLog("PURIFY", "발판", npc.npc_id, areaId || "-");
+        await appendCard({
+          body: `[정화] ${npc.icon} ${npc.label}\n${npc.flavor_text || "들판이 되살아난다."}`,
+          purifyBloom: true,
+          mood: "joy",
+          effectLines: ["지역이 열렸다"],
+          syncStage: false,
+        });
+        if (areaId) await fireDialogue("AREA_PURIFY", areaId);
+        await fireDialogueByPurify(islandPurifyPct().pct);
+        if (journey3d?.isOn()) {
+          const me = journey3d.getPlayer();
+          await journey3d.playPurifyRevealWave({
+            xPct: row?.x_pct ?? me.xPct,
+            yPct: row?.y_pct ?? me.yPct,
+          });
+        }
+        if (journey3d?.isOn()) armNextPurifyButton(npc.npc_id);
+        renderCatalystHud();
+        explore?.refreshCurrentArea();
+        cleared = true;
+        break;
+      }
       case "BLIGHT": {
         // AREA/LIFE: 정화제를 선불하고 그 자리 게이지를 녹인다. 턴 VS는 열지 않는다.
         const blight = data.purifyBlights.find((b) => b.blight_id === ref);
@@ -1397,7 +1739,11 @@ async function runMapNode(npc: {
           cleared = true;
           break;
         }
-        const go = await askRescueApproachOnNode(animal);
+        const row = data.areaNpcs.find((n) => n.npc_id === npc.npc_id);
+        const go = await askRescueApproachOnNode(
+          animal,
+          row ? { xPct: row.x_pct, yPct: row.y_pct } : undefined,
+        );
         if (!go) {
           playLog("RESCUE", "지나침", animal.animal_id, animal.name);
           // 지나치면 노드는 남는다 — 되돌아와 다시 시도할 수 있다
@@ -1520,27 +1866,12 @@ const scrapbookFab = document.getElementById("scrapbookFab")!;
 const scrapbookBadge = document.getElementById("scrapbookBadge")!;
 const catalystHud = document.getElementById("catalystHud")!;
 
-/** 정화제 탄창 HUD — 여정에서 항상 `정화제 획득 n/need` */
+/** 정화제·기록은 방랑자 카드에 합침 */
 function renderCatalystHud() {
   if (!data || !state) return;
-  if (appMode !== "journey") {
-    catalystHud.style.display = "none";
-    catalystHud.innerHTML = "";
-    return;
-  }
-  const areaId = explore?.areaId || "";
-  const have = state.purifyAmmo ?? 0;
-  const need = currentAmmoNeed(data, state, areaId);
-  const full = need > 0 && have >= need;
-  const title = full ? ammoFullMsg() : ammoHaveMsg(have, need);
-  const pct = need > 0 ? Math.min(100, Math.round((have / Math.max(1, need)) * 100)) : 0;
-  catalystHud.style.display = "flex";
-  catalystHud.innerHTML = `
-    <span class="ammo-chip${full ? " full" : ""}">
-      <span class="ammo-title">${title}</span>
-      ${full ? `<span class="ammo-frac">${have}/${need}</span>` : ""}
-      <span class="ammo-bar"><i style="width:${pct}%"></i></span>
-    </span>`;
+  catalystHud.style.display = "none";
+  catalystHud.innerHTML = "";
+  if (appMode === "journey") syncPartyHud();
 }
 
 /**
@@ -1654,6 +1985,33 @@ function renderDexInto(pane: HTMLElement) {
         `<div class="term-file-note">${m.note || compactEffectLabel(m)}</div>`;
     });
   });
+}
+
+/** 칸 클리어 기록 — 스크랩·도감과 다른 칸 */
+function renderClearRecordsInto(pane: HTMLElement) {
+  const rows = state.areaClearRecords ?? [];
+  if (!rows.length) {
+    pane.innerHTML = `<div class="lobby-term-stub">아직 닫은 칸이 없어요.\n들판을 정화하면 날·연타가 여기 남아요.</div>`;
+    return;
+  }
+  pane.innerHTML = `
+    <div class="term-journal">
+      <div class="term-journal-sec">
+        <div class="term-journal-h">칸 클리어 · ${rows.length}</div>
+        ${rows
+          .map((r) => {
+            const area = data.areas.find((a) => a.area_id === r.areaId);
+            const name = area?.display_name || r.areaId;
+            const best = r.bestDays < r.days ? ` · 최고 ${r.bestDays}날` : "";
+            return `<div class="term-journal-row ok">
+              <span>${name}</span>
+              <span class="term-journal-tag">${r.days}날 · 연타 ${r.mashOk}${best}</span>
+            </div>
+            <div class="term-journal-empty">이번 ${r.days}날 · 꽝 ${r.unlucky} · 느린 연타 ${r.mashSlow}</div>`;
+          })
+          .join("")}
+      </div>
+    </div>`;
 }
 
 /** S8 — 구조 일지: 성공 목록 + 아직 풀에 남은(재조우 가능) */
@@ -1782,10 +2140,9 @@ function initExplore() {
     },
     runNode: (npc) => runMapNode(npc),
   });
-  // 시작 구역 = 부두(남중 i21). CSV 첫 행이 스폰.
+  // 시작 구역 = 남쪽 들판 스폰(`area_config.is_spawn`).
   const startArea = data.areas.find((a) => a.is_spawn) ?? data.areas[0];
   if (startArea) explore.enter(startArea.area_id, { silent: true });
-  if (use3dView) initJourney3D(startArea?.area_id);
   (window as unknown as { __explore: () => void }).__explore = () => {
     if (!explore) return;
     if (explore.isOn()) {
@@ -1853,7 +2210,7 @@ function initExplore() {
     }
     explore.refreshCurrentArea({ animate: true });
   };
-  /** 첫 지역(부두) 정화 데모: 탐방 켜고 → 촉매 지급 → 웅덩이 정화 → 원형 색 회복 */
+  /** 첫 지역(들판) 정화 데모: 탐방 켜고 → 촉매 지급 → 웅덩이 정화 → 원형 색 회복 */
   (window as unknown as { __demoPurifyFirst: () => void }).__demoPurifyFirst = () => {
     if (!explore || !state || !data) return;
     if (appMode !== "journey") void enterJourney();
@@ -1897,6 +2254,7 @@ function initJourney3D(startAreaId?: string) {
     isNodeCleared: (id) => state.clearedNodes.includes(id),
     isNodeRevealed: (npc) => explore?.isRevealedAt(npc.area_id, npc.x_pct, npc.y_pct) ?? true,
     isAreaPurified: (areaId) => state.purifiedAreas.includes(areaId),
+    getPurifyFoci: () => state.purifyFoci ?? [],
     isPropPurified: (id) => (state.purifiedProps ?? []).includes(id),
     onPropPurified: (id) => {
       if (!state.purifiedProps) state.purifiedProps = [];
@@ -1918,9 +2276,36 @@ function initJourney3D(startAreaId?: string) {
       syncJourneyActionBtn();
     },
     onNearChange: () => syncJourneyActionBtn(),
+    onArenaMash: (hit, label) => {
+      arenaMash = hit;
+      if (hit) {
+        setMashBtn(label);
+        return;
+      }
+      if (mainBtn.classList.contains("mash")) {
+        setMainBtnLabel(ui("ui_btn_next"));
+        setMainBtnClass("idle");
+      }
+      syncFillerChrome();
+    },
+    mashPressHint: ui("ui_mash_press"),
+    mashUntilHint: ui("ui_mash_until"),
+    onAreaCross: (from, to, fromEdge) => {
+      explore?.enter(to, { fromEdge, silent: true });
+      const me = journey3d?.getPlayer();
+      if (me) explore?.syncFrom3D(me.xPct, me.yPct, me.yawDeg);
+      ensureChapterHeader(to);
+      void fireDialogue("AREA_ENTER", to);
+      playLog("AREA", "횡단", from, to);
+    },
+    onAreaShown: (areaId) => {
+      /* 부두 입장은 정화 원이 아님. 이름 펫말·자동 원 시작 없음. */
+      void areaId;
+    },
   });
 
   explore?.setMinimapMode(true);
+  explore?.suppressMinimap(true);
   if (startAreaId) void journey3d.enter(startAreaId);
 
   // 3D를 끄고 예전 탑뷰 단독으로 되돌리는 비상구
@@ -1945,33 +2330,59 @@ function initJourney3D(startAreaId?: string) {
 /**
  * 3D가 주연일 때 셸 배치를 갈아 끼운다.
  * 상단 마일스톤 → 좌하단, 헤더는 3D 위에 겹쳐 방위 띠가 가운데를 차지한다.
+ *
+ * HUD JSON은 비동기라서, 캐시가 있으면 view-3d 켜기 **전에** 먼저 입힌다.
+ * (아니면 기본 .view-3d CSS가 한 프레임 보이다가 배치가 튀는 FOUC)
  */
 function setView3dLayout(on: boolean) {
-  phoneEl.classList.toggle("view-3d", on);
   if (on) {
-    if (dayRoadmap.parentElement !== visualStage) visualStage.appendChild(dayRoadmap);
+    /* HUD %는 폰 기준 — 세로도 지도/로드맵을 폰에 올려 연출 칸 위에 겹친다 */
+    const portrait = phoneEl.classList.contains("shell-portrait");
+    const hudHost = portrait ? phoneEl : visualStage;
+    if (dayRoadmap.parentElement !== hudHost) hudHost.appendChild(dayRoadmap);
     dayRoadmap.classList.add("dock-bl");
-    void mountJourneyHudLayout();
+    explore?.setHost(hudHost);
+    const cached = getCachedJourneyHudLayout(RUNTIME_HUD_ASPECT);
+    if (cached) {
+      applyJourneyHudLayout(cached, phoneEl);
+      phoneEl.classList.remove("hud-awaiting-layout");
+      phoneEl.classList.add("view-3d");
+      explore?.enableMinimapTabShelf();
+    } else {
+      phoneEl.classList.add("hud-awaiting-layout");
+      phoneEl.classList.add("view-3d");
+      void mountJourneyHudLayout();
+    }
   } else {
+    phoneEl.classList.remove("view-3d", "hud-awaiting-layout");
     dayRoadmap.classList.remove("dock-bl");
     if (dayRoadmap.parentElement !== shellHeader) {
       shellHeader.insertBefore(dayRoadmap, shellTopRes);
     }
+    explore?.setHost(visualStage);
   }
 }
 
 async function mountJourneyHudLayout() {
   if (appMode !== "journey") return;
-  const hud = await loadJourneyHudLayout();
+  const hud = await loadJourneyHudLayout({ aspect: RUNTIME_HUD_ASPECT });
+  if (appMode !== "journey") return;
   applyJourneyHudLayout(hud, phoneEl);
+  phoneEl.classList.remove("hud-awaiting-layout");
+  explore?.enableMinimapTabShelf();
 }
 
 function syncExploreVisibility(_modeId?: string) {
   if (journey3d) {
     // 3D 뷰도 탑뷰와 같은 규칙으로 붙었다 떨어진다
     const on = appMode === "journey" && use3dView;
-    if (on) journey3d.show();
-    else journey3d.hide();
+    if (on) {
+      // 풀스크린 탐방이 3D 페이드 아래를 비치지 않게 — 미니맵만
+      explore?.setMinimapMode(true);
+      journey3d.show();
+    } else {
+      journey3d.hide();
+    }
     setView3dLayout(on);
   }
   if (!explore) return;
@@ -1983,6 +2394,7 @@ function syncExploreVisibility(_modeId?: string) {
   }
   // 여정 중: 모드와 무관하게 맵 유지 (BRANCH/SKILL/RESCUE/COMBAT 포함) — 연출은 오버랩
   if (appMode === "journey") {
+    if (use3dView) explore.setMinimapMode(true);
     if (!explore.isOn()) explore.show();
     visualStage.classList.add("explore-on");
     return;
@@ -2049,22 +2461,37 @@ async function enterJourney() {
 
   playLog("GAME", journeyBootstrapped ? "여정 복귀" : "여정 시작", `day${state?.day ?? 1}`);
 
+  if (!journeyBootstrapped) shutterHold(phoneEl);
+
   appMode = "journey";
+  if (use3dView) initJourney3D(explore?.areaId || spawnAreaId());
+  // HUD를 씬 전환보다 먼저 준비 — 기본 view-3d CSS가 한 프레임 비치는 FOUC 방지
+  await mountJourneyHudLayout();
   // 로비를 끄기 전에 여정 씬을 켠다(빈 깜빡임·이전 화면 비침 방지)
   setAppScene("journey");
   lobby?.hide();
+  // 이전 습격/스테이지 크롬이 로비→여정에 남지 않게
+  phoneEl.classList.remove("raid-live");
   islandBtn.style.display = "none";
   syncGotoLobbyBtn();
   renderScrapbookBadge();
   renderCatalystHud();
   syncExploreVisibility(currentStageModeId);
-  void mountJourneyHudLayout();
 
   if (!journeyBootstrapped) {
     journeyBootstrapping = true;
     islandBtn.style.display = "none";
     try {
-      setStageMode("IDLE");
+      const startId = explore?.areaId || spawnAreaId();
+      setStageMode("IDLE", {
+        title: journeyAreaLabel(startId),
+        subtitle: "",
+        remember: false,
+        clearLog: false,
+      });
+      if (journey3d && startId) await journey3d.enter(startId);
+      await shutterOpen(phoneEl);
+      if (journey3d) await journey3d.playEnterReveal();
       // 43 — 장 헤더 → 도착 카드 → 리더 대화 + 방랑자 독백
       ensureChapterHeader(spawnAreaId());
       await appendCard({ body: textFor(data, "t_hometown") });
@@ -2122,6 +2549,9 @@ function initLobby() {
     },
     onRenderJournal: (pane) => {
       renderJournalInto(pane);
+    },
+    onRenderClear: (pane) => {
+      renderClearRecordsInto(pane);
     },
     onRenderMap: (pane) => {
       renderMapInto(pane);
@@ -3080,7 +3510,10 @@ function awaitApproachChoice(
  * 옛 `presentRescueApproach`는 `finishTurn`을 불러 주사위 루프에 묶여 있어 노드에서 못 쓴다.
  * 여기서는 **결과만 돌려주고** 흐름은 `runMapNode`가 쥔다.
  */
-function askRescueApproachOnNode(animal: RescueAnimalDef): Promise<boolean> {
+function askRescueApproachOnNode(
+  animal: RescueAnimalDef,
+  at?: { xPct: number; yPct: number },
+): Promise<boolean> {
   return new Promise((resolve) => {
     const mk = (label: string, secondary: boolean) => {
       const b = document.createElement("button");
@@ -3089,17 +3522,18 @@ function askRescueApproachOnNode(animal: RescueAnimalDef): Promise<boolean> {
       b.textContent = label;
       return b;
     };
-    const approach = mk("🐾 다가가기", false);
-    const pass = mk("🚶 지나친다", true);
+    const approach = mk("다가가기", false);
+    const pass = mk("지나친다", true);
     const done = (v: boolean) => {
       choiceButtons.style.display = "none";
       choiceButtons.innerHTML = "";
-      mainBtn.style.display = "";
       setGaugesVisible(true);
+      syncFillerChrome();
       resolve(v);
     };
     approach.onclick = async () => {
       await playActivate(approach);
+      if (at && journey3d?.isOn()) await journey3d.walkToFillFront(at.xPct, at.yPct);
       done(true);
     };
     pass.onclick = async () => {
@@ -3124,8 +3558,8 @@ function presentRescueApproach(animal: RescueAnimalDef) {
     b.textContent = label;
     return b;
   };
-  const approach = mk("🐾 다가가기", false);
-  const pass = mk("🚶 지나친다", true);
+  const approach = mk("다가가기", false);
+  const pass = mk("지나친다", true);
   const cleanup = () => {
     choiceButtons.style.display = "none";
     choiceButtons.innerHTML = "";
@@ -3157,19 +3591,14 @@ function presentRescueApproach(animal: RescueAnimalDef) {
   slideIn(choiceButtons);
 }
 
-/** 리더 코멘터리 — 구조/전투/이벤트 순간에 Piper·Nashui·Olmas 반응을 로그에 한 줄 띄운다. */
+/** 리더 코멘터리 — 하단 필러 카드와 같은 형식으로. */
 async function appendCommentary(trigger: string) {
   const c = rollCommentary(data, trigger);
   if (!c) return;
-  const card = document.createElement("div");
-  card.className = "card commentary";
-  card.innerHTML =
-    `<span class="commentary-speaker">${c.icon} ${c.speaker}</span>` +
-    `<span class="commentary-line">${highlightKeywords(data, c.line)}</span>`;
-  feedEl.appendChild(card);
-  watchFeedCardGrowth(card, 600);
-  scrollFeedToBottom({ el: card, anticipatePx: 16 });
-  await sleep(300);
+  await appendCard({
+    body: `${c.speaker}\n${c.line}`,
+    syncStage: false,
+  });
 }
 
 /** 구조 조우 본편 — 인트로(힌트) → 최대 5턴 2지선다 → 성공(합류) / 실패(도주) */
@@ -3311,6 +3740,46 @@ function setMainBtnLabel(label: string, withDots = false) {
   } else {
     mainBtn.textContent = label;
   }
+}
+
+function setMashBtn(label?: string) {
+  const title = label || ui("ui_btn_pickup");
+  mainBtn.innerHTML =
+    `<span class="btn-main-label">${title}</span>` +
+    `<small class="btn-mash-hint">${ui("ui_mash_press")}</small>`;
+  setMainBtnClass("pick", "mash");
+  mainBtn.style.display = "";
+  mainBtn.disabled = false;
+}
+
+/** 선택·미니게임·원 루프 중에는 하단 필러에 「정화 지역 찾기」가 남으면 안 된다 */
+function fillerHeldByOverlay(): boolean {
+  if (choiceButtons.style.display === "flex") return true;
+  if (skillChoicePanel.style.display === "flex") return true;
+  if (minigamePanel.style.display === "flex") return true;
+  return false;
+}
+
+function syncFillerChrome() {
+  if (arenaMash || pendingMainAction) {
+    mainBtn.style.display = "";
+    return;
+  }
+  if (fillerHeldByOverlay()) {
+    mainBtn.style.display = "none";
+    mainBtn.disabled = true;
+    return;
+  }
+  if (pendingSkillChoice) {
+    mainBtn.style.display = "";
+    return;
+  }
+  if (journey3d?.isBusy()) {
+    mainBtn.style.display = "none";
+    mainBtn.disabled = true;
+    return;
+  }
+  mainBtn.style.display = "";
 }
 
 function playActivate(el: HTMLElement): Promise<void> {
@@ -3490,7 +3959,8 @@ function refreshStatbar() {
   const topHp = document.getElementById("shellTopHp");
   const topGold = document.getElementById("shellTopGold");
   if (topHp) {
-    topHp.textContent = `${formatStat(next.hp)}/${formatStat(state.maxHp)}`;
+    const rec = islandPurifyPct();
+    topHp.textContent = `${rec.pct}%`;
   }
   if (topGold && (first || next.gold <= prevStatSnap.gold)) {
     topGold.textContent = formatStat(next.gold);
@@ -3575,31 +4045,62 @@ function syncFeedBottomPad(extra = 0) {
   document.documentElement.style.setProperty("--controls-overlay-h", `${h}px`);
 }
 
+/** 3D 위 방랑자 칸은 펫말처럼 보임. 대사는 하단 필러만. */
+function talkPaneOn(): boolean {
+  return false;
+}
+
+type TalkSide = "them" | "me";
+
+function talkFeed(side: TalkSide = "them"): HTMLElement {
+  if (!talkPaneOn()) return feedEl;
+  return side === "me" ? stageFeedMeEl : stageFeedThemEl;
+}
+
+function feedHostFor(el?: HTMLElement | null): HTMLElement {
+  if (el && stageFeedThemEl.contains(el)) return stageFeedThemEl;
+  if (el && stageFeedMeEl.contains(el)) return stageFeedMeEl;
+  if (el && feedEl.contains(el)) return feedEl;
+  return feedEl;
+}
+
+function makeFillerChatWrap(): HTMLElement {
+  const wrap = document.createElement("div");
+  wrap.className = "filler-chat card";
+  wrap.style.background = "none";
+  wrap.style.border = "0";
+  wrap.style.padding = "0";
+  wrap.style.boxShadow = "none";
+  wrap.style.clipPath = "none";
+  return wrap;
+}
+
 /**
  * 최신 로그가 하단 버튼 위에 완전히 보이도록 스크롤.
  * 정렬 기준 = 하단 끝점 (채팅처럼 항상 바닥 고정).
  */
 function scrollFeedToBottom(opts?: { el?: HTMLElement | null; anticipatePx?: number }) {
   syncFeedBottomPad();
+  const host = feedHostFor(opts?.el ?? null);
   const target =
     opts?.el ??
-    (feedEl.lastElementChild instanceof HTMLElement ? feedEl.lastElementChild : null);
+    (host.lastElementChild instanceof HTMLElement ? host.lastElementChild : null);
   const anticipate = Math.max(0, opts?.anticipatePx ?? 0);
 
   const align = () => {
     syncFeedBottomPad();
     // 1) 먼저 바닥으로 (상단 창 확대로 clientHeight가 줄어도 하단 유지)
-    const maxScroll = Math.max(0, feedEl.scrollHeight - feedEl.clientHeight);
-    feedEl.scrollTop = maxScroll;
+    const maxScroll = Math.max(0, host.scrollHeight - host.clientHeight);
+    host.scrollTop = maxScroll;
     // 2) 타깃 카드가 패널 하단을 넘치면 추가 보정
     //    (가로 모드: 도크는 메인 영역만 덮으므로 채팅 패널엔 가림이 없음)
-    if (target && feedEl.contains(target)) {
-      const feedRect = feedEl.getBoundingClientRect();
+    if (target && host.contains(target)) {
+      const feedRect = host.getBoundingClientRect();
       const visibleBottom = feedRect.bottom;
       const tRect = target.getBoundingClientRect();
       const overflow = tRect.bottom + anticipate - visibleBottom;
       if (overflow > 0) {
-        feedEl.scrollTop += overflow + 10;
+        host.scrollTop += overflow + 10;
       }
     }
   };
@@ -3632,6 +4133,8 @@ function bindFeedLayoutGuards() {
     scrollFeedToBottom({ anticipatePx: 10 });
   });
   ro.observe(feedEl);
+  ro.observe(stageFeedThemEl);
+  ro.observe(stageFeedMeEl);
   ro.observe(visualStage);
   visualStage.addEventListener("transitionend", (e) => {
     if (e.propertyName === "height" || e.propertyName === "max-height") {
@@ -3685,21 +4188,487 @@ interface CardOptions {
    - 전투 요약   : 턴 로그가 상단 무대에만 있어 필러에 안 남았다
    ══════════════════════════════════════════════ */
 
-/** 방랑자 독백 — 박스 없는 한 줄. 하루를 쓰지 않는다(같은 날의 결) */
+/** 방랑자 독백 — 박스 없는 한 줄. 3D에서는 오른쪽(방랑자) 칸. */
 async function appendMonologue(line: string): Promise<void> {
   if (!line) return;
   const el = document.createElement("div");
   el.className = "filler-mono";
   el.innerHTML = highlightKeywords(data, line);
-  feedEl.appendChild(el);
+  talkFeed("me").appendChild(el);
   scrollFeedToBottom({ el, anticipatePx: 12 });
   await sleep(620);
+}
+
+function pickLoopText(prefix: string, fallback: string): { body: string; line2: string } {
+  const rows = (data.texts ?? []).filter((t) => t.text_id.startsWith(prefix) && t.body);
+  if (!rows.length) return { body: fallback, line2: "" };
+  const t = rows[Math.floor(Math.random() * rows.length)];
+  return { body: t.body, line2: t.body_line2 || "" };
+}
+
+let stainTalkI = 0;
+
+const STAIN_TEXTS = [
+  "t_i21_stain_a",
+  "t_i21_stain_b",
+  "t_i21_stain_c",
+  "t_i21_stain_d",
+  "t_i21_stain_e",
+  "t_i21_stain_f",
+];
+
+async function playStainPurifyFiller(): Promise<void> {
+  const i = stainTalkI++;
+  const tid = STAIN_TEXTS[i % STAIN_TEXTS.length];
+  const t = (data.texts ?? []).find((x) => x.text_id === tid);
+  await appendCard({
+    body: `[정화] ${t?.body || "얼룩이 걷혔다."}`,
+    bodyLine2: t?.body_line2 || undefined,
+    syncStage: false,
+  });
+}
+
+function spendLoopThrow(kind: "adsorb" | "inhibit" | "culprit"): boolean {
+  const breath = loopStatMods(data, state).breath;
+  const save = Math.min(
+    0.7,
+    (state.learnedSkills.includes("sk_cat_save") ? 0.35 : 0) + breath * 0.08,
+  );
+  const sink = kind === "adsorb" ? "THROW_ADSORB" : kind === "culprit" ? "THROW_CULPRIT" : "THROW_INHIBIT";
+  const ok = spendThrowMag(state, sink, kind === "culprit" ? 0 : save);
+  renderCatalystHud();
+  return ok;
+}
+
+/** 갈림길. A=빠름, B=느림. 실패가 아니라 길이만 바뀐다. */
+async function playQuestBranch(branchId: string): Promise<"A" | "B"> {
+  const br = data.branches.find((b) => b.branch_id === branchId);
+  const a = br?.option_a_label || "빨리 간다";
+  const b = br?.option_b_label || "한 바퀴 더";
+  await appendCard({ body: textFor(data, br?.text_id || "") || "길이 둘이다." });
+  const pick = await askLoopTwo(a, b);
+  const effectId = pick === "A" ? br?.option_a_effect_id : br?.option_b_effect_id;
+  if (effectId) {
+    const res = applyEffectId(data, state, effectId);
+    refreshStatbar();
+    await appendCard({
+      body: pick === "A" ? a : b,
+      effectLines: res.lines.length ? res.lines : [pick === "A" ? "지름길" : "우회 · 날은 간다"],
+    });
+  } else {
+    await appendCard({ body: pick === "A" ? a : b, effectLines: [pick === "A" ? "지름길" : "우회 · 날은 간다"] });
+  }
+  return pick;
+}
+
+function loopHuntTune() {
+  return composeLoopHuntTune(
+    {
+      range: state.learnedSkills.includes("sk_cat_range"),
+      stride: state.learnedSkills.includes("sk_cat_stride"),
+      spread: state.learnedSkills.includes("sk_cat_spread"),
+    },
+    loopStatMods(data, state),
+  );
+}
+
+function applyCatalystLoopSkill(skillId: string): void {
+  if (skillId === "sk_cat_stride") {
+    const tune = loopHuntTune();
+    journey3d?.boostMoveSpeed(tune.speedMul);
+  }
+  if (skillId === "sk_cat_refill") {
+    const breath = loopStatMods(data, state).breath;
+    refillThrowMags(state, 0.25 * (0.85 + breath * 0.15));
+    renderCatalystHud();
+  }
+}
+
+function pickCatalystSkills(count = 3): SkillDef[] {
+  const fresh = data.skills.filter(
+    (s) => s.skill_category === "CATALYST" && !s.is_upgrade && !state.learnedSkills.includes(s.skill_id),
+  );
+  const shuffled = [...fresh].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
+async function offerLoopSkill(): Promise<void> {
+  if (!loopRunCanSkill()) return;
+  const candidates = pickCatalystSkills(3);
+  const pool = candidates.length ? candidates : pickSkillChoices(data, state, "일반", 3);
+  if (!pool.length) {
+    loopRunNoteSkill();
+    await appendCard({ body: "익힐 게 더 남아 있지 않았다." });
+    return;
+  }
+  const chosen = await presentSkillChoice(ui("ui_btn_skill_choice"), ui("ui_skill_sub"), pool, true);
+  if (!chosen) return;
+  loopRunNoteSkill();
+  const got = applyLearnedSkill(chosen.skill_id);
+  applyCatalystLoopSkill(chosen.skill_id);
+  if (got) await presentSkillLearnedFeedback(got);
+}
+
+async function maybeOfferLoopLuckSkill(): Promise<void> {
+  if (!loopRunLive() || !loopRunCanSkill()) return;
+  await appendQuestText("t_q_skill_luck");
+  await offerLoopSkill();
 }
 
 /**
  * 43 S2 — **트리거로** 대화를 찾는다. 코드에 dialogue_id를 박지 않는다.
  * 같은 트리거가 여러 묶음이면 조건이 맞는 첫 묶음 하나만 나온다.
  */
+async function playSectorLoopContent(
+  kind: LoopContentKind,
+  at?: { xPct: number; yPct: number },
+): Promise<void> {
+  playLog("LOOP", kind);
+  const xPct = at?.xPct ?? journey3d?.getPlayer().xPct ?? 50;
+  const yPct = at?.yPct ?? journey3d?.getPlayer().yPct ?? 50;
+
+  if (kind === "catalyst") {
+    const flavor = pickLoopText("t_i21_catalyst_", "앞에 시안 방울이 맺혀 있다. 흡착 정화제다.");
+    await grantFillPickup({
+      npc_id: "loop_i21_adsorb",
+      label: "흡착 정화제",
+      icon: "💧",
+      trigger_type: "CATALYST_ADSORB",
+      trigger_ref: "",
+      flavor_text: flavor.body,
+      x_pct: xPct,
+      y_pct: yPct,
+    });
+    return;
+  }
+
+  if (kind === "inhibit") {
+    const flavor = pickLoopText("t_i21_inhibit_", "앞에 분홍 점이 맺혀 있다. 억제 미립이다.");
+    await grantFillPickup({
+      npc_id: "loop_i21_inhibit",
+      label: "억제 미립",
+      icon: "🌸",
+      trigger_type: "CATALYST_INHIBIT",
+      trigger_ref: "",
+      flavor_text: flavor.body,
+      x_pct: xPct,
+      y_pct: yPct,
+    });
+    return;
+  }
+
+  if (kind === "life") {
+    const go = await askRescueApproachOnNode(
+      {
+        animal_id: "a_loop_mongchi",
+        type: "DOG",
+        name: "뭉치",
+        icon: "🐕",
+        stage_map_id: "map_1",
+        liked_tags: ["GENTLE"],
+        disliked_tags: ["BOLD"],
+        hint_text: "정화된 얼룩 자리에 작은 개가 웅크리고 있다.",
+        purify_goal: 75,
+        max_turns: 5,
+        reward_member_id: "mem_mongchi",
+        reencounter_chance: 0,
+        gold: 0,
+        exp: 0,
+        note: "들판 루프",
+      },
+      { xPct, yPct },
+    );
+    if (!go) {
+      await appendCard({ body: "🐕 뭉치를 지나쳤다. 원은 아직 여기다.", mood: "sad" });
+      return;
+    }
+    const animal = data.rescueAnimals.find((a) => a.animal_id === "a_dog_shy");
+    const grantSrc = animal
+      ? { ...animal, animal_id: "a_loop_mongchi", name: "뭉치", icon: "🐕", reward_member_id: "mem_mongchi" }
+      : null;
+    if (grantSrc) {
+      const res = grantRescueReward(data, state, grantSrc);
+      if (res?.member) {
+        fillLoopCond("rescue");
+        await showPetAcquiredModal(res.member);
+        await appendCard({
+          body: "🐕 뭉치가 따라온다. 정화된 자리에서 깨어난 아이다.",
+          mood: "joy",
+          effectLines: [res.member.description],
+        });
+      }
+    }
+    return;
+  }
+
+  if (kind === "filter") {
+    addPurifyAmmo(state, fillAmountForNode(data, "FILTER", ""));
+    renderCatalystHud();
+    await resolveGradeFindNode(
+      { icon: "💧", flavor_text: pickLoopText("t_i21_filter_", "").line2 || "손으로 걸러 보았다. 무엇이 남을까." },
+      "FILTER",
+      { skipLead: true },
+    );
+    return;
+  }
+
+  if (kind === "trace") {
+    await resolveGradeFindNode(
+      { icon: "🕸", flavor_text: pickLoopText("t_i21_trace_", "").line2 || "누가 두고 간 흔적이었다." },
+      "TRACE",
+      { skipLead: true },
+    );
+    return;
+  }
+
+  if (kind === "daily") {
+    await resolveGradeFindNode(
+      { icon: "🌤", flavor_text: pickLoopText("t_i21_daily_", "").line2 || "오늘만의 작은 일이 발치에 떨어져 있었다." },
+      "DAILY",
+      { skipLead: true },
+    );
+    return;
+  }
+
+  if (kind === "commentary") {
+    return;
+  }
+
+  if (kind === "branch") {
+    await playQuestBranch("br_i21_king");
+    return;
+  }
+
+  if (kind === "skill") {
+    await offerLoopSkill();
+    return;
+  }
+
+  if (kind === "memory") {
+    const areaId = journey3d?.areaId || explore?.areaId || "";
+    const mem =
+      data.tigonMemories.find((m) => m.unlock_value === areaId) ??
+      data.tigonMemories.find((m) => m.memory_id === "mem_i21_loop") ??
+      data.tigonMemories[0];
+    if (!mem) {
+      await appendCard({ body: "조각이 없었다." });
+      return;
+    }
+    if (!state.collectedMemories.includes(mem.memory_id)) state.collectedMemories.push(mem.memory_id);
+    renderScrapbookBadge();
+    fillLoopCond("memory");
+    grantThrowMag(state, "THROW_CULPRIT", 1, ammoCost(data, "THROW_CULPRIT", 4));
+    renderCatalystHud();
+    await appendCard({
+      body: mem.scenario_text,
+      mood: "joy",
+      effectLines: [
+        `기억 조각 ${state.collectedMemories.length}/${Math.max(1, data.tigonMemories.length)}`,
+        `원흉 처치제 ${state.throwCulprit}/${state.throwCulpritCap}`,
+      ],
+    });
+    if (mem.reactor && mem.reaction_text) {
+      await appendCard({ body: `— ${mem.reactor}: ${mem.reaction_text}` });
+    }
+    return;
+  }
+
+  if (kind === "memo") {
+    const p = islandPurifyPct();
+    await appendCard({
+      body: "[탐구] 전망\n이 원에서 본 섬의 숨이다.",
+      effectLines: [`섬 정화도 ${p.pct}% (${p.done}/${p.total})`],
+    });
+    return;
+  }
+
+  if (kind === "location") {
+    const loc = data.locations.find((l) => l.location_id === "loc_i21_loop");
+    const lines = textLinesFor(data, loc?.text_id || "t_i21_loc");
+    const effectLines = loc?.linked_effect_id ? applyEffectId(data, state, loc.linked_effect_id).lines : [];
+    refreshStatbar();
+    await appendCard({
+      body: `[탐구] 📍 ${loc?.name || "숨은 배수로"}\n${lines.line1 || "원 가장자리에 숨은 길이 있다."}`,
+      bodyLine2: lines.line2,
+      effectLines,
+    });
+    return;
+  }
+
+  if (kind === "npc") {
+    return;
+  }
+
+  if (kind === "rest") {
+    const res = applyEffectId(data, state, "e_hp30");
+    refreshStatbar();
+    const card = pickLoopText("t_i21_rest_", "[쉼] 숨 고르기");
+    await appendCard({
+      body: card.body,
+      bodyLine2: card.line2 || undefined,
+      effectLines: res.lines,
+    });
+    return;
+  }
+
+  if (kind === "rescue") {
+    const areaId = journey3d?.areaId || explore?.areaId || "";
+    const preferId = areaId === "area_i11" ? "a_cat_lazy" : "a_dog_shy";
+    const animal =
+      data.rescueAnimals.find((a) => a.animal_id === preferId && !state.rescuedAnimals.includes(a.animal_id)) ??
+      data.rescueAnimals.find((a) => a.animal_id === "a_dog_shy" && !state.rescuedAnimals.includes(a.animal_id)) ??
+      data.rescueAnimals.find((a) => !state.rescuedAnimals.includes(a.animal_id));
+    if (!animal) {
+      await appendCard({ body: "[구조] 이 원에서 더 만날 아이는 없다." });
+      return;
+    }
+    const go = await askRescueApproachOnNode(animal, at);
+    if (!go) {
+      await appendCard({
+        body: `${animal.icon} ${animal.name}을(를) 지나쳤다. 원은 아직 여기다.`,
+        mood: "sad",
+      });
+      return;
+    }
+    await playRescueEncounter(animal);
+    if (state.rescuedAnimals.includes(animal.animal_id)) fillLoopCond("rescue");
+    mainBtn.style.display = "";
+    mainBtn.disabled = true;
+    setGaugesVisible(true);
+    return;
+  }
+
+  if (kind === "life2") {
+    const animal =
+      data.rescueAnimals.find((a) => a.animal_id === "a_dog_pup" && !state.rescuedAnimals.includes(a.animal_id)) ??
+      data.rescueAnimals.find((a) => a.animal_id === "a_cat_kitten" && !state.rescuedAnimals.includes(a.animal_id)) ??
+      data.rescueAnimals.find((a) => !state.rescuedAnimals.includes(a.animal_id));
+    if (!animal) {
+      await appendCard({ body: "[구조] 이 원에서 더 만날 아이는 없다." });
+      return;
+    }
+    const go = await askRescueApproachOnNode(animal, at);
+    if (!go) {
+      await appendCard({
+        body: `${animal.icon} ${animal.name}을(를) 지나쳤다. 원은 아직 여기다.`,
+        mood: "sad",
+      });
+      return;
+    }
+    await playRescueEncounter(animal);
+    if (state.rescuedAnimals.includes(animal.animal_id)) fillLoopCond("rescue");
+    mainBtn.style.display = "";
+    mainBtn.disabled = true;
+    setGaugesVisible(true);
+    return;
+  }
+
+  if (kind === "daily_jackpot") {
+    await presentGradeById("g_jackpot");
+    return;
+  }
+  if (kind === "daily_mid") {
+    await presentGradeById("g_mid");
+    return;
+  }
+  if (kind === "daily_bad") {
+    await presentGradeById("g_bad");
+    return;
+  }
+  if (kind === "minigame_gold") {
+    await runMinigame("mg_lucky_treasure");
+    return;
+  }
+  if (kind === "minigame_square" || kind === "minigame_myth" || kind === "minigame_dig" || kind === "minigame_circle") {
+    return;
+  }
+  if (kind === "arena") {
+    const arena = data.arenas.find((a) => a.arena_id === "arena_clock_scrap");
+    if (arena && journey3d?.isOn()) await journey3d.runArena(arena);
+    else await appendCard({ body: "쓸 만한 폐기물이 길을 막아, 그 자리에서 겨루게 되었다." });
+    return;
+  }
+}
+
+function askLoopTwo(labelA: string, labelB: string): Promise<"A" | "B"> {
+  return new Promise((resolve) => {
+    journey3d?.setHeadStatus("선택", "고르는중");
+    const mk = (label: string, secondary: boolean) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "choice-btn shell-btn" + (secondary ? " secondary" : "");
+      b.textContent = label;
+      return b;
+    };
+    const a = mk(labelA, false);
+    const b = mk(labelB, true);
+    const done = (v: "A" | "B") => {
+      choiceButtons.style.display = "none";
+      choiceButtons.innerHTML = "";
+      setGaugesVisible(true);
+      syncFillerChrome();
+      journey3d?.setHeadChoice(v === "A" ? labelA : labelB);
+      resolve(v);
+    };
+    a.onclick = async () => {
+      await playActivate(a);
+      done("A");
+    };
+    b.onclick = async () => {
+      await playActivate(b);
+      done("B");
+    };
+    choiceButtons.innerHTML = "";
+    choiceButtons.appendChild(a);
+    choiceButtons.appendChild(b);
+    choiceButtons.style.display = "flex";
+    mainBtn.style.display = "none";
+    setGaugesVisible(false);
+    slideIn(choiceButtons);
+  });
+}
+
+function fillLoopCond(kind: "stain" | "rescue" | "memory"): void {
+  if (!loopCulpritId) return;
+  for (const c of data.culpritConds.filter((x) => x.culprit_id === loopCulpritId && x.fill_kind === kind)) {
+    loopConds.add(c.cond_id);
+  }
+  renderCatalystHud();
+}
+
+async function runCulpritTalk(): Promise<"pass" | "abort"> {
+  const areaId = journey3d?.areaId || explore?.areaId || "";
+  const c = data.culprits.find((x) => x.area_id === areaId);
+  if (!c) return "pass";
+  await appendCard({
+    body: `[원흉] ${c.display_name}\n${c.first_line}`,
+    syncStage: false,
+  });
+  const steps = data.culpritTalks.filter((t) => t.culprit_id === c.culprit_id);
+  for (const step of steps) {
+    while (true) {
+      await appendCard({ body: step.prompt, syncStage: false });
+      const pick = await askLoopTwo(step.pass_label, step.fail_label);
+      const has = !step.need_cond_id || loopConds.has(step.need_cond_id);
+      if (pick === "A" && has) {
+        if (step.pass_line) {
+          await appendCard({ body: step.pass_line, mood: "joy", syncStage: false });
+        }
+        break;
+      }
+      const failBody = step.fail_line || c.talk_fail_line || "말이 닫혔다.";
+      await appendCard({ body: failBody, mood: "sad", syncStage: false });
+      if (c.fail_kind !== "talk_retry") {
+        if (c.talk_fail_line && c.talk_fail_line !== failBody) {
+          await appendCard({ body: c.talk_fail_line, mood: "sad", syncStage: false });
+        }
+        return "abort";
+      }
+    }
+  }
+  return "pass";
+}
+
 const firedDialogues = new Set<string>();
 async function fireDialogue(trigger: string, ref?: string): Promise<void> {
   const rows = (data.dialogues ?? []).filter(
@@ -3725,34 +4694,54 @@ async function fireDialogueByPurify(pct: number): Promise<void> {
   }
 }
 
-/** 리더 채팅 — dialogue_config의 한 묶음을 순서대로 흘린다 */
+/** 퀘스트 필러 — 화자 이름 없이 상황 카드만 */
+async function appendQuestText(textId: string): Promise<void> {
+  if (!textId) return;
+  const lines = textLinesFor(data, textId);
+  if (!lines.line1) return;
+  await appendCard({
+    body: lines.line1,
+    bodyLine2: lines.line2 || undefined,
+    scramble: true,
+    syncStage: false,
+  });
+}
+
+/** 리더 채팅 — 방랑자(ME)만 상단 오른쪽. 나머지는 하단 필러 카드. */
 async function appendDialogue(dialogueId: string): Promise<void> {
   const lines = (data.dialogues ?? []).filter((d) => d.dialogue_id === dialogueId);
   if (!lines.length) return;
+  const split = talkPaneOn();
   let wrap: HTMLElement | null = null;
+  let wrapMe: HTMLElement | null = null;
   for (const d of lines) {
     if (d.style === "MONO") {
-      wrap = null; // 독백이 끼면 말풍선 묶음을 끊는다
+      wrap = null;
+      wrapMe = null;
       await appendMonologue(d.line);
       continue;
     }
-    if (!wrap) {
-      wrap = document.createElement("div");
-      wrap.className = "filler-chat card";
-      // .card의 배경/보더를 쓰지 않도록 최소만 무력화 (인라인 · 기존 CSS 불변)
-      wrap.style.background = "none";
-      wrap.style.border = "0";
-      wrap.style.padding = "0";
-      wrap.style.boxShadow = "none";
-      wrap.style.clipPath = "none";
-      feedEl.appendChild(wrap);
+    const mine = d.style === "ME";
+    if (!mine) {
+      await appendCard({
+        body: `${d.speaker}\n${d.line}`,
+        syncStage: false,
+      });
+      continue;
+    }
+    let host: HTMLElement | null = split ? wrapMe : wrap;
+    if (!host) {
+      host = makeFillerChatWrap();
+      (split ? talkFeed("me") : feedEl).appendChild(host);
+      if (split) wrapMe = host;
+      else wrap = host;
     }
     const b = document.createElement("div");
-    b.className = "filler-bub" + (d.style === "ME" ? " me" : "");
+    b.className = "filler-bub" + (mine ? " me" : "");
     b.innerHTML =
       `<span class="filler-bub-who">${d.icon} ${d.speaker}</span>` +
       `<span class="filler-bub-line">${highlightKeywords(data, d.line)}</span>`;
-    wrap.appendChild(b);
+    host.appendChild(b);
     scrollFeedToBottom({ el: b, anticipatePx: 14 });
     await sleep(520);
   }
@@ -4159,12 +5148,17 @@ function showRewardModal(opts: { icon: string; qtyLabel: string; title?: string;
     rewardModal.classList.add("reward-modal-in");
 
     const close = () => {
+      if (done) return;
+      done = true;
+      window.clearTimeout(auto);
       rewardModal.removeEventListener("click", close);
       rewardModal.classList.remove("reward-modal-in");
       rewardModal.style.display = "none";
       resolve();
     };
+    let done = false;
     rewardModal.addEventListener("click", close);
+    const auto = window.setTimeout(close, 2200);
   });
 }
 
@@ -4563,12 +5557,13 @@ function waitMainButton(label: string): Promise<void> {
     setMainBtnLabel(label);
     mainBtn.disabled = false;
     setMainBtnClass('idle');
-    slideIn(mainBtn);
     pendingMainAction = () => {
       pendingMainAction = null;
       mainBtn.disabled = true;
       resolve();
     };
+    syncFillerChrome();
+    slideIn(mainBtn);
   });
 }
 
@@ -4721,8 +5716,11 @@ async function runLuckyTreasureFlow(minigameId: string) {
   await runMinigame(minigameId);
 }
 
+const SKIP_LOOP_MINIGAMES = new Set(["mg_slot", "mg_square", "mg_circle", "mg_card_match"]);
+
 /** linked_minigame_id 공통 런처 — 타입별 플로우 분기 */
 async function launchLinkedMinigame(minigameId: string) {
+  if (SKIP_LOOP_MINIGAMES.has(minigameId)) return;
   const mg = data.minigames.find((m) => m.minigame_id === minigameId);
   if (!mg) return;
   if (mg.type === "GOLD_SLOT") await runLuckyTreasureFlow(minigameId);
@@ -4745,8 +5743,8 @@ async function offerLeaveOrPlay(): Promise<"LEAVE" | "PLAY"> {
       await playActivate(btn);
       choiceButtons.style.display = "none";
       choiceButtons.innerHTML = "";
-      mainBtn.style.display = "";
       setGaugesVisible(true);
+      syncFillerChrome();
       resolve(side);
     };
     leaveBtn.onclick = () => finish("LEAVE", leaveBtn);
@@ -4770,14 +5768,15 @@ async function runGoldSlotGame(minigameId: string) {
   minigameTitle.textContent = "";
   minigameSub.textContent = "";
   minigameResult.textContent = "";
+  syncFillerChrome();
   setupGoldSlotIdle();
 
-  // 패널이 메인 버튼을 덮음 → 패널 안 「돌리기」로 진행
-  setMainBtnLabel(ui("ui_mg_spinning"));
-  mainBtn.disabled = true;
+  // 패널이 메인 버튼을 덮으므로, 덮인 「돌리는 중」을 보여 주지 않는다
+  mainBtn.style.display = "none";
   minigameActionBtn.classList.add("lucky-spin-btn");
   await waitMinigameAction(ui("ui_mg_spin_btn"));
   minigameActionBtn.classList.remove("lucky-spin-btn");
+  syncFillerChrome();
 
   const win = spinMinigameRow(data, minigameId);
   if (!win) {
@@ -4803,10 +5802,12 @@ async function runGoldSlotGame(minigameId: string) {
     await sleep(400);
   }
   refreshStatbar();
-  // 패널/대기 중 바뀐 메인 버튼 문구 복구 (finishTurn 전에도 멈춤 방지)
-  setMainBtnLabel(ui("ui_btn_next"));
-  mainBtn.disabled = false;
-  setMainBtnClass('idle');
+  if (!journey3d?.isBusy()) {
+    setMainBtnLabel(ui("ui_btn_next"));
+    mainBtn.disabled = false;
+    setMainBtnClass("idle");
+  }
+  syncFillerChrome();
 }
 
 function mythStackCaps(mgId = "mg_slot") {
@@ -4866,37 +5867,18 @@ async function runMinigame(minigameId: string) {
     return;
   }
 
+  if (mg.type === "CARD_MATCH") {
+    return;
+  }
+
   const pool = getMinigamePool(data, minigameId);
   await playSplash(ui("ui_mg_splash"));
   minigamePanel.style.display = "flex";
   minigameTitle.textContent = mg.minigame_name;
-  minigameSub.textContent = mg.type === "CARD_MATCH" ? ui("ui_mg_card_sub") : "";
+  minigameSub.textContent = "";
   minigameResult.textContent = "";
   minigameActionBtn.style.display = "none";
-
-  if (mg.type === "CARD_MATCH") {
-    minigamePanel.classList.add("dig-mode");
-    minigameTitle.textContent = "";
-    minigameSub.textContent = "";
-    const win = await playCardMatchDig(pool);
-    if (win.effect_id) {
-      applyEffectId(data, state, win.effect_id);
-    }
-    refreshStatbar();
-    const modal = win.effect_id ? rewardModalFromEffect(win.effect_id) : null;
-    minigamePanel.classList.remove("dig-mode");
-    await hideFullscreen(minigamePanel);
-    if (modal) {
-      await showRewardModal({
-        ...modal,
-        title: win.label || ui("ui_reward_modal_title"),
-      });
-    } else {
-      await sleep(500);
-    }
-    refreshStatbar();
-    return;
-  }
+  syncFillerChrome();
 
   const maxSpins = mg.attempt_limit ?? 1;
   let spinsUsed = 0;
@@ -4973,6 +5955,7 @@ async function runMinigame(minigameId: string) {
   await sleep(1300);
   await hideFullscreen(minigamePanel);
   refreshStatbar();
+  syncFillerChrome();
 }
 
 interface ChoiceCardOption {
@@ -5024,13 +6007,10 @@ function presentChoicePanel(
       resolve(null);
       return;
     }
-    mainBtn.textContent = buttonLabel;
-    setMainBtnClass('choosing');
-    mainBtn.disabled = false;
-    slideIn(mainBtn);
-    pendingSkillChoice = () => {
+    const openPanel = () => {
       pendingSkillChoice = null;
       mainBtn.disabled = true;
+      mainBtn.style.display = "none";
       setStageMode("SKILL", {
         title: title,
         subtitle: subtitle,
@@ -5038,7 +6018,7 @@ function presentChoicePanel(
       });
       skillChoiceTitle.textContent = title;
       skillChoiceSub.textContent = subtitle;
-      learnedSkillsBtn.textContent = `📖 ${ui("ui_btn_learned_skills")}`;
+      learnedSkillsBtn.textContent = ui("ui_btn_learned_skills");
       learnedSkillsBtn.onclick = () => openLearnedSkillsModal();
       skillChoiceCards.innerHTML = "";
       options.forEach((opt, idx) => {
@@ -5054,6 +6034,7 @@ function presentChoicePanel(
           await playActivate(card);
           learnedSkillsModal.style.display = "none";
           await hideFullscreen(skillChoicePanel);
+          syncFillerChrome();
           resolve(idx);
         };
         skillChoiceCards.appendChild(card);
@@ -5061,11 +6042,16 @@ function presentChoicePanel(
       });
       showFullscreen(skillChoicePanel);
     };
+    pendingSkillChoice = openPanel;
     if (openNow) {
-      const open = pendingSkillChoice;
-      pendingSkillChoice = null;
-      open?.();
+      openPanel();
+      return;
     }
+    mainBtn.textContent = buttonLabel;
+    setMainBtnClass('choosing');
+    mainBtn.disabled = false;
+    mainBtn.style.display = "";
+    slideIn(mainBtn);
   });
 }
 
@@ -5085,7 +6071,7 @@ async function presentSkillChoice(
       return {
         badge: s.is_upgrade ? ui("ui_skill_upgrade_badge") : s.tier,
         badgeClass: s.is_upgrade ? "tier-upgrade" : `tier-${s.tier}`,
-        name: s.icon ? `${s.icon} ${s.skill_name}` : s.skill_name,
+        name: s.skill_name,
         desc: s.is_upgrade
           ? `${ui("ui_skill_upgrade_desc", { name: s.skill_name, text: s.effect_text })}${hintLine}`
           : `${s.effect_text}${hintLine}`,
@@ -5093,7 +6079,9 @@ async function presentSkillChoice(
     }),
     openNow
   );
-  return idx === null ? null : candidates[idx];
+  const picked = idx === null ? null : candidates[idx];
+  if (picked) journey3d?.setHeadChoice(picked.skill_name);
+  return picked;
 }
 
 async function grantLevelSkill(mode: "CHOICE_3" | "AUTO", tier: string) {
@@ -5543,11 +6531,13 @@ const ISLAND_PURIFY_STEPS = [
   { pct: 100, label: "섬이 완전히 깨어난다" },
 ];
 
-/** 41 §4 — 섬 전체 정화도(%). AREA 오염만 센다(LIFE는 구조로 별도 집계) */
+/** 한 판 기록 — 정화한 원 / 섬 원 수 */
 function islandPurifyPct(): { done: number; total: number; pct: number } {
-  const areaBlights = data.purifyBlights.filter((b) => b.target_kind === "AREA");
-  const total = areaBlights.length;
-  const done = areaBlights.filter((b) => state.purifiedBlights.includes(b.blight_id)).length;
+  const live = data.areaNpcs.filter((n) => n.trigger_type.toUpperCase() === "PURIFY").length;
+  const total = live > 0 ? live : (data.islandRun?.circle_count || 1);
+  const done = data.areaNpcs.filter(
+    (n) => n.trigger_type.toUpperCase() === "PURIFY" && state.clearedNodes.includes(n.npc_id),
+  ).length;
   return { done, total, pct: total > 0 ? Math.round((done / total) * 100) : 0 };
 }
 
@@ -5828,8 +6818,8 @@ async function showBranchPrompt(branch: BranchDef) {
     const effectA = data.effects.find((e) => e.effect_id === branch.option_a_effect_id);
     const effectB = data.effects.find((e) => e.effect_id === branch.option_b_effect_id);
     const options = [
-      { name: effectA?.icon ? `${effectA.icon} ${branch.option_a_label}` : branch.option_a_label, desc: effectA?.description ?? "" },
-      { name: effectB?.icon ? `${effectB.icon} ${branch.option_b_label}` : branch.option_b_label, desc: effectB?.description ?? "" },
+      { name: branch.option_a_label, desc: effectA?.description ?? "" },
+      { name: branch.option_b_label, desc: effectB?.description ?? "" },
     ];
     const idx = await presentChoicePanel(ui("ui_btn_blessing"), ui("ui_angel_title"), ui("ui_angel_sub"), options);
     if (idx !== null) {
@@ -5875,7 +6865,6 @@ async function showBranchPrompt(branch: BranchDef) {
     await playActivate(btn);
     choiceButtons.style.display = "none";
     choiceButtons.innerHTML = "";
-    mainBtn.style.display = "";
     setGaugesVisible(true);
     mainBtn.disabled = true;
     await resolveBranch(branch, side);
@@ -5902,8 +6891,16 @@ function setIdle() {
   applyJourneyIdleAction(computeJourneyIdleAction());
   mainBtn.classList.remove("combat-pulse", "combat-busy");
   const hint = mapIdleSubtitle();
-  // 직전 장면(도착·보상·조우 등) 타이틀을 유지해 하단 로그와 맞춤
-  if (lastStageScene && lastStageScene.modeId !== "IDLE" && lastStageScene.modeId !== "MOVING") {
+  const areaTitle = appMode === "journey" ? journeyAreaLabel() : undefined;
+  if (areaTitle) {
+    setStageMode("IDLE", {
+      title: areaTitle,
+      subtitle: hint,
+      icon: lastStageScene?.icon ?? "🏕️",
+      clearLog: false,
+      remember: false,
+    });
+  } else if (lastStageScene && lastStageScene.modeId !== "IDLE" && lastStageScene.modeId !== "MOVING") {
     setStageMode("IDLE", {
       title: lastStageScene.title,
       subtitle: hint,
@@ -6009,6 +7006,29 @@ async function resolveDirectReward() {
   await presentGradeReward(grade);
 }
 
+/** 걷기·연타·사냥을 끝낸 뒤. 원본처럼 등급 카드(골드·칩). 슬롯 미니게임은 안 연다. */
+function loopStepNeedsGradeReward(step: QuestStepDef): boolean {
+  if (step.kind === "FILLER" || step.kind === "BRANCH") return false;
+  if (step.kind === "CONTENT") {
+    const k = (step.content_kind || "").toLowerCase();
+    return !["daily", "filter", "trace", "skill", "memory", "rest", "location", "life", "life2", "arena"].includes(k);
+  }
+  return (
+    step.kind === "SEARCH" ||
+    step.kind === "APPLY_STAINS" ||
+    step.kind === "TINT" ||
+    step.kind === "INVADE" ||
+    step.kind === "CULPRIT"
+  );
+}
+
+async function grantLoopActionReward(step: QuestStepDef): Promise<void> {
+  if (!loopStepNeedsGradeReward(step)) return;
+  journey3d?.setHeadStatus("상태", "보상");
+  await resolveDirectReward();
+  if (loopRunCanSkill() && Math.random() < 0.3) await offerLoopSkill();
+}
+
 /**
  * 등급 뽑기 노드 3종 — 속통은 같고(대박·중박·운빨·보너스) **이름만 확실히 구분**.
  * - DAILY  하루의 발견
@@ -6018,7 +7038,8 @@ async function resolveDirectReward() {
  */
 async function resolveGradeFindNode(
   npc: { icon: string; flavor_text: string },
-  kind: "DAILY" | "TRACE" | "FILTER"
+  kind: "DAILY" | "TRACE" | "FILTER",
+  opts?: { skipLead?: boolean },
 ): Promise<void> {
   const meta: Record<
     typeof kind,
@@ -6041,14 +7062,25 @@ async function resolveGradeFindNode(
     },
   };
   const m = meta[kind];
-  await appendCard({
-    body: `[${m.pillar}] ${npc.icon} ${m.title}`,
-    bodyLine2: npc.flavor_text?.trim() || m.defaultLine,
-  });
+  if (!opts?.skipLead) {
+    await appendCard({
+      body: `[${m.pillar}] ${npc.icon} ${m.title}`,
+      bodyLine2: npc.flavor_text?.trim() || m.defaultLine,
+    });
+  }
   await resolveDirectReward();
 }
 
-/** 이미 뽑힌 등급으로 대박·중박·운빨·보너스 카드·게이지·미니게임을 연다. */
+/** 원 슬롯에서 등급을 고정으로 보여 준다. 랜덤에 안 묻힌다. */
+async function presentGradeById(gradeId: string): Promise<void> {
+  const grade = data.grades.find((g) => g.grade_id === gradeId);
+  if (!grade) {
+    await appendCard({ body: "[탐구] 오늘은 등급이 없다." });
+    return;
+  }
+  await presentGradeReward(grade);
+}
+
 async function presentGradeReward(grade: GradeDef) {
   const entry = rollDailyEntry(data, grade.grade_id);
   if (!entry) {
@@ -6099,11 +7131,14 @@ async function presentGradeReward(grade: GradeDef) {
   refreshStatbar();
   if (gaugeRes?.gained) pulseGauge(grade.grade_id);
 
-  if (hasLinkedMg) {
+  const skipMg = loopRunLive();
+  if (hasLinkedMg && !skipMg) {
     await launchLinkedMinigame(linkedMg);
-  } else if (gaugeRes?.filled && gaugeRes.gauge.reward_minigame_id) {
+  } else if (!skipMg && gaugeRes?.filled && gaugeRes.gauge.reward_minigame_id) {
     await launchLinkedMinigame(gaugeRes.gauge.reward_minigame_id);
   }
+
+  if (grade.is_jackpot) await maybeOfferLoopLuckSkill();
 }
 
 async function resolveLocation(forcedLocationId?: string) {
@@ -6233,7 +7268,19 @@ async function resolveUngraded() {
 
 async function onMainBtnClick() {
   if (state.finalBossDefeated) return;
+  if (arenaMash) {
+    arenaMash();
+    return;
+  }
   if (raidLive) return;
+  if (
+    appMode === "journey" &&
+    journey3d?.isBusy() &&
+    !pendingMainAction &&
+    !pendingSkillChoice
+  ) {
+    return;
+  }
 
   // 오픈 / 돌리기 등 대기 액션 우선
   if (pendingMainAction) {
@@ -6255,14 +7302,27 @@ async function onMainBtnClick() {
   }
 
   const idleAct = computeJourneyIdleAction();
-  if (appMode === "journey" && !rescuePending && !combatPending && (idleAct === "pick" || idleAct === "find")) {
+  if (appMode === "journey" && !rescuePending && !combatPending && idleAct === "pick") {
     mainBtn.disabled = true;
     await playActivate(mainBtn);
-    if (idleAct === "pick") {
-      await journey3d?.pickupNear();
-      finishTurn();
-      return;
-    }
+    await journey3d?.confirmNear();
+    mainBtn.disabled = false;
+    applyJourneyIdleAction(computeJourneyIdleAction());
+    return;
+  }
+
+  if (pendingNextPurifyArea && appMode === "journey" && !rescuePending && !combatPending && !journey3d?.isBusy()) {
+    pendingNextPurifyArea = false;
+    mainBtn.disabled = true;
+    await playActivate(mainBtn);
+    await goToNextPurifySpot();
+    finishTurn();
+    return;
+  }
+
+  if (appMode === "journey" && !rescuePending && !combatPending && idleAct === "find") {
+    mainBtn.disabled = true;
+    await playActivate(mainBtn);
     playLog("AMMO", "다가가기");
     await journey3d?.walkToNearestFill();
     mainBtn.disabled = false;
@@ -6287,16 +7347,22 @@ async function onMainBtnClick() {
     return;
   }
 
-  // 해금할 정화제가 없으면 웅덩이로 다시 보내지 않는다. 같은 날 걸어 모은다.
-  const gatherHold = purifyGatherHold();
-  if (gatherHold) {
-    playLog("AMMO", "모으는중", ammoHaveMsg(gatherHold.have, gatherHold.need), gatherHold.name);
-    await appendCard({
-      body: `[정화] ${gatherHold.name}\n${ammoShortMsg(gatherHold.have, gatherHold.need)}`,
-    });
-    renderCatalystHud();
+  if (journey3d?.isOn()) {
+    await goToNextPurifySpot();
     finishTurn();
     return;
+  }
+  if (!journey3d?.isOn()) {
+    const gatherHold = purifyGatherHold();
+    if (gatherHold) {
+      playLog("AMMO", "모으는중", ammoHaveMsg(gatherHold.have, gatherHold.need), gatherHold.name);
+      await appendCard({
+        body: `[정화] ${gatherHold.name}\n${ammoShortMsg(gatherHold.have, gatherHold.need)}`,
+      });
+      renderCatalystHud();
+      finishTurn();
+      return;
+    }
   }
 
   // 41 §1-1 — 하루는 advanceDay 단일 경로. 줍기만 같은 날이고, 「다음날」은 항상 하루가 간다.
@@ -6312,6 +7378,17 @@ async function onMainBtnClick() {
       if (mapId) lastStageMapId = mapId;
     }
     await playMovingPhase();
+
+    /*
+     * 3D 여정: 걷지 않고, 정화 노드도 안 밟는다.
+     * 살아있는 다음날 본편은 기존 등급 필러(daily_roll_pool).
+     */
+    if (journey3d?.isOn()) {
+      // 3D에서는 등급 룰렛·신화 슬롯을 돌리지 않는다. 다음 정화 자리로만 잇는다.
+      await goToNextPurifySpot();
+      finishTurn();
+      return;
+    }
 
     /*
      * 43 S3 — 「다음날」이 주사위를 굴리지 않는다.
@@ -6419,7 +7496,93 @@ function pickScoredNeighbor(
   return tier[randInt(0, tier.length - 1)]!;
 }
 
+
+function livePurifyNodes(areaId: string, skipId?: string): AreaNpcDef[] {
+  return data.areaNpcs.filter(
+    (n) =>
+      n.area_id === areaId &&
+      n.trigger_type === "PURIFY" &&
+      n.npc_id !== skipId &&
+      isNodeLive(n),
+  );
+}
+
+function hasNextPurify(skipId?: string): boolean {
+  const here = explore?.areaId;
+  if (here && livePurifyNodes(here, skipId).length) return true;
+  const opts = explore?.neighbors() ?? [];
+  return opts.some((o) => !o.locked && livePurifyNodes(o.to, skipId).length);
+}
+
+function armNextPurifyButton(skipId?: string): void {
+  pendingNextPurifyArea = hasNextPurify(skipId);
+  if (pendingNextPurifyArea) setMainBtnLabel(ui("ui_btn_next_purify_area"));
+}
+
+function nearestPurify(list: AreaNpcDef[], xPct: number, yPct: number): AreaNpcDef {
+  return list.slice().sort((a, b) => {
+    const da = (a.x_pct - xPct) ** 2 + (a.y_pct - yPct) ** 2;
+    const db = (b.x_pct - xPct) ** 2 + (b.y_pct - yPct) ** 2;
+    return da - db;
+  })[0]!;
+}
+
+/** 같은 칸의 남은 정화 자리 → 없으면 이웃 칸의 정화 자리 */
+async function goToNextPurifySpot(): Promise<void> {
+  if (!explore) return;
+  mainBtn.style.display = "none";
+  mainBtn.disabled = true;
+  const me = journey3d?.isOn()
+    ? journey3d.getPlayer()
+    : { xPct: explore.pos.x, yPct: explore.pos.y };
+  const here = explore.areaId;
+  const local = here ? livePurifyNodes(here) : [];
+  const arrive = () => {
+    mainBtn.style.display = "none";
+    mainBtn.disabled = true;
+  };
+  if (local.length) {
+    const next = nearestPurify(local, me.xPct, me.yPct);
+    playLog("PURIFY", "다음자리", next.npc_id, next.label);
+    await appendCard({
+      body: `[정화] 다음 정화 지역 — ${next.icon} ${next.label}`,
+      bodyLine2: next.flavor_text || "오염 앞으로 걸어간다.",
+    });
+    if (journey3d?.isOn()) await journey3d.walkToAndActivate(next, { onArrived: arrive });
+    else await explore.walkTo(next.x_pct, Math.min(94, next.y_pct + 7));
+    return;
+  }
+  const open = (explore.neighbors() ?? []).filter(
+    (o) => !o.locked && livePurifyNodes(o.to).length,
+  );
+  if (!open.length) {
+    await appendCard({
+      body: "[정화] 더 갈 정화 지역이 없다.",
+      bodyLine2: "이 섬에서 연 원은 여기까지다.",
+    });
+    return;
+  }
+  const pick = open.find((o) => o.side === "TOP") ?? open[0]!;
+  const preview = nearestPurify(livePurifyNodes(pick.to), 50, 50);
+  playLog("PURIFY", "다음칸", pick.to, preview.npc_id);
+  await appendCard({
+    body: `[정화] 다음 정화 지역 — ${preview.icon} ${preview.label}`,
+    bodyLine2: (data.areas.find((a) => a.area_id === pick.to)?.display_name ?? pick.to) + "으로 걸어간다.",
+  });
+  if (journey3d?.isOn()) {
+    const crossed = await journey3d.walkToNeighborArea(pick.to);
+    if (!crossed) await travelToSector(pick.to);
+    const me2 = journey3d.getPlayer();
+    const dest = nearestPurify(livePurifyNodes(pick.to), me2.xPct, me2.yPct);
+    await journey3d.walkToAndActivate(dest, { onArrived: arrive });
+    return;
+  }
+  await travelToSector(pick.to);
+  await explore.walkTo(preview.x_pct, Math.min(94, preview.y_pct + 7));
+}
+
 async function travelToSector(toAreaId: string): Promise<boolean> {
+
   if (!explore) return false;
   const moved = await explore.goToSector(toAreaId);
   if (moved) beatCursors.delete(toAreaId);
@@ -6523,8 +7686,8 @@ async function presentPathJudgment(reason: PathJudgeReason): Promise<void> {
       await playActivate(b);
       choiceButtons.style.display = "none";
       choiceButtons.innerHTML = "";
-      mainBtn.style.display = "";
       setGaugesVisible(true);
+      syncFillerChrome();
       if (mode === "FORK_COSTLY" && judge.choice_cost_effect_id) {
         const cost = applyEffectId(data, state, judge.choice_cost_effect_id);
         if (cost.lines.length) {
@@ -6577,18 +7740,32 @@ function isFillEvent(npc: { trigger_type: string }): boolean {
 }
 
 function computeJourneyIdleAction(): JourneyIdleAction {
-  if (appMode !== "journey" || raidLive || !journey3d?.isOn()) return "next";
-  const near = journey3d.getNearNpc();
-  if (near && isFillEvent(near) && !state.clearedNodes.includes(near.npc_id)) return "pick";
-  if (purifyGatherHold() && journey3d.nearestFill()) return "find";
+  if (journey3d?.isBusy()) {
+    pendingNextPurifyArea = false;
+    return journeyAction;
+  }
+  if (journey3d?.isOn()) {
+    const near = journey3d.getNearNpc();
+    if (near && journey3d.needsConfirm(near)) return "pick";
+    pendingNextPurifyArea = hasNextPurify();
+  }
   return "next";
 }
 
 function applyJourneyIdleAction(next: JourneyIdleAction) {
+  if (journey3d?.isBusy() && !arenaMash && !pendingMainAction) {
+    syncFillerChrome();
+    return;
+  }
   journeyAction = next;
   if (next === "pick") {
     setMainBtnLabel(ui("ui_btn_pickup"));
     setMainBtnClass("pick");
+    return;
+  }
+  if (pendingNextPurifyArea) {
+    setMainBtnLabel(ui("ui_btn_next_purify_area"));
+    setMainBtnClass("idle");
     return;
   }
   if (next === "find") {
@@ -6601,7 +7778,8 @@ function applyJourneyIdleAction(next: JourneyIdleAction) {
 }
 
 function syncJourneyActionBtn() {
-  if (appMode !== "journey" || raidLive) return;
+  if (appMode !== "journey" || raidLive || arenaMash) return;
+  if (journey3d?.isBusy()) return;
   if (pendingMainAction || pendingSkillChoice || rescuePending || combatPending) return;
   if (mainBtn.disabled) return;
   if (choiceButtons.style.display === "flex") return;
@@ -6802,7 +7980,6 @@ async function stepToNextNode(): Promise<boolean> {
       next.trigger_type === "FILL" || next.trigger_type === "CATALYST"
         ? Math.min(96, next.y_pct + 5)
         : Math.min(94, next.y_pct + 7);
-    // 3D가 주연이면 미니맵은 좌표만 받는다. 탑뷰 walkTo만 부르면 FPS/3인칭 캐릭터가 그대로 선다.
     if (journey3d?.isOn()) {
       await journey3d.walkTo(walkX, walkY);
     } else {
@@ -7122,6 +8299,8 @@ async function init() {
   renderScrapbookBadge();
   initExplore();
   initLobby();
+  phoneEl.classList.add("shell-portrait");
+  void preloadJourneyHudLayout(RUNTIME_HUD_ASPECT);
   ensureWandererHero();
   applyStageBackground();
   refreshStatbar();
@@ -7161,8 +8340,6 @@ init();
 };
 /** 행운의 보물 슬롯만 바로 미리보기 (오픈 대기 생략) */
 (window as any).__lucky = () => runGoldSlotGame("mg_lucky_treasure");
-/** 보물 파내기 바로 미리보기 */
-(window as any).__dig = () => runMinigame("mg_card_match");
 /** S7 Memory Battle 바로 미리보기 */
 (window as any).__memoryBattle = () => void runMemoryBattleFlow("c_purify_final");
 /** 41 — 항해 상태 한눈에 (일차 · 배까지 · 섬 정화도 · 아이 수) */
@@ -7176,6 +8353,9 @@ init();
     party: state.joinedPartyMembers.length,
     heldCatalysts: [...state.heldCatalysts],
     purifyAmmo: state.purifyAmmo,
+    throwAdsorb: state.throwAdsorb,
+    throwInhibit: state.throwInhibit,
+    throwCulprit: state.throwCulprit,
     area: explore?.areaId ?? "-",
     voyageOver,
   };

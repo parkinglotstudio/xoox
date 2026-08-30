@@ -1,13 +1,2 @@
 location_id,name,text_id,entry_path,grade_id,repeatable,linked_effect_id,linked_minigame_id,milestone_id,scenario_id,offer_leave
-loc_mercenary,버려진 항만 초소,t_mercenary,BRANCH_ROUTE,g_bonus,TRUE,e_flag3,,ms_mercenary_pirate,sc_mercenary,FALSE
-loc_pirate,좌초된 화물선,t_pirate,DIRECT,g_bonus,TRUE,e_flag3,,ms_mercenary_pirate,sc_pirate,FALSE
-loc_magictower,신호 중계탑,t_towermagic,DIRECT,,FALSE,,,,,FALSE
-loc_treasuremap,낡은 항해 일지,t_treasuremap,DIRECT,g_jackpot,FALSE,,mg_card_match,,,FALSE
-loc_luckyroulette,무지개 조각 룰렛,t_luckyroulette,DIRECT,,FALSE,,mg_square,,,TRUE
-loc_rest,안전 대피소,t_rest_zone,DIRECT,,TRUE,e_hp60,,,,FALSE
-loc_mercenary_2,버려진 항만 초소(임시),t_mercenary_2,BRANCH_ROUTE,g_bonus,TRUE,e_flag3,,ms_mercenary_pirate,sc_mercenary_2,FALSE
-loc_pirate_2,좌초된 화물선(임시),t_pirate_2,DIRECT,g_bonus,TRUE,e_flag3,,ms_mercenary_pirate,sc_pirate_2,FALSE
-loc_magictower_2,신호 중계탑(임시),t_towermagic_2,DIRECT,,FALSE,,,,,FALSE
-loc_treasuremap_2,낡은 항해 일지(임시),t_treasuremap_2,DIRECT,g_jackpot,FALSE,,mg_card_match,,,FALSE
-loc_luckyroulette_2,무지개 조각 룰렛(임시),t_luckyroulette_2,DIRECT,,FALSE,,mg_square,,,TRUE
-loc_rest_2,안전 대피소(임시),t_rest_zone_2,DIRECT,,TRUE,e_hp60,,,,FALSE
+loc_i21_loop,숨은 배수로,t_i21_loc,,,FALSE,e_gold275,,,,FALSE

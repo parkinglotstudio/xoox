@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XOOX 프롭 배치 · 나무</title>
+    <style>
+      :root {
+        --bg: #0a0c10;
+        --panel: #141a22;
+        --line: #2a3544;
+        --text: #e8eef8;
+        --muted: #8a9bb0;
+        --accent: #2de0d0;
+        --ok: #6ddea0;
+        --err: #ff8f8f;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: "Pretendard", "Malgun Gothic", sans-serif; }
+      body { display: grid; grid-template-rows: auto 1fr; }
+      .bar {
+        display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+        padding: 10px 14px; background: var(--panel); border-bottom: 1px solid var(--line);
+      }
+      .bar h1 { margin: 0; font-size: 15px; font-weight: 800; letter-spacing: -0.02em; }
+      .bar .hint { color: var(--muted); font-size: 12px; max-width: 420px; line-height: 1.4; }
+      .bar button, .bar input {
+        border: 1px solid var(--line); background: #0e141c; color: var(--text);
+        border-radius: 8px; padding: 7px 12px; font-weight: 700; cursor: pointer; font-size: 12px;
+      }
+      .bar button.primary { background: #123a3a; border-color: #2de0d0; color: #dffcf8; }
+      .status { font-size: 12px; color: var(--muted); margin-left: auto; }
+      .status.ok { color: var(--ok); }
+      .status.err { color: var(--err); }
+      .workspace {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        min-height: 0; height: 100%;
+      }
+      .col {
+        border-right: 1px solid var(--line); padding: 14px; overflow: auto;
+        display: flex; flex-direction: column; gap: 12px;
+      }
+      .col h2 { margin: 0; font-size: 11px; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
+      .tree-row { display: grid; gap: 4px; }
+      .tree-row label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; }
+      .tree-row input[type="range"] { width: 100%; }
+      .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 99px; margin-right: 6px; vertical-align: middle; }
+      .muted { color: var(--muted); font-size: 12px; line-height: 1.45; }
+      .stage {
+        background: #05080d; padding: 14px; display: grid; place-items: center; min-width: 0;
+      }
+      canvas {
+        width: min(100%, 820px); height: auto; aspect-ratio: 1;
+        background: #000; border-radius: 8px; border: 1px solid var(--line);
+      }
+      #stats { font-size: 13px; font-weight: 700; line-height: 1.5; }
+    </style>
+  </head>
+  <body>
+    <div class="bar">
+      <h1>프롭 배치 · 나무</h1>
+      <p class="hint">마스크에서 존을 읽어 심는다. 클릭 한 그루가 아니다. 저장은 area_prop_config.csv.</p>
+      <label>시드 <input id="seed" type="number" value="7" style="width:72px" /></label>
+      <button id="btnPlant" class="primary">심기</button>
+      <button id="btnSave">CSV 저장</button>
+      <button id="btnClear">미리보기 비우기</button>
+      <span id="status" class="status"></span>
+    </div>
+    <div class="workspace">
+      <aside class="col">
+        <h2>그루 수 (섬 전체)</h2>
+        <div class="tree-row">
+          <label><span><i class="swatch" style="background:#c8e86a"></i>우산 수관 · 들판</span><b id="nv_tree_01">25</b></label>
+          <input id="n_tree_01" type="range" min="0" max="80" value="25" />
+        </div>
+        <div class="tree-row">
+          <label><span><i class="swatch" style="background:#1f6b3a"></i>키 큰 수관 · 숲 속</span><b id="nv_tree_02">25</b></label>
+          <input id="n_tree_02" type="range" min="0" max="80" value="25" />
+        </div>
+        <div class="tree-row">
+          <label><span><i class="swatch" style="background:#6a9a3a"></i>낮은 뭉치 · 가장자리</span><b id="nv_tree_03">24</b></label>
+          <input id="n_tree_03" type="range" min="0" max="80" value="24" />
+        </div>
+        <p class="muted">
+          숲 속=가는 키 큰 나무, 숲·꽃 경계=낮은 뭉치, 들판=우산 수관(홀수 클러스터).
+          길·호수·바위·오염·NPC·i21 시작 들판은 비운다.
+        </p>
+        <h2>결과</h2>
+        <div id="stats">아직 안 심음</div>
+      </aside>
+      <section class="stage">
+        <canvas id="preview" width="768" height="768"></canvas>
+      </section>
+    </div>
+    <script type="module" src="/src/propPlaceTool/main.ts"></script>
+  </body>
+</html>

@@ -36,6 +36,7 @@ export class PurifyGun {
 
   setFiring(on: boolean): void {
     this.firing = on;
+    this.stage.setAiming(on);
   }
 
   isFiring(): boolean {
@@ -120,11 +121,10 @@ export class PurifyGun {
   }
 
   private fireTo(tx: number, tz: number, reach: number, range: number, nx: number, nz: number): void {
-    const me = this.stage.getPlayerWorld();
-    const muzzle = 0.45;
+    const origin = this.stage.muzzleOrigin(nx, nz);
     const arc = this.cfg.missile_arc_m * (0.45 + 0.55 * (reach / range));
     this.missiles.launch(
-      { x: me.x + nx * muzzle, y: 0.85, z: me.z + nz * muzzle },
+      origin,
       { x: tx, z: tz },
       arc,
       this.cfg.missile_speed_mps,

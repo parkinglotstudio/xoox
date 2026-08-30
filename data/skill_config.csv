@@ -43,3 +43,8 @@ sk_renta_plus,연타+,일반,TRUE,sk_renta,👊,연타율 +15%,ATTACK,UPGRADE,Co
 sk_normal_shield_plus,일반 공격 보호막+,일반,TRUE,sk_normal_shield,🛡️,평타 보호막 강화,DEFENSE,UPGRADE,Basic Attack Shield+
 sk_rage_firewave_plus,분노 공격 화염파+,일반,TRUE,sk_rage_firewave,🔥,분노 화염파 2발 강화(한 발씩),ATTACK,UPGRADE,Rage Fire Strike+
 sk_lightning_plus,번개 슈레더+,일반,TRUE,sk_lightning,⚡,매 턴 번개 2발(한 발씩),ATTACK,UPGRADE,Round Bolt+
+sk_cat_stride,보폭,일반,FALSE,,👟,이동이 조금 빨라진다,CATALYST,LOOP,들판에서 더 넓게 걷는다
+sk_cat_range,투척 거리,일반,FALSE,,🎯,정화제가 조금 더 멀리 닿는다,CATALYST,LOOP,한 발 앞에서 던져도 닿는다
+sk_cat_spread,확산,일반,FALSE,,💧,착탄이 조금 더 넓게 번진다,CATALYST,LOOP,얼룩을 한 번에 더 덮는다
+sk_cat_save,잔량 절약,일반,FALSE,,🧪,가끔 잔량이 안 줄어든다,CATALYST,LOOP,한 줌을 아껴 쓴다
+sk_cat_refill,재보충,일반,FALSE,,🧴,들고 있는 정화제가 조금 찬다,CATALYST,LOOP,통에 한 줌 더 따른다

@@ -1,0 +1,13 @@
+spot_id,step_id,sort_order,is_real,content_kind,flavor_text_id,weight,place,note
+sp_i21_ads_filter,qs_i21_adsorb,1,FALSE,filter,t_q_fake_filter,1,west,거르기 · 서쪽
+sp_i21_ads_bad,qs_i21_adsorb,2,FALSE,daily_bad,t_q_fake_bad,1,west,꽝 · 서쪽
+sp_i21_ads_real,qs_i21_adsorb,3,TRUE,catalyst,t_q_real_adsorb,1,east,진짜 · 동쪽
+sp_i21_inh_trace,qs_i21_inhibit,1,FALSE,trace,t_q_fake_trace,1,west,흔적 · 서쪽
+sp_i21_inh_miss,qs_i21_inhibit,2,FALSE,,t_q_fake_miss,1,west,빈 반짝임
+sp_i21_inh_real,qs_i21_inhibit,3,TRUE,inhibit,t_q_real_inhibit,1,east,진짜 · 동쪽
+sp_i11_ads_filter,qs_i11_adsorb,1,FALSE,filter,t_q_fake_filter,1,west,
+sp_i11_ads_bad,qs_i11_adsorb,2,FALSE,daily_bad,t_q_fake_bad,1,west,
+sp_i11_ads_real,qs_i11_adsorb,3,TRUE,catalyst,t_q_real_adsorb,1,east,
+sp_i11_inh_trace,qs_i11_inhibit,1,FALSE,trace,t_q_fake_trace,1,west,
+sp_i11_inh_miss,qs_i11_inhibit,2,FALSE,,t_q_fake_miss,1,west,
+sp_i11_inh_real,qs_i11_inhibit,3,TRUE,inhibit,t_q_real_inhibit,1,east,

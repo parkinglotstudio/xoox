@@ -19,7 +19,7 @@ p_poisonberry,g_bad,t_poisonberry,e_atk_neg10,10,
 p_shrine,g_bad,t_shrine,e_def_neg5,10,
 p_ruin,g_jackpot,t_ruin,e_atk21,10,
 p_luckybox,g_jackpot,t_luckybox,,10,mg_lucky_treasure
-p_mythslot,g_jackpot,t_mythslot,,8,mg_slot
+p_mythslot,g_jackpot,t_mythslot,e_skill_myth,8,
 p_waterblessing,g_jackpot,t_waterblessing,e_maxhp21,10,
 p_bonus_star,g_bonus,t_bonus_star,e_star2,10,
 p_bonus_coin,g_bonus,t_bonus_coin,e_gold275,10,
@@ -44,7 +44,7 @@ p_poisonberry_2,g_bad,t_poisonberry_2,e_atk_neg10,10,
 p_shrine_2,g_bad,t_shrine_2,e_def_neg5,10,
 p_ruin_2,g_jackpot,t_ruin_2,e_atk21,10,
 p_luckybox_2,g_jackpot,t_luckybox_2,,10,mg_lucky_treasure
-p_mythslot_2,g_jackpot,t_mythslot_2,,8,mg_slot
+p_mythslot_2,g_jackpot,t_mythslot_2,e_skill_myth,8,
 p_waterblessing_2,g_jackpot,t_waterblessing_2,e_maxhp21,10,
 p_bonus_star_2,g_bonus,t_bonus_star_2,e_star2,10,
 p_bonus_coin_2,g_bonus,t_bonus_coin_2,e_gold275,10,

@@ -43,7 +43,15 @@ const KIND_TONE: Record<string, { accent: string; rivalName: string }> = {
  *
  * @param host 3D 레이어(stage3d-layer) — 오버레이가 무대 안에 머물러야 "제자리"가 된다
  */
-export function runArenaBout(host: HTMLElement, arena: ArenaDef): Promise<ArenaResult> {
+export function runArenaBout(
+  host: HTMLElement,
+  arena: ArenaDef,
+  opts?: {
+    onMash?: (hit: (() => void) | null) => void;
+    untilHint?: string;
+    pressHint?: string;
+  },
+): Promise<ArenaResult> {
   return new Promise<ArenaResult>((resolve) => {
     const tone = KIND_TONE[arena.rival_kind] ?? KIND_TONE.CLOCK!;
     const goal = Math.max(1, arena.goal);
@@ -67,7 +75,8 @@ export function runArenaBout(host: HTMLElement, arena: ArenaDef): Promise<ArenaR
           <span class="arena-count">0/${goal}</span>
         </div>
       </div>
-      <button type="button" class="arena-act">모으기 <b>SPACE</b></button>
+      <button type="button" class="arena-act" hidden>모으기</button>
+      <p class="arena-hint" hidden></p>
       <button type="button" class="arena-give-up">물러난다</button>
     `;
     host.appendChild(root);
@@ -77,6 +86,16 @@ export function runArenaBout(host: HTMLElement, arena: ArenaDef): Promise<ArenaR
     const countEl = root.querySelector<HTMLElement>(".arena-count")!;
     const actBtn = root.querySelector<HTMLButtonElement>(".arena-act")!;
     const giveUpBtn = root.querySelector<HTMLButtonElement>(".arena-give-up")!;
+    const hintEl = root.querySelector<HTMLElement>(".arena-hint")!;
+    if (opts?.pressHint || opts?.untilHint) {
+      hintEl.hidden = false;
+      const press = document.createElement("b");
+      press.textContent = opts.pressHint || "";
+      const until = document.createElement("span");
+      until.textContent = opts.untilHint || "";
+      if (opts?.pressHint) hintEl.appendChild(press);
+      if (opts?.untilHint) hintEl.appendChild(until);
+    }
 
     let score = 0;
     let rival = 0;
@@ -103,6 +122,7 @@ export function runArenaBout(host: HTMLElement, arena: ArenaDef): Promise<ArenaR
       done = true;
       window.clearInterval(timer);
       window.removeEventListener("keydown", onKey);
+      opts?.onMash?.(null);
       root.classList.add(won ? "won" : "lost");
       // 결과를 0.5초 보여준 뒤 걷는다 — 즉시 사라지면 이겼는지 알 수 없다
       window.setTimeout(() => {
@@ -111,23 +131,25 @@ export function runArenaBout(host: HTMLElement, arena: ArenaDef): Promise<ArenaR
       }, 520);
     };
 
+    const pulseEl = () => document.getElementById("mainBtn") ?? actBtn;
+
     const hit = () => {
       if (done) return;
       const now = performance.now();
       if (now - lastInput < INPUT_COOLDOWN_MS) return;
       lastInput = now;
       score = Math.min(goal, score + HIT_PER_INPUT);
-      actBtn.classList.remove("pulse");
-      // 클래스를 다시 붙여 애니메이션을 재시작한다
-      void actBtn.offsetWidth;
-      actBtn.classList.add("pulse");
+      const el = pulseEl();
+      el.classList.remove("arena-pulse");
+      void el.offsetWidth;
+      el.classList.add("arena-pulse");
       paint();
       if (score >= goal) finish(true);
     };
 
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement | null;
-      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA")) return;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "BUTTON")) return;
       if (e.key === " " || e.key === "Enter") {
         e.preventDefault();
         hit();
@@ -137,9 +159,9 @@ export function runArenaBout(host: HTMLElement, arena: ArenaDef): Promise<ArenaR
       }
     };
 
-    actBtn.addEventListener("click", hit);
     giveUpBtn.addEventListener("click", () => finish(false, true));
     window.addEventListener("keydown", onKey);
+    opts?.onMash?.(hit);
 
     paint();
     timer = window.setInterval(() => {

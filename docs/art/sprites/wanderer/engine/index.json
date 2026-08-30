@@ -1,0 +1,117 @@
+{
+  "engine_root": "C:\\xoox\\docs\\art\\sprites\\wanderer\\engine",
+  "anims": [
+    {
+      "id": "aim_fire",
+      "dir": "aim_fire",
+      "manifest": "aim_fire/aim_fire.json",
+      "sheet": "aim_fire/aim_fire_sheet.png",
+      "cell": 512,
+      "frame_count": 2
+    },
+    {
+      "id": "aim_walk_b",
+      "dir": "aim_walk_b",
+      "manifest": "aim_walk_b/aim_walk_b.json",
+      "sheet": "aim_walk_b/aim_walk_b_sheet.png",
+      "cell": 512,
+      "frame_count": 2
+    },
+    {
+      "id": "aim_walk_f",
+      "dir": "aim_walk_f",
+      "manifest": "aim_walk_f/aim_walk_f.json",
+      "sheet": "aim_walk_f/aim_walk_f_sheet.png",
+      "cell": 512,
+      "frame_count": 2
+    },
+    {
+      "id": "aim_walk_l",
+      "dir": "aim_walk_l",
+      "manifest": "aim_walk_l/aim_walk_l.json",
+      "sheet": "aim_walk_l/aim_walk_l_sheet.png",
+      "cell": 512,
+      "frame_count": 2
+    },
+    {
+      "id": "aim_walk_r",
+      "dir": "aim_walk_r",
+      "manifest": "aim_walk_r/aim_walk_r.json",
+      "sheet": "aim_walk_r/aim_walk_r_sheet.png",
+      "cell": 512,
+      "frame_count": 2
+    },
+    {
+      "id": "draw_holster",
+      "dir": "draw_holster",
+      "manifest": "draw_holster/draw_holster.json",
+      "sheet": "draw_holster/draw_holster_sheet.png",
+      "cell": 512,
+      "frame_count": 3
+    },
+    {
+      "id": "holster",
+      "dir": "holster",
+      "manifest": "holster/holster.json",
+      "sheet": "holster/holster_sheet.png",
+      "cell": 512,
+      "frame_count": 3
+    },
+    {
+      "id": "ingame_idle",
+      "dir": "ingame_idle",
+      "manifest": "ingame_idle/ingame_idle.json",
+      "sheet": "ingame_idle/ingame_idle_sheet.png",
+      "cell": 512,
+      "frame_count": 13
+    },
+    {
+      "id": "move",
+      "dir": "move",
+      "manifest": "move/move.json",
+      "sheet": "move/move_sheet.png",
+      "cell": 512,
+      "frame_count": 12
+    },
+    {
+      "id": "move_back",
+      "dir": "move_back",
+      "manifest": "move_back/move_back.json",
+      "sheet": "move_back/move_back_sheet.png",
+      "cell": 512,
+      "frame_count": 16
+    },
+    {
+      "id": "throw",
+      "dir": "throw",
+      "manifest": "throw/throw.json",
+      "sheet": "throw/throw_sheet.png",
+      "cell": 512,
+      "frame_count": 14
+    },
+    {
+      "id": "walk_gun",
+      "dir": "walk_gun",
+      "manifest": "walk_gun/walk_gun.json",
+      "sheet": "walk_gun/walk_gun_sheet.png",
+      "cell": 512,
+      "frame_count": 2
+    },
+    {
+      "id": "walk_l",
+      "dir": "walk_l",
+      "manifest": "walk_l/walk_l.json",
+      "sheet": "walk_l/walk_l_sheet.png",
+      "cell": 512,
+      "frame_count": 9
+    },
+    {
+      "id": "walk_r",
+      "dir": "walk_r",
+      "manifest": "walk_r/walk_r.json",
+      "sheet": "walk_r/walk_r_sheet.png",
+      "cell": 512,
+      "frame_count": 5
+    }
+  ]
+}

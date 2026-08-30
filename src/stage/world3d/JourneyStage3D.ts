@@ -16,10 +16,14 @@
  * Three 캔버스는 renderer.setAnimationLoop을 쓰는 RegionBackdrop의 선례를 따른다.
  */
 import * as THREE from "three";
-import { PROP_DEFAULTS, stickerTexture, disposePropTextures } from "./propArt";
+import { PROP_DEFAULTS, stickerTexture, stickerArtTexture, stickerArtMaterial, stickerArtReady, disposePropTextures } from "./propArt";
 import type { Journey3DConfig } from "./journey3dConfig";
-import { IslandTerrain, sectorIdOf } from "./IslandTerrain";
+import { IslandTerrain, sectorIdOf, purifyAmountAt, type PurifyFocusWorld } from "./IslandTerrain";
 import { findWorldPath, resolveCircleMove, type PathObstacle } from "./propPath";
+import { GritBurst, type GritEmitOpts } from "./fx/GritBurst";
+import { SAND_DISSOLVE_CACHE_KEY, SAND_DISSOLVE_GLSL } from "./fx/sandDissolve";
+import { StoneThrow } from "./StoneThrow";
+import type { PurifyRaidConfig } from "./purifyRaidConfig";
 import {
   asSheet,
   type PlayerSprite,
@@ -57,6 +61,10 @@ export interface JourneyStage3DOptions {
   onViewModeChange?: (mode: ViewMode) => void;
   /** 매 틱 — 습격처럼 스테이지 밖에서 움직이는 콘텐츠 */
   onTick?: (dt: number) => void;
+  /** 먼저 깔 육지 칸. 기본은 남쪽 들판 스폰. */
+  initialFocus?: string;
+  /** 플레이어가 섹터 가장자리에 닿았을 때(한 번). 이웃 칸 이동용 */
+  onCellEdge?: (side: "TOP" | "BOTTOM" | "LEFT" | "RIGHT") => void;
 }
 
 const PILLAR_COLOR: Record<string, string> = {
@@ -128,7 +136,7 @@ function applyPropSketchTint(e: PropEntry, sketch: boolean): void {
   e.material.needsUpdate = true;
 }
 
-/** 아래(uv.y=0)부터 위로 컬러가 차오름. uPurifyFill 0=스케치 · 1=완칠 */
+/** 아래→위 + 모래식 알갱이 임계. uPurifyFill 0=스케치 · 1=완칠 */
 function wirePropPurifyFillShader(mat: THREE.MeshBasicMaterial): { value: number } {
   const u = { value: 0 };
   mat.userData.uPurifyFill = u;
@@ -143,19 +151,10 @@ uniform float uPurifyFill;`,
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>
-        {
-          vec3 baseColor = diffuseColor.rgb;
-          float g = dot(baseColor, vec3(0.30, 0.32, 0.22));
-          vec3 paper = vec3(0.97, 0.96, 0.93);
-          vec3 ink = vec3(0.22, 0.22, 0.24);
-          vec3 sketch = mix(paper, ink, clamp((1.0 - g) * 0.55 + 0.12, 0.0, 1.0));
-          float edge = 0.06;
-          float colored = 1.0 - smoothstep(uPurifyFill - edge, uPurifyFill + edge * 0.4, vMapUv.y);
-          diffuseColor.rgb = mix(sketch, baseColor, colored);
-        }`,
+        ${SAND_DISSOLVE_GLSL}`,
       );
   };
-  mat.customProgramCacheKey = () => "prop-purify-fill-v1";
+  mat.customProgramCacheKey = () => SAND_DISSOLVE_CACHE_KEY;
   return u;
 }
 
@@ -193,8 +192,33 @@ export class JourneyStage3D {
   private paintGroup = new THREE.Group();
   /** 오염체 등 임시 빌보드 */
   private overlayGroup = new THREE.Group();
+  /** 잔여 정화 착탄 grit (모래식) */
+  private residualGrit: GritBurst | null = null;
   private nodes: NodeEntry[] = [];
   private props: PropEntry[] = [];
+  /** 섹터 CSV 전체 — 메시는 50m 안에만 만든다 */
+  private propCatalog: WorldProp[] = [];
+  private propStreamAcc = 0;
+  private lastStreamPx = 9999;
+  private lastStreamPz = 9999;
+  private obstacleCache: PathObstacle[] = [];
+  /** 프롭 생성 반경(m). 안개 far 바로 앞 — 안개 너머는 안 만든다 */
+  private propStreamM = 34;
+  private residualColoredIds = new Set<string>();
+  private wallBatches: {
+    mesh: THREE.InstancedMesh;
+    mat: THREE.MeshBasicMaterial;
+    items: { wx: number; wz: number; w: number; h: number }[];
+    live: { wx: number; wz: number; w: number; h: number }[];
+  }[] = [];
+  private wallDummy = new THREE.Object3D();
+  private lastBillboardCx = 9999;
+  private lastBillboardCz = 9999;
+  private lastBillboardYaw = 9999;
+  private lastFogLerp = -1;
+  private lastWallTint = -1;
+  private wallSphereDirty = false;
+  private fogLerpColor = new THREE.Color();
 
   private decalGeo: THREE.CircleGeometry;
   private decalTex: THREE.Texture;
@@ -206,14 +230,38 @@ export class JourneyStage3D {
   private playerShadow: THREE.Mesh;
   private animIdle: AnimState | null = null;
   private animMove: AnimState | null = null;
+  private animAim: AnimState | null = null;
+  private animDraw: AnimState | null = null;
+  private animHolster: AnimState | null = null;
+  private animAimWalkF: AnimState | null = null;
+  private animAimWalkB: AnimState | null = null;
+  private animAimWalkL: AnimState | null = null;
+  private animAimWalkR: AnimState | null = null;
+  private animWalkL: AnimState | null = null;
+  private animWalkR: AnimState | null = null;
+  private animMoveBack: AnimState | null = null;
+  private animThrow: AnimState | null = null;
+  private throwing = false;
+  private throwReleased = false;
+  private throwAim: { x: number; z: number } | null = null;
+  private stoneThrow: StoneThrow | null = null;
+  private wantAim = false;
+  private gunPose: "holstered" | "draw" | "aim" | "holster" = "holstered";
+  private moveFwd = 0;
+  private moveSide = 0;
+  private walkSpeedMul = 2 / 3;
 
   private worldM: number;
   private charH: number;
   private fogVisionM: number;
   private fogFarMul: number;
   private skyIsPurified = false;
-  private skyPolluted = { fog: 0xc5c19e, zenith: 0x726e56 };
-  private skyPurified = { fog: 0xf7b65c, zenith: 0xf59954 };
+  private skyPurifyAmount = 0;
+  private skyMoodJobs: { polluted?: Promise<void>; purified?: Promise<void> } = {};
+  /** 정화전 — 차가운 재빛(시안 림과 같은 가족). 예전 회황 #c5c19e 폐기 */
+  private skyPolluted = { fog: 0x6a7f88, zenith: 0x2e3d48 };
+  /** 정화후 — 열린 시안 하늘·바닥 포그. 살구 노을 폐기 */
+  private skyPurified = { fog: 0x8eb0bc, zenith: 0x5a98ac };
   private skyTexPolluted: THREE.Texture | null = null;
   private skyTexPurified: THREE.Texture | null = null;
   private horizonTexPolluted: THREE.Texture | null = null;
@@ -235,6 +283,7 @@ export class JourneyStage3D {
   /** 월드 미터 좌표 */
   private px = 0;
   private pz = 0;
+  private lastEdgeSide: "TOP" | "BOTTOM" | "LEFT" | "RIGHT" | null = null;
   private yaw = 0;
   private bobPhase = 0;
   private bobAmp = 0.06;
@@ -268,6 +317,7 @@ export class JourneyStage3D {
     z1: number;
     t0: number;
     ms: number;
+    restoreFrozen: boolean;
     resolve: () => void;
   } | null = null;
   private areaPropsStanding = false;
@@ -297,8 +347,9 @@ export class JourneyStage3D {
       canvas,
       antialias: this.resScale >= 1,
       alpha: false,
+      stencil: false,
       powerPreference: "high-performance",
-      preserveDrawingBuffer: true,
+      preserveDrawingBuffer: false,
     });
     this.renderer.setClearColor(fogColor, 1);
     this.applyPixelRatio();
@@ -315,9 +366,10 @@ export class JourneyStage3D {
       fog: false,
       side: THREE.BackSide,
     });
-    this.horizonMesh = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 64, 1, true), this.horizonMat);
+    this.horizonMesh = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 48, 1, true), this.horizonMat);
     this.horizonMesh.renderOrder = -1;
     this.horizonMesh.frustumCulled = false;
+    wireHorizonWaveShader(this.horizonMat);
     this.scene.add(this.horizonMesh);
     this.layoutHorizon();
     void this.loadSkyArt();
@@ -347,8 +399,9 @@ export class JourneyStage3D {
 
     this.island = new IslandTerrain({
       cellSize: this.worldM,
-      anisotropy: this.renderer.capabilities.getMaxAnisotropy(),
+      anisotropy: Math.min(4, this.renderer.capabilities.getMaxAnisotropy()),
       centerOnFocus: true,
+      initialFocus: opts.initialFocus ?? "i21",
     });
     this.scene.add(this.island.group);
     void this.island.ready.then(() => {
@@ -358,10 +411,12 @@ export class JourneyStage3D {
       this.island.setCellSize(this.worldM);
     });
 
-    this.decalGeo = new THREE.CircleGeometry(this.charH * 0.7, 24);
+    this.decalGeo = new THREE.CircleGeometry(this.charH * 0.7, 16);
     this.decalTex = makeDecalTexture();
     this.paintGroup.position.y = 0.02;
     this.scene.add(this.nodeGroup, this.propGroup, this.paintGroup, this.overlayGroup);
+    this.residualGrit = new GritBurst(this);
+    this.stoneThrow = new StoneThrow(this);
 
     this.playerMat = new THREE.SpriteMaterial({
       transparent: true,
@@ -374,13 +429,13 @@ export class JourneyStage3D {
     this.player.center.set(0.5, 0);
     this.player.renderOrder = 8;
     this.playerShadow = new THREE.Mesh(
-      new THREE.CircleGeometry(this.charH * 0.34, 20),
+      new THREE.CircleGeometry(this.charH * 0.266, 16),
       new THREE.MeshBasicMaterial({
-        map: this.decalTex,
+        map: makePlayerShadowTexture(),
         transparent: true,
         depthWrite: false,
         color: 0x000000,
-        opacity: 0.5,
+        opacity: 0.8,
         fog: true,
       }),
     );
@@ -406,7 +461,7 @@ export class JourneyStage3D {
       this.fallbackTimer = window.setInterval(() => {
         if (this.disposed) return;
         if (performance.now() - this.lastT > 90) drive(performance.now());
-      }, 33);
+      }, 50);
     }
   }
 
@@ -416,24 +471,55 @@ export class JourneyStage3D {
    * 섹터 바닥. 예전에는 항공 PNG 한 장을 늘려 깔았다.
    * 지금은 9칸 타일 섬을 현재 섹터가 원점에 오도록 맞춘다.
    */
-  async setFloor(src: string, opts?: { polluted?: boolean; purifiedIds?: string[] }): Promise<void> {
+  async setFloor(src: string, opts?: { polluted?: boolean; purifiedIds?: string[]; foci?: PurifyFocusWorld[] }): Promise<void> {
     const m = /(?:sector_)?(i\d{2})/.exec(src);
     const id = m?.[1] ? m[1] : sectorIdOf(src);
     await this.setIslandFloor(id, opts);
   }
 
-  async setIslandFloor(areaId: string, opts?: { polluted?: boolean; purifiedIds?: string[] }): Promise<void> {
+  async setIslandFloor(
+    areaId: string,
+    opts?: { polluted?: boolean; purifiedIds?: string[]; foci?: PurifyFocusWorld[] },
+  ): Promise<void> {
     const id = sectorIdOf(areaId);
     await this.island.ready;
     if (this.disposed) return;
     this.island.setCellSize(this.worldM);
     this.island.setFocus(id);
-    if (opts?.purifiedIds) this.island.setPurified(opts.purifiedIds);
+    await this.island.ensureLand(id);
+    if (this.disposed) return;
+    if (opts?.foci) this.setPurifyFoci(opts.foci);
+    else if (opts?.purifiedIds) this.island.setPurified(opts.purifiedIds);
     else if (opts?.polluted != null) {
       this.island.setPurified(opts.polluted ? [] : [id]);
+      if (opts.polluted) this.setPurifyFoci([]);
     }
+    this.syncSkyFromFoci(true);
     this.floor.visible = false;
     this.detail.visible = false;
+    this.island.cullLandByView(this.px, this.pz, this.fog.far + 12);
+  }
+
+  setPurifyFoci(foci: PurifyFocusWorld[]): void {
+    this.island.setPurifyFoci(foci);
+    for (const e of this.props) {
+      e.waveStand = foci.some((f) => Math.hypot(e.wx - f.x, e.wz - f.z) <= f.r);
+    }
+    this.areaPropsStanding = false;
+    this.syncSkyFromFoci(true);
+  }
+
+  setPurifyColorAmt(amt: number): void {
+    this.island.setPurifyColorAmt(amt);
+    this.syncSkyFromFoci(true);
+  }
+
+  keepInsideDisk(cx: number, cz: number, radiusM: number): void {
+    const d = Math.hypot(this.px - cx, this.pz - cz);
+    if (d <= radiusM || d < 1e-4) return;
+    const k = radiusM / d;
+    this.px = cx + (this.px - cx) * k;
+    this.pz = cz + (this.pz - cz) * k;
   }
 
   backgroundStickers(areaId: string): WorldProp[] {
@@ -458,7 +544,10 @@ export class JourneyStage3D {
       const p = this.pctToWorld(e.prop.xPct, e.prop.yPct);
       e.wx = p.x;
       e.wz = p.z;
+      e.mesh.position.set(e.wx, 0.04 + (e.hM / 2) * clamp(e.stand, 0, 1), e.wz);
     }
+    this.rebuildObstacles();
+    this.rebuildWallBatch();
     this.setPlayer(at.xPct, at.yPct);
   }
 
@@ -501,6 +590,21 @@ export class JourneyStage3D {
     // 캐릭터보다 조금 큰 정도. 더 키우면 가까이 갔을 때 화면을 다 덮는다.
     const h = this.charH * this.nodeHMul;
     for (const n of nodes) {
+      const p = this.pctToWorld(n.xPct, n.yPct);
+      if (n.noMarker) {
+        const tex = new THREE.Texture();
+        const ghost = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, opacity: 0, transparent: true }));
+        ghost.visible = false;
+        ghost.position.set(p.x, 0.06, p.z);
+        const decal = new THREE.Mesh(
+          this.decalGeo,
+          new THREE.MeshBasicMaterial({ opacity: 0, transparent: true }),
+        );
+        decal.visible = false;
+        decal.position.set(p.x, 0.02, p.z);
+        this.nodes.push({ node: n, sprite: ghost, decal, texture: tex });
+        continue;
+      }
       const tex = makeNodeTexture(n);
       const img = tex.image as HTMLCanvasElement;
       const mat = new THREE.SpriteMaterial({
@@ -518,18 +622,18 @@ export class JourneyStage3D {
         map: this.decalTex,
         transparent: true,
         depthWrite: false,
-        fog: true,
+        fog: !n.pierceFog,
         color: new THREE.Color(PILLAR_COLOR[n.pillar ?? "탐구"] ?? "#5fd0ff"),
       });
       const decal = new THREE.Mesh(this.decalGeo, decalMat);
       decal.rotation.x = -Math.PI / 2;
 
-      const p = this.pctToWorld(n.xPct, n.yPct);
       sprite.position.set(p.x, 0.06, p.z);
       sprite.renderOrder = 3;
       decal.position.set(p.x, 0.02, p.z);
-      sprite.visible = !n.hidden;
-      decal.visible = !n.hidden;
+      const show = !n.hidden && !n.noMarker;
+      sprite.visible = show;
+      decal.visible = show;
 
       this.nodeGroup.add(sprite, decal);
       this.nodes.push({ node: n, sprite, decal, texture: tex });
@@ -541,15 +645,19 @@ export class JourneyStage3D {
     const e = this.nodes.find((x) => x.node.id === id);
     if (!e) return;
     e.node.hidden = hidden;
-    e.sprite.visible = !hidden;
-    e.decal.visible = !hidden;
+    const show = !hidden && !e.node.noMarker;
+    e.sprite.visible = show;
+    e.decal.visible = show;
   }
 
   setNodeCleared(id: string, cleared: boolean): void {
     const e = this.nodes.find((x) => x.node.id === id);
     if (!e) return;
     e.node.cleared = cleared;
-    (e.sprite.material as THREE.SpriteMaterial).opacity = cleared ? 0.55 : 1;
+    const show = !cleared && !e.node.hidden && !e.node.noMarker;
+    e.sprite.visible = show;
+    e.decal.visible = show;
+    (e.sprite.material as THREE.SpriteMaterial).opacity = 1;
   }
 
   removeNode(id: string): void {
@@ -561,7 +669,6 @@ export class JourneyStage3D {
     (e.decal.material as THREE.Material).dispose();
     e.texture.dispose();
     this.nodes.splice(i, 1);
-    if (this.nearNodeId === id) this.nearNodeId = null;
     this.syncNearNode();
   }
 
@@ -580,73 +687,253 @@ export class JourneyStage3D {
 
   setProps(props: WorldProp[]): void {
     this.clearProps();
-    for (const p of props) {
-      const def = PROP_DEFAULTS[p.kind];
-      const h = p.hM ?? def.hM;
-      const w = h * (p.aspect ?? def.aspect);
+    this.propCatalog = props;
+    this.rebuildObstacles();
+    this.rebuildWallBatch();
+    this.lastStreamPx = 9999;
+    this.syncPropStream(true);
+  }
+
+  private rebuildObstacles(): void {
+    const out: PathObstacle[] = [];
+    for (const p of this.propCatalog) {
+      const r = p.collide === false ? 0 : (p.collideR ?? COLLIDE_R[p.kind] ?? 0.8);
+      if (r <= 0.05) continue;
       const pos = this.pctToWorld(p.xPct, p.yPct);
+      out.push({ x: pos.x, z: pos.z, r });
+    }
+    this.obstacleCache = out;
+  }
 
-      let tex: THREE.Texture;
-      let own: THREE.Texture | null = null;
-      if (p.art) {
-        tex = new THREE.TextureLoader().load(p.art);
-        tex.colorSpace = THREE.SRGBColorSpace;
-        own = tex;
-      } else {
-        tex = stickerTexture(p.kind);
-      }
+  /** 플레이어 근처 프롭만 메시로. 나가면 회수 */
+  private syncPropStream(force = false): void {
+    if (this.propCatalog.length === 0) return;
+    if (!force && Math.hypot(this.px - this.lastStreamPx, this.pz - this.lastStreamPz) < 2.4) {
+      return;
+    }
+    this.lastStreamPx = this.px;
+    this.lastStreamPz = this.pz;
+    this.island.cullLandByView(this.px, this.pz, this.fog.far + 12);
+    const r = this.propStreamM;
+    const drop = r * 1.25;
+    const spawned = new Set(this.props.map((e) => e.prop.id));
+    for (const p of this.propCatalog) {
+      if (p.groupId === "sea_wall") continue;
+      if (spawned.has(p.id)) continue;
+      const pos = this.pctToWorld(p.xPct, p.yPct);
+      if (Math.hypot(pos.x - this.px, pos.z - this.pz) > r) continue;
+      this.spawnPropMesh(p);
+      spawned.add(p.id);
+    }
+    for (let i = this.props.length - 1; i >= 0; i--) {
+      const e = this.props[i]!;
+      if (Math.hypot(e.wx - this.px, e.wz - this.pz) <= drop) continue;
+      this.despawnPropAt(i);
+    }
+    this.streamWallVisible();
+    this.faceBillboards(true);
+  }
 
-      const mat = new THREE.MeshBasicMaterial({
+  private spawnPropMesh(p: WorldProp): void {
+    const def = PROP_DEFAULTS[p.kind];
+    const h = p.hM ?? def.hM;
+    const w = h * (p.aspect ?? def.aspect);
+    const pos = this.pctToWorld(p.xPct, p.yPct);
+    const residual = !!p.purifyTarget;
+    const shared = !residual && !!p.art;
+
+    let mat: THREE.MeshBasicMaterial;
+    if (shared && p.art) {
+      mat = stickerArtMaterial(p.art);
+    } else {
+      const tex = p.art ? stickerArtTexture(p.art) : stickerTexture(p.kind);
+      mat = new THREE.MeshBasicMaterial({
         map: tex,
-        transparent: true,
-        depthWrite: false,
+        transparent: !residual,
+        depthWrite: true,
         side: THREE.DoubleSide,
         fog: true,
-        alphaTest: 0.04,
+        alphaTest: 0.1,
       });
-      const residual = !!p.purifyTarget;
       if (residual) wirePropPurifyFillShader(mat);
-      const mesh = new THREE.Mesh(this.planeGeo, mat);
-      mesh.scale.set(w, h, 1);
-      mesh.position.set(pos.x, 0.04, pos.z);
-      mesh.rotation.x = -Math.PI / 2;
-      mesh.rotation.y = ((p.yawDeg ?? 0) * Math.PI) / 180;
-      mesh.renderOrder = 2;
-      this.propGroup.add(mesh);
-      const collideR =
-        p.collide === false ? 0 : (p.collideR ?? COLLIDE_R[p.kind] ?? 0.8);
-      const entry: PropEntry = {
-        prop: p,
-        mesh,
-        material: mat,
-        ownTexture: own,
-        hM: h,
-        wx: pos.x,
-        wz: pos.z,
-        stand: 0,
-        standVel: 0,
-        faceYaw: ((p.yawDeg ?? 0) * Math.PI) / 180,
-        faced: false,
-        waveStand: false,
-        collideR,
-        residual,
-        residualPending: residual,
-        residualRising: false,
-        purifyFill: 0,
-      };
-      if (residual) setPropPurifyFill(entry, 0);
-      this.props.push(entry);
     }
+
+    const mesh = new THREE.Mesh(this.planeGeo, mat);
+    mesh.scale.set(w, h, 1);
+    mesh.position.set(pos.x, 0.04, pos.z);
+    mesh.rotation.x = -Math.PI / 2;
+    mesh.rotation.y = ((p.yawDeg ?? 0) * Math.PI) / 180;
+    mesh.renderOrder = 2;
+    mesh.frustumCulled = true;
+    mesh.visible = false;
+    this.propGroup.add(mesh);
+    const collideR =
+      p.collide === false ? 0 : (p.collideR ?? COLLIDE_R[p.kind] ?? 0.8);
+    const entry: PropEntry = {
+      prop: p,
+      mesh,
+      material: mat,
+      ownTexture: null,
+      hM: h,
+      wx: pos.x,
+      wz: pos.z,
+      stand: 0,
+      standVel: 0,
+      faceYaw: ((p.yawDeg ?? 0) * Math.PI) / 180,
+      faced: false,
+      waveStand: false,
+      collideR,
+      residual,
+      residualPending: residual,
+      residualRising: false,
+      purifyFill: 0,
+    };
+    if (residual) {
+      if (this.residualColoredIds.has(p.id)) {
+        entry.residualPending = false;
+        entry.residualRising = true;
+        entry.waveStand = true;
+        setPropPurifyFill(entry, 1);
+      } else {
+        setPropPurifyFill(entry, 0);
+      }
+    }
+    this.props.push(entry);
+  }
+
+  private despawnPropAt(i: number): void {
+    const e = this.props[i];
+    if (!e) return;
+    this.propGroup.remove(e.mesh);
+    if (e.residual || !e.prop.art) e.material.dispose();
+    e.ownTexture?.dispose();
+    this.props.splice(i, 1);
   }
 
   private clearProps(): void {
-    for (const e of this.props) {
-      this.propGroup.remove(e.mesh);
-      e.material.dispose();
-      e.ownTexture?.dispose();
-    }
-    this.props = [];
+    for (let i = this.props.length - 1; i >= 0; i--) this.despawnPropAt(i);
+    this.propCatalog = [];
+    this.obstacleCache = [];
+    this.clearWallBatch();
   }
+
+  private clearWallBatch(): void {
+    for (const b of this.wallBatches) {
+      this.propGroup.remove(b.mesh);
+      b.mat.dispose();
+    }
+    this.wallBatches = [];
+    this.lastWallTint = -1;
+  }
+
+  /** 해안 나무는 아트별로 한 번에 그린다. 장마다 메시를 만들면 이 밀도에서 버벅인다. */
+  private rebuildWallBatch(): void {
+    this.clearWallBatch();
+    const walls = this.propCatalog.filter((p) => p.groupId === "sea_wall" && p.art);
+    if (walls.length === 0) return;
+    const byArt = new Map<string, typeof walls>();
+    for (const p of walls) {
+      const art = p.art!;
+      const list = byArt.get(art);
+      if (list) list.push(p);
+      else byArt.set(art, [p]);
+    }
+    for (const [art, list] of byArt) {
+      const sample = list[0]!;
+      const def = PROP_DEFAULTS[sample.kind];
+      const mat = stickerArtMaterial(art).clone();
+      const mesh = new THREE.InstancedMesh(this.planeGeo, mat, list.length);
+      mesh.frustumCulled = true;
+      mesh.renderOrder = 2;
+      mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      mesh.count = 0;
+      const items = list.map((p) => {
+        const h = p.hM ?? def.hM;
+        const w = h * (p.aspect ?? def.aspect);
+        const pos = this.pctToWorld(p.xPct, p.yPct);
+        return { wx: pos.x, wz: pos.z, w, h };
+      });
+      this.wallBatches.push({ mesh, mat, items, live: [] });
+      this.propGroup.add(mesh);
+    }
+    this.applyWallPurifyTint();
+    this.streamWallVisible();
+    this.faceBillboards(true);
+  }
+
+  /** 안개 안 나무만 인스턴스에 넣는다. 섹터 전체를 매 프레임 돌리면 남쪽 들판에서도 버벅인다. */
+  private streamWallVisible(): void {
+    if (this.wallBatches.length === 0) return;
+    const r = this.propStreamM;
+    const drop = r * 1.25;
+    const px = this.px;
+    const pz = this.pz;
+    for (const b of this.wallBatches) {
+      const was = b.live;
+      const next: typeof was = [];
+      for (const it of b.items) {
+        const d = Math.hypot(it.wx - px, it.wz - pz);
+        if (d <= r || (d <= drop && was.includes(it))) next.push(it);
+      }
+      b.live = next;
+      b.mesh.count = next.length;
+    }
+    this.wallSphereDirty = true;
+  }
+
+  private faceBillboards(force = false): void {
+    const cx = this.camera.position.x;
+    const cz = this.camera.position.z;
+    const moved = Math.hypot(cx - this.lastBillboardCx, cz - this.lastBillboardCz);
+    const yawD = Math.abs(this.yaw - this.lastBillboardYaw);
+    if (!force && moved < 0.08 && yawD < 0.015) return;
+    this.lastBillboardCx = cx;
+    this.lastBillboardCz = cz;
+    this.lastBillboardYaw = this.yaw;
+    this.facePropsToCamera();
+    this.faceWallBatch();
+  }
+
+  private faceWallBatch(): void {
+    if (this.wallBatches.length === 0) return;
+    const cx = this.camera.position.x;
+    const cz = this.camera.position.z;
+    const dummy = this.wallDummy;
+    for (const b of this.wallBatches) {
+      const live = b.live;
+      const n = live.length;
+      b.mesh.count = n;
+      for (let i = 0; i < n; i++) {
+        const it = live[i]!;
+        dummy.position.set(it.wx, 0.04 + it.h / 2, it.wz);
+        dummy.scale.set(it.w, it.h, 1);
+        dummy.rotation.set(0, Math.atan2(cx - it.wx, cz - it.wz), 0);
+        dummy.updateMatrix();
+        b.mesh.setMatrixAt(i, dummy.matrix);
+      }
+      b.mesh.instanceMatrix.needsUpdate = n > 0;
+      if (n > 0 && this.wallSphereDirty) b.mesh.computeBoundingSphere();
+    }
+    this.wallSphereDirty = false;
+  }
+
+  /** 근처 나무 메시·텍스처가 다 올라올 때까지. 페이드 인 전에 호출 */
+  async waitPropsReady(): Promise<void> {
+    this.rebuildWallBatch();
+    this.syncPropStream(true);
+    const arts = new Set(
+      this.props.map((e) => e.prop.art).filter((a): a is string => !!a),
+    );
+    for (const p of this.propCatalog) {
+      if (p.groupId === "sea_wall" && p.art) arts.add(p.art);
+    }
+    await Promise.all([...arts].map((u) => stickerArtReady(u)));
+    this.faceBillboards(true);
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  /** 기립은 stepPropPop이 담당. 여기선 벽을 카메라에만 맞춘다. */
+  private facePropsToCamera(): void {}
 
   // ── 플레이어 스프라이트 ────────────────────────────────────────
 
@@ -655,10 +942,50 @@ export class JourneyStage3D {
    * (지금 data/ui/lobby에는 정지 PNG만 있어 그 경로로 먼저 붙는다)
    */
   async setPlayerSprite(sprite: PlayerSprite): Promise<void> {
-    this.animIdle = await this.loadAnim(asSheet(sprite.idle));
-    this.animMove = sprite.move ? await this.loadAnim(asSheet(sprite.move)) : null;
+    const hadIdle = !!this.animIdle;
+    this.animIdle = await this.takeAnim(this.animIdle, asSheet(sprite.idle));
+    this.animMove = sprite.move ? await this.takeAnim(this.animMove, asSheet(sprite.move)) : this.animMove;
+    if (sprite.aimFire) this.animAim = await this.takeAnim(this.animAim, sprite.aimFire);
+    if (sprite.drawHolster) this.animDraw = await this.takeAnim(this.animDraw, sprite.drawHolster);
+    if (sprite.holster) this.animHolster = await this.takeAnim(this.animHolster, sprite.holster);
+    if (sprite.aimWalkF) this.animAimWalkF = await this.takeAnim(this.animAimWalkF, sprite.aimWalkF);
+    if (sprite.aimWalkB) this.animAimWalkB = await this.takeAnim(this.animAimWalkB, sprite.aimWalkB);
+    if (sprite.aimWalkL) this.animAimWalkL = await this.takeAnim(this.animAimWalkL, sprite.aimWalkL);
+    if (sprite.aimWalkR) this.animAimWalkR = await this.takeAnim(this.animAimWalkR, sprite.aimWalkR);
+    if (sprite.walkL) this.animWalkL = await this.takeAnim(this.animWalkL, sprite.walkL);
+    if (sprite.walkR) this.animWalkR = await this.takeAnim(this.animWalkR, sprite.walkR);
+    if (sprite.moveBack) this.animMoveBack = await this.takeAnim(this.animMoveBack, sprite.moveBack);
+    if (sprite.throw) {
+      this.animThrow = await this.takeAnim(this.animThrow, { ...sprite.throw, loop: false });
+    }
+    if (!hadIdle) this.gunPose = "holstered";
     this.applyAnimFrame(this.animIdle);
     this.applyPlayerScale();
+  }
+
+  private async takeAnim(prev: AnimState | null, sheet: SpriteAnimSheet): Promise<AnimState> {
+    if (prev && prev.sheet.url === sheet.url) return prev;
+    const next = await this.loadAnim(sheet);
+    prev?.texture.dispose();
+    return next;
+  }
+
+  /** 정화 총이 나가거나 마우스 사격일 때 조준 시트 */
+  setAiming(on: boolean): void {
+    this.wantAim = on;
+  }
+
+  hasAimSheet(): boolean {
+    return this.animAim != null;
+  }
+
+  /** 빌보드 셀 위 총구 → 월드. JSON muzzle_uv 가 있으면 높이를 쓴다. */
+  muzzleOrigin(nx: number, nz: number): { x: number; y: number; z: number } {
+    const anim = this.gunPose === "aim" ? this.currentAnim() : this.animAim;
+    const uv = anim?.sheet.muzzleUv ?? this.animAim?.sheet.muzzleUv;
+    const along = 0.45;
+    const y = uv ? this.charH * (1 - uv[1]) : 0.85;
+    return { x: this.px + nx * along, y, z: this.pz + nz * along };
   }
 
   private async loadAnim(sheet: SpriteAnimSheet): Promise<AnimState> {
@@ -687,8 +1014,56 @@ export class JourneyStage3D {
     }
   }
 
+  private resetAnim(anim: AnimState | null): void {
+    if (!anim) return;
+    anim.frame = 0;
+    anim.elapsedMs = 0;
+  }
+
+  private gunWanted(): boolean {
+    return this.wantAim || this.shooting;
+  }
+
+  private stepGunPose(): void {
+    const want = this.gunWanted();
+    if (want) {
+      if (this.gunPose === "holstered") {
+        this.gunPose = this.animDraw ? "draw" : "aim";
+        this.resetAnim(this.animDraw);
+        this.resetAnim(this.animAim);
+      } else if (this.gunPose === "holster") {
+        this.gunPose = this.animDraw ? "draw" : "aim";
+        this.resetAnim(this.animDraw);
+        this.resetAnim(this.animAim);
+      }
+    } else if (this.gunPose === "aim" || this.gunPose === "draw") {
+      this.gunPose = this.animHolster ? "holster" : "holstered";
+      this.resetAnim(this.animHolster);
+    }
+  }
+
+  private currentAnim(): AnimState | null {
+    if (this.throwing) return this.animThrow ?? this.animIdle;
+    if (this.gunPose === "draw") return this.animDraw ?? this.animAim ?? this.animIdle;
+    if (this.gunPose === "holster") return this.animHolster ?? this.animIdle;
+    if (this.gunPose === "aim") {
+      // 던지기: 이동 중에도 던지기 시트(이동은 walk 시트로 따로 안 섞음)
+      return this.animAim ?? this.animIdle;
+    }
+    if (!this.moving) return this.animIdle;
+    const ax = Math.abs(this.moveFwd);
+    const ay = Math.abs(this.moveSide);
+    if (ay > ax + 0.01) {
+      return (this.moveSide < 0 ? this.animWalkL : this.animWalkR) ?? this.animMove ?? this.animIdle;
+    }
+    if (this.moveFwd < 0) {
+      return this.animMoveBack ?? this.animMove ?? this.animIdle;
+    }
+    return this.animMove ?? this.animIdle;
+  }
+
   private applyPlayerScale(): void {
-    const anim = this.moving && this.animMove ? this.animMove : this.animIdle;
+    const anim = this.currentAnim();
     const img = anim?.texture.image as { width?: number; height?: number } | undefined;
     const cols = anim?.sheet.cols ?? 1;
     const rows = anim?.sheet.rows ?? 1;
@@ -699,9 +1074,11 @@ export class JourneyStage3D {
   }
 
   private stepAnim(dt: number): void {
-    const anim = this.moving && this.animMove ? this.animMove : this.animIdle;
+    this.stepGunPose();
+    const anim = this.currentAnim();
     if (!anim || anim.sheet.frames.length <= 1) {
       this.applyAnimFrame(anim);
+      this.applyPlayerScale();
       return;
     }
     anim.elapsedMs += dt * 1000;
@@ -710,10 +1087,34 @@ export class JourneyStage3D {
       anim.elapsedMs = 0;
       anim.frame += 1;
       if (anim.frame >= anim.sheet.frames.length) {
-        anim.frame = anim.sheet.loop ? 0 : anim.sheet.frames.length - 1;
+        if (anim.sheet.loop) {
+          anim.frame = 0;
+        } else {
+          anim.frame = anim.sheet.frames.length - 1;
+          if (this.gunPose === "draw") {
+            this.gunPose = "aim";
+            this.resetAnim(this.animAim);
+          } else if (this.gunPose === "holster") {
+            this.gunPose = "holstered";
+          } else if (this.throwing) {
+            this.throwing = false;
+            this.throwReleased = false;
+            this.throwAim = null;
+          }
+        }
       }
     }
-    this.applyAnimFrame(anim);
+    if (this.throwing && this.animThrow && !this.throwReleased) {
+      const n = this.animThrow.sheet.frames.length;
+      const releaseAt = Math.max(1, Math.floor(n * 0.55));
+      if (this.animThrow.frame >= releaseAt) {
+        this.throwReleased = true;
+        if (this.throwAim) this.stoneThrow?.launchAt(this.throwAim.x, this.throwAim.z);
+        else this.stoneThrow?.launch();
+      }
+    }
+    this.applyAnimFrame(this.currentAnim());
+    this.applyPlayerScale();
   }
 
   // ── 좌표 ──────────────────────────────────────────────────────
@@ -736,6 +1137,59 @@ export class JourneyStage3D {
     return this.shooting && !this.frozen && this.inputOn;
   }
 
+  emitPurifyGrit(opts: GritEmitOpts): void {
+    this.residualGrit?.emit(opts);
+  }
+
+  applyStoneThrowConfig(cfg: PurifyRaidConfig): void {
+    this.stoneThrow?.applyConfig(cfg);
+  }
+
+  setOnStoneLand(cb: ((x: number, z: number) => void) | null): void {
+    if (this.stoneThrow) this.stoneThrow.onLand = cb;
+  }
+
+  stampPurifyDiskPct(xPct: number, yPct: number): void {
+    const p = this.pctToWorld(xPct, yPct);
+    this.stoneThrow?.stampAt(p.x, p.z);
+  }
+
+  private beginThrow(): void {
+    if (this.frozen || this.throwing) return;
+    this.throwAim = null;
+    this.startThrow();
+  }
+
+  /** 자동 습격 — frozen이어도 목표 좌표로 던진다. */
+  throwAt(x: number, z: number): boolean {
+    if (this.isThrowBusy()) return false;
+    this.throwAim = { x, z };
+    this.startThrow();
+    return true;
+  }
+
+  isThrowing(): boolean {
+    return this.throwing;
+  }
+
+  /** 던지는 모션이거나 폭단이 아직 날아가는 중 */
+  isThrowBusy(): boolean {
+    return this.throwing || !!this.stoneThrow?.isFlying();
+  }
+
+  private startThrow(): void {
+    this.throwing = true;
+    this.throwReleased = false;
+    this.resetAnim(this.animThrow);
+    if (!this.animThrow) {
+      this.throwReleased = true;
+      if (this.throwAim) this.stoneThrow?.launchAt(this.throwAim.x, this.throwAim.z);
+      else this.stoneThrow?.launch();
+      this.throwing = false;
+      this.throwAim = null;
+    }
+  }
+
   getPaintGroup(): THREE.Group {
     return this.paintGroup;
   }
@@ -748,8 +1202,49 @@ export class JourneyStage3D {
     this.overlayGroup.remove(obj);
   }
 
+  getCamera(): THREE.Camera {
+    return this.camera;
+  }
+
   getPlayerWorld(): { x: number; z: number; yaw: number } {
     return { x: this.px, z: this.pz, yaw: this.yaw };
+  }
+
+  /**
+   * 전방(yaw) 기준 목표까지의 부호 있는 각(rad).
+   * 0 = 정면, + = 왼쪽.
+   */
+  facingDeltaTo(x: number, z: number): number {
+    const fx = -Math.sin(this.yaw);
+    const fz = -Math.cos(this.yaw);
+    const dx = x - this.px;
+    const dz = z - this.pz;
+    const dist = Math.hypot(dx, dz);
+    if (dist < 1e-4) return 0;
+    const nx = dx / dist;
+    const nz = dz / dist;
+    return Math.atan2(fx * nz - fz * nx, fx * nx + fz * nz);
+  }
+
+  inForwardCone(x: number, z: number, deg = 10): boolean {
+    return Math.abs(this.facingDeltaTo(x, z)) <= (deg * Math.PI) / 180;
+  }
+
+  /** 목표 좌표를 전방 원뿔 안으로 꺾는다. 거리 유지. */
+  clampToForwardCone(x: number, z: number, deg = 10): { x: number; z: number } {
+    const dist = Math.hypot(x - this.px, z - this.pz);
+    if (dist < 1e-4) return { x, z };
+    const max = (deg * Math.PI) / 180;
+    let a = this.facingDeltaTo(x, z);
+    if (Math.abs(a) <= max) return { x, z };
+    a = Math.sign(a) * max;
+    const fx = -Math.sin(this.yaw);
+    const fz = -Math.cos(this.yaw);
+    const c = Math.cos(a);
+    const s = Math.sin(a);
+    const nx = fx * c - fz * s;
+    const nz = fx * s + fz * c;
+    return { x: this.px + nx * dist, z: this.pz + nz * dist };
   }
 
   /**
@@ -757,6 +1252,7 @@ export class JourneyStage3D {
    * yaw 0 = 북(-Z). 카메라 applyPose가 다음 틱에 따라온다.
    */
   turnToward(x: number, z: number, dt: number, degPerSec = 240): void {
+    if (this.isThrowBusy()) return;
     const target = Math.atan2(-(x - this.px), -(z - this.pz));
     let d = target - this.yaw;
     while (d > Math.PI) d -= Math.PI * 2;
@@ -772,6 +1268,7 @@ export class JourneyStage3D {
    * 자동 전투 이동 — WASD와 별개. frozen이어도 거점 주위를 한 발짝 옮긴다.
    */
   nudgeToward(x: number, z: number, dt: number, mps: number): void {
+    if (this.isThrowBusy()) return;
     const dx = x - this.px;
     const dz = z - this.pz;
     const dist = Math.hypot(dx, dz);
@@ -820,12 +1317,48 @@ export class JourneyStage3D {
     if (moved) this.camInit = false;
     this.applyPose();
     this.syncNearNode();
+    this.syncPropStream(true);
   }
 
   /** 바라보는 방향만 바꾼다. camInit를 건드리지 않아 카메라가 부드럽게 따라온다. */
   setYaw(yawDeg: number): void {
     this.yaw = (yawDeg * Math.PI) / 180;
     this.applyPose();
+  }
+
+  /** 월드 목표를 바라본다. 겹친 자리면 각이 죽어서 북쪽으로 꺾이지 않게 둔다. */
+  lookAtWorld(tx: number, tz: number): void {
+    const dx = tx - this.px;
+    const dz = tz - this.pz;
+    if (Math.hypot(dx, dz) < 0.2) return;
+    this.yaw = Math.atan2(-dx, -dz);
+    this.camInit = false;
+    this.applyPose();
+  }
+
+  /**
+   * 목표보다 distM 앞에 설 맵 %. 캐릭터→목표 직선.
+   * 이미 위에 있어도 뒤로 빠져, 옆·발밑에서 채취하지 않는다.
+   */
+  frontStandPct(tx: number, tz: number, distM = 2.6): { xPct: number; yPct: number } {
+    let dx = tx - this.px;
+    let dz = tz - this.pz;
+    const len = Math.hypot(dx, dz);
+    if (len < 0.12) {
+      dx = -Math.sin(this.yaw);
+      dz = -Math.cos(this.yaw);
+    } else {
+      dx /= len;
+      dz /= len;
+    }
+    return this.worldToPct(tx - dx * distM, tz - dz * distM);
+  }
+
+  /** 지금 보는 방향 distM 앞. 줍기·원 드롭이 발밑에 붙지 않게. */
+  aheadPct(distM: number): { xPct: number; yPct: number } {
+    const fx = -Math.sin(this.yaw);
+    const fz = -Math.cos(this.yaw);
+    return this.worldToPct(this.px + fx * distM, this.pz + fz * distM);
   }
 
   /**
@@ -841,23 +1374,18 @@ export class JourneyStage3D {
     const pts = path.length ? path : [{ x: dest.x, z: dest.z }];
     const first = pts[0]!;
     const distM = Math.hypot(first.x - this.px, first.z - this.pz);
-    if (pts.length === 1 && distM < 0.12) {
-      // 이미 도착 — 카메라 스냅 없이 좌표만 맞춤
-      this.px = dest.x;
-      this.pz = dest.z;
-      this.applyPose();
+    if (pts.length === 1 && distM < 0.35) {
+      this.yaw = Math.atan2(-(dest.x - this.px), -(dest.z - this.pz));
       this.syncNearNode();
-      const p = this.getPlayer();
-      this.opts.onMove?.(p.xPct, p.yPct, p.yawDeg);
       return Promise.resolve();
     }
-    this.yaw = Math.atan2(-(first.x - this.px), -(first.z - this.pz));
+    const restoreFrozen = this.autoWalk?.restoreFrozen ?? this.frozen;
     this.finishAutoWalk(false);
     this.setFrozen(true);
     this.moving = true;
     this.applyPlayerScale();
     return new Promise((resolve) => {
-      this.startWalkSeg(pts, 0, durationMs, resolve);
+      this.startWalkSeg(pts, 0, durationMs, restoreFrozen, resolve);
     });
   }
 
@@ -865,18 +1393,18 @@ export class JourneyStage3D {
     pts: { x: number; z: number }[],
     i: number,
     durationMs: number | undefined,
+    restoreFrozen: boolean,
     resolve: () => void,
   ): void {
     const dest = pts[i]!;
     const dx = dest.x - this.px;
     const dz = dest.z - this.pz;
     const distM = Math.hypot(dx, dz);
-    this.yaw = Math.atan2(-dx, -dz);
-    const speed = Math.max(2.4, this.moveSpeed * 1.35);
+    const speed = Math.max(0.8, this.moveSpeed);
     const ms =
       durationMs != null && pts.length === 1
         ? durationMs
-        : Math.round(clamp((distM / speed) * 1000, 180, 1200));
+        : Math.round(Math.max(280, (distM / speed) * 1000));
     this.autoWalk = {
       pts,
       i,
@@ -886,6 +1414,7 @@ export class JourneyStage3D {
       z1: dest.z,
       t0: performance.now(),
       ms,
+      restoreFrozen,
       resolve,
     };
   }
@@ -901,21 +1430,19 @@ export class JourneyStage3D {
       const p = this.worldToPct(this.px, this.pz);
       this.opts.onMove?.(p.xPct, p.yPct, (this.yaw * 180) / Math.PI);
       if (w.i + 1 < w.pts.length) {
-        this.startWalkSeg(w.pts, w.i + 1, undefined, w.resolve);
+        this.startWalkSeg(w.pts, w.i + 1, undefined, w.restoreFrozen, w.resolve);
         return;
       }
     }
     this.autoWalk = null;
     this.moving = false;
     this.applyPlayerScale();
-    this.setFrozen(false);
+    this.setFrozen(w.restoreFrozen);
     w.resolve();
   }
 
   propObstacles(): PathObstacle[] {
-    return this.props
-      .filter((e) => e.collideR > 0.05)
-      .map((e) => ({ x: e.wx, z: e.wz, r: e.collideR }));
+    return this.obstacleCache;
   }
 
   worldToPctPublic(x: number, z: number): { xPct: number; yPct: number } {
@@ -923,14 +1450,24 @@ export class JourneyStage3D {
   }
 
   listResidualProps(): { id: string; wx: number; wz: number; pending: boolean }[] {
-    return this.props
-      .filter((e) => e.residual)
-      .map((e) => ({ id: e.prop.id, wx: e.wx, wz: e.wz, pending: e.residualPending }));
+    return this.propCatalog
+      .filter((p) => p.purifyTarget)
+      .map((p) => {
+        const e = this.props.find((x) => x.prop.id === p.id);
+        const pos = e ? { x: e.wx, z: e.wz } : this.pctToWorld(p.xPct, p.yPct);
+        return {
+          id: p.id,
+          wx: pos.x,
+          wz: pos.z,
+          pending: e ? e.residualPending : !this.residualColoredIds.has(p.id),
+        };
+      });
   }
 
   /** 세이브·AREA 이후: 이미 칠한 잔여는 컬러, 남은 건 스케치 */
   syncResidualState(coloredIds: string[]): void {
-    const done = new Set(coloredIds);
+    this.residualColoredIds = new Set(coloredIds);
+    const done = this.residualColoredIds;
     for (const e of this.props) {
       if (!e.residual) continue;
       if (done.has(e.prop.id)) {
@@ -962,6 +1499,17 @@ export class JourneyStage3D {
     setPropPurifyFill(e, next);
     e.residualRising = true;
     e.waveStand = true;
+    // 모래식 grit — 차오를 때 burst, 완료 시 erosion
+    this.residualGrit?.emit({
+      x: e.wx,
+      z: e.wz,
+      y: 0.5 + next * 0.8,
+      count: next >= 0.999 ? 18 : 8,
+      mode: next >= 0.999 ? "erosion" : "burst",
+      spreadM: next >= 0.999 ? 0.7 : 0.35,
+      lifeSec: next >= 0.999 ? 0.55 : 0.35,
+      palette: "teal",
+    });
     if (next < 0.999) return false;
     e.residualPending = false;
     e.stand = Math.max(e.stand, 0.99);
@@ -989,6 +1537,10 @@ export class JourneyStage3D {
     durationMs?: number;
     /** 이미 정화된 구역 재진입 등 — 바닥 파도 생략 */
     skipFloorWave?: boolean;
+    /** 원경도 같은 반경으로 정화후 텍스처를 연다 */
+    skyWave?: boolean;
+    /** 끝나면 파도를 남긴다. 호출측이 정착 후 clearPurifyWaves */
+    holdWave?: boolean;
   }): Promise<void> {
     const me =
       opts?.xPct != null && opts?.yPct != null
@@ -997,18 +1549,27 @@ export class JourneyStage3D {
     const radius = opts?.radiusM ?? 50;
     const duration = opts?.durationMs ?? 2800;
     const t0 = performance.now();
-    this.areaPropsStanding = true;
     if (!opts?.skipFloorWave) this.island.setPurifyWave({ x: me.x, z: me.z, r: 0 });
+    if (opts?.skyWave) this.setHorizonWave({ x: me.x, z: me.z, r: 0 });
+    const fogFrom = new THREE.Color(this.skyPolluted.fog);
+    const fogTo = new THREE.Color(this.skyPurified.fog);
     return new Promise((resolve) => {
       const tick = () => {
         if (this.disposed) {
           if (!opts?.skipFloorWave) this.island.setPurifyWave(null);
+          this.setHorizonWave(null);
           resolve();
           return;
         }
         const elapsed = performance.now() - t0;
         const waveR = (elapsed / duration) * radius;
         if (!opts?.skipFloorWave) this.island.setPurifyWave({ x: me.x, z: me.z, r: waveR });
+        if (opts?.skyWave) {
+          this.setHorizonWave({ x: me.x, z: me.z, r: waveR });
+          const t = Math.min(1, waveR / radius);
+          this.fog.color.copy(fogFrom).lerp(fogTo, t);
+          this.renderer.setClearColor(this.fog.color, 1);
+        }
         for (const e of this.props) {
           if (e.residual && e.residualPending) continue; // 잔여 타깃은 파도에 안 일어남·안 칠함
           const d = Math.hypot(e.wx - me.x, e.wz - me.z);
@@ -1033,7 +1594,13 @@ export class JourneyStage3D {
               }
             }
           }
-          if (!opts?.skipFloorWave) this.island.setPurifyWave(null);
+          if (!opts?.holdWave) {
+            if (!opts?.skipFloorWave) this.island.setPurifyWave(null);
+            if (opts?.skyWave) this.setHorizonWave(null);
+          } else {
+            if (!opts?.skipFloorWave) this.island.setPurifyWave({ x: me.x, z: me.z, r: radius });
+            if (opts?.skyWave) this.setHorizonWave({ x: me.x, z: me.z, r: radius });
+          }
           resolve();
           return;
         }
@@ -1069,6 +1636,10 @@ export class JourneyStage3D {
 
   isAutoWalking(): boolean {
     return this.autoWalk != null;
+  }
+
+  isMoving(): boolean {
+    return this.moving || this.autoWalk != null;
   }
 
   /** 미니게임 중처럼 이동을 막아야 할 때 */
@@ -1139,43 +1710,96 @@ export class JourneyStage3D {
   /** 지금 서 있는 칸이 정화됐으면 노을 PNG, 아니면 회황 PNG. */
   setSkyPurified(purified: boolean): void {
     this.skyIsPurified = purified;
+    this.skyPurifyAmount = purified ? 1 : 0;
+    void this.ensureSkyMood(purified).then(() => {
+      if (!this.disposed) this.applySkyMood();
+    });
+    void this.ensureSkyMood(!purified);
+  }
+
+  /** 원 안=맑은 하늘, 원 밖=오염 하늘. 파도 중에는 건드리지 않는다. */
+  syncSkyFromFoci(force = false): void {
+    const waving = (this.horizonMat.userData.uWaveActive?.value ?? 0) > 0.5;
+    if (waving) return;
+    const geo = purifyAmountAt(this.px, this.pz, this.island.getPurifyFoci());
+    const amt = this.island.getPurifyColorAmt();
+    const next = amt >= 0.95 ? geo : 0;
+    if (!force && Math.abs(next - this.skyPurifyAmount) < 0.015) {
+      if (this.horizonMat.userData.uSettledPurified) {
+        this.horizonMat.userData.uSettledPurified.value = next;
+      }
+      if (Math.abs(next - this.lastFogLerp) >= 0.002) this.lerpFogToAmount(next);
+      return;
+    }
+    this.skyPurifyAmount = next;
+    this.skyIsPurified = next > 0.4;
     this.applySkyMood();
   }
 
+  private lerpFogToAmount(amount: number): void {
+    this.lastFogLerp = amount;
+    this.fog.color.setHex(this.skyPolluted.fog).lerp(this.fogLerpColor.setHex(this.skyPurified.fog), amount);
+    this.renderer.setClearColor(this.fog.color, 1);
+    this.applyWallPurifyTint();
+  }
+
+  /** 해안 나무는 한 장씩. 정화량으로 스틸블루→시안만 올린다. */
+  private applyWallPurifyTint(): void {
+    if (this.wallBatches.length === 0) return;
+    const t = this.skyPurifyAmount;
+    if (Math.abs(t - this.lastWallTint) < 0.002) return;
+    this.lastWallTint = t;
+    for (const b of this.wallBatches) {
+      b.mat.color.setRGB(0.52 + 0.34 * t, 0.60 + 0.36 * t, 0.68 + 0.32 * t);
+    }
+  }
+
   private async loadSkyArt(): Promise<void> {
+    await this.ensureSkyMood(this.skyIsPurified);
+    if (this.disposed) return;
+    void this.ensureSkyMood(!this.skyIsPurified);
+  }
+
+  private ensureSkyMood(purified: boolean): Promise<void> {
+    const key = purified ? "purified" : "polluted";
+    const hit = this.skyMoodJobs[key];
+    if (hit) return hit;
+    const job = this.loadSkyMood(purified);
+    this.skyMoodJobs[key] = job;
+    return job;
+  }
+
+  private async loadSkyMood(purified: boolean): Promise<void> {
+    const skyUrl = purified ? "/art/sky/sky_purified.png" : "/art/sky/sky_polluted.png";
+    const hillUrl = purified
+      ? "/art/sky/horizon_mountains_purified.png"
+      : "/art/sky/horizon_mountains_polluted.png";
     try {
-      const [polluted, purified] = await Promise.all([
-        loadTexture("/art/sky/sky_polluted.png"),
-        loadTexture("/art/sky/sky_purified.png"),
-      ]);
+      const sky = await loadTexture(skyUrl);
       if (this.disposed) {
-        polluted.dispose();
-        purified.dispose();
+        sky.dispose();
         return;
       }
-      for (const tex of [polluted, purified]) {
-        tex.colorSpace = THREE.SRGBColorSpace;
-        tex.mapping = THREE.EquirectangularReflectionMapping;
-        tex.minFilter = THREE.LinearFilter;
-        tex.magFilter = THREE.LinearFilter;
-      }
-      this.skyTexPolluted = polluted;
-      this.skyTexPurified = purified;
+      sky.colorSpace = THREE.SRGBColorSpace;
+      sky.mapping = THREE.EquirectangularReflectionMapping;
+      sky.wrapS = THREE.RepeatWrapping;
+      sky.wrapT = THREE.ClampToEdgeWrapping;
+      sky.minFilter = THREE.LinearMipmapLinearFilter;
+      sky.magFilter = THREE.LinearFilter;
+      sky.generateMipmaps = true;
+      if (purified) this.skyTexPurified = sky;
+      else this.skyTexPolluted = sky;
     } catch {
       /* 하늘 PNG 없으면 그라데이션 */
     }
     try {
-      const [hillsP, hillsU] = await Promise.all([
-        loadHorizonTex("/art/sky/horizon_mountains_polluted.png"),
-        loadHorizonTex("/art/sky/horizon_mountains_purified.png"),
-      ]);
+      const hills = await loadHorizonTex(hillUrl);
       if (this.disposed) {
-        hillsP.dispose();
-        hillsU.dispose();
+        hills.dispose();
         return;
       }
-      this.horizonTexPolluted = hillsP;
-      this.horizonTexPurified = hillsU;
+      if (purified) this.horizonTexPurified = hills;
+      else this.horizonTexPolluted = hills;
     } catch {
       /* 산 PNG 없으면 그린 능선 */
     }
@@ -1183,30 +1807,66 @@ export class JourneyStage3D {
   }
 
   private applySkyMood(): void {
-    const pal = this.skyIsPurified ? this.skyPurified : this.skyPolluted;
-    this.fog.color.setHex(pal.fog);
-    this.renderer.setClearColor(pal.fog, 1);
-    const painted = this.skyIsPurified ? this.skyTexPurified : this.skyTexPolluted;
-    if (painted) {
-      this.scene.background = painted;
-    } else {
-      const prev = this.scene.background;
-      if (prev instanceof THREE.Texture && prev !== this.skyTexPolluted && prev !== this.skyTexPurified) {
-        prev.dispose();
+    const waving = (this.horizonMat.userData.uWaveActive?.value ?? 0) > 0.5;
+    const amount = this.skyPurifyAmount;
+    this.island.setFogPurifiedColor(this.skyPurified.fog);
+    if (!waving) {
+      this.lerpFogToAmount(amount);
+      const painted = amount > 0.45 ? this.skyTexPurified : this.skyTexPolluted;
+      if (painted) {
+        this.scene.background = painted;
+      } else {
+        const prev = this.scene.background;
+        if (prev instanceof THREE.Texture && prev !== this.skyTexPolluted && prev !== this.skyTexPurified) {
+          prev.dispose();
+        }
+        const pal = amount > 0.45 ? this.skyPurified : this.skyPolluted;
+        this.scene.background = makeSkyTexture(pal.fog, pal.zenith, amount > 0.45);
       }
-      this.scene.background = makeSkyTexture(pal.fog, pal.zenith, this.skyIsPurified);
     }
-    const hills = this.skyIsPurified ? this.horizonTexPurified : this.horizonTexPolluted;
-    if (hills) this.horizonMat.map = hills;
+    const polluted = this.horizonTexPolluted;
+    const purified = this.horizonTexPurified || polluted;
+    if (polluted) this.horizonMat.map = polluted;
+    if (this.horizonMat.userData.purifiedMap) {
+      this.horizonMat.userData.purifiedMap.value = purified || this.horizonMat.map;
+    }
+    if (this.horizonMat.userData.uSettledPurified) {
+      this.horizonMat.userData.uSettledPurified.value = amount;
+    }
+    if (this.horizonMat.userData.uFogPolluted) {
+      this.horizonMat.userData.uFogPolluted.value.setHex(this.skyPolluted.fog);
+    }
+    if (this.horizonMat.userData.uFogPurified) {
+      this.horizonMat.userData.uFogPurified.value.setHex(this.skyPurified.fog);
+    }
     this.horizonMat.color.setHex(0xffffff);
     this.horizonMat.needsUpdate = true;
+    this.applyWallPurifyTint();
+  }
+
+  /** 원경 정화 파도 — 플레이어 xz. null이면 정착 슬롯만 쓴다. */
+  setHorizonWave(wave: { x: number; z: number; r: number } | null): void {
+    const u = this.horizonMat.userData;
+    if (!u.uWaveActive) return;
+    u.uWaveActive.value = wave ? 1 : 0;
+    if (wave) {
+      u.uWaveCenter.value.set(wave.x, wave.z);
+      u.uWaveR.value = wave.r;
+    }
+  }
+
+  clearPurifyWaves(): void {
+    this.island.setPurifyWave(null);
+    this.setHorizonWave(null);
+    this.applySkyMood();
   }
 
   private layoutHorizon(): void {
     const radius = Math.max(18, this.fog.far * 0.86);
-    const height = Math.max(8, this.charH * 7);
+    const height = Math.max(16, this.charH * 18);
     this.horizonMesh.scale.set(radius, height, radius);
-    this.horizonMesh.position.y = height * 0.38;
+    // 텍스처 아래(땅 보카시)가 지면 y=0에 앉게. 아주 조금만 묻혀 이음 틈을 막는다.
+    this.horizonMesh.position.y = height * 0.5 - 0.22;
   }
 
   setMoveSpeed(mps: number): void {
@@ -1256,6 +1916,7 @@ export class JourneyStage3D {
     };
     this.applySkyMood();
     this.setMoveSpeed(cfg.move_speed_mps);
+    this.walkSpeedMul = Math.min(1, Math.max(0.2, cfg.walk_speed_mul));
     this.setTurnSpeed(cfg.turn_speed_deg);
     this.setTurnMode(cfg.turn_mode);
     this.setViewMode(cfg.view_mode);
@@ -1293,16 +1954,19 @@ export class JourneyStage3D {
   }
 
   private applyPixelRatio(): void {
-    const base = Math.min(window.devicePixelRatio || 1, 2);
+    const base = Math.min(window.devicePixelRatio || 1, 1.5);
     this.renderer.setPixelRatio(base * this.resScale);
     // 저해상도로 그릴 때만 픽셀 확대 — 부드럽게 늘리면 그냥 흐려진다
     this.canvas.style.imageRendering = this.resScale < 1 ? "pixelated" : "auto";
   }
 
   private applyFog(): void {
-    this.fog.near = this.fogVisionM * 0.3;
-    this.fog.far = this.fogVisionM * this.fogFarMul;
-    this.camera.far = Math.max(this.worldM * 2, this.fog.far * 1.5);
+    // 시야 거리 = 완전 안개. 그 앞에서만 살짝 녹아들게 해서 30m 너머가 뚫려 보이지 않게.
+    const far = Math.max(2, this.fogVisionM * this.fogFarMul);
+    this.fog.far = far;
+    this.fog.near = far * 0.34;
+    this.propStreamM = far * 1.12;
+    this.camera.far = Math.max(this.worldM * 2, far * 1.5);
     this.camera.updateProjectionMatrix();
     this.layoutHorizon();
   }
@@ -1341,12 +2005,23 @@ export class JourneyStage3D {
       this.toggleViewMode();
       return;
     }
-    if (k === "enter" || k === " ") {
+    if (k === "enter") {
       const near = this.getNearNode();
       if (near) {
         e.preventDefault();
         this.opts.onNodeActivate?.(near);
       }
+      return;
+    }
+    if (k === " ") {
+      e.preventDefault();
+      if (e.repeat) return;
+      const near = this.getNearNode();
+      if (near) {
+        this.opts.onNodeActivate?.(near);
+        return;
+      }
+      this.beginThrow();
       return;
     }
     if (MOVE_KEYS.has(k)) {
@@ -1387,13 +2062,18 @@ export class JourneyStage3D {
   }
 
   private step(dt: number): void {
+    this.residualGrit?.tick(dt);
+    this.stoneThrow?.tick(dt);
+    this.moving = false;
+    this.opts.onTick?.(dt);
+
     if (this.autoWalk) {
       this.stepAutoWalk(dt);
       this.stepAnim(dt);
       this.applyPose(dt);
-      this.fadeNearCamera();
       this.stepPropPop(dt);
-      this.opts.onTick?.(dt);
+      this.fadeNearCamera();
+      this.stepPropStream(dt);
       return;
     }
 
@@ -1427,28 +2107,43 @@ export class JourneyStage3D {
       }
     }
 
+    const poseLocked = this.gunPose === "draw" || this.gunPose === "holster" || this.throwing;
+    const armed = this.gunPose === "aim";
+    if (this.frozen || poseLocked) {
+      fwd = 0;
+      side = 0;
+    }
+    this.moveFwd = fwd;
+    this.moveSide = side;
+
     if (turn !== 0) this.yaw += ((turn * this.turnSpeed * Math.PI) / 180) * dt;
 
     const moveLen = Math.hypot(fwd, side);
     const wasMoving = this.moving;
-    this.moving = moveLen > 0.01;
+    this.moving = this.moving || moveLen > 0.01;
     if (wasMoving !== this.moving) this.applyPlayerScale();
 
-    if (this.moving) {
+    if (moveLen > 0.01) {
       const nf = fwd / moveLen;
       const ns = side / moveLen;
+      // 뛰기 = 무총 전진만. 좌/우/뒤·던지기 중 = 걷기(2/3). 뒷걸음은 그 절반.
+      const walk = armed || fwd < -0.01 || Math.abs(side) > Math.abs(fwd) + 0.01;
+      let mul = walk ? this.walkSpeedMul : 1;
+      if (fwd < -0.01) mul *= 0.5;
+      const speed = this.moveSpeed * mul;
       // yaw 0 = -Z(북). 전진 = (-sin, -cos), 우측 = (cos, -sin)
       const sy = Math.sin(this.yaw);
       const cy = Math.cos(this.yaw);
-      const dx = (-sy * nf + cy * ns) * this.moveSpeed * dt;
-      const dz = (-cy * nf - sy * ns) * this.moveSpeed * dt;
+      const dx = (-sy * nf + cy * ns) * speed * dt;
+      const dz = (-cy * nf - sy * ns) * speed * dt;
       const half = this.worldM / 2 - 2;
       const next = resolveCircleMove(this.px, this.pz, dx, dz, this.propObstacles(), 0.45);
       this.px = clamp(next.x, -half, half);
       this.pz = clamp(next.z, -half, half);
+      this.emitCellEdge(half);
       this.bobPhase += dt * this.bobHz * Math.PI * 2;
       this.syncNearNode();
-    } else {
+    } else if (!this.moving) {
       // 멈출 때 흔들림을 0으로 되돌린다 — 뚝 끊으면 어색하다
       const target = Math.round(this.bobPhase / Math.PI) * Math.PI;
       this.bobPhase += (target - this.bobPhase) * Math.min(1, dt * 8);
@@ -1461,58 +2156,14 @@ export class JourneyStage3D {
 
     this.stepAnim(dt);
     this.applyPose(dt);
-    this.fadeNearCamera();
     this.stepPropPop(dt);
-    this.opts.onTick?.(dt);
-  }
-
-  private stepAutoWalk(dt: number): void {
-    const w = this.autoWalk;
-    if (!w) return;
-    const t = Math.min(1, (performance.now() - w.t0) / Math.max(1, w.ms));
-    const e = t * t * (3 - 2 * t);
-    this.px = w.x0 + (w.x1 - w.x0) * e;
-    this.pz = w.z0 + (w.z1 - w.z0) * e;
-    this.moving = true;
-    this.bobPhase += dt * this.bobHz * Math.PI * 2;
-    this.syncNearNode();
-    const p = this.worldToPct(this.px, this.pz);
-    this.opts.onMove?.(p.xPct, p.yPct, (this.yaw * 180) / Math.PI);
-    if (t >= 1) this.finishAutoWalk(true);
+    this.fadeNearCamera();
+    this.stepPropStream(dt);
   }
 
   /**
-   * 카메라에 너무 가까운 빌보드는 화면을 통째로 덮는다.
-   * (3인칭은 카메라가 플레이어 뒤로 빠지므로 바로 뒤에 있는 노드 안에 파묻히기 쉽다)
-   * 가까울수록 투명하게 빼서 시야를 막지 않게 한다.
-   */
-  private fadeNearCamera(): void {
-    const cam = this.camera.position;
-    const near = this.charH * 0.6;
-    const full = this.charH * 1.9;
-    const ramp = (obj: THREE.Object3D, base: number): number => {
-      const d = Math.hypot(obj.position.x - cam.x, obj.position.z - cam.z);
-      if (d >= full) return base;
-      if (d <= near) return 0;
-      return base * ((d - near) / (full - near));
-    };
-
-    for (const e of this.nodes) {
-      if (e.node.hidden) continue;
-      const base = e.node.cleared ? 0.55 : 1;
-      const a = ramp(e.sprite, base);
-      const mat = e.sprite.material as THREE.SpriteMaterial;
-      mat.opacity = a;
-      e.sprite.visible = a > 0.02;
-      e.decal.visible = a > 0.02;
-    }
-  }
-
-  /**
-   * 시야 안: 바닥에 평면(0°)으로 붙음.
-   * 가까이 오면 힌지처럼 90°로 일어섬 — 일어설 때 한 번만 플레이어 쪽을 보고 고정.
-   * 정화 파도(waveStand)면 시야와 무관하게 기립 유지.
-   * 잔여 스케치 타깃은 7m에서만 기립(발견).
+   * 시야 안: 바닥(0°)에서 90°로 일어선다.
+   * 정화 파도(waveStand)면 시야와 무관하게 기립. 잔여 타깃은 7m에서만 기립(발견).
    */
   private stepPropPop(dt: number): void {
     const vision = Math.max(4, this.fogVisionM);
@@ -1541,8 +2192,7 @@ export class JourneyStage3D {
       } else {
         want = e.waveStand || this.areaPropsStanding ? 1 : d <= riseAt ? 1 : 0;
       }
-      const rising = want > e.stand + 0.02;
-      if (rising && !e.faced && e.stand < 0.15) {
+      if (want > e.stand + 0.02 && !e.faced && e.stand < 0.15) {
         e.faceYaw = Math.atan2(this.px - e.wx, this.pz - e.wz);
         e.faced = true;
       }
@@ -1559,14 +2209,77 @@ export class JourneyStage3D {
       if (e.stand < 0.05 && want < 0.5) e.faced = false;
 
       const s = clamp(e.stand, 0, 1);
+      if (s < 0.48) {
+        e.mesh.visible = false;
+        continue;
+      }
+      e.mesh.visible = true;
       const shake =
         Math.sin(performance.now() * 0.042) * Math.min(0.22, Math.abs(e.standVel) * 0.045);
-      // 0° 바닥 → 90° 직립 (힌지 = 밑변)
       e.mesh.rotation.x = (-Math.PI / 2) * (1 - s);
       e.mesh.rotation.y = s > 0.08 ? e.faceYaw : restYaw(e);
       e.mesh.rotation.z = shake * s;
       e.mesh.position.set(e.wx, 0.04 + (e.hM / 2) * s, e.wz);
-      e.material.opacity = 0.82 + 0.18 * s;
+    }
+  }
+
+  private stepPropStream(dt: number): void {
+    this.propStreamAcc += dt;
+    if (this.propStreamAcc < 0.18) return;
+    this.propStreamAcc = 0;
+    this.syncPropStream();
+  }
+
+  private stepAutoWalk(dt: number): void {
+    const w = this.autoWalk;
+    if (!w) return;
+    const t = Math.min(1, (performance.now() - w.t0) / Math.max(1, w.ms));
+    this.px = w.x0 + (w.x1 - w.x0) * t;
+    this.pz = w.z0 + (w.z1 - w.z0) * t;
+    this.turnToward(w.x1, w.z1, dt, 280);
+    this.moving = true;
+    this.bobPhase += dt * this.bobHz * Math.PI * 2;
+    this.syncNearNode();
+    const p = this.worldToPct(this.px, this.pz);
+    this.opts.onMove?.(p.xPct, p.yPct, (this.yaw * 180) / Math.PI);
+    if (t >= 1) this.finishAutoWalk(true);
+  }
+
+  /**
+   * 카메라에 너무 가까운 빌보드는 화면을 통째로 덮는다.
+   * (3인칭은 카메라가 플레이어 뒤로 빠지므로 바로 뒤에 있는 노드 안에 파묻히기 쉽다)
+   * 가까울수록 투명하게 빼서 시야를 막지 않게 한다.
+   */
+  private fadeNearCamera(): void {
+    const cam = this.camera.position;
+    const near = this.charH * 0.6;
+    const full = this.charH * 1.9;
+    const ramp = (obj: THREE.Object3D, base: number): number => {
+      const d = Math.hypot(obj.position.x - cam.x, obj.position.z - cam.z);
+      if (d >= full) return base;
+      if (d <= near) return 0;
+      return base * ((d - near) / (full - near));
+    };
+
+    for (const e of this.nodes) {
+      if (e.node.hidden || e.node.noMarker) {
+        e.sprite.visible = false;
+        e.decal.visible = false;
+        continue;
+      }
+      const dPl = Math.hypot(e.sprite.position.x - this.px, e.sprite.position.z - this.pz);
+      // 캐릭터를 뚫고 나온 간판처럼 보임 — 몸 옆·발치에선 끈다
+      if (dPl < this.charH * 2.1) {
+        e.sprite.visible = false;
+        e.decal.visible = false;
+        continue;
+      }
+      const base = e.node.cleared ? 0.55 : 1;
+      const a = ramp(e.sprite, base);
+      const mat = e.sprite.material as THREE.SpriteMaterial;
+      mat.opacity = a;
+      e.sprite.visible = a > 0.02;
+      e.decal.visible = a > 0.02;
     }
   }
 
@@ -1576,7 +2289,8 @@ export class JourneyStage3D {
     const cy = Math.cos(this.yaw);
 
     this.player.position.set(this.px, 0.08, this.pz);
-    this.playerShadow.position.set(this.px, 0.04, this.pz);
+    /* 발 기준으로 붙임 (너무 낮으면 바닥에서 뜬 느낌) */
+    this.playerShadow.position.set(this.px, 0.095, this.pz);
 
     if (this.viewMode === "fps") {
       const eye = this.charH * 0.92 + bob;
@@ -1585,6 +2299,7 @@ export class JourneyStage3D {
       this.camInit = false;
       this.horizonMesh.position.x = this.camera.position.x;
       this.horizonMesh.position.z = this.camera.position.z;
+      this.faceBillboards();
       return;
     }
 
@@ -1598,22 +2313,42 @@ export class JourneyStage3D {
       height + bob,
       clamp(this.pz + cy * dist, -edge, edge),
     );
-    if (!this.camInit || dt <= 0) {
+    // dt=0인 applyPose(자리·시선만 갱신)에서 카메라를 붙이면 180도 스냅이 난다.
+    // 처음 한 번만 붙이고, 이후는 틱에서만 따라온다.
+    if (!this.camInit) {
       this.camPos.copy(want);
       this.camInit = true;
-    } else {
+    } else if (dt > 0) {
       this.camPos.lerp(want, Math.min(1, dt * 9));
     }
     this.camera.position.copy(this.camPos);
-    // 캐릭터 머리 조금 위 + 진행 방향 앞쪽을 본다
+    // 세로 화면: 시선 더 위로 — 상단 하늘
     const lookAhead = this.charH * this.tpsLookMul;
     this.camera.lookAt(
       this.px - sy * lookAhead,
-      this.charH * 0.85,
+      this.charH * 1.85,
       this.pz - cy * lookAhead,
     );
     this.horizonMesh.position.x = this.camera.position.x;
     this.horizonMesh.position.z = this.camera.position.z;
+    this.syncSkyFromFoci();
+    this.faceBillboards();
+  }
+
+  private emitCellEdge(half: number): void {
+    const eps = 0.12;
+    const left = this.px <= -half + eps;
+    const right = this.px >= half - eps;
+    const top = this.pz <= -half + eps;
+    const bot = this.pz >= half - eps;
+    let side: "TOP" | "BOTTOM" | "LEFT" | "RIGHT" | null = null;
+    if (left || right || top || bot) {
+      const ex = left || right ? Math.abs(this.px) - (half - eps) : -1;
+      const ez = top || bot ? Math.abs(this.pz) - (half - eps) : -1;
+      side = ez >= ex ? (top ? "TOP" : "BOTTOM") : left ? "LEFT" : "RIGHT";
+    }
+    if (side && side !== this.lastEdgeSide) this.opts.onCellEdge?.(side);
+    this.lastEdgeSide = side;
   }
 
   private syncNearNode(): void {
@@ -1656,11 +2391,26 @@ export class JourneyStage3D {
     }
     this.clearNodes();
     this.clearProps();
+    this.stoneThrow?.dispose();
+    this.stoneThrow = null;
+    this.residualGrit?.dispose();
+    this.residualGrit = null;
     disposePropTextures();
     this.animIdle?.texture.dispose();
     this.animMove?.texture.dispose();
+    this.animAim?.texture.dispose();
+    this.animDraw?.texture.dispose();
+    this.animHolster?.texture.dispose();
+    this.animWalkL?.texture.dispose();
+    this.animWalkR?.texture.dispose();
+    this.animMoveBack?.texture.dispose();
+    this.animThrow?.texture.dispose();
     this.playerMat.dispose();
-    (this.playerShadow.material as THREE.Material).dispose();
+    {
+      const m = this.playerShadow.material as THREE.MeshBasicMaterial;
+      m.map?.dispose();
+      m.dispose();
+    }
     this.playerShadow.geometry.dispose();
     this.decalGeo.dispose();
     this.decalTex.dispose();
@@ -1842,6 +2592,25 @@ function makeDecalTexture(): THREE.Texture {
   return tex;
 }
 
+/** 캐릭터 발밑 그림자 — 데칼보다 약 2배 진한 알파 */
+function makePlayerShadowTexture(): THREE.Texture {
+  const S = 128;
+  const c = document.createElement("canvas");
+  c.width = S;
+  c.height = S;
+  const ctx = c.getContext("2d")!;
+  const g = ctx.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+  g.addColorStop(0, "rgba(255,255,255,1)");
+  g.addColorStop(0.35, "rgba(255,255,255,0.85)");
+  g.addColorStop(0.65, "rgba(255,255,255,0.4)");
+  g.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, S, S);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
 /** 하늘 — 안개색으로 수렴하는 세로 그라데이션 한 장. PNG가 아니다. */
 function makeSkyTexture(fogColor: number, zenithColor: number, sunset: boolean): THREE.Texture {
   const fog = new THREE.Color(fogColor);
@@ -1866,7 +2635,90 @@ function makeSkyTexture(fogColor: number, zenithColor: number, sunset: boolean):
   return tex;
 }
 
-/** 지평선 산 — PNG 하늘색을 걷어 실루엣만 남긴다. */
+/** 원경 원통 — 정화전 맵 + 정화후 맵을 같은 파도로 연다. 경계는 시안 레이저. */
+function wireHorizonWaveShader(mat: THREE.MeshBasicMaterial): void {
+  const uWaveActive = { value: 0 };
+  const uWaveCenter = { value: new THREE.Vector2(0, 0) };
+  const uWaveR = { value: 0 };
+  const uSettledPurified = { value: 0 };
+  const purifiedMap = { value: mat.map as THREE.Texture | null };
+  const uFogPolluted = { value: new THREE.Color(0x6a7f88) };
+  const uFogPurified = { value: new THREE.Color(0x8eb0bc) };
+  mat.userData.uWaveActive = uWaveActive;
+  mat.userData.uWaveCenter = uWaveCenter;
+  mat.userData.uWaveR = uWaveR;
+  mat.userData.uSettledPurified = uSettledPurified;
+  mat.userData.purifiedMap = purifiedMap;
+  mat.userData.uFogPolluted = uFogPolluted;
+  mat.userData.uFogPurified = uFogPurified;
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.uWaveActive = uWaveActive;
+    shader.uniforms.uWaveCenter = uWaveCenter;
+    shader.uniforms.uWaveR = uWaveR;
+    shader.uniforms.uSettledPurified = uSettledPurified;
+    shader.uniforms.uPurifiedMap = purifiedMap;
+    shader.uniforms.uFogPolluted = uFogPolluted;
+    shader.uniforms.uFogPurified = uFogPurified;
+    shader.vertexShader = shader.vertexShader
+      .replace(
+        "#include <common>",
+        `#include <common>
+varying vec3 vHorizonWorld;`,
+      )
+      .replace(
+        "#include <begin_vertex>",
+        `#include <begin_vertex>
+vHorizonWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;`,
+      );
+    shader.fragmentShader = shader.fragmentShader
+      .replace(
+        "#include <common>",
+        `#include <common>
+varying vec3 vHorizonWorld;
+uniform sampler2D uPurifiedMap;
+uniform float uWaveActive;
+uniform vec2 uWaveCenter;
+uniform float uWaveR;
+uniform float uSettledPurified;
+uniform vec3 uFogPolluted;
+uniform vec3 uFogPurified;`,
+      )
+      .replace(
+        "#include <map_fragment>",
+        `#include <map_fragment>
+        {
+          vec3 purifiedRgb = texture2D(uPurifiedMap, vMapUv).rgb;
+          float d = length(vHorizonWorld.xz - uWaveCenter);
+          float reveal = uSettledPurified;
+          if (uWaveActive > 0.5) {
+            float soft = 2.4;
+            reveal = 1.0 - smoothstep(uWaveR - soft, uWaveR + soft * 0.35, d);
+          }
+          diffuseColor.rgb = mix(diffuseColor.rgb, purifiedRgb, clamp(reveal, 0.0, 1.0));
+          float lineW = 1.7;
+          float rim = (1.0 - smoothstep(0.0, lineW, abs(d - uWaveR))) * step(0.5, uWaveActive) * step(0.45, uWaveR);
+          vec3 laser = vec3(0.059, 0.745, 0.780);
+          vec3 spark = vec3(0.820, 0.345, 0.737);
+          diffuseColor.rgb += laser * rim * 1.6;
+          diffuseColor.rgb += spark * (rim * rim) * 0.3;
+          vec3 haze = mix(uFogPolluted, uFogPurified, clamp(reveal, 0.0, 1.0));
+          float r = clamp(reveal, 0.0, 1.0);
+          float y = max(0.0, vHorizonWorld.y);
+          float nearH = 1.0 - smoothstep(0.0, 9.0, y);
+          float climb = 1.0 - smoothstep(1.5, 22.0, y);
+          float luma = dot(diffuseColor.rgb, vec3(0.30, 0.59, 0.11));
+          float bright = smoothstep(0.36, 0.58, luma);
+          // 정화후 그림의 흰 지평선 띠를 대기로 덮고, 발치는 불투명.
+          diffuseColor.rgb = mix(diffuseColor.rgb, haze, bright * nearH * mix(0.25, 0.94, r));
+          diffuseColor.rgb = mix(diffuseColor.rgb, haze, climb * mix(0.06, 0.30, r));
+          diffuseColor.a = max(diffuseColor.a, nearH * 0.97);
+        }`,
+      );
+  };
+  mat.customProgramCacheKey = () => "horizon-wave-v5-crush";
+}
+
+/** 지평선 산 — 뚫린 PNG는 알파 유지. 불투명 한 장(원경)은 하늘을 걷지 않는다. */
 async function loadHorizonTex(src: string): Promise<THREE.Texture> {
   const img = await new Promise<HTMLImageElement>((resolve, reject) => {
     const el = new Image();
@@ -1882,51 +2734,83 @@ async function loadHorizonTex(src: string): Promise<THREE.Texture> {
   ctx.drawImage(img, 0, 0);
   const data = ctx.getImageData(0, 0, c.width, c.height);
   const px = data.data;
-  let sr = 0;
-  let sg = 0;
-  let sb = 0;
   const sampleH = Math.max(2, Math.floor(c.height * 0.08));
   const n = c.width * sampleH;
+  let sa = 0;
   for (let y = 0; y < sampleH; y++) {
     for (let x = 0; x < c.width; x++) {
-      const i = (y * c.width + x) * 4;
-      sr += px[i];
-      sg += px[i + 1];
-      sb += px[i + 2];
+      sa += px[(y * c.width + x) * 4 + 3];
     }
   }
-  sr /= n;
-  sg /= n;
-  sb /= n;
-  const skyLuma = 0.3 * sr + 0.59 * sg + 0.11 * sb;
-  for (let x = 0; x < c.width; x++) {
-    let ridge = false;
-    for (let y = 0; y < c.height; y++) {
-      const i = (y * c.width + x) * 4;
-      const dr = px[i] - sr;
-      const dg = px[i + 1] - sg;
-      const db = px[i + 2] - sb;
-      const dist = Math.sqrt(dr * dr + dg * dg + db * db);
-      const luma = 0.3 * px[i] + 0.59 * px[i + 1] + 0.11 * px[i + 2];
-      if (!ridge) {
-        if (dist > 26 || luma < skyLuma - 12) {
-          ridge = true;
-          px[i + 3] = 220;
+  const prePunched = sa / n < 48;
+  const onePiece = sa / n > 240;
+  if (!prePunched && !onePiece) {
+    let sr = 0;
+    let sg = 0;
+    let sb = 0;
+    for (let y = 0; y < sampleH; y++) {
+      for (let x = 0; x < c.width; x++) {
+        const i = (y * c.width + x) * 4;
+        sr += px[i];
+        sg += px[i + 1];
+        sb += px[i + 2];
+      }
+    }
+    sr /= n;
+    sg /= n;
+    sb /= n;
+    const skyLuma = 0.3 * sr + 0.59 * sg + 0.11 * sb;
+    for (let x = 0; x < c.width; x++) {
+      let ridge = false;
+      for (let y = 0; y < c.height; y++) {
+        const i = (y * c.width + x) * 4;
+        const dr = px[i] - sr;
+        const dg = px[i + 1] - sg;
+        const db = px[i + 2] - sb;
+        const dist = Math.sqrt(dr * dr + dg * dg + db * db);
+        const luma = 0.3 * px[i] + 0.59 * px[i + 1] + 0.11 * px[i + 2];
+        if (!ridge) {
+          if (dist > 26 || luma < skyLuma - 12) {
+            ridge = true;
+            px[i + 3] = 220;
+          } else {
+            px[i + 3] = 0;
+          }
         } else {
-          px[i + 3] = 0;
+          px[i + 3] = 230;
         }
-      } else {
-        px[i + 3] = 230;
+      }
+    }
+    ctx.putImageData(data, 0, 0);
+  }
+  // 좌·우 알파/색 크로스페이드 — 원통 wrap 이음새 완화 (아트 seamless와 이중 안전)
+  const blend = Math.min(160, Math.floor(c.width / 8));
+  const img2 = ctx.getImageData(0, 0, c.width, c.height);
+  const p2 = img2.data;
+  for (let y = 0; y < c.height; y++) {
+    for (let x = 0; x < blend; x++) {
+      const t = (x + 0.5) / blend;
+      const u = t * t * (3 - 2 * t);
+      const iL = (y * c.width + x) * 4;
+      const iR = (y * c.width + (c.width - blend + x)) * 4;
+      for (let k = 0; k < 4; k++) {
+        const L = p2[iL + k];
+        const R = p2[iR + k];
+        p2[iR + k] = (R * (1 - u) + L * u) | 0;
+        const u2 = Math.min(0.5, (1 - t) * 0.45);
+        p2[iL + k] = (L * (1 - u2) + R * u2) | 0;
       }
     }
   }
-  ctx.putImageData(data, 0, 0);
+  ctx.putImageData(img2, 0, 0);
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.ClampToEdgeWrapping;
-  tex.minFilter = THREE.LinearFilter;
+  tex.minFilter = THREE.LinearMipmapLinearFilter;
   tex.magFilter = THREE.LinearFilter;
+  tex.anisotropy = 8;
+  tex.generateMipmaps = true;
   return tex;
 }
 

@@ -3,10 +3,15 @@
  * URL: /hud-layout-tool.html
  */
 import {
+  DEFAULT_STAGE_H_PCT,
   HUD_LAYOUT_DEFAULTS,
+  HUD_LAYOUT_PORTRAIT_DEFAULTS,
+  STAGE_H_MAX,
+  STAGE_H_MIN,
   WIDGET_DEFS,
   boxesOverlap,
   clampPct,
+  layoutStageHPct,
   loadJourneyHudLayout,
   normalizeHudLayout,
   resolveRects,
@@ -14,11 +19,17 @@ import {
   saveJourneyHudLayout,
   squareH,
   widgetDef,
+  type HudAspect,
   type HudFlow,
   type HudPillar,
   type JourneyHudLayout,
   type ResolvedRect,
 } from "../../hud/journeyHudLayout";
+import {
+  loadJourney3DConfig,
+  saveJourney3DConfig,
+  type Journey3DConfig,
+} from "../../stage/world3d/journey3dConfig";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -26,22 +37,40 @@ const stage = $<HTMLElement>("stage");
 const layerPillars = $<HTMLElement>("layerPillars");
 const layerWidgets = $<HTMLElement>("layerWidgets");
 const stageGrid = $<HTMLElement>("stageGrid");
+const stageSplit = $<HTMLElement>("stageSplit");
+const stageSplitTag = $<HTMLElement>("stageSplitTag");
+const stagePillarLabel = $<HTMLElement>("stagePillarLabel");
+const camPanel = $<HTMLElement>("camPanel");
+const fStageH = $<HTMLInputElement>("fStageH");
+const camFov = $<HTMLInputElement>("camFov");
+const camDist = $<HTMLInputElement>("camDist");
+const camHeight = $<HTMLInputElement>("camHeight");
+const camLook = $<HTMLInputElement>("camLook");
+const vFov = $<HTMLElement>("vFov");
+const vDist = $<HTMLElement>("vDist");
+const vHeight = $<HTMLElement>("vHeight");
+const vLook = $<HTMLElement>("vLook");
 const pillarList = $<HTMLElement>("pillarList");
 const widgetList = $<HTMLElement>("widgetList");
 const inspector = $<HTMLElement>("inspector");
 const statusEl = $<HTMLElement>("status");
 const chkSnap = $<HTMLInputElement>("chkSnap");
+const selAspect = $<HTMLSelectElement>("selAspect");
 
 type Sel = { kind: "pillar" | "widget"; id: string } | null;
 type Handle = "n" | "s" | "e" | "w" | "ne" | "nw" | "se" | "sw";
 
-let layout: JourneyHudLayout = JSON.parse(JSON.stringify(HUD_LAYOUT_DEFAULTS)) as JourneyHudLayout;
+let boardAspect: HudAspect = "9:16";
+let layout: JourneyHudLayout = JSON.parse(JSON.stringify(HUD_LAYOUT_PORTRAIT_DEFAULTS)) as JourneyHudLayout;
+let cam: Journey3DConfig | null = null;
+let camDirty = false;
 let sel: Sel = { kind: "pillar", id: "p_minimap" };
 let dirty = false;
 const undo: string[] = [];
 const HANDLES: Handle[] = ["n", "s", "e", "w", "ne", "nw", "se", "sw"];
 
 type Drag =
+  | { mode: "stage-split"; startY: number; origH: number }
   | {
       mode: "move" | "resize";
       handle?: Handle;
@@ -87,8 +116,14 @@ function mockBody(id: string): string {
       return `섹터 축소`;
     case "log":
       return `<b>구조 로그</b><br />라디오에 잠들었다<br />최대HP -5%`;
+    case "talk_them":
+      return `<b>올마스</b><br />이쪽이야.`;
+    case "talk_me":
+      return `<b>방랑자</b><br />알겠어.`;
     case "activity":
       return `<b>현재 활동</b><br />버튼을 눌러 계속`;
+    case "prompt":
+      return `🚩<b>여정의 시작 확인</b>`;
     case "compass":
       return `W · N · E`;
     case "header_brand":
@@ -129,7 +164,46 @@ function clashIds(rects: Map<string, ResolvedRect>): Set<string> {
   return bad;
 }
 
+function syncStageSplit() {
+  const portrait = boardAspect === "9:16";
+  camPanel.hidden = !portrait;
+  stageSplit.style.display = portrait ? "block" : "none";
+  if (!portrait) return;
+  const h = layoutStageHPct(layout);
+  layout.stage_h_pct = h;
+  stageSplit.style.top = `${h}%`;
+  stageSplitTag.textContent = `연출 ${h}%`;
+  stagePillarLabel.style.top = `calc(${h}% + 8px)`;
+  stagePillarLabel.textContent = `필러 ${round1(100 - h)}%`;
+  if (document.activeElement !== fStageH) fStageH.value = String(h);
+}
+
+function syncCamPanel() {
+  if (!cam) return;
+  camFov.value = String(cam.fov_deg);
+  camDist.value = String(cam.tps_distance_mul);
+  camHeight.value = String(cam.tps_height_mul);
+  camLook.value = String(cam.tps_look_ahead_mul);
+  vFov.textContent = String(round1(cam.fov_deg));
+  vDist.textContent = String(round1(cam.tps_distance_mul));
+  vHeight.textContent = String(round1(cam.tps_height_mul));
+  vLook.textContent = String(round1(cam.tps_look_ahead_mul));
+}
+
+function readCamFromUi() {
+  if (!cam) return;
+  cam.fov_deg = Number(camFov.value);
+  cam.tps_distance_mul = Number(camDist.value);
+  cam.tps_height_mul = Number(camHeight.value);
+  cam.tps_look_ahead_mul = Number(camLook.value);
+  syncCamPanel();
+  camDirty = true;
+  setStatus("카메라 수정됨 · 저장하세요");
+}
+
 function render() {
+  syncStageSplit();
+
   const rects = resolveRects(layout);
   const clash = clashIds(rects);
 
@@ -329,7 +403,7 @@ function bindInspector() {
       w.lock = ($("fLock") as HTMLInputElement).checked;
       w.keep_square = ($("fSq") as HTMLInputElement).checked;
       w.z = Number(($("fZ") as HTMLInputElement).value) || 1;
-      if (w.keep_square && !w.pillar_id) w.h_pct = squareH(w.w_pct);
+      if (w.keep_square && !w.pillar_id) w.h_pct = squareH(w.w_pct, layout.aspect);
     }
     markDirty();
     render();
@@ -406,7 +480,7 @@ function writeBox(kind: "pillar" | "widget", id: string, box: { x: number; y: nu
   w.y_pct = snap(clampPct(box.y));
   w.w_pct = snap(clampPct(box.w, 1, 100));
   w.h_pct = snap(clampPct(box.h, 1, 100));
-  if (w.keep_square) w.h_pct = squareH(w.w_pct);
+  if (w.keep_square) w.h_pct = squareH(w.w_pct, layout.aspect);
 }
 
 function onDown(e: PointerEvent, kind: "pillar" | "widget", id: string, handle?: Handle) {
@@ -432,7 +506,7 @@ function onDown(e: PointerEvent, kind: "pillar" | "widget", id: string, handle?:
 }
 
 function applyDelta(dx: number, dy: number) {
-  if (!drag) return;
+  if (!drag || drag.mode === "stage-split") return;
   const o = drag.orig;
   let x = o.x;
   let y = o.y;
@@ -462,7 +536,14 @@ function applyDelta(dx: number, dy: number) {
 function onMove(e: PointerEvent) {
   if (!drag) return;
   const rect = stage.getBoundingClientRect();
-  if (rect.width <= 0) return;
+  if (rect.width <= 0 || rect.height <= 0) return;
+  if (drag.mode === "stage-split") {
+    const dy = ((e.clientY - drag.startY) / rect.height) * 100;
+    layout.stage_h_pct = snap(clampPct(drag.origH + dy, STAGE_H_MIN, STAGE_H_MAX));
+    markDirty();
+    syncStageSplit();
+    return;
+  }
   const dx = ((e.clientX - drag.startX) / rect.width) * 100;
   const dy = ((e.clientY - drag.startY) / rect.height) * 100;
   applyDelta(dx, dy);
@@ -476,8 +557,15 @@ function onUp() {
 
 async function doSave() {
   const res = await saveJourneyHudLayout(layout);
+  let msg = res.message;
+  if (cam && (camDirty || boardAspect === "9:16")) {
+    readCamFromUi();
+    const camRes = await saveJourney3DConfig(cam);
+    camDirty = !camRes.ok;
+    msg += camRes.ok ? " · 카메라 저장" : ` · 카메라 ${camRes.message}`;
+  }
   dirty = !res.ok;
-  setStatus(res.message, res.ok ? "ok" : "err");
+  setStatus(msg, res.ok && !camDirty ? "ok" : "err");
 }
 
 function doUndo() {
@@ -515,14 +603,53 @@ $("btnGrid").addEventListener("click", () => {
 $("btnUndo").addEventListener("click", doUndo);
 $("btnReset").addEventListener("click", () => {
   pushUndo();
-  layout = JSON.parse(JSON.stringify(HUD_LAYOUT_DEFAULTS)) as JourneyHudLayout;
-  sel = { kind: "pillar", id: "p_minimap" };
+  const base = boardAspect === "9:16" ? HUD_LAYOUT_PORTRAIT_DEFAULTS : HUD_LAYOUT_DEFAULTS;
+  layout = JSON.parse(JSON.stringify(base)) as JourneyHudLayout;
+  layout.aspect = boardAspect;
+  sel = { kind: "pillar", id: layout.pillars[0]?.id ?? "p_log" };
   markDirty();
   render();
 });
 $("btnReload").addEventListener("click", () => void boot());
 $("btnSave").addEventListener("click", () => void doSave());
 chkSnap.addEventListener("change", () => render());
+selAspect.addEventListener("change", () => void switchBoard(selAspect.value as HudAspect));
+
+async function switchBoard(next: HudAspect) {
+  if (next === boardAspect) return;
+  if (dirty && !confirm("저장하지 않은 수정이 있습니다. 보드를 바꿀까요?")) {
+    selAspect.value = boardAspect;
+    return;
+  }
+  boardAspect = next;
+  await boot();
+}
+
+stageSplit.addEventListener("pointerdown", (e) => {
+  if (boardAspect !== "9:16") return;
+  e.preventDefault();
+  e.stopPropagation();
+  pushUndo();
+  drag = {
+    mode: "stage-split",
+    startY: e.clientY,
+    origH: layoutStageHPct(layout),
+  };
+  stageSplit.setPointerCapture(e.pointerId);
+});
+
+fStageH.addEventListener("change", () => {
+  pushUndo();
+  layout.stage_h_pct = snap(clampPct(Number(fStageH.value) || DEFAULT_STAGE_H_PCT, STAGE_H_MIN, STAGE_H_MAX));
+  markDirty();
+  syncStageSplit();
+});
+
+for (const el of [camFov, camDist, camHeight, camLook]) {
+  el.addEventListener("input", () => {
+    readCamFromUi();
+  });
+}
 
 stage.addEventListener("pointermove", onMove);
 window.addEventListener("pointerup", onUp);
@@ -556,9 +683,19 @@ window.addEventListener("keydown", (e) => {
 });
 
 async function boot() {
-  layout = await loadJourneyHudLayout();
+  boardAspect = (selAspect.value as HudAspect) === "16:9" ? "16:9" : "9:16";
+  selAspect.value = boardAspect;
+  stage.classList.toggle("portrait", boardAspect === "9:16");
+  layout = await loadJourneyHudLayout({ force: true, aspect: boardAspect });
+  layout.aspect = boardAspect;
+  if (boardAspect === "9:16" && layout.stage_h_pct == null) {
+    layout.stage_h_pct = DEFAULT_STAGE_H_PCT;
+  }
+  cam = await loadJourney3DConfig();
+  camDirty = false;
   dirty = false;
-  setStatus("불러옴", "ok");
+  syncCamPanel();
+  setStatus(boardAspect === "9:16" ? "세로 보드 · 카메라 불러옴" : "가로 보드 불러옴", "ok");
   render();
 }
 

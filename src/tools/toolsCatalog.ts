@@ -44,6 +44,15 @@ export const TOOLS: ToolEntry[] = [
     npm: "dev:map",
   },
   {
+    id: "map-mask",
+    name: "맵 마스크",
+    short: "마스크",
+    href: "/map-mask-tool.html",
+    blurb: "섬 마스터 9등분 · 외곽·이동 구역 칠하기 · 네온/인상파 미리보기. 저장: data/map_mask_tool/",
+    group: "map",
+    npm: "dev:mapmask",
+  },
+  {
     id: "layout",
     name: "레이아웃 에디터",
     short: "레이아웃",
@@ -80,6 +89,15 @@ export const TOOLS: ToolEntry[] = [
     npm: "dev:kit",
   },
   {
+    id: "wanderer-anim",
+    name: "방랑자 스프라이트",
+    short: "방랑자애니",
+    href: "/wanderer-anim.html",
+    blurb: "뒷모습 대기·뛰기 시트 미리보기. 로비 상단에서 연다.",
+    group: "art",
+    npm: "dev:wanderer-anim",
+  },
+  {
     id: "fpv",
     name: "3D 여정 뷰",
     short: "3D뷰",
@@ -96,6 +114,15 @@ export const TOOLS: ToolEntry[] = [
     blurb: "정화 총 · 땅 칠 · 웨이브 손맛",
     group: "art",
     npm: "dev:raid",
+  },
+  {
+    id: "culprit-cloud",
+    name: "원흉 점구름",
+    short: "원흉구름",
+    href: "/culprit-cloud-tool.html",
+    blurb: "점 구름 원흉 미리보기. 모이기·흩어지기·정화색. 본편 미연결.",
+    group: "art",
+    npm: "dev:culprit",
   },
   {
     id: "play-log",

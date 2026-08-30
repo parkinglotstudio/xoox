@@ -1,6 +1,6 @@
 vfx_id,particle_count,size_min,size_max,life_sec,color_hex,spread_m,note
-hit,6,0.04,0.1,0.35,#7dffee,0.35,착탄
-death,10,0.06,0.16,0.55,#c090ff,0.55,정화 소멸
+hit,10,0.04,0.12,0.4,#7dffee,0.45,착탄
+death,16,0.05,0.16,0.55,#c090ff,0.7,정화 소멸
 skill_bolt,8,0.05,0.12,0.4,#ffe45c,0.4,번개
 skill_spread,12,0.06,0.14,0.45,#ff8844,0.7,화염파
 boss_intro,16,0.08,0.2,0.7,#ff66aa,0.9,보스 등장

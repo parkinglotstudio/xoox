@@ -1,0 +1,61 @@
+{
+  "anim_id": "move",
+  "cell": 512,
+  "pivot": {
+    "x": 256,
+    "y": 500
+  },
+  "type": "body_offsets",
+  "baseline": "_pre_offset_backup",
+  "note": "Applied from editor Save → engine pack (absolute).",
+  "offsets": {
+    "0": {
+      "dx": 0,
+      "dy": 0
+    },
+    "1": {
+      "dx": 0,
+      "dy": 0
+    },
+    "2": {
+      "dx": 0,
+      "dy": 0
+    },
+    "3": {
+      "dx": 0,
+      "dy": 0
+    },
+    "4": {
+      "dx": 0,
+      "dy": 0
+    },
+    "5": {
+      "dx": 17,
+      "dy": 0
+    },
+    "6": {
+      "dx": 18,
+      "dy": 0
+    },
+    "7": {
+      "dx": 1,
+      "dy": 0
+    },
+    "8": {
+      "dx": 8,
+      "dy": 0
+    },
+    "9": {
+      "dx": 24,
+      "dy": 0
+    },
+    "10": {
+      "dx": 19,
+      "dy": 0
+    },
+    "11": {
+      "dx": 12,
+      "dy": 0
+    }
+  }
+}

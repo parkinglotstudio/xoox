@@ -3,6 +3,7 @@
   "label": "무지개섬 로비",
   "aspect": "16:9",
   "anchor": "bottom-left",
+  "world_w_pct": 100,
   "note": "지면·캐릭·배는 하단 기준. 상단 HUD/푯말은 v_anchor=top. 에디터: /layout-editor.html",
   "bg": "/ui/lobby/lobby_bg.png",
   "items": [

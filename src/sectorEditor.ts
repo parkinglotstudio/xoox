@@ -4,6 +4,7 @@
  * 배치는 NPC(area_npc_config)만. 데코 아트는 별도.
  */
 import { paintSectorFloorUrl, SPLAT_LAND_IDS } from "./stage/world3d/islandFloorSplat";
+import { conceptUrlFor, ISLAND_OVERVIEW_URL, loadSectorScale } from "./island/islandMapShared";
 import { spawnPctInArea } from "./stage/spawnStart";
 type ScaleConfig = {
   character_height_m: number;
@@ -53,8 +54,7 @@ type ConnRow = {
 const CSV_PATH = "data/area_npc_config.csv";
 const CONN_URL = "/area_connection_config.csv";
 const ZONE_URL = "/area_zone_config.csv";
-const SCALE_URL = "/ui/layout/sector_scale.json";
-const ISLAND_MAP = "/ui/journey/island_overview_1km.png";
+const ISLAND_MAP = ISLAND_OVERVIEW_URL;
 /** 원본 컨셉 · 정화전(타일+하얗게) · 정화후(타일) */
 type ArtMode = "concept" | "polluted" | "purified";
 let artMode: ArtMode = "polluted";
@@ -398,15 +398,14 @@ function focusOnStart() {
 }
 
 async function loadAll() {
-  const [scaleRes, csvRes, connRes, zoneRes] = await Promise.all([
-    fetch(`${SCALE_URL}?t=${Date.now()}`),
+  const [scaleCfg, csvRes, connRes, zoneRes] = await Promise.all([
+    loadSectorScale(true),
     fetch(`/area_npc_config.csv?t=${Date.now()}`),
     fetch(`${CONN_URL}?t=${Date.now()}`),
     fetch(`${ZONE_URL}?t=${Date.now()}`),
   ]);
-  if (!scaleRes.ok) throw new Error(`scale ${scaleRes.status}`);
   if (!csvRes.ok) throw new Error(`csv ${csvRes.status}`);
-  scale = (await scaleRes.json()) as ScaleConfig;
+  scale = scaleCfg as ScaleConfig;
   const parsed = parseCsv(await csvRes.text());
   header = parsed.header;
   rows = parsed.rows;
@@ -446,17 +445,24 @@ function clearFloorUrls() {
   floorUrls.clear();
 }
 
-async function ensureFloorArts(): Promise<void> {
-  if (floorUrls.size > 0 || floorBusy || !scale) return;
+async function ensureFloorArts(force = false): Promise<void> {
+  if (!scale) return;
+  if (floorBusy) return;
+  if (!force && floorUrls.size > 0) return;
+  if (force) clearFloorUrls();
   floorBusy = true;
   setStatus("타일 바닥 생성 중…");
   try {
+    const ids = Object.keys(scale.sectors || {}).map((a) => a.replace(/^area_/, ""));
+    const landIds = ids.length ? ids : [...SPLAT_LAND_IDS];
     await Promise.all(
-      SPLAT_LAND_IDS.map(async (id) => {
-        const areaId = `area_${id}`;
-        const src = scale?.sectors?.[areaId]?.map;
+      landIds.map(async (id) => {
+        const areaId = id.startsWith("area_") ? id : `area_${id}`;
+        const sec = scale?.sectors?.[areaId];
+        if (!sec?.map) return;
+        const src = conceptUrlFor(scale!, areaId, artMode === "purified");
         if (!src) return;
-        const url = await paintSectorFloorUrl(src);
+        const url = await paintSectorFloorUrl(`${src}?t=${artBust}`);
         floorUrls.set(areaId, url);
       }),
     );
@@ -848,12 +854,14 @@ artModeSel.addEventListener("change", () => {
   const v = artModeSel.value;
   artMode = v === "purified" ? "purified" : v === "concept" ? "concept" : "polluted";
   if (artMode !== "concept") {
-    void ensureFloorArts().then(() => {
+    artBust = Date.now();
+    void ensureFloorArts(true).then(() => {
       renderAll();
       setStatus(artMode === "polluted" ? "보기: 정화전 (타일+하얗게)" : "보기: 정화후 (타일)", "ok");
     });
     return;
   }
+  clearFloorUrls();
   renderAll();
   setStatus("보기: 원본 (컨셉)", "ok");
 });

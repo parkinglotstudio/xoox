@@ -73,29 +73,60 @@ export async function playPurifyMelt(opts: {
   overlay.remove();
 }
 
-/** 바닥 정화제를 줍는 게이지. 캐릭터 머리 위에 작게 · HP 칩 자리. */
+export type MashCollectResult = {
+  hits: number;
+  ms: number;
+  sluggish: boolean;
+};
+
+const MASH_COOLDOWN_MS = 110;
+const MASH_HIT = 0.13;
+const MASH_IDLE_PER_SEC = 0.16;
+const MASH_SLOW_MS = 2800;
+
+/** 바닥 정화제를 줍는 게이지. 연타하면 짧아진다. 실패해도 재료는 남는다. */
 export async function playPickupGauge(opts: {
   host: HTMLElement;
   label: string;
   seconds?: number;
   /** 매 프레임 머리 스크린 좌표. null이면 숨김 */
   anchor?: () => { x: number; y: number } | null;
-}): Promise<void> {
-  const seconds = Math.max(1.2, opts.seconds ?? 3);
-  const overlay = document.createElement("div");
-  overlay.className = "melt-overlay pick-overlay pick-head";
-  overlay.innerHTML = `
+  /** 겨루기와 같은 하단 연타 버튼 */
+  onBindHit?: (hit: (() => void) | null) => void;
+  /** 이미 머리 위에 있는 창을 쓴다. 끝나면 지우지 않는다. */
+  reuse?: {
+    overlay: HTMLElement;
+    box: HTMLElement;
+    fill: HTMLElement;
+    pctEl: HTMLElement;
+    needEl: HTMLElement;
+    labelEl: HTMLElement;
+  };
+  onPct?: (amt: number) => void;
+}): Promise<MashCollectResult> {
+  const idleCap = Math.max(1.6, opts.seconds ?? 6.2);
+  const reused = opts.reuse;
+  const overlay = reused?.overlay ?? document.createElement("div");
+  if (!reused) {
+    overlay.className = "melt-overlay pick-overlay pick-head";
+    overlay.innerHTML = `
     <div class="pick-head-box">
-      <div class="pick-need">001 동작 필요</div>
+      <div class="pick-need">연속으로 누르세요</div>
       <div class="melt-label">${escapeHtml(opts.label)}</div>
       <div class="melt-meter pick-meter" title="줍기"><i></i></div>
       <div class="melt-pct">0%</div>
     </div>
   `;
-  const box = overlay.querySelector(".pick-head-box") as HTMLElement;
-  const fill = overlay.querySelector("i") as HTMLElement;
-  const pctEl = overlay.querySelector(".melt-pct") as HTMLElement;
-  opts.host.appendChild(overlay);
+    opts.host.appendChild(overlay);
+  }
+  const box = reused?.box ?? (overlay.querySelector(".pick-head-box") as HTMLElement);
+  const fill = reused?.fill ?? (overlay.querySelector("i") as HTMLElement);
+  const pctEl = reused?.pctEl ?? (overlay.querySelector(".melt-pct") as HTMLElement);
+  const needEl = reused?.needEl ?? (overlay.querySelector(".pick-need") as HTMLElement);
+  const labelEl = reused?.labelEl ?? (overlay.querySelector(".melt-label") as HTMLElement);
+  if (needEl) needEl.textContent = "연속으로 누르세요";
+  if (labelEl) labelEl.textContent = opts.label;
+  overlay.classList.add("mash");
   fill.style.width = "0%";
 
   const place = () => {
@@ -111,22 +142,48 @@ export async function playPickupGauge(opts: {
   };
   place();
 
+  let amt = 0;
+  let hits = 0;
+  let lastHit = 0;
   const t0 = performance.now();
-  await new Promise<void>((resolve) => {
+
+  const bump = () => {
+    const now = performance.now();
+    if (now - lastHit < MASH_COOLDOWN_MS) return;
+    lastHit = now;
+    hits += 1;
+    amt = Math.min(1, amt + MASH_HIT);
+  };
+
+  opts.onBindHit?.(bump);
+  overlay.addEventListener("pointerdown", bump);
+
+  const result = await new Promise<MashCollectResult>((resolve) => {
+    let lastFrame = t0;
     const step = (now: number) => {
       place();
-      const t = Math.min(1, (now - t0) / (seconds * 1000));
-      fill.style.width = `${t * 100}%`;
-      pctEl.textContent = `${Math.round(t * 100)}%`;
-      if (t >= 1) {
-        window.setTimeout(resolve, 160);
+      const dt = Math.min(0.05, (now - lastFrame) / 1000);
+      lastFrame = now;
+      amt = Math.max(0, amt - dt * MASH_IDLE_PER_SEC);
+      fill.style.width = `${amt * 100}%`;
+      pctEl.textContent = `${Math.round(amt * 100)}%`;
+      opts.onPct?.(amt);
+      const elapsed = now - t0;
+      if (amt >= 1 || elapsed >= idleCap * 1000) {
+        const ms = Math.round(elapsed);
+        resolve({ hits, ms, sluggish: ms >= MASH_SLOW_MS || hits < 5 });
         return;
       }
       requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
   });
-  overlay.remove();
+
+  opts.onBindHit?.(null);
+  overlay.removeEventListener("pointerdown", bump);
+  overlay.classList.remove("mash");
+  if (!reused) overlay.remove();
+  return result;
 }
 
 function escapeHtml(s: string): string {

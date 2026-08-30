@@ -1,14 +1,28 @@
 /**
  * 컨셉 PNG → 바닥 타일 스플랫. Three와 섹터 에디터가 같이 쓴다.
- * 에디터 floor 모드는 흙길만 그린다.
+ * 정화후 타일 미리보기: 들판·숲·흙길·바위·물 텍스처 혼합.
  */
+import { LAND_SECTOR_IDS } from "./islandLoadOrder";
 
-export const SPLAT_LAND_IDS = ["i01", "i10", "i11", "i12", "i21"] as const;
+export const SPLAT_LAND_IDS = LAND_SECTOR_IDS;
 
-const SRC = 280;
-const OUT = 512;
-const TILE = 128;
-const REPEAT = 14;
+/**
+ * 바닥 스플랫 해상도 (인게임 IslandTerrain · 맵배치 sectorEditor 공용)
+ *
+ * 백업 이력 (되돌릴 때 아래 숫자로):
+ * - 2026-08-23 초기:     SRC=320  OUT=1024 TILE=128 REPEAT=18
+ * - 2026-08-23 1차 상향: SRC=512  OUT=2048 TILE=256 REPEAT=20
+ * - 2026-08-23 2차 상향: SRC=768  OUT=3072 TILE=256 REPEAT=24
+ * - 2026-08-25 스트리밍: SRC=768  OUT=2048 TILE=256 REPEAT=24  ← 현재
+ *   (5칸 선생성 중단 · 들판 스폰 칸 우선. 발밑이 뭉개지면 OUT만 3072)
+ *
+ * 소스 타일 PNG는 512×512. TILE>512는 이득 거의 없음.
+ * OUT↑ = 발밑 선명 / 생성·VRAM↑.
+ */
+const SRC = 768;
+const OUT = 2048;
+const TILE = 256;
+const REPEAT = 24;
 const INPAINT_PASSES = 24;
 const ROOF_DILATE = 14;
 
@@ -298,14 +312,14 @@ function pathWeight(r: number, g: number, b: number): number {
 
 function floorWeights(rgb: Float32Array, sea: Uint8Array, S: number): {
   grass: Float32Array;
+  forest: Float32Array;
   dirt: Float32Array;
-  wood: Float32Array;
   cobble: Float32Array;
 } {
   const n = S * S;
   const grass = new Float32Array(n);
+  const forest = new Float32Array(n);
   const dirt = new Float32Array(n);
-  const wood = new Float32Array(n);
   const cobble = new Float32Array(n);
   for (let i = 0; i < n; i++) {
     if (sea[i]) continue;
@@ -316,28 +330,44 @@ function floorWeights(rgb: Float32Array, sea: Uint8Array, S: number): {
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
     const sat = max <= 1 ? 0 : (max - min) / max;
+
+    // 흙·희미한 길 (황토)
     let d =
-      clamp01((v - 118) / 50) *
-      clamp01((r - 145) / 50) *
-      clamp01((210 - b) / 90) *
-      clamp01((g - r * 0.52) / 50);
-    if (v > 150 && r > 175 && g > 125 && b < 120) d = Math.max(d, 0.95);
-    let w =
-      clamp01((r - g - 12) / 40) *
-      clamp01((g - b) / 35) *
-      clamp01((160 - v) / 45) *
-      clamp01((r - 85) / 55);
-    if (v > 150) w *= 0.28;
-    const c = sat < 0.26 && v > 72 && v < 175 ? ((0.26 - sat) / 0.26) * 0.55 : 0;
-    let gr = clamp01((95 - Math.abs(g - r)) / 95) * clamp01((155 - v) / 70 + 0.35);
-    gr = clamp01(gr + 0.25 * clamp01((g - r + 8) / 30));
-    const sum = d + w + c + gr + 1e-6;
+      clamp01((v - 100) / 55) *
+      clamp01((r - 120) / 55) *
+      clamp01((200 - b) / 90) *
+      clamp01((g - r * 0.45) / 55);
+    if (v > 140 && r > 160 && g > 120 && b < 130) d = Math.max(d, 0.85);
+
+    // 바위 (저채도 회보라)
+    const c =
+      sat < 0.28 && v > 60 && v < 180 && Math.abs(r - b) < 35
+        ? ((0.28 - sat) / 0.28) * 0.75
+        : clamp01((95 - Math.abs(r - b)) / 95) * clamp01((130 - v) / 80) * 0.35;
+
+    // 숲 (어둡고 초록 우세)
+    let fo =
+      clamp01((g - r) / 35) *
+      clamp01((g - b) / 25) *
+      clamp01((120 - v) / 70 + 0.2) *
+      clamp01((g - 40) / 60);
+    if (g > r + 12 && g > b + 8 && v < 110) fo = Math.max(fo, 0.8);
+
+    // 들판·꽃 (밝고 노란/연두)
+    let gr =
+      clamp01((g - r + 20) / 50) *
+      clamp01((v - 90) / 70) *
+      clamp01((180 - Math.abs(g - 140)) / 80);
+    if (r > 160 && g > 140 && b < 140 && v > 130) gr = Math.max(gr, 0.7); // flower warm
+    gr = clamp01(gr);
+
+    const sum = d + c + fo + gr + 1e-6;
     dirt[i] = d / sum;
-    wood[i] = w / sum;
     cobble[i] = c / sum;
+    forest[i] = fo / sum;
     grass[i] = gr / sum;
   }
-  return { grass, dirt, wood, cobble };
+  return { grass, forest, dirt, cobble };
 }
 
 function tilePixels(img: HTMLImageElement, size: number): Uint8ClampedArray {
@@ -401,10 +431,16 @@ export async function paintSectorPathUrl(conceptUrl: string, dirtUrl: string): P
   return canvasToUrl(canvas);
 }
 
-/** 컨셉에서 오브젝트를 걷고 풀·흙·덱·판석 타일을 섞은 정화후 바닥. */
+/** 컨셉에서 오브젝트를 걷고 들판·숲·흙·바위 타일을 섞은 정화후 바닥. */
 export function paintSectorFloorCanvas(
   concept: HTMLImageElement,
-  tiles: { grass: HTMLImageElement; dirt: HTMLImageElement; wood: HTMLImageElement; cobble: HTMLImageElement },
+  tiles: {
+    grass: HTMLImageElement;
+    forest: HTMLImageElement;
+    dirt: HTMLImageElement;
+    cobble: HTMLImageElement;
+    water: HTMLImageElement;
+  },
 ): HTMLCanvasElement {
   const src = drawToSize(concept, SRC);
   const waterish = new Uint8Array(SRC * SRC);
@@ -418,13 +454,14 @@ export function paintSectorFloorCanvas(
   const rgb = inpaintFloor(src.data, sea, obj, SRC);
   const w = floorWeights(rgb, sea, SRC);
   const grassW = blurFloat(w.grass, SRC, 2);
+  const forestW = blurFloat(w.forest, SRC, 2);
   const dirtW = blurFloat(w.dirt, SRC, 2);
-  const woodW = blurFloat(w.wood, SRC, 2);
   const cobbleW = blurFloat(w.cobble, SRC, 2);
   const grass = tilePixels(tiles.grass, TILE);
+  const forest = tilePixels(tiles.forest, TILE);
   const dirt = tilePixels(tiles.dirt, TILE);
-  const wood = tilePixels(tiles.wood, TILE);
   const cobble = tilePixels(tiles.cobble, TILE);
+  const water = tilePixels(tiles.water, TILE);
   const c = document.createElement("canvas");
   c.width = OUT;
   c.height = OUT;
@@ -439,26 +476,27 @@ export function paintSectorFloorCanvas(
       const u = (x + 0.5) / OUT;
       const tx = x * scale;
       const gW = sampleBilinear(grassW, SRC, u, v);
+      const fW = sampleBilinear(forestW, SRC, u, v);
       const dW = sampleBilinear(dirtW, SRC, u, v);
-      const woW = sampleBilinear(woodW, SRC, u, v);
       const cW = sampleBilinear(cobbleW, SRC, u, v);
       const g = wrapSample(grass, TILE, tx, ty);
+      const f = wrapSample(forest, TILE, tx, ty);
       const d = wrapSample(dirt, TILE, tx, ty);
-      const wo = wrapSample(wood, TILE, tx, ty);
       const cb = wrapSample(cobble, TILE, tx, ty);
+      const wt = wrapSample(water, TILE, tx, ty);
       const o = (y * OUT + x) * 4;
       const sx = Math.min(SRC - 1, ((x * SRC) / OUT) | 0);
       const sy = Math.min(SRC - 1, ((y * SRC) / OUT) | 0);
       if (sea[sy * SRC + sx]) {
-        p[o] = 78;
-        p[o + 1] = 138;
-        p[o + 2] = 158;
+        p[o] = wt[0];
+        p[o + 1] = wt[1];
+        p[o + 2] = wt[2];
         p[o + 3] = 255;
         continue;
       }
-      p[o] = g[0] * gW + d[0] * dW + wo[0] * woW + cb[0] * cW;
-      p[o + 1] = g[1] * gW + d[1] * dW + wo[1] * woW + cb[1] * cW;
-      p[o + 2] = g[2] * gW + d[2] * dW + wo[2] * woW + cb[2] * cW;
+      p[o] = g[0] * gW + f[0] * fW + d[0] * dW + cb[0] * cW;
+      p[o + 1] = g[1] * gW + f[1] * fW + d[1] * dW + cb[1] * cW;
+      p[o + 2] = g[2] * gW + f[2] * fW + d[2] * dW + cb[2] * cW;
       p[o + 3] = 255;
     }
   }
@@ -466,15 +504,61 @@ export function paintSectorFloorCanvas(
   return c;
 }
 
-export async function paintSectorFloorUrl(conceptUrl: string): Promise<string> {
-  const [concept, grass, dirt, wood, cobble] = await Promise.all([
-    loadSplatImage(conceptUrl),
+let defaultFloorTiles: {
+  grass: HTMLImageElement;
+  forest: HTMLImageElement;
+  dirt: HTMLImageElement;
+  cobble: HTMLImageElement;
+  water: HTMLImageElement;
+} | null = null;
+
+async function loadDefaultFloorTiles(): Promise<{
+  grass: HTMLImageElement;
+  forest: HTMLImageElement;
+  dirt: HTMLImageElement;
+  cobble: HTMLImageElement;
+  water: HTMLImageElement;
+}> {
+  if (defaultFloorTiles) return defaultFloorTiles;
+  const [grass, forest, dirt, cobble, water] = await Promise.all([
     loadSplatImage("/art/tiles/floor/floor_grass_flower.png"),
+    loadSplatImage("/art/tiles/floor/floor_forest.png"),
     loadSplatImage("/art/tiles/floor/floor_dirt.png"),
-    loadSplatImage("/art/tiles/floor/floor_wood_plank.png"),
     loadSplatImage("/art/tiles/floor/floor_cobble.png"),
+    loadSplatImage("/art/tiles/floor/floor_water_deep.png"),
   ]);
-  return canvasToUrl(paintSectorFloorCanvas(concept, { grass, dirt, wood, cobble }));
+  defaultFloorTiles = { grass, forest, dirt, cobble, water };
+  return defaultFloorTiles;
+}
+
+/** 컨셉 Image → 타일 스플랫 캔버스 (IslandTerrain·에디터 공용) */
+export async function paintSectorFloorFromImage(concept: HTMLImageElement): Promise<HTMLCanvasElement> {
+  const tiles = await loadDefaultFloorTiles();
+  return paintSectorFloorCanvas(concept, tiles);
+}
+
+/** 인게임·맵배치 공용 — 컨셉에서 바다·오브젝트 마스크 추출 */
+export function analyzeConceptMesh(concept: HTMLImageElement): {
+  sea: Uint8Array;
+  srcSize: number;
+  objectMask: Uint8Array;
+} {
+  const src = drawToSize(concept, SRC);
+  const waterish = new Uint8Array(SRC * SRC);
+  for (let i = 0; i < waterish.length; i++) {
+    const o = i * 4;
+    waterish[i] = looksLikeWater(src.data[o], src.data[o + 1], src.data[o + 2]) ? 1 : 0;
+  }
+  const sea = floodSea(waterish, SRC);
+  keepLargestLand(sea, SRC);
+  const obj = objectMask(src.data, sea, SRC);
+  return { sea, srcSize: SRC, objectMask: obj };
+}
+
+export async function paintSectorFloorUrl(conceptUrl: string): Promise<string> {
+  const concept = await loadSplatImage(conceptUrl);
+  const canvas = await paintSectorFloorFromImage(concept);
+  return canvasToUrl(canvas);
 }
 
 function canvasToUrl(canvas: HTMLCanvasElement): Promise<string> {

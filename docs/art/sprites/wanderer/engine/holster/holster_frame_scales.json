@@ -1,0 +1,10 @@
+{
+  "anim_id": "holster",
+  "cell": 512,
+  "pivot": "bottom-center",
+  "pad_bottom": 12,
+  "type": "frame_scales",
+  "baseline": "_pre_scale_backup",
+  "note": "Applied from editor Save → engine pack (absolute).",
+  "scales": {}
+}

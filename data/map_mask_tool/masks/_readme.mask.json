@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "sector_id": "_readme",
+  "size": 512,
+  "note": "섹터별 {id}.mask.json 저장 위치. 툴: npm run dev:mapmask",
+  "layers": {}
+}

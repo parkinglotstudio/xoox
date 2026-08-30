@@ -190,7 +190,8 @@ export class ResidualColorHunt {
   private setFiringNeed(on: boolean): void {
     if (on === this.firingNeed) return;
     this.firingNeed = on;
-    this.onNeedAnim?.(on ? "002" : null);
+    if (on && !this.stage.hasAimSheet()) this.onNeedAnim?.("002");
+    else this.onNeedAnim?.(null);
   }
 
   private pickAim(px: number, pz: number, yaw: number): { id: string; wx: number; wz: number } | null {

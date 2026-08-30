@@ -50,7 +50,7 @@ export const PURIFY_RAID_CONFIG_SAVE_PATH = "data/ui/layout/purify_raid_layout.j
 export const PURIFY_RAID_DEFAULTS: PurifyRaidConfig = {
   version: 1,
   weapon_type: "missile",
-  gun_range_m: 10,
+  gun_range_m: 16,
   gun_spread_deg: 8,
   gun_ammo_per_sec: 2.4,
   gun_ammo_max: 24,

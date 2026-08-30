@@ -99,8 +99,9 @@
       }
       .map-stage .sector-art-cell.is-polluted img.sector-art,
       .phone-stage.is-polluted .phone-bg {
-        filter: grayscale(1) contrast(1.85) brightness(2.15);
-        background-color: #f7f4ef;
+        /* 정화전 — 차가운 재빛 (인게임 v8 coolash와 톤 맞춤). 흰 스케치 폐기 */
+        filter: grayscale(0.78) contrast(1.12) brightness(0.82) sepia(0.22) hue-rotate(165deg) saturate(0.85);
+        background-color: #1a2830;
       }
 
       /* 오염 미리보기: after PNG + 포토샵식 스케치/사이버 필터 (에디터 전용) */

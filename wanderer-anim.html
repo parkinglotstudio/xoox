@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>방랑자 스프라이트</title>
+    <style>
+      :root {
+        --bg: #14141f; --panel: #1c1814; --line: rgba(201, 137, 58, 0.45);
+        --text: #f3ebe0; --muted: #9a8c78; --accent: #e0a04a;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+        font-family: "Pretendard", "Malgun Gothic", sans-serif; }
+      body { display: grid; grid-template-rows: auto 1fr; }
+      .bar {
+        display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+        padding: 10px 14px; background: var(--panel); border-bottom: 1px solid var(--line);
+      }
+      .bar h1 { margin: 0; font-size: 15px; font-weight: 800; }
+      .bar .hint { color: var(--muted); font-size: 12px; }
+      .bar a { color: var(--accent); font-weight: 800; text-decoration: none; font-size: 12px; }
+      .bar button, .bar select {
+        border: 1px solid var(--line); background: #111; color: var(--text);
+        border-radius: 999px; padding: 7px 12px; font-weight: 700; cursor: pointer;
+      }
+      .bar button.on { background: #3a2a14; color: #ffd27a; }
+      .workspace { display: grid; place-items: center; padding: 24px; }
+      .stage {
+        width: min(72vw, 512px); height: min(72vw, 512px);
+        background:
+          linear-gradient(45deg, #3a3a48 25%, transparent 25%),
+          linear-gradient(-45deg, #3a3a48 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #3a3a48 75%),
+          linear-gradient(-45deg, transparent 75%, #3a3a48 75%);
+        background-size: 24px 24px;
+        background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+        background-color: #2a2a36;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      .stage canvas { width: 100%; height: 100%; display: block; image-rendering: auto; }
+      .status { font-size: 12px; color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <header class="bar">
+      <a href="/tools.html">← 툴 허브</a>
+      <h1>방랑자 스프라이트</h1>
+      <span class="hint">게임 시트 미리보기 · 체크보드 = 투명</span>
+      <button type="button" data-anim="ingame_idle" class="on">대기</button>
+      <button type="button" data-anim="move">뛰기</button>
+      <button type="button" data-anim="throw">던지기</button>
+      <button type="button" data-anim="aim_fire">총쏘기</button>
+      <button type="button" data-anim="aim_walk_f">총앞걷기</button>
+      <button type="button" data-anim="aim_walk_b">총뒤걷기</button>
+      <button type="button" data-anim="aim_walk_l">총좌걷기</button>
+      <button type="button" data-anim="aim_walk_r">총우걷기</button>
+      <button type="button" data-anim="walk_l">좌걷기</button>
+      <button type="button" data-anim="walk_r">우걷기</button>
+      <button type="button" data-anim="move_back">뒤걷기</button>
+      <button type="button" data-anim="draw_holster">빼기</button>
+      <button type="button" data-anim="holster">넣기</button>
+      <button type="button" id="play">일시정지</button>
+      <span class="status" id="status">불러오는 중…</span>
+    </header>
+    <div class="workspace">
+      <div class="stage"><canvas id="cv" width="512" height="512"></canvas></div>
+    </div>
+    <script type="module">
+      const ROOT = "/ui/actor/wanderer";
+      const cv = document.getElementById("cv");
+      const ctx = cv.getContext("2d");
+      const status = document.getElementById("status");
+      const playBtn = document.getElementById("play");
+
+      let animId = "ingame_idle";
+      let manifest = null;
+      let sheet = null;
+      let idx = 0;
+      let playing = true;
+      let acc = 0;
+      let last = performance.now();
+
+      async function load(id) {
+        animId = id;
+        status.textContent = `${id} 불러오는 중…`;
+        const m = await (await fetch(`${ROOT}/${id}/${id}.json?v=${Date.now()}`)).json();
+        const img = new Image();
+        img.src = `${ROOT}/${id}/${m.sheet}?v=${Date.now()}`;
+        await img.decode();
+        manifest = m;
+        sheet = img;
+        idx = 0;
+        acc = 0;
+        status.textContent = `${id} · ${m.frame_count}프레임 · 셀 ${m.cell}`;
+      }
+
+      function draw() {
+        if (!manifest || !sheet) return;
+        const cell = manifest.cell || 512;
+        const cols = manifest.cols || 1;
+        const i = manifest.frames[idx]?.index ?? idx;
+        const sx = (i % cols) * cell;
+        const sy = Math.floor(i / cols) * cell;
+        ctx.clearRect(0, 0, cell, cell);
+        ctx.drawImage(sheet, sx, sy, cell, cell, 0, 0, cell, cell);
+      }
+
+      function loop(now) {
+        const dt = now - last;
+        last = now;
+        if (playing && manifest?.frames?.length) {
+          acc += dt;
+          const hold = manifest.frames[idx]?.duration_ms ?? 120;
+          if (acc >= hold) {
+            acc = 0;
+            idx = (idx + 1) % manifest.frames.length;
+          }
+        }
+        draw();
+        requestAnimationFrame(loop);
+      }
+
+      document.querySelectorAll("button[data-anim]").forEach((b) => {
+        b.addEventListener("click", () => {
+          document.querySelectorAll("button[data-anim]").forEach((x) => x.classList.toggle("on", x === b));
+          void load(b.dataset.anim).catch((e) => {
+            status.textContent = `실패: ${e}`;
+          });
+        });
+      });
+      playBtn.addEventListener("click", () => {
+        playing = !playing;
+        playBtn.textContent = playing ? "일시정지" : "재생";
+      });
+
+      void load("ingame_idle")
+        .then(() => requestAnimationFrame(loop))
+        .catch((e) => {
+          status.textContent = `실패: ${e}`;
+        });
+    </script>
+  </body>
+</html>

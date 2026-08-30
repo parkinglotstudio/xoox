@@ -1,13 +1,13 @@
 npc_id,area_id,x_pct,y_pct,icon,label,trigger_type,trigger_ref,appear_condition,flavor_text,zone_id
-s1_fill_a,area_i21,34,91,💧,정화제,FILL,1,ALWAYS,바닥에 맑은 정화제가 떨어져 있다.,z_i21_dock
-s1_fill_b,area_i21,68,89,💧,정화제,FILL,1,ALWAYS,바닥에 맑은 정화제가 떨어져 있다.,z_i21_dock
-s1_fill_c,area_i21,50,77,💧,정화제,FILL,1,ALWAYS,발치에 정화제가 고여 있다.,z_i21_dock
-s1_filter,area_i21,32,80,🫧,탁한 물 거르기,FILTER,,ALWAYS,웅덩이 가장자리. 손으로 걸러 보면 뭔가 남을지도.,z_i21_workshop
-s1_mercenary,area_i21,30,74,🏚️,버려진 항만 초소,LOCATION,loc_mercenary,ALWAYS,오래전 누가 쓰던 초소. 아직 쓸 만한 게 남아 있을까.,z_i21_workshop
-d_i21_a,area_i21,68,80,🎴,하루의 발견,DAILY,,ALWAYS,길 위에서 오늘만의 일이 생긴다.,z_i21_warehouse
-a_i21_scrap,area_i21,70,74,♻️,쓸 만한 폐기물,ARENA,arena_clock_scrap,ALWAYS,쓸 만한 게 섞여 있다. 해가 남아 있는 동안만.,z_i21_warehouse
-s1_blight_pool,area_i21,50,70,🌫️,탁한 물웅덩이,BLIGHT,blight_s1_pool,ALWAYS,탁한 물이 길을 막고 있다. 씻어낼 무언가가 필요해.,z_i21_blight
-a_i21_spread,area_i21,54,66,🌫️,번지는 오염,ARENA,arena_blight_pool,ALWAYS,발밑에서 천천히 번지고 있다.,z_i21_blight
+s1_fill_a,area_i21,18,62,💧,정화제,FILL,1,ALWAYS,서쪽 풀숲에 맑은 정화제가 떨어져 있다.,z_i21_yard
+s1_fill_b,area_i21,82,58,💧,정화제,FILL,1,ALWAYS,동쪽 길에 맑은 정화제가 떨어져 있다.,z_i21_east
+s1_fill_c,area_i21,40,44,💧,정화제,FILL,1,ALWAYS,들판 안쪽에 정화제가 고여 있다.,z_i21_blight
+s1_filter,area_i21,30,56,🫧,탁한 물 거르기,FILTER,,ALWAYS,흙길 가의 탁한 물. 손으로 걸러 보면 뭔가 남을지도.,z_i21_workshop
+s1_mercenary,area_i21,28,58,🏚️,버려진 항만 초소,LOCATION,loc_mercenary,ALWAYS,오래전 누가 쓰던 초소. 아직 쓸 만한 게 남아 있을까.,z_i21_workshop
+d_i21_a,area_i21,74,46,🎴,하루의 발견,DAILY,,ALWAYS,길 위에서 오늘만의 일이 생긴다.,z_i21_warehouse
+a_i21_scrap,area_i21,72,42,♻️,쓸 만한 폐기물,ARENA,arena_clock_scrap,ALWAYS,쓸 만한 게 섞여 있다. 해가 남아 있는 동안만.,z_i21_warehouse
+s1_blight_pool,area_i21,50,50,🌫️,탁한 물웅덩이,BLIGHT,blight_s1_pool,ALWAYS,탁한 물이 길을 막고 있다. 씻어낼 무언가가 필요해.,z_i21_blight
+a_i21_spread,area_i21,53,48,🌫️,번지는 오염,ARENA,arena_blight_pool,ALWAYS,발밑에서 천천히 번지고 있다.,z_i21_blight
 s1_rest,area_i21,34,60,🏕️,안전 대피소,REST,loc_rest,ALWAYS,잠시 숨을 고를 수 있는 곳.,z_i21_yard
 s1_goblin,area_i21,28,62,🛍️,사치품 상인,NPC,b_goblin,ALWAYS,편해지는 대신 무언가를 요구하는 눈빛이다.,z_i21_yard
 s1_wander,area_i21,66,56,🚶,떠돌이,NPC,b_wander,ALWAYS,저쪽에서 온 것 같은 승무원이 서 있다.,z_i21_east
@@ -96,3 +96,5 @@ k_i11_a,area_i11,42,44,📗,갈림길의 수첩,SKILL,tier_common,ALWAYS,어느 
 k_i11_b,area_i11,64,40,📗,전망대의 기록,SKILL,tier_legend,ALWAYS,높은 곳에서 적은 요령.,
 r_i11_stray1,area_i11,32,34,🐾,십자로의 아이,RESCUE,a_dog_stray,ALWAYS,길 한가운데서 이쪽을 본다.,
 r_i11_stray2,area_i11,70,32,🐾,우물가의 아이,RESCUE,a_cat_lazy,ALWAYS,우물 그늘에 웅크려 있다.,
+s1_purify_step,area_i21,50,50,💧,정화의 자리,PURIFY,blight_s1_pool,ALWAYS,발을 디디면 들판이 되살아난다.,z_i21_blight
+s11_purify_step,area_i11,50,50,💧,메마른 우물,PURIFY,blight_i11_well,ALWAYS,가운데가 살아나야 사방이 열린다.,z_i11_well

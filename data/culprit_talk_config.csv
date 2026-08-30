@@ -1,0 +1,5 @@
+culprit_id,step_order,prompt,pass_label,fail_label,need_cond_id,pass_line,fail_line
+culprit_i21_thirst,1,물을 남겨 둔 채 기다린다. 보내 줄 거냐,보낸다,붙잡는다,stain,핵이 풀린다. 이제 물질을 걷는다.,기다림이 더 짙어진다.
+culprit_i11_well,1,왜 가운데가 말랐나,얼룩이 목을 틀어막았다,힘으로 퍼 올린다,stain,금이 간 우물이 듣는다.,우물이 입을 닫는다.
+culprit_i11_well,2,무엇이 우물을 기억하나,메마른 기억을 보여 준다,모른 척한다,memory,붙잡힌 숨이 풀린다.,목이 더 탄다.
+culprit_i11_well,3,물을 돌려줄 거냐,보낸다,우물을 때린다,,핵이 열린다. 이제 물질을 걷는다.,가운데가 다시 갈라진다.

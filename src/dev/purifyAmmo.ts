@@ -45,8 +45,64 @@ export function ammoCostForCombatTier(data: GameData, tier: string): number {
 export function fillAmountForNode(data: GameData, triggerType: string, triggerRef: string): number {
   const parsed = Number(triggerRef);
   if (Number.isFinite(parsed) && parsed > 0) return parsed;
-  if (triggerType.toUpperCase() === "CATALYST") return ammoCost(data, "CATALYST", 2);
+  const t = triggerType.toUpperCase();
+  if (t === "CATALYST_ADSORB") {
+    const cap = ammoCost(data, "THROW_ADSORB", 100);
+    return Math.max(12, Math.round(cap * 0.4));
+  }
+  if (t === "CATALYST_INHIBIT") {
+    const cap = ammoCost(data, "THROW_INHIBIT", 80);
+    return Math.max(8, Math.round(cap * 0.4));
+  }
+  if (t === "CATALYST_CULPRIT") return 1;
+  if (t === "CATALYST") return ammoCost(data, "CATALYST", 2);
   return ammoCost(data, "FILL", 1);
+}
+
+export type ThrowMagKind = "THROW_ADSORB" | "THROW_INHIBIT" | "THROW_CULPRIT";
+
+export function grantThrowMag(state: PlayerState, kind: ThrowMagKind, amount: number, cap: number): number {
+  const n = Math.max(0, Math.floor(amount));
+  const bag = Math.max(1, Math.floor(cap));
+  if (kind === "THROW_ADSORB") {
+    state.throwAdsorbCap = Math.max(state.throwAdsorbCap ?? 0, bag);
+    state.throwAdsorb = Math.min(state.throwAdsorbCap, (state.throwAdsorb ?? 0) + n);
+    return state.throwAdsorb;
+  }
+  if (kind === "THROW_CULPRIT") {
+    state.throwCulpritCap = Math.max(state.throwCulpritCap ?? 0, bag);
+    state.throwCulprit = Math.min(state.throwCulpritCap, (state.throwCulprit ?? 0) + n);
+    return state.throwCulprit;
+  }
+  state.throwInhibitCap = Math.max(state.throwInhibitCap ?? 0, bag);
+  state.throwInhibit = Math.min(state.throwInhibitCap, (state.throwInhibit ?? 0) + n);
+  return state.throwInhibit;
+}
+
+export function spendThrowMag(state: PlayerState, kind: ThrowMagKind, saveChance = 0): boolean {
+  if (saveChance > 0 && Math.random() < saveChance) return true;
+  if (kind === "THROW_ADSORB") {
+    if ((state.throwAdsorb ?? 0) <= 0) return false;
+    state.throwAdsorb -= 1;
+    return true;
+  }
+  if (kind === "THROW_CULPRIT") {
+    if ((state.throwCulprit ?? 0) <= 0) return false;
+    state.throwCulprit -= 1;
+    return true;
+  }
+  if ((state.throwInhibit ?? 0) > 0) {
+    state.throwInhibit -= 1;
+    return true;
+  }
+  return false;
+}
+
+export function refillThrowMags(state: PlayerState, frac = 0.25): void {
+  const aCap = state.throwAdsorbCap ?? 0;
+  const iCap = state.throwInhibitCap ?? 0;
+  if (aCap > 0) state.throwAdsorb = Math.min(aCap, (state.throwAdsorb ?? 0) + Math.round(aCap * frac));
+  if (iCap > 0) state.throwInhibit = Math.min(iCap, (state.throwInhibit ?? 0) + Math.round(iCap * frac));
 }
 
 export function addPurifyAmmo(state: PlayerState, amount: number): number {
