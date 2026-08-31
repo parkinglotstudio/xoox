@@ -1531,12 +1531,6 @@ async function runMapNode(npc: {
             onStainCleared: () => playStainPurifyFiller(),
             onThrowSpend: (kind) => spendLoopThrow(kind),
             onBugPetEncounter: (at) => playBugPetEncounter(at),
-            onMatterLoot: (at) =>
-              grantSlotThrowPickup("adsorb", {
-                title: "정화제",
-                icon: "💧",
-                flavor: "오염 속에서 정화제가 맺혔다.",
-              }),
             getCombatAmmo,
             getInhibitAmmo,
             spendCombatAmmo,
@@ -4448,15 +4442,16 @@ async function maybeOfferLoopLuckSkill(): Promise<void> {
   await offerLoopSkill();
 }
 
-async function playBugPetEncounter(at?: {
+async function playBugPetEncounter(at: {
   xPct: number;
   yPct: number;
   x?: number;
   z?: number;
+  petId: import("./stage/world3d/CulpritCloud").FieldPetId;
 }): Promise<void> {
   const cloudMod = await import("./stage/world3d/CulpritCloud");
-  const { pickFieldPetId, loadFieldPet, CulpritCloud } = cloudMod;
-  const petId = pickFieldPetId();
+  const { loadFieldPet, CulpritCloud } = cloudMod;
+  const petId = at.petId;
   const petLabel = petId === "Tobby" ? "토비" : petId === "Bolinha" ? "볼리냐" : petId === "Vrum" ? "브룸" : petId;
   const animal = makeFieldPetRescueAnimal(petId, petLabel);
 

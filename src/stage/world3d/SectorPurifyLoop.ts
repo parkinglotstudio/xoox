@@ -6,7 +6,7 @@
 import * as THREE from "three";
 import { BlightWave } from "./BlightWave";
 import { BlightBody } from "./BlightBody";
-import { CulpritCloud, loadStainDroplet, loadWaterDroplet, petFit } from "./CulpritCloud";
+import { CulpritCloud, loadStainDroplet, loadWaterDroplet, petFit, type FieldPetId } from "./CulpritCloud";
 import { GroundPaint } from "./GroundPaint";
 import type { JourneyStage3D } from "./JourneyStage3D";
 import { THROW_FORWARD_DEG } from "./StoneThrow";
@@ -48,6 +48,12 @@ const COMBAT_STOP_DIRS: { name: string; ang: number }[] = [
   { name: "남", ang: Math.PI / 2 },
 ];
 
+/** 루프 조우 — 벌레 2 · 오염물질 1 (랜덤 없음) */
+const LOOP_BUG_ENCOUNTER_SLOTS = 2;
+const LOOP_MATTER_ENCOUNTER_SLOTS = 1;
+const LOOP_BUG_ENCOUNTER_PETS: readonly FieldPetId[] = ["Tobby", "Bolinha"];
+const LOOP_MATTER_ENCOUNTER_PET: FieldPetId = "Vrum";
+
 /** 한 원에 한 번씩 도는 시나리오 콘텐츠. 1·2판이 같은 룰 슬롯. */
 export type LoopContentKind =
   | "catalyst"
@@ -83,10 +89,14 @@ export interface SectorLoopHooks {
   onHud?: (label: string) => void;
   onThrowSpend?: (kind: "adsorb" | "inhibit" | "culprit") => boolean;
   onStainCleared?: () => Promise<void>;
-  /** 벌레 퇴치 — 펫 파편 조우 (월드 좌표 포함) */
-  onBugPetEncounter?: (at: { xPct: number; yPct: number; x: number; z: number }) => Promise<void>;
-  /** 오염물질 처치 시 랜덤 획득(슬롯) */
-  onMatterLoot?: (at: { xPct: number; yPct: number }) => Promise<number | void>;
+  /** 벌레 퇴치 — 펫 파편 조우 (월드 좌표·펫 ID 고정) */
+  onBugPetEncounter?: (at: {
+    xPct: number;
+    yPct: number;
+    x: number;
+    z: number;
+    petId: FieldPetId;
+  }) => Promise<void>;
   huntTune?: () => {
     rangeAdd: number;
     speedMul: number;
@@ -296,10 +306,9 @@ export class SectorPurifyLoop {
   private lootBusy = false;
   /** 벌레 처치 → 펫 구출 연출 (전투 루프가 끝날 때까지 대기) */
   private petEncounterWait: Promise<void> | null = null;
-  /** 침입당 펫 조우 1회만 — 플레이타임 폭주 방지 */
-  private petEncounterDone = false;
-  /** 침입 중엔 구조 UI 생략(소프트락 방지) */
-  private petEncounterLite = false;
+  /** 남은 고정 조우 — 벌레 2 · 오염물질 1 */
+  private bugEncountersLeft = LOOP_BUG_ENCOUNTER_SLOTS;
+  private matterEncountersLeft = LOOP_MATTER_ENCOUNTER_SLOTS;
 
   constructor(
     private readonly stage: JourneyStage3D,
@@ -339,6 +348,7 @@ export class SectorPurifyLoop {
     this.bind(true);
     this.running = true;
     loopRunBegin();
+    this.resetEncounterSlots();
     try {
       const steps = this.hooks.questSteps ?? [];
       // combat_loop=본세팅 타임어택 루프. 퀘스트 장문은 combat 꺼진 칸만.
@@ -1163,9 +1173,6 @@ export class SectorPurifyLoop {
     this.wave.resetPool();
     this.wave.stationary = false;
     this.eatAcc = 0;
-    this.petEncounterDone = false;
-    // 침입 중 구조 UI가 전투를 멈추면 소프트락 — 카드만 짧게(선택 없음)
-    this.petEncounterLite = true;
     const bugs = Math.max(
       1,
       this.cfg.invade_count || this.combatBal?.bugCount || 12,
@@ -1258,7 +1265,6 @@ export class SectorPurifyLoop {
       this.pauseHunt = false;
       this.lootBusy = false;
     }
-    this.petEncounterLite = false;
     this.invadeActive = false;
     this.emitCombatHud();
     if (this.cfg.combat_loop) {
@@ -1867,6 +1873,32 @@ export class SectorPurifyLoop {
     }
   }
 
+  private resetEncounterSlots(): void {
+    this.bugEncountersLeft = LOOP_BUG_ENCOUNTER_SLOTS;
+    this.matterEncountersLeft = LOOP_MATTER_ENCOUNTER_SLOTS;
+  }
+
+  private beginPetEncounter(
+    spot: { x: number; z: number },
+    pct: { xPct: number; yPct: number },
+    petId: FieldPetId,
+  ): void {
+    if (!this.hooks.onBugPetEncounter) return;
+    this.lootBusy = true;
+    this.pauseHunt = true;
+    this.talking = true;
+    this.hooks.onHud?.("반려동물…?");
+    this.petEncounterWait = this.hooks
+      .onBugPetEncounter({ xPct: pct.xPct, yPct: pct.yPct, x: spot.x, z: spot.z, petId })
+      .finally(() => {
+        this.talking = false;
+        this.pauseHunt = false;
+        this.lootBusy = false;
+        if (this.invadeActive) this.setBeat("invade");
+        else if (this.beat === "king") this.setBeat("king");
+      });
+  }
+
   private onLand(x: number, z: number): void {
     if (!this.running) return;
     // 착탄 후 결과(HP·이펙트)가 보일 때까지 이동 텀
@@ -1912,6 +1944,8 @@ export class SectorPurifyLoop {
         onlyId: this.huntLock.id,
         skipBoss,
       });
+    } else if (this.beat === "invade" && this.huntLock) {
+      this.wave.hitSplash(x, z, r, 1, { stamp: false, onlyId: this.huntLock.id });
     } else {
       this.wave.hitSplash(x, z, r, 1, { stamp: false, skipBoss });
     }
@@ -1939,53 +1973,15 @@ export class SectorPurifyLoop {
     if (deaths.length > 0 && !this.lootBusy && !this.talking && !this.pauseHunt) {
       const spot = deaths[0]!;
       const pct = this.stage.worldToPctPublic(spot.x, spot.z);
-      // 침입당 펫 조우 최대 1회. 침입 중엔 구조 UI가 전투를 멈추므로 생략.
-      if (
-        lockedLook === "bug" &&
-        this.hooks.onBugPetEncounter &&
-        !this.petEncounterDone &&
-        !this.petEncounterLite &&
-        Math.random() < 0.35
-      ) {
-        this.petEncounterDone = true;
-        this.lootBusy = true;
-        this.pauseHunt = true;
-        this.talking = true;
-        this.hooks.onHud?.("반려동물…?");
-        this.petEncounterWait = this.hooks
-          .onBugPetEncounter({ xPct: pct.xPct, yPct: pct.yPct, x: spot.x, z: spot.z })
-          .finally(() => {
-            this.talking = false;
-            this.pauseHunt = false;
-            this.lootBusy = false;
-            if (this.invadeActive) this.setBeat("invade");
-            else if (this.beat === "king") this.setBeat("king");
-          });
-      } else if (
-        lockedLook === "bug" &&
-        this.petEncounterLite &&
-        !this.petEncounterDone &&
-        Math.random() < 0.35
-      ) {
-        // 침입 중: 전투는 계속, 힌트만
-        this.petEncounterDone = true;
-        this.hooks.onHud?.("벌레 자리에 작은 기운… 지나간다");
-      } else if (
-        (lockedLook === "matter" || this.polluteDefend) &&
-        this.hooks.onMatterLoot &&
-        Math.random() < 0.28
-      ) {
-        this.lootBusy = true;
-        this.pauseHunt = true;
-        this.talking = true;
-        this.hooks.onHud?.("오염 속에서 무언가");
-        void this.hooks
-          .onMatterLoot({ xPct: pct.xPct, yPct: pct.yPct })
-          .finally(() => {
-            this.talking = false;
-            this.pauseHunt = false;
-            this.lootBusy = false;
-          });
+      const bugKill = lockedLook === "bug";
+      const matterKill = lockedLook === "matter" || this.polluteDefend;
+      if (bugKill && this.bugEncountersLeft > 0) {
+        const petId = LOOP_BUG_ENCOUNTER_PETS[LOOP_BUG_ENCOUNTER_SLOTS - this.bugEncountersLeft]!;
+        this.bugEncountersLeft -= 1;
+        this.beginPetEncounter(spot, pct, petId);
+      } else if (matterKill && this.matterEncountersLeft > 0) {
+        this.matterEncountersLeft -= 1;
+        this.beginPetEncounter(spot, pct, LOOP_MATTER_ENCOUNTER_PET);
       }
     }
 
