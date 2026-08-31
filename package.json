@@ -16,6 +16,7 @@
     "dev:fpv": "vite --open /fpv-tool.html",
     "dev:wanderer-anim": "vite --open /wanderer-anim.html",
     "dev:raid": "vite --open /purify-raid-tool.html",
+    "dev:skillproto": "vite --open /purify-skill-proto-tool.html",
     "dev:culprit": "vite --open /culprit-cloud-tool.html",
     "dev:log": "vite --open /play-log-tool.html",
     "build": "tsc -b && vite build",

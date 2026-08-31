@@ -126,6 +126,7 @@ app.innerHTML = `
       </div>
       <div class="day-roadmap" id="dayRoadmap"></div>
       <div class="shell-top-res" id="shellTopRes">
+        <button type="button" class="shell-speed-btn" id="shellSpeedBtn" aria-pressed="false" title="배속 ×4">×1</button>
         <div class="shell-top-chip shell-top-hp" title="섬 정화">
           <span class="shell-top-ico" aria-hidden="true">◎</span>
           <span class="shell-top-val" id="shellTopHp">0%</span>
@@ -215,6 +216,13 @@ app.innerHTML = `
     </div>
     </div>
     <aside class="party-hud" id="partyHud" aria-label="파티"></aside>
+    <div class="combat-purify-hud-host" id="combatPurifyHudHost" aria-hidden="true"></div>
+    <aside class="actor-status-hud" id="actorStatusHud" aria-label="상태">
+      <div class="pick-need">상태</div>
+      <div class="melt-label">탐색중</div>
+      <div class="melt-meter pick-meter" title="상태"><i></i></div>
+      <div class="melt-pct">0%</div>
+    </aside>
     <div class="activity-toast" id="activityToast" aria-live="polite">
       <div class="tag">현재 활동</div>
       <div class="title" id="shellActivityTitle"></div>
@@ -568,6 +576,7 @@ const learnedSkillsClose = document.getElementById("learnedSkillsClose") as HTML
 const mainBtn = document.getElementById("mainBtn") as HTMLButtonElement;
 const islandBtn = document.getElementById("islandBtn") as HTMLButtonElement;
 const shellBrandBtn = document.getElementById("shellBrandBtn") as HTMLButtonElement;
+const shellSpeedBtn = document.getElementById("shellSpeedBtn") as HTMLButtonElement;
 const phoneEl = document.getElementById("phoneRoot") as HTMLElement;
 const shellHeader = document.getElementById("shellHeader")!;
 const shellTopRes = document.getElementById("shellTopRes")!;
@@ -598,6 +607,8 @@ let explore: ExploreView | null = null;
  * null이면 3D를 끈 상태(탑뷰 단독)로 예전처럼 동작한다.
  */
 let journey3d: Journey3DView | null = null;
+/** 상단 배속 버튼 상태 (3D 생성 전에도 유지) */
+let journeyTimeScale = 1;
 let use3dView = true;
 /** 원흉 원에 처음 닿았을 때만 큰 미니맵 인트로 */
 const culpritMapIntroDone = new Set<string>();
@@ -940,18 +951,23 @@ function syncPartyHud() {
   const p = islandPurifyPct();
   const left = state.purifyAttemptsLeft ?? 0;
   const cap = state.purifyAttemptCap ?? data.islandRun?.attempt_count ?? 10;
-  const adsorb =
-    (state.throwAdsorbCap ?? 0) > 0 ? `${state.throwAdsorb ?? 0}/${state.throwAdsorbCap}` : "";
-  const inhibit =
-    (state.throwInhibitCap ?? 0) > 0 ? `${state.throwInhibit ?? 0}/${state.throwInhibitCap}` : "";
-  const culprit =
-    (state.throwCulpritCap ?? 0) > 0 ? `${state.throwCulprit ?? 0}/${state.throwCulpritCap}` : "";
+  const adsorbN = state.throwAdsorb ?? 0;
+  const adsorbCap = state.throwAdsorbCap ?? 0;
+  const inhibitN = state.throwInhibit ?? 0;
+  const inhibitCap = state.throwInhibitCap ?? 0;
+  const ammoChip = (kind: string, label: string, n: number, cap: number) => {
+    if (cap <= 0 && n <= 0) return "";
+    const showCap = Math.max(cap, n, 1);
+    const low = n <= Math.max(2, Math.floor(showCap * 0.25));
+    const empty = n <= 0;
+    return `<span class="party-ammo ${kind}${low ? " low" : ""}${empty ? " empty" : ""}"><em>${label}</em><b>${n}</b><i>/${showCap}</i></span>`;
+  };
+  // 발사체 2종만 — 정화제 · 퇴치제 (원흉 칸 제거)
   const ammoBits = [
-    adsorb ? `<span class="party-ammo adsorb">흡착 ${adsorb}</span>` : "",
-    inhibit ? `<span class="party-ammo inhibit">퇴치 ${inhibit}</span>` : "",
-    culprit ? `<span class="party-ammo culprit">원흉 ${culprit}</span>` : "",
-    !adsorb && !inhibit && !culprit && (state.purifyAmmo ?? 0) > 0
-      ? `<span class="party-ammo">정화제 ${state.purifyAmmo}</span>`
+    ammoChip("adsorb", "정화제", adsorbN, adsorbCap),
+    ammoChip("inhibit", "퇴치제", inhibitN, inhibitCap),
+    adsorbCap <= 0 && inhibitCap <= 0 && (state.purifyAmmo ?? 0) > 0
+      ? `<span class="party-ammo"><em>정화제</em><b>${state.purifyAmmo}</b></span>`
       : "",
   ]
     .filter(Boolean)
@@ -965,16 +981,18 @@ function syncPartyHud() {
         })
         .join("")
     : "";
-  const PARTY_SKILL_SLOTS = 5;
+  // 배운 스킬만 표시 — 빈 칸·불필요 슬롯 제거
   const skills = state.learnedSkills
     .map((id) => data.skills.find((s) => s.skill_id === id))
-    .filter((s): s is SkillDef => !!s)
-    .slice(0, PARTY_SKILL_SLOTS);
-  const skillHtml = Array.from({ length: PARTY_SKILL_SLOTS }, (_, i) => {
-    const s = skills[i];
-    if (!s) return `<span class="party-skill-ico is-empty" aria-hidden="true"></span>`;
-    return `<button type="button" class="party-skill-ico" title="${s.skill_name}">${s.icon || "✦"}</button>`;
-  }).join("");
+    .filter((s): s is SkillDef => !!s);
+  const skillHtml = skills.length
+    ? skills
+        .map(
+          (s) =>
+            `<button type="button" class="party-skill-ico" data-skill-id="${s.skill_id}" title="${s.skill_name} — ${s.effect_text || ""}">${s.icon || "✦"}</button>`,
+        )
+        .join("")
+    : `<span class="party-skills-empty" title="배운 스킬 없음">스킬</span>`;
   const mates = state.joinedPartyMembers
     .map((id) => data.partyMembers.find((m) => m.member_id === id))
     .filter((m): m is PartyMemberDef => !!m)
@@ -985,7 +1003,10 @@ function syncPartyHud() {
         <div class="party-face party-face-wanderer" aria-hidden="true"></div>
         <div class="party-meta">
           <div class="party-name">방랑자</div>
-          <div class="party-record">정화 ${p.done}/${p.total} · 도전 ${left}/${cap}</div>
+          <div class="party-record">
+            <span class="party-purify-gauge" title="섬 정화">정화 <b>${p.done}</b><i>/${p.total}</i></span>
+            <span class="party-challenge-gauge${left <= 1 ? " low" : ""}" title="남은 도전">도전 <b>${left}</b><i>/${cap}</i></span>
+          </div>
           <div class="party-ammo-row">${ammoBits}${pipHtml ? `<span class="culprit-pips">${pipHtml}</span>` : ""}</div>
         </div>
       </div>
@@ -1004,7 +1025,18 @@ function syncPartyHud() {
     )
     .join("");
   hud.innerHTML = selfCard + mateCards;
-  hud.querySelector(".party-skills")?.addEventListener("click", () => openLearnedSkillsModal());
+  hud.querySelectorAll(".party-skill-ico").forEach((btn) => {
+    btn.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      const id = (btn as HTMLElement).dataset.skillId;
+      if (id) showSkillTip(id, { pin: true, toggle: true });
+      openLearnedSkillsModal();
+    });
+  });
+  hud.querySelector(".party-skills")?.addEventListener("click", (ev) => {
+    if ((ev.target as HTMLElement).closest(".party-skill-ico")) return;
+    openLearnedSkillsModal();
+  });
 }
 
 function syncShellAreaChip() {
@@ -1228,37 +1260,24 @@ async function grantFillPickup(npc: {
   if (!loopPickup && state.clearedNodes.includes(npc.npc_id)) return;
   if (!loopPickup) state.clearedNodes.push(npc.npc_id);
   journey3d?.dismissPickup(npc.npc_id);
-  if (journey3d?.isOn() && !loopPickup) {
-    const row = data.areaNpcs.find((n) => n.npc_id === npc.npc_id);
-    const mash = await journey3d.playPickupGather({
-      label: `${npc.icon} ${npc.label}`,
-      lookXPct: row?.x_pct ?? npc.x_pct ?? 50,
-      lookYPct: row?.y_pct ?? npc.y_pct ?? 80,
-    });
-    loopRunNoteMash(mash.sluggish);
-  }
+  // 연타 게이지 없음 — 발견 즉시 지급
   const amount = fillAmountForNode(data, npc.trigger_type, npc.trigger_ref);
   const kind = npc.trigger_type.toUpperCase();
   let effectLines: string[];
   if (kind === "CATALYST_ADSORB" || kind === "CATALYST_INHIBIT" || kind === "CATALYST_CULPRIT") {
-    const sink =
-      kind === "CATALYST_ADSORB" ? "THROW_ADSORB" : kind === "CATALYST_INHIBIT" ? "THROW_INHIBIT" : "THROW_CULPRIT";
-    const cap = ammoCost(data, sink, kind === "CATALYST_CULPRIT" ? 4 : 100);
-    grantThrowMag(state, sink, amount || (kind === "CATALYST_CULPRIT" ? 1 : Math.max(8, Math.round(cap * 0.4))), cap);
-    if (kind !== "CATALYST_CULPRIT") addPurifyAmmo(state, ammoCost(data, "CATALYST", 2));
-    const have =
-      kind === "CATALYST_ADSORB"
-        ? state.throwAdsorb
-        : kind === "CATALYST_INHIBIT"
-          ? state.throwInhibit
-          : state.throwCulprit;
-    const haveCap =
-      kind === "CATALYST_ADSORB"
-        ? state.throwAdsorbCap
-        : kind === "CATALYST_INHIBIT"
-          ? state.throwInhibitCap
-          : state.throwCulpritCap;
-    const label = kind === "CATALYST_ADSORB" ? "흡착 정화제" : kind === "CATALYST_INHIBIT" ? "억제 미립" : "원흉 처치제";
+    // 원흉 픽업도 정화제로 통합 (발사체 2종)
+    const sink = kind === "CATALYST_INHIBIT" ? "THROW_INHIBIT" : "THROW_ADSORB";
+    const cap = ammoCost(data, sink, 100);
+    grantThrowMag(
+      state,
+      sink,
+      amount || (kind === "CATALYST_CULPRIT" ? 4 : Math.max(8, Math.round(cap * 0.4))),
+      cap,
+    );
+    if (kind !== "CATALYST_INHIBIT") addPurifyAmmo(state, ammoCost(data, "CATALYST", 2));
+    const have = kind === "CATALYST_INHIBIT" ? state.throwInhibit : state.throwAdsorb;
+    const haveCap = kind === "CATALYST_INHIBIT" ? state.throwInhibitCap : state.throwAdsorbCap;
+    const label = kind === "CATALYST_INHIBIT" ? "퇴치제" : "정화제";
     playLog("AMMO", "획득", label, `${have}/${haveCap}`, npc.npc_id);
     effectLines = [`${label} ${have}/${haveCap} · 통에 쌓임`];
   } else {
@@ -1511,21 +1530,23 @@ async function runMapNode(npc: {
             onContent: (kind, at) => playSectorLoopContent(kind, at),
             onStainCleared: () => playStainPurifyFiller(),
             onThrowSpend: (kind) => spendLoopThrow(kind),
+            onBugPetEncounter: (at) => playBugPetEncounter(at),
+            onMatterLoot: (at) =>
+              grantSlotThrowPickup("adsorb", {
+                title: "정화제",
+                icon: "💧",
+                flavor: "오염 속에서 정화제가 맺혔다.",
+              }),
+            getCombatAmmo,
+            getInhibitAmmo,
+            spendCombatAmmo,
+            addCombatAmmo,
+            addInhibitAmmo,
             huntTune: () => loopHuntTune(),
             onCulprit: () => runCulpritTalk(),
             onCondFill: (kind) => fillLoopCond(kind),
             onBranch: (id) => playQuestBranch(id),
             onActionReward: (step) => grantLoopActionReward(step),
-            onMashCollect: async (label, at) => {
-              if (!journey3d?.isOn()) return;
-              const me = journey3d.getPlayer();
-              const mash = await journey3d.playPickupGather({
-                label,
-                lookXPct: at?.xPct ?? me.xPct,
-                lookYPct: at?.yPct ?? me.yPct,
-              });
-              loopRunNoteMash(mash.sluggish);
-            },
             onRunEnd: async (rec, line) => {
               if (!state.areaClearRecords) state.areaClearRecords = [];
               commitAreaClear(state.areaClearRecords, loopArea, rec);
@@ -1533,6 +1554,14 @@ async function runMapNode(npc: {
               await appendCard({ body: `[기록] ${line}`, bodyLine2: rec.unlucky ? `꽝 ${rec.unlucky}` : undefined });
             },
           });
+          // 루프 종료 후 하단 버튼·로비 링크 복구 (combat/disabled 잔류 방지)
+          phoneEl.classList.remove("lobby-on");
+          mainBtn.disabled = false;
+          mainBtn.classList.remove("combat", "combat-busy", "raid-firing");
+          setMainBtnClass("idle");
+          syncFillerChrome();
+          syncGotoLobbyBtn();
+          syncJourneyActionBtn();
           loopCulpritId = "";
           loopConds.clear();
           renderCatalystHud();
@@ -2306,6 +2335,7 @@ function initJourney3D(startAreaId?: string) {
 
   explore?.setMinimapMode(true);
   explore?.suppressMinimap(true);
+  journey3d.setTimeScale(journeyTimeScale);
   if (startAreaId) void journey3d.enter(startAreaId);
 
   // 3D를 끄고 예전 탑뷰 단독으로 되돌리는 비상구
@@ -2420,15 +2450,18 @@ function refreshLobbyHud() {
     partyIcons: state.joinedPartyMembers
       .map((id) => data.partyMembers.find((m) => m.member_id === id)?.icon)
       .filter((x): x is string => !!x),
+    fieldPets: state.fieldPets ?? [],
   });
 }
 
 function syncGotoLobbyBtn() {
-  // 여정 중: 무지개섬 브랜드가 로비 복귀
+  // 여정 중: 상단 브랜드 + 하단 「로비」버튼 (진행 유지 · enterLobby는 리셋 안 함)
   const show = appMode === "journey";
   shellBrandBtn.classList.toggle("is-lobby-link", show);
   shellBrandBtn.title = show ? "무지개섬 로비로" : "무지개섬";
-  islandBtn.style.display = "none";
+  islandBtn.style.display = show ? "inline-flex" : "none";
+  islandBtn.textContent = "로비";
+  islandBtn.title = "로비로 (진행 유지)";
 }
 
 function enterLobby(opts?: { note?: string }) {
@@ -2464,6 +2497,7 @@ async function enterJourney() {
   if (!journeyBootstrapped) shutterHold(phoneEl);
 
   appMode = "journey";
+  phoneEl.classList.remove("lobby-on");
   if (use3dView) initJourney3D(explore?.areaId || spawnAreaId());
   // HUD를 씬 전환보다 먼저 준비 — 기본 view-3d CSS가 한 프레임 비치는 FOUC 방지
   await mountJourneyHudLayout();
@@ -2490,6 +2524,10 @@ async function enterJourney() {
         clearLog: false,
       });
       if (journey3d && startId) await journey3d.enter(startId);
+      {
+        const me = journey3d?.getPlayer();
+        if (me) explore?.syncFrom3D(me.xPct, me.yPct, me.yawDeg);
+      }
       await shutterOpen(phoneEl);
       if (journey3d) await journey3d.playEnterReveal();
       // 43 — 장 헤더 → 도착 카드 → 리더 대화 + 방랑자 독백
@@ -2640,6 +2678,15 @@ async function runLobbyAdventure(stageMapId: string) {
     if (journeyBootstrapping) return;
     if (appMode !== "journey") return;
     enterLobby({ note: "무지개섬으로 돌아왔어요." });
+  });
+  // 상단 배속 ×1 ↔ ×4
+  shellSpeedBtn.addEventListener("click", () => {
+    journeyTimeScale = journeyTimeScale >= 3.5 ? 1 : 4;
+    journey3d?.setTimeScale(journeyTimeScale);
+    const on = journeyTimeScale >= 3.5;
+    shellSpeedBtn.textContent = on ? "×4" : "×1";
+    shellSpeedBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    shellSpeedBtn.title = on ? "배속 끄기 (×1)" : "배속 ×4";
   });
 }
 
@@ -3457,11 +3504,15 @@ function renderRescueStage(animal: RescueAnimalDef, pct: number, maxTurns: numbe
   const goal = animal.purify_goal || 100;
   const frac = Math.max(0, Math.min(1, pct / goal));
   // 첫 렌더에만 실루엣 주입(매 턴 innerHTML 재설정하면 필터 트랜지션이 끊긴다)
-  if (!rescueAnimal.querySelector(".pet-head")) {
+  if (!rescueAnimal.querySelector(".pet-head") && !rescueAnimal.querySelector(".rescue-pet-cloud-canvas")) {
     rescueAnimal.innerHTML = petHeadMarkup(animal.icon, petNeonColor(animal.animal_id), 58);
   }
-  // 정화가 진행될수록 오염(어둡고 채도 없음)이 걷히고 원래 색으로 밝아진다.
-  rescueAnimal.style.filter = `grayscale(${(1 - frac).toFixed(2)}) brightness(${(0.55 + 0.45 * frac).toFixed(2)})`;
+  // 정화가 진행될수록 오염이 걷히고 원래 색으로. 필드 펫 점구름은 툴과 같이 본색 유지
+  if (rescueAnimal.querySelector(".rescue-pet-cloud-canvas")) {
+    rescueAnimal.style.filter = "none";
+  } else {
+    rescueAnimal.style.filter = `grayscale(${(1 - frac).toFixed(2)}) brightness(${(0.55 + 0.45 * frac).toFixed(2)})`;
+  }
   rescueRingFill.style.strokeDasharray = String(RESCUE_RING_CIRC);
   rescueRingFill.style.strokeDashoffset = String(RESCUE_RING_CIRC * (1 - frac));
   const pctInt = Math.round(frac * 100);
@@ -3602,7 +3653,10 @@ async function appendCommentary(trigger: string) {
 }
 
 /** 구조 조우 본편 — 인트로(힌트) → 최대 5턴 2지선다 → 성공(합류) / 실패(도주) */
-async function playRescueEncounter(animal: RescueAnimalDef) {
+async function playRescueEncounter(
+  animal: RescueAnimalDef,
+  opts?: { fieldPetId?: "Tobby" | "Bolinha" | "Vrum" },
+) {
   mainBtn.disabled = true;
   mainBtn.classList.remove("btn-slide-in");
   setMainBtnClass('combat', 'combat-busy');
@@ -3623,6 +3677,9 @@ async function playRescueEncounter(animal: RescueAnimalDef) {
   const headStart = islandP.pct >= 75 ? Math.round(goal * 0.15) : 0;
   let pct = headStart;
   rescueAnimal.innerHTML = ""; // 이전 동물 실루엣 제거 → 새 동물로 재주입
+  const rescueCloudStop = opts?.fieldPetId
+    ? await paintRescuePetCloud(rescueAnimal, opts.fieldPetId)
+    : null;
   renderRescueStage(animal, pct, maxTurns, 0);
   rescueSituation.textContent = animal.hint_text;
   appendStageLogLine(`${animal.icon} ${animal.name} 조우 — ${animal.hint_text}`, "hit-turn");
@@ -3652,6 +3709,7 @@ async function playRescueEncounter(animal: RescueAnimalDef) {
     }
   }
 
+  rescueCloudStop?.();
   rescueStage.style.display = "none";
   choiceButtons.style.display = "none";
   choiceButtons.innerHTML = "";
@@ -3680,7 +3738,7 @@ async function playRescueEncounter(animal: RescueAnimalDef) {
           swapPartyMember(data, state, outId, res.member.member_id);
           refreshStatbar();
           renderPartyRow();
-          await showPetAcquiredModal(res.member);
+          await showPetAcquiredModal(res.member, { fieldPetId: opts?.fieldPetId });
           await appendCard({ body: `🔁 ${res.member.display_name}(으)로 교체! ${res.member.description}` });
           await appendCommentary("RESCUE_SWAP");
         } else {
@@ -3689,7 +3747,7 @@ async function playRescueEncounter(animal: RescueAnimalDef) {
       } else {
         refreshStatbar();
         renderPartyRow();
-        await showPetAcquiredModal(res.member);
+        await showPetAcquiredModal(res.member, { fieldPetId: opts?.fieldPetId });
         await appendCard({
           body: `🐾 ${res.member.display_name} 합류! ${res.member.description}`,
         });
@@ -4234,10 +4292,45 @@ function spendLoopThrow(kind: "adsorb" | "inhibit" | "culprit"): boolean {
     0.7,
     (state.learnedSkills.includes("sk_cat_save") ? 0.35 : 0) + breath * 0.08,
   );
-  const sink = kind === "adsorb" ? "THROW_ADSORB" : kind === "culprit" ? "THROW_CULPRIT" : "THROW_INHIBIT";
+  // 원흉도 정화제(adsorb) 소모
+  const sink = kind === "inhibit" ? "THROW_INHIBIT" : "THROW_ADSORB";
   const ok = spendThrowMag(state, sink, kind === "culprit" ? 0 : save);
   renderCatalystHud();
+  syncPartyHud();
   return ok;
+}
+
+function getCombatAmmo(): number {
+  return state.throwAdsorb ?? 0;
+}
+
+function getInhibitAmmo(): number {
+  return state.throwInhibit ?? 0;
+}
+
+function spendCombatAmmo(n: number): boolean {
+  const need = Math.max(1, Math.floor(n));
+  if ((state.throwAdsorb ?? 0) < need) return false;
+  for (let i = 0; i < need; i++) {
+    if (!spendThrowMag(state, "THROW_ADSORB", 0)) return false;
+  }
+  renderCatalystHud();
+  syncPartyHud();
+  return true;
+}
+
+function addCombatAmmo(n: number): void {
+  const cap = Math.max(state.throwAdsorbCap ?? 0, ammoCost(data, "THROW_ADSORB", 100));
+  grantThrowMag(state, "THROW_ADSORB", Math.max(0, Math.floor(n)), cap);
+  renderCatalystHud();
+  syncPartyHud();
+}
+
+function addInhibitAmmo(n: number): void {
+  const cap = Math.max(state.throwInhibitCap ?? 0, ammoCost(data, "THROW_INHIBIT", 80));
+  grantThrowMag(state, "THROW_INHIBIT", Math.max(0, Math.floor(n)), cap);
+  renderCatalystHud();
+  syncPartyHud();
 }
 
 /** 갈림길. A=빠름, B=느림. 실패가 아니라 길이만 바뀐다. */
@@ -4267,6 +4360,7 @@ function loopHuntTune() {
       range: state.learnedSkills.includes("sk_cat_range"),
       stride: state.learnedSkills.includes("sk_cat_stride"),
       spread: state.learnedSkills.includes("sk_cat_spread"),
+      speed: state.learnedSkills.includes("sk_cat_speed") || (state.gaugeCounts?.["stack_sk_cat_speed"] ?? 0) > 0,
     },
     loopStatMods(data, state),
   );
@@ -4282,20 +4376,40 @@ function applyCatalystLoopSkill(skillId: string): void {
     refillThrowMags(state, 0.25 * (0.85 + breath * 0.15));
     renderCatalystHud();
   }
+  if (skillId === "sk_cat_speed") {
+    if (!state.gaugeCounts) state.gaugeCounts = {};
+    state.gaugeCounts["stack_sk_cat_speed"] = (state.gaugeCounts["stack_sk_cat_speed"] ?? 0) + 1;
+  }
 }
 
+/** CATALYST 중복 학습 허용 · 발사탄 선택지 포함 */
 function pickCatalystSkills(count = 3): SkillDef[] {
-  const fresh = data.skills.filter(
-    (s) => s.skill_category === "CATALYST" && !s.is_upgrade && !state.learnedSkills.includes(s.skill_id),
-  );
-  const shuffled = [...fresh].sort(() => Math.random() - 0.5);
+  const cats = data.skills.filter((s) => s.skill_category === "CATALYST" && !s.is_upgrade);
+  const shuffled = [...cats].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, count);
+}
+
+function ammoPickAsSkill(kind: "adsorb" | "inhibit"): SkillDef {
+  const adsorb = kind === "adsorb";
+  return {
+    skill_id: adsorb ? "__ammo_adsorb" : "__ammo_inhibit",
+    skill_name: adsorb ? "정화제 +8" : "퇴치제 +6",
+    tier: "일반",
+    is_upgrade: false,
+    base_skill_id: "",
+    icon: adsorb ? "💧" : "💊",
+    effect_text: adsorb ? "정화제 탄약을 채운다" : "퇴치제 탄약을 채운다",
+    skill_category: "CATALYST",
+    grant_source: "LOOP",
+    description: "발사탄",
+  } as SkillDef;
 }
 
 async function offerLoopSkill(): Promise<void> {
   if (!loopRunCanSkill()) return;
-  const candidates = pickCatalystSkills(3);
-  const pool = candidates.length ? candidates : pickSkillChoices(data, state, "일반", 3);
+  const candidates = pickCatalystSkills(2);
+  const ammo = Math.random() < 0.5 ? ammoPickAsSkill("adsorb") : ammoPickAsSkill("inhibit");
+  const pool = [...candidates, ammo].sort(() => Math.random() - 0.5).slice(0, 3);
   if (!pool.length) {
     loopRunNoteSkill();
     await appendCard({ body: "익힐 게 더 남아 있지 않았다." });
@@ -4304,15 +4418,229 @@ async function offerLoopSkill(): Promise<void> {
   const chosen = await presentSkillChoice(ui("ui_btn_skill_choice"), ui("ui_skill_sub"), pool, true);
   if (!chosen) return;
   loopRunNoteSkill();
-  const got = applyLearnedSkill(chosen.skill_id);
+  if (chosen.skill_id === "__ammo_adsorb") {
+    addCombatAmmo(8);
+    await appendCard({ body: "정화제 +8", effectLines: ["탄약 보충"] });
+    return;
+  }
+  if (chosen.skill_id === "__ammo_inhibit") {
+    grantThrowMag(state, "THROW_INHIBIT", 6, ammoCost(data, "THROW_INHIBIT", 100));
+    renderCatalystHud();
+    await appendCard({ body: "퇴치제 +6", effectLines: ["탄약 보충"] });
+    return;
+  }
+  const already = state.learnedSkills.includes(chosen.skill_id);
+  const got = already ? null : applyLearnedSkill(chosen.skill_id);
+  if (already) {
+    if (!state.gaugeCounts) state.gaugeCounts = {};
+    const k = `stack_${chosen.skill_id}`;
+    state.gaugeCounts[k] = (state.gaugeCounts[k] ?? 1) + 1;
+  }
   applyCatalystLoopSkill(chosen.skill_id);
   if (got) await presentSkillLearnedFeedback(got);
+  else await appendCard({ body: `${chosen.skill_name} 강화`, effectLines: ["같은 요령을 한 겹 더"] });
 }
 
 async function maybeOfferLoopLuckSkill(): Promise<void> {
   if (!loopRunLive() || !loopRunCanSkill()) return;
   await appendQuestText("t_q_skill_luck");
   await offerLoopSkill();
+}
+
+async function playBugPetEncounter(at?: {
+  xPct: number;
+  yPct: number;
+  x?: number;
+  z?: number;
+}): Promise<void> {
+  const cloudMod = await import("./stage/world3d/CulpritCloud");
+  const { pickFieldPetId, loadFieldPet, CulpritCloud } = cloudMod;
+  const petId = pickFieldPetId();
+  const petLabel = petId === "Tobby" ? "토비" : petId === "Bolinha" ? "볼리냐" : petId === "Vrum" ? "브룸" : petId;
+  const animal = makeFieldPetRescueAnimal(petId, petLabel);
+
+  // ── 죽은 자리에 펫 점구름 파편 (원본색에 가깝게) ──
+  let cloud: InstanceType<typeof CulpritCloud> | null = null;
+  let raf = 0;
+  let lastT = performance.now();
+  const cleanupFragment = async (spread: boolean) => {
+    if (spread && cloud) {
+      cloud.playSpread();
+      await sleep(480);
+    }
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    if (cloud) {
+      journey3d?.removeOverlay(cloud.group);
+      cloud.dispose();
+      cloud = null;
+    }
+  };
+
+  if (journey3d?.isOn() && at && Number.isFinite(at.x) && Number.isFinite(at.z)) {
+    const loaded = await loadFieldPet(petId);
+    cloud = new CulpritCloud({
+      form: "pet",
+      count: loaded.count,
+      size: loaded.size,
+    });
+    cloud.setSize(loaded.size);
+    cloud.group.scale.setScalar(0.92 * 0.7); // 툴 대비 ~30% 축소
+    cloud.purify = 1;
+    cloud.purifyTo = 1;
+    cloud.playRise();
+    cloud.playGather();
+    cloud.setWorld(at.x!, at.z!);
+    // 키비주얼 면이 플레이어를 향하게 — 옆에서 보면 납작한 앞면만 보임
+    {
+      const me = journey3d.getPlayerWorld();
+      cloud.group.rotation.y = Math.atan2(me.x - at.x!, me.z - at.z!);
+    }
+    journey3d.addOverlay(cloud.group);
+    const tickFrag = (t: number) => {
+      const dt = Math.min(0.05, (t - lastT) / 1000);
+      lastT = t;
+      if (cloud && journey3d) {
+        const me = journey3d.getPlayerWorld();
+        const p = cloud.group.position;
+        cloud.group.rotation.y = Math.atan2(me.x - p.x, me.z - p.z);
+      }
+      cloud?.tick(dt);
+      raf = requestAnimationFrame(tickFrag);
+    };
+    raf = requestAnimationFrame(tickFrag);
+  }
+
+  await appendCard({
+    body: `🐾 ${petLabel}`,
+    bodyLine2: "벌레가 쓰러진 자리에 점구름 파편이 모인다.",
+    mood: "joy",
+  });
+
+  const go = await askRescueApproachOnNode(animal, at);
+  if (!go) {
+    await cleanupFragment(true);
+    await appendCard({ body: `🐾 ${petLabel}를 지나쳤다.`, mood: "sad" });
+    await appendCommentary("RESCUE_PASS");
+    return;
+  }
+
+  // 조우 획득 — 머리 위로 크게 띄워 원본 점구름 강조 후 흩어짐
+  if (cloud && journey3d?.isOn()) {
+    const w = journey3d.getPlayerWorld();
+    cloud.purify = 1;
+    cloud.purifyTo = 1;
+    cloud.gather = 1;
+    cloud.gatherTo = 1;
+    cloud.group.scale.setScalar(1.85 * 0.7);
+    cloud.group.position.set(w.x, 2.35, w.z);
+    await sleep(900);
+    cloud.playSpread();
+    await sleep(520);
+  }
+  await cleanupFragment(false);
+
+  journey3d?.setFrozen(true);
+  try {
+    await playRescueEncounter(animal, { fieldPetId: petId });
+  } finally {
+    journey3d?.setFrozen(false);
+  }
+
+  const rescued = state.rescuedAnimals.includes(animal.animal_id);
+  if (rescued) {
+    if (!state.fieldPets) state.fieldPets = [];
+    if (!state.fieldPets.includes(petId)) state.fieldPets.push(petId);
+    fillLoopCond("rescue");
+  }
+  refreshLobbyHud();
+}
+
+/** 필드 펫 3종 → 기존 구조 동물 스펙을 빌려 5턴 퍼즐에 태움 */
+function makeFieldPetRescueAnimal(
+  petId: "Tobby" | "Bolinha" | "Vrum",
+  label: string,
+): RescueAnimalDef {
+  const baseId =
+    petId === "Tobby" ? "a_dog_shy" : petId === "Bolinha" ? "a_dog_playful" : "a_cat_wary";
+  const base =
+    data.rescueAnimals.find((a) => a.animal_id === baseId) ??
+    data.rescueAnimals.find((a) => a.animal_id === "a_dog_shy") ??
+    data.rescueAnimals[0]!;
+  return {
+    ...base,
+    animal_id: `a_field_${petId.toLowerCase()}`,
+    name: label,
+    icon: "🐾",
+    hint_text: `벌레 잔해에서 ${label}의 형체가 흔들린다. 서두르면 흩어질 것 같다.`,
+    note: "들판 · 벌레 파편",
+    reencounter_chance: 35,
+    gold: Math.max(20, base.gold || 0),
+    exp: Math.max(30, base.exp || 0),
+  };
+}
+
+/**
+ * 클릭 획득 — 대박/중박/운빨망빨 슬롯으로 발사체 개수 결정.
+ * 연출(물방울 모임·표기·흩어짐)은 SectorPurifyLoop.playPickup 쪽.
+ */
+function rollSlotGrade(): GradeDef {
+  const pool = data.grades.filter((g) => g.grade_id === "g_jackpot" || g.grade_id === "g_mid" || g.grade_id === "g_bad");
+  if (!pool.length) return rollGrade(data);
+  const total = pool.reduce((s, g) => s + Math.max(1, g.weight || 1), 0);
+  let r = Math.random() * total;
+  for (const g of pool) {
+    r -= Math.max(1, g.weight || 1);
+    if (r <= 0) return g;
+  }
+  return pool[pool.length - 1]!;
+}
+
+function slotAmmoAmount(gradeId: string): number {
+  // 초반 획득: 최소 10 · 최대 30
+  if (gradeId === "g_jackpot") return 24 + Math.floor(Math.random() * 7); // 24~30
+  if (gradeId === "g_mid") return 16 + Math.floor(Math.random() * 8); // 16~23
+  // 운빨망함 — 그래도 최소 10
+  return 10 + Math.floor(Math.random() * 6); // 10~15
+}
+
+async function grantSlotThrowPickup(
+  mag: "adsorb" | "inhibit",
+  opts: { title: string; icon: string; flavor: string; skipBanner?: boolean },
+): Promise<number> {
+  const grade = rollSlotGrade();
+  const n = slotAmmoAmount(grade.grade_id);
+  const sink = mag === "adsorb" ? "THROW_ADSORB" : "THROW_INHIBIT";
+  const cap = ammoCost(data, sink, 100);
+  if (n > 0) grantThrowMag(state, sink, n, cap);
+  renderCatalystHud();
+  syncPartyHud();
+  const effectLines = n > 0 ? [`${opts.title} +${n}`] : ["거의 비었다…"];
+  if (!opts.skipBanner) {
+    await Promise.all([
+      playGradeBanner(grade),
+      appendCard({
+        body: `${opts.icon} ${opts.title}`,
+        bodyLine2: opts.flavor,
+        grade,
+        effectLines,
+        jackpotSlot: !!grade.is_jackpot,
+        scramble: true,
+      }),
+    ]);
+  } else {
+    await appendCard({
+      body: `${opts.icon} ${opts.title}`,
+      bodyLine2: effectLines[0],
+      grade,
+      effectLines,
+    });
+  }
+  const gaugeRes = incrementGauge(data, state, grade.grade_id);
+  refreshStatbar();
+  if (gaugeRes?.gained) pulseGauge(grade.grade_id);
+  if (grade.is_jackpot) await maybeOfferLoopLuckSkill();
+  return n;
 }
 
 /**
@@ -4322,39 +4650,25 @@ async function maybeOfferLoopLuckSkill(): Promise<void> {
 async function playSectorLoopContent(
   kind: LoopContentKind,
   at?: { xPct: number; yPct: number },
-): Promise<void> {
+): Promise<number | void> {
   playLog("LOOP", kind);
   const xPct = at?.xPct ?? journey3d?.getPlayer().xPct ?? 50;
   const yPct = at?.yPct ?? journey3d?.getPlayer().yPct ?? 50;
 
   if (kind === "catalyst") {
-    const flavor = pickLoopText("t_i21_catalyst_", "앞에 시안 방울이 맺혀 있다. 흡착 정화제다.");
-    await grantFillPickup({
-      npc_id: "loop_i21_adsorb",
-      label: "흡착 정화제",
+    return grantSlotThrowPickup("adsorb", {
+      title: "정화제",
       icon: "💧",
-      trigger_type: "CATALYST_ADSORB",
-      trigger_ref: "",
-      flavor_text: flavor.body,
-      x_pct: xPct,
-      y_pct: yPct,
+      flavor: pickLoopText("t_i21_catalyst_", "앞에 시안 방울이 맺혀 있다. 정화제다.").body,
     });
-    return;
   }
 
   if (kind === "inhibit") {
-    const flavor = pickLoopText("t_i21_inhibit_", "앞에 분홍 점이 맺혀 있다. 억제 미립이다.");
-    await grantFillPickup({
-      npc_id: "loop_i21_inhibit",
-      label: "억제 미립",
+    return grantSlotThrowPickup("inhibit", {
+      title: "퇴치제",
       icon: "🌸",
-      trigger_type: "CATALYST_INHIBIT",
-      trigger_ref: "",
-      flavor_text: flavor.body,
-      x_pct: xPct,
-      y_pct: yPct,
+      flavor: pickLoopText("t_i21_inhibit_", "앞에 분홍 점이 맺혀 있다. 퇴치제다.").body,
     });
-    return;
   }
 
   if (kind === "life") {
@@ -4402,14 +4716,11 @@ async function playSectorLoopContent(
   }
 
   if (kind === "filter") {
-    addPurifyAmmo(state, fillAmountForNode(data, "FILTER", ""));
-    renderCatalystHud();
-    await resolveGradeFindNode(
-      { icon: "💧", flavor_text: pickLoopText("t_i21_filter_", "").line2 || "손으로 걸러 보았다. 무엇이 남을까." },
-      "FILTER",
-      { skipLead: true },
-    );
-    return;
+    return grantSlotThrowPickup("adsorb", {
+      title: "정화제",
+      icon: "💧",
+      flavor: pickLoopText("t_i21_filter_", "").line2 || "거르다 보니 정화제가 남았다.",
+    });
   }
 
   if (kind === "trace") {
@@ -4457,14 +4768,15 @@ async function playSectorLoopContent(
     if (!state.collectedMemories.includes(mem.memory_id)) state.collectedMemories.push(mem.memory_id);
     renderScrapbookBadge();
     fillLoopCond("memory");
-    grantThrowMag(state, "THROW_CULPRIT", 1, ammoCost(data, "THROW_CULPRIT", 4));
+    grantThrowMag(state, "THROW_ADSORB", 4, ammoCost(data, "THROW_ADSORB", 100));
     renderCatalystHud();
+    syncPartyHud();
     await appendCard({
       body: mem.scenario_text,
       mood: "joy",
       effectLines: [
         `기억 조각 ${state.collectedMemories.length}/${Math.max(1, data.tigonMemories.length)}`,
-        `원흉 처치제 ${state.throwCulprit}/${state.throwCulpritCap}`,
+        `정화제 ${state.throwAdsorb}/${state.throwAdsorbCap}`,
       ],
     });
     if (mem.reactor && mem.reaction_text) {
@@ -5199,14 +5511,95 @@ function presentPartySwap(newMember: PartyMemberDef): Promise<string | null> {
   });
 }
 
-async function showPetAcquiredModal(member: { member_id?: string; icon: string; display_name: string; description: string }): Promise<void> {
-  await showRewardModal({
+async function showPetAcquiredModal(
+  member: { member_id?: string; icon: string; display_name: string; description: string },
+  opts?: { fieldPetId?: "Tobby" | "Bolinha" | "Vrum" },
+): Promise<void> {
+  let stopCloud: (() => void) | null = null;
+  const iconHtml = opts?.fieldPetId
+    ? `<canvas class="reward-pet-cloud-canvas" width="160" height="160" data-pet="${opts.fieldPetId}"></canvas>`
+    : petHeadMarkup(member.icon, petNeonColor(member.member_id ?? member.display_name), 56);
+  rewardModal.classList.toggle("pet-join-modal", !!opts?.fieldPetId);
+  const p = showRewardModal({
     icon: member.icon,
-    iconHtml: petHeadMarkup(member.icon, petNeonColor(member.member_id ?? member.display_name), 56),
+    iconHtml,
     qtyLabel: member.display_name,
     title: "🐾 동료 합류!",
     desc: member.description,
   });
+  if (opts?.fieldPetId) {
+    const canvas = rewardModalIcon.querySelector<HTMLCanvasElement>(".reward-pet-cloud-canvas");
+    if (canvas) stopCloud = await paintPetCloudOnCanvas(canvas, opts.fieldPetId);
+  }
+  await p;
+  stopCloud?.();
+  rewardModal.classList.remove("pet-join-modal");
+}
+
+/** 구조 UI / 합류 모달용 — 원본 펫 점구름 (정화색=원본) */
+async function paintRescuePetCloud(
+  host: HTMLElement,
+  petId: "Tobby" | "Bolinha" | "Vrum",
+): Promise<() => void> {
+  const canvas = document.createElement("canvas");
+  canvas.className = "rescue-pet-cloud-canvas";
+  canvas.width = 160;
+  canvas.height = 160;
+  host.appendChild(canvas);
+  return paintPetCloudOnCanvas(canvas, petId);
+}
+
+async function paintPetCloudOnCanvas(
+  canvas: HTMLCanvasElement,
+  petId: "Tobby" | "Bolinha" | "Vrum",
+): Promise<() => void> {
+  const THREE = await import("three");
+  const { loadFieldPet, CulpritCloud } = await import("./stage/world3d/CulpritCloud");
+  const loaded = await loadFieldPet(petId);
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+  renderer.setSize(canvas.width, canvas.height, false);
+  renderer.setClearColor(0x000000, 0);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 40);
+  // 키비주얼(옆·뒤 3/4)이 화면에 그대로 보이도록 +Z에서만 본다. 돌리지 않음.
+  const lookY = 1.15;
+  camera.position.set(0, lookY + 0.35, 5.4);
+  camera.lookAt(0, lookY, 0);
+  const cloud = new CulpritCloud({
+    form: "pet",
+    count: loaded.count,
+    size: loaded.size,
+  });
+  cloud.setSize(loaded.size);
+  // 툴 프리뷰 대비 ~30% 축소
+  cloud.group.scale.setScalar(0.7);
+  cloud.purify = 1;
+  cloud.purifyTo = 1;
+  cloud.gather = 1;
+  cloud.gatherTo = 1;
+  cloud.rise = 1;
+  cloud.riseTo = 1;
+  cloud.setWorld(0, 0);
+  cloud.group.position.y = 0.15;
+  cloud.group.rotation.y = 0;
+  scene.add(cloud.group);
+  let raf = 0;
+  let last = performance.now();
+  const tick = (t: number) => {
+    const dt = Math.min(0.05, (t - last) / 1000);
+    last = t;
+    cloud.group.rotation.y = 0;
+    cloud.tick(dt);
+    renderer.render(scene, camera);
+    raf = requestAnimationFrame(tick);
+  };
+  raf = requestAnimationFrame(tick);
+  return () => {
+    if (raf) cancelAnimationFrame(raf);
+    cloud.dispose();
+    renderer.dispose();
+  };
 }
 
 function rewardModalFromEffect(effectId: string): { icon: string; qtyLabel: string } | null {
@@ -7056,8 +7449,8 @@ async function resolveGradeFindNode(
       pillar: "탐구",
     },
     FILTER: {
-      title: "탁한 물 거르기",
-      defaultLine: "손으로 걸러 본다. 무엇이 남을까.",
+      title: "탁한 물",
+      defaultLine: "시안처럼 보였으나 흙물이었다. 무엇이 남을까.",
       pillar: "정화",
     },
   };
@@ -7781,8 +8174,13 @@ function syncJourneyActionBtn() {
   if (appMode !== "journey" || raidLive || arenaMash) return;
   if (journey3d?.isBusy()) return;
   if (pendingMainAction || pendingSkillChoice || rescuePending || combatPending) return;
-  if (mainBtn.disabled) return;
   if (choiceButtons.style.display === "flex") return;
+  // combat-busy가 아닌데 disabled만 남은 경우 풀어 줌 (루프/필러 잔류)
+  if (mainBtn.disabled) {
+    if (mainBtn.classList.contains("combat-busy") || mainBtn.classList.contains("raid-firing")) return;
+    mainBtn.disabled = false;
+    mainBtn.classList.remove("combat");
+  }
   const next = computeJourneyIdleAction();
   const cls = next === "next" ? "idle" : next;
   if (next === journeyAction && mainBtn.classList.contains(cls)) return;
@@ -8308,9 +8706,7 @@ async function init() {
   lastStageMapId = getStageMapForDay(data, 1)?.stage_map_id ?? null;
   // S1: 인트로 후 로비(집)부터 — 여정은 「외출하기」로
   enterLobby({
-    note: wantsSkipOpening()
-      ? "테스트 진입 · 시나리오 스킵됨. 바로 외출해도 돼요."
-      : "여기는 무지개섬. 준비되면 외출해요.",
+    note: wantsSkipOpening() ? undefined : "여기는 무지개섬. 준비되면 외출해요.",
   });
   (window as unknown as { __lobby: () => void }).__lobby = () => {
     if (appMode === "lobby") void enterJourney();

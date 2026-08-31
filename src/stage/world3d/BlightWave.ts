@@ -6,17 +6,31 @@ import * as THREE from "three";
 import type { JourneyStage3D } from "./JourneyStage3D";
 import type { GroundPaint } from "./GroundPaint";
 import type { PurifyRaidConfig } from "./purifyRaidConfig";
-import { CulpritCloud } from "./CulpritCloud";
+import { BlightBody, type BlightKind } from "./BlightBody";
+import { loadBugVolume, loadPollutant, type CulpritCloud } from "./CulpritCloud";
+import { CulpritPresence } from "./purify/CulpritPresence";
+import { defaultPurifySkillBalance } from "./purifySkillBalance";
 
-export type BlightLook = "stain" | "bug" | "boss";
+export type BlightLook = "stain" | "matter" | "bug" | "boss";
 
 const HATCH_BUGS = 3;
+
+/** 프로토 툴 원흉 점구름 → 얼룩. 핵·안개 제외 · 알갱이 2배 · scale만 필드용 축소 */
+const STAIN_FROM_CULPRIT = (() => {
+  const bal = defaultPurifySkillBalance();
+  return {
+    scale: bal.culpritScale * 0.28,
+    count: bal.culpritCount * 2,
+    size: bal.culpritSize,
+  };
+})();
 
 export interface BlightUnit {
   id: number;
   x: number;
   z: number;
   hp: number;
+  maxHp: number;
   eating: boolean;
   role: "runner" | "tank" | "spitter" | "boss";
   speed_mult: number;
@@ -32,6 +46,7 @@ interface Live {
   mat?: THREE.MeshBasicMaterial;
   ring?: THREE.Mesh;
   ringMat?: THREE.MeshBasicMaterial;
+  hpBar?: THREE.Sprite;
   drip: number;
   look: BlightLook;
   bob: number;
@@ -40,6 +55,28 @@ interface Live {
   w: number;
   h: number;
   dots?: CulpritCloud;
+  /** 얼룩 — 프로토 원흉(CulpritPresence)과 동일 비주얼 */
+  presence?: CulpritPresence;
+  /** 오염물질 — 살짝 피하며 움직임 */
+  skitter?: boolean;
+  skitterPhase?: number;
+  homeX?: number;
+  homeZ?: number;
+  /** 오염물질 — 개체마다 다른 좌우 흔들림 폭(m) */
+  wanderAmpX?: number;
+  wanderAmpZ?: number;
+  /** 벌레 — 가운데 도착 후 다음 목표 */
+  wanderTx?: number;
+  wanderTz?: number;
+  /** 벌레 — 가운데에 한 번 닿았는지 */
+  reachedCore?: boolean;
+  /** 벌레 — 이동 방향에 맞춘 yaw (머리=-X → +π/2) */
+  faceYaw?: number;
+  /** 얼룩 — 플레이어 접근 시 땅에서 올라옴 */
+  emerged?: boolean;
+  /** 정화 확산용 시작 스케일 */
+  dieSpreadFrom?: number;
+  dieSpreadDur?: number;
 }
 
 let uid = 1;
@@ -54,19 +91,33 @@ export class BlightWave {
   private finished = false;
   lastDeaths: { x: number; z: number }[] = [];
   lastStainKills = 0;
+  /** 오염물질 스폰/처치 자리 — 이후 벌레 스폰 기준 */
+  pollutionSites: { x: number; z: number }[] = [];
   /** false면 디렉터가 스폰·종료를 맡는다 */
   useLegacyWaves = true;
   /** true면 리젠만. 거점으로 안 달려온다 */
   stationary = false;
   /** false면 걸을 때 발밑 보라 데칼을 안 찍는다 */
   dripPaint = true;
+  /** 벌레 이동 시 타이어마크(점구름색 바닥칠) */
+  bugTireMarks = true;
+  /** 얼룩이 땅에서 올라오기 시작하는 거리(사거리와 맞춤) */
+  emergeRangeM = 12;
 
   constructor(
     private readonly stage: JourneyStage3D,
     private readonly paint: GroundPaint,
     private cfg: PurifyRaidConfig,
     private core: { x: number; z: number },
-  ) {}
+  ) {
+    void loadBugVolume();
+    void loadPollutant();
+  }
+
+  /** 사거리(+보정)에 맞춰 얼룩 출현 거리 */
+  setEmergeRange(rangeM: number): void {
+    this.emergeRangeM = Math.max(4, rangeM);
+  }
 
   applyConfig(cfg: PurifyRaidConfig): void {
     this.cfg = cfg;
@@ -130,6 +181,48 @@ export class BlightWave {
     return this.live.filter((l) => l.unit.hp > 0 && l.dying <= 0).map((l) => l.unit);
   }
 
+  /** 원흉 가드(얼룩·오염)만 — 보스 제외 */
+  get guardUnits(): BlightUnit[] {
+    return this.live
+      .filter((l) => l.unit.hp > 0 && l.dying <= 0 && !l.unit.is_boss && (l.look === "stain" || l.look === "matter"))
+      .map((l) => l.unit);
+  }
+
+  guardAliveCount(): number {
+    return this.guardUnits.length;
+  }
+
+  lookOf(id: number): BlightLook | null {
+    return this.live.find((l) => l.unit.id === id)?.look ?? null;
+  }
+
+  isBossId(id: number): boolean {
+    const l = this.live.find((x) => x.unit.id === id);
+    return !!l && (l.unit.is_boss || l.look === "boss");
+  }
+
+  healBoss(amount: number): void {
+    for (const l of this.live) {
+      if (!l.unit.is_boss && l.look !== "boss") continue;
+      if (l.dying > 0 || l.unit.hp <= 0) continue;
+      l.unit.hp = Math.min(l.unit.maxHp, l.unit.hp + amount);
+    }
+  }
+
+  /** 원흉 순간이동 — 유닛 좌표만 옮김 */
+  setUnitWorld(id: number, x: number, z: number): void {
+    const l = this.live.find((v) => v.unit.id === id);
+    if (!l || l.dying > 0 || l.unit.hp <= 0) return;
+    l.unit.x = x;
+    l.unit.z = z;
+    this.placeLive(l, 0);
+  }
+
+  /** 살아 있는 오염물질 수 */
+  matterAliveCount(): number {
+    return this.live.filter((l) => l.look === "matter" && l.unit.hp > 0 && l.dying <= 0).length;
+  }
+
   get huntAliveCount(): number {
     return this.live.filter((l) => l.unit.hp > 0 || l.dying > 0).length;
   }
@@ -180,16 +273,15 @@ export class BlightWave {
     this.lastStainKills = l.look === "stain" ? 1 : 0;
     const hx = l.unit.x;
     const hz = l.unit.z;
-    const stain = l.look === "stain";
     this.finishKill(l, true);
     this.lastDeaths = [{ x: hx, z: hz }];
-    if (stain) this.hatchBugsAt(hx, hz);
+    // 얼룩은 퍼져 사라지고 끝 — 벌레 부화 없음 (클리어 → 1차 정화)
     this.reap();
     return 1;
   }
 
-  /** 원을 각도로 나눠 뿌린다. 한쪽에 몰리지 않게. */
-  scatterAround(count: number, minR: number, maxR: number): void {
+  /** 원을 각도로 나눠 뿌린다. 랜덤 순서로 하나씩 모이며 리젠 */
+  async scatterAround(count: number, minR: number, maxR: number): Promise<void> {
     this.clear();
     this.stationary = true;
     this.useLegacyWaves = false;
@@ -197,23 +289,72 @@ export class BlightWave {
     const n = Math.max(1, count);
     const spin = Math.random() * Math.PI * 2;
     const half = this.stage.getWorldScale() / 2 - 1;
+    const spots: { x: number; z: number }[] = [];
     for (let i = 0; i < n; i++) {
       const ang = spin + (i / n) * Math.PI * 2;
       const r = minR + (maxR - minR) * 0.55 + (Math.random() - 0.5) * 2.4;
-      const x = clamp(this.core.x + Math.cos(ang) * r, -half, half);
-      const z = clamp(this.core.z + Math.sin(ang) * r, -half, half);
+      spots.push({
+        x: clamp(this.core.x + Math.cos(ang) * r, -half, half),
+        z: clamp(this.core.z + Math.sin(ang) * r, -half, half),
+      });
+    }
+    shuffleInPlace(spots);
+    for (const spot of spots) {
       this.spawnTyped({
-        x,
-        z,
+        x: spot.x,
+        z: spot.z,
         hp: 1,
         role: "runner",
         speed_mult: 0,
         eat_mult: 0,
-        scale: 1.55,
+        scale: 1,
         color: 0xd8a8ff,
         look: "stain",
       });
-      this.paint.stamp(x, z, "blight", 0.85);
+      const prevR = this.cfg.paint_radius_m;
+      this.paint.setRadius(1);
+      this.paint.stamp(spot.x, spot.z, "blight", 0.85);
+      this.paint.setRadius(prevR);
+      await delayMs(180 + Math.random() * 320);
+    }
+  }
+
+  /** 1차 정화 후 — 오염물질. 랜덤 순서로 하나씩 모이며 리젠 */
+  async scatterBigPollution(count: number, minR: number, maxR: number, hp: number): Promise<void> {
+    this.clear();
+    this.stationary = true;
+    this.useLegacyWaves = false;
+    this.finished = false;
+    this.pollutionSites = [];
+    const n = Math.max(1, count);
+    const spin = Math.random() * Math.PI * 2;
+    const half = this.stage.getWorldScale() / 2 - 1;
+    const spots: { x: number; z: number }[] = [];
+    for (let i = 0; i < n; i++) {
+      const ang = spin + (i / n) * Math.PI * 2;
+      const r = minR + (maxR - minR) * (0.45 + (i % 3) * 0.18);
+      const x = clamp(this.core.x + Math.cos(ang) * r, -half, half);
+      const z = clamp(this.core.z + Math.sin(ang) * r, -half, half);
+      spots.push({ x, z });
+      this.pollutionSites.push({ x, z });
+    }
+    shuffleInPlace(spots);
+    for (const spot of spots) {
+      this.spawnTyped({
+        x: spot.x,
+        z: spot.z,
+        hp: Math.max(1, hp),
+        role: "tank",
+        speed_mult: 0.55,
+        eat_mult: 0,
+        scale: 2.475,
+        color: 0xd8a8ff,
+        look: "matter",
+        showHp: true,
+        skitter: true,
+      });
+      this.paint.stamp(spot.x, spot.z, "blight", 1.35);
+      await delayMs(220 + Math.random() * 380);
     }
   }
 
@@ -227,7 +368,7 @@ export class BlightWave {
       role: "runner",
       speed_mult: 0,
       eat_mult: 0,
-      scale: 1.55,
+      scale: 1,
       color: 0xd8a8ff,
       look: "stain",
     });
@@ -266,33 +407,50 @@ export class BlightWave {
   }
 
   /** 착탄 반경 안의 적을 깎는다. 쓰러진 수를 돌려준다 */
-  hitSplash(cx: number, cz: number, radiusM: number, dmg = 1, opts?: { stamp?: boolean }): number {
+  hitSplash(cx: number, cz: number, radiusM: number, dmg = 1, opts?: { stamp?: boolean; onlyId?: number; skipBoss?: boolean }): number {
     const r2 = radiusM * radiusM;
     const stamp = opts?.stamp !== false;
     let down = 0;
     this.lastDeaths = [];
     this.lastStainKills = 0;
-    const hatches: { x: number; z: number }[] = [];
     for (const l of this.live) {
+      if (opts?.onlyId != null && l.unit.id !== opts.onlyId) continue;
+      if (opts?.skipBoss && (l.unit.is_boss || l.look === "boss")) continue;
       const dx = l.unit.x - cx;
       const dz = l.unit.z - cz;
       if (dx * dx + dz * dz > r2) continue;
       if (l.dying > 0) continue;
       l.unit.hp -= dmg;
       l.hitSpin = Math.PI * 0.95;
+      l.dots?.pulseHit();
       if (l.unit.hp <= 0) {
         this.lastDeaths.push({ x: l.unit.x, z: l.unit.z });
         down += 1;
-        if (l.look === "stain") {
-          this.lastStainKills += 1;
-          hatches.push({ x: l.unit.x, z: l.unit.z });
-        }
+        if (l.look === "stain") this.lastStainKills += 1;
         this.finishKill(l, stamp);
       }
     }
-    for (const h of hatches) this.hatchBugsAt(h.x, h.z);
     this.reap();
     return down;
+  }
+
+  /** 락된 한 개체만 깎기 (오염물질 순차 격파) */
+  hitLocked(id: number, dmg = 1): number {
+    const l = this.live.find((x) => x.unit.id === id);
+    if (!l || l.dying > 0 || l.unit.hp <= 0) return 0;
+    this.lastDeaths = [];
+    this.lastStainKills = 0;
+    l.unit.hp -= dmg;
+    l.hitSpin = Math.PI * 0.95;
+    l.dots?.pulseHit();
+    if (l.unit.hp <= 0) {
+      this.lastDeaths.push({ x: l.unit.x, z: l.unit.z });
+      if (l.look === "stain") this.lastStainKills += 1;
+      this.finishKill(l, false);
+      this.reap();
+      return 1;
+    }
+    return 0;
   }
 
   /** @deprecated 미사일 착탄은 hitSplash */
@@ -312,11 +470,36 @@ export class BlightWave {
 
   private finishKill(l: Live, stampTeal: boolean): void {
     l.unit.hp = 0;
-    l.dying = l.dots ? 0.95 : 0.18;
-    l.dots?.hitPurify();
-    if (l.look === "bug") {
-      this.paint.eraseNear(l.unit.x, l.unit.z, this.cfg.paint_radius_m * 2.6);
-    } else if (l.look !== "stain" && stampTeal) {
+    if (l.look === "stain") {
+      l.dying = 2.15;
+      l.dieSpreadDur = 2.15;
+      if (l.presence) {
+        l.dieSpreadFrom = STAIN_FROM_CULPRIT.scale;
+        l.presence.hitPurify();
+      } else if (l.dots) {
+        l.dieSpreadFrom = l.dots.group.scale.x;
+        l.dots.playDiffuse();
+      }
+    } else {
+      l.dying = l.dots ? 0.95 : 0.18;
+      l.dots?.die();
+    }
+    // 바닥 오염 링/데칼 즉시 제거 (얼룩·오염물질·벌레)
+    this.paint.eraseNear(
+      l.unit.x,
+      l.unit.z,
+      l.look === "stain"
+        ? Math.max(this.cfg.paint_radius_m * 4.2, (l.w || 2) * 1.6)
+        : this.cfg.paint_radius_m * 2.6,
+    );
+    if (l.ring) {
+      this.stage.getPaintGroup().remove(l.ring);
+      l.ringMat?.dispose();
+      l.ring = undefined;
+      l.ringMat = undefined;
+    }
+    if (l.hpBar) l.hpBar.visible = false;
+    if (l.look !== "stain" && l.look !== "bug" && stampTeal) {
       this.paint.stamp(l.unit.x, l.unit.z, "teal", 1);
     }
   }
@@ -359,7 +542,36 @@ export class BlightWave {
 
     const speed = this.cfg.blight_speed_mps;
     for (const l of this.live) {
-      if (l.look === "stain" || l.unit.speed_mult <= 0) {
+      if (l.look === "stain" || l.look === "matter") {
+        l.unit.eating = false;
+        if (l.dying > 0) {
+          l.dying -= dt;
+          this.placeLive(l, dt);
+          continue;
+        }
+        if (l.dots && l.look === "stain") {
+          // 처음부터 지상에 고정 — 접근할 때 올라오면 캐릭을 따라다니는 느낌 남
+          l.emerged = true;
+          l.dots.rise = 1;
+          l.dots.riseTo = 1;
+        } else if (l.dots && l.look === "matter" && l.dying <= 0) {
+          // 살아 있을 때만 공 형태 유지. 죽으면 퍼지기
+          l.dots.gatherTo = 1;
+        }
+        if (l.skitter) {
+          l.skitterPhase = (l.skitterPhase ?? 0) + dt * 1.7;
+          const homeX = l.homeX ?? l.unit.x;
+          const homeZ = l.homeZ ?? l.unit.z;
+          // 제자리 좌우 흔들림만 — 플레이어 근처 회피는 따라다니는 느낌이라 제거
+          const ax = l.look === "matter" ? (l.wanderAmpX ?? 3) : 0.35;
+          const az = l.look === "matter" ? (l.wanderAmpZ ?? 0.8) : 0.35;
+          l.unit.x = homeX + Math.cos(l.skitterPhase * 0.7) * ax;
+          l.unit.z = homeZ + Math.sin(l.skitterPhase * 0.55) * az;
+        }
+        this.placeLive(l, dt);
+        continue;
+      }
+      if (l.unit.speed_mult <= 0) {
         l.unit.eating = false;
         if (l.dying > 0) l.dying -= dt;
         this.placeLive(l, dt);
@@ -370,13 +582,19 @@ export class BlightWave {
         this.placeLive(l, 0);
         continue;
       }
+      const sp = speed * l.unit.speed_mult * l.unit.slow_mult;
+      if (l.look === "bug") {
+        this.tickBugMove(l, dt, sp);
+        this.placeLive(l, dt);
+        if (l.dying > 0) l.dying -= dt;
+        continue;
+      }
       const dx = this.core.x - l.unit.x;
       const dz = this.core.z - l.unit.z;
       const dist = Math.hypot(dx, dz) || 1;
       const hold = l.unit.role === "spitter" ? 4.2 : 1.35;
       l.unit.eating = dist < (l.unit.role === "spitter" ? 4.4 : 1.35);
       if (dist > hold) {
-        const sp = speed * l.unit.speed_mult * l.unit.slow_mult;
         l.unit.x += (dx / dist) * sp * dt;
         l.unit.z += (dz / dist) * sp * dt;
       }
@@ -389,6 +607,67 @@ export class BlightWave {
       }
     }
     this.reap();
+  }
+
+  /** 벌레 — 가운데로 → 도착하면 다른 방향으로 계속 이동 */
+  private tickBugMove(l: Live, dt: number, sp: number): void {
+    const hold = 1.45;
+    const dx = this.core.x - l.unit.x;
+    const dz = this.core.z - l.unit.z;
+    const distCore = Math.hypot(dx, dz) || 1;
+    l.unit.eating = distCore < hold * 1.15;
+
+    if (!l.reachedCore) {
+      if (distCore > hold) {
+        this.stepBug(l, dx / distCore, dz / distCore, sp, dt);
+        return;
+      }
+      l.reachedCore = true;
+      this.pickBugWanderAway(l);
+    }
+
+    if (l.wanderTx == null || l.wanderTz == null) {
+      this.pickBugWanderAway(l);
+    }
+    const tx = l.wanderTx ?? this.core.x;
+    const tz = l.wanderTz ?? this.core.z;
+    const wx = tx - l.unit.x;
+    const wz = tz - l.unit.z;
+    const wd = Math.hypot(wx, wz) || 1;
+    if (wd < 1.3) {
+      this.pickBugWanderAway(l);
+      return;
+    }
+    this.stepBug(l, wx / wd, wz / wd, sp, dt);
+  }
+
+  private pickBugWanderAway(l: Live): void {
+    const fromAng = Math.atan2(l.unit.z - this.core.z, l.unit.x - this.core.x);
+    // 지금 방향과 다르게 — 90~270도 쪽으로 꺾기
+    const turn = (Math.random() < 0.5 ? 1 : -1) * (Math.PI * 0.55 + Math.random() * Math.PI * 0.7);
+    const ang = fromAng + turn;
+    const r = 7 + Math.random() * 12;
+    l.wanderTx = this.core.x + Math.cos(ang) * r;
+    l.wanderTz = this.core.z + Math.sin(ang) * r;
+  }
+
+  private stepBug(l: Live, nx: number, nz: number, sp: number, dt: number): void {
+    const px = l.unit.x;
+    const pz = l.unit.z;
+    l.unit.x += nx * sp * dt;
+    l.unit.z += nz * sp * dt;
+    // Bug_blight 옆보기: 머리(앞면)가 이미지 왼쪽 = 로컬 -X → 이동 방향으로 +π/2
+    if (nx * nx + nz * nz > 1e-8) {
+      l.faceYaw = Math.atan2(nx, nz) + Math.PI * 0.5;
+    }
+    if (this.bugTireMarks) {
+      const moved = Math.hypot(l.unit.x - px, l.unit.z - pz);
+      l.drip += moved;
+      if (l.drip > 0.28) {
+        l.drip = 0;
+        this.paint.stamp(l.unit.x, l.unit.z, "blight", 0.55, 0.38);
+      }
+    }
   }
 
   clear(): void {
@@ -452,17 +731,30 @@ export class BlightWave {
     color: number;
     is_boss?: boolean;
     look?: BlightLook;
+    showHp?: boolean;
+    skitter?: boolean;
+    /** true면 점구름 본체 없이 HP/히트박스만 */
+    noCloud?: boolean;
   }): BlightUnit {
     const pos = opts.x != null && opts.z != null ? { x: opts.x, z: opts.z } : this.pickSpawnAroundCore();
     const look: BlightLook = opts.look ?? (opts.is_boss ? "boss" : "bug");
     const s = Math.max(0.6, opts.scale);
-    const w = (look === "stain" ? 0.7 : look === "boss" ? 1.45 : 1.05) * s;
-    const h = (look === "stain" ? 0.85 : look === "boss" ? 2.2 : 1.45) * s;
+    const stainHit = STAIN_FROM_CULPRIT.scale * 0.55;
+    const w =
+      look === "stain"
+        ? stainHit
+        : (look === "matter" ? 1.15 : look === "boss" ? 1.45 : 1.05) * s;
+    const h =
+      look === "stain"
+        ? stainHit * 1.1
+        : (look === "matter" ? 1.85 : look === "boss" ? 2.2 : 1.45) * s;
+    const maxHp = Math.max(1, opts.hp);
     const unit: BlightUnit = {
       id: uid++,
       x: pos.x,
       z: pos.z,
-      hp: opts.hp,
+      hp: maxHp,
+      maxHp,
       eating: false,
       role: opts.role,
       speed_mult: opts.speed_mult,
@@ -480,41 +772,137 @@ export class BlightWave {
       dying: 0,
       w,
       h,
+      skitter: !!opts.skitter,
+      skitterPhase: Math.random() * Math.PI * 2,
+      homeX: pos.x,
+      homeZ: pos.z,
+      // 좌우 ±(1~5)m · 앞뒤는 더 작게 — 개체마다 제각각
+      wanderAmpX: look === "matter" ? 1 + Math.random() * 4 : undefined,
+      wanderAmpZ: look === "matter" ? 0.4 + Math.random() * 1.2 : undefined,
     };
     this.live.push(live);
 
-    const form = look === "boss" ? "square" : "circle";
-    const count = look === "boss" ? 1200 : look === "stain" ? 140 : 180;
-    live.dots = new CulpritCloud({ form, count, size: look === "boss" ? 0.1 : look === "bug" ? 0.13 : 0.09 });
-    live.dots.group.scale.setScalar(look === "boss" ? 1.05 * s : look === "stain" ? 0.55 * s : 0.72 * s);
-    this.stage.addOverlay(live.dots.group);
-    if (look === "boss") live.dots.playRise();
-    else live.dots.playGather();
-    if (look === "bug" || look === "stain") {
-      this.ensureGlowArt();
-      const ringMat = new THREE.MeshBasicMaterial({
-        map: this.glowTex,
-        color: 0xffffff,
-        transparent: true,
-        depthWrite: false,
-        fog: false,
-        side: THREE.DoubleSide,
-        blending: THREE.AdditiveBlending,
-        polygonOffset: true,
-        polygonOffsetFactor: -4,
-        polygonOffsetUnits: -4,
-      });
-      const ring = new THREE.Mesh(this.ringGeo!, ringMat);
-      ring.rotation.x = -Math.PI / 2;
-      ring.scale.setScalar(look === "bug" ? 1.9 : 1.5);
-      ring.renderOrder = 5;
-      ring.frustumCulled = false;
-      this.stage.getPaintGroup().add(ring);
-      live.ring = ring;
-      live.ringMat = ringMat;
+    if (look === "matter") {
+      // 이전 상태: 입체 오염물질 (납작 원반 실험 되돌림)
+      this.attachBlight(live, "matter", Math.max(1.4, 0.95 * s));
+      if (opts.showHp || maxHp > 1) {
+        live.hpBar = makeHpSprite();
+        this.stage.addOverlay(live.hpBar);
+        syncHpSprite(live.hpBar, 1);
+      }
+      this.placeLive(live, 0);
+      return unit;
+    }
+
+    if (look === "stain") {
+      // 프로토 툴 원흉(CulpritPresence) 비주얼을 얼룩에 사용
+      this.attachStainPresence(live);
+      if (opts.showHp || maxHp > 1) {
+        live.hpBar = makeHpSprite();
+        this.stage.addOverlay(live.hpBar);
+        syncHpSprite(live.hpBar, 1);
+      }
+      this.placeLive(live, 0);
+      return unit;
+    }
+
+    if (look === "boss") {
+      // 네모 원흉 점구름 (크기 유지) — noCloud면 외부 연출만 씀
+      if (!opts.noCloud) {
+        this.attachBlight(live, "culprit", Math.max(2.2, 1.9 * s));
+      }
+      live.hpBar = makeHpSprite();
+      this.stage.addOverlay(live.hpBar);
+      syncHpSprite(live.hpBar, 1);
+      this.placeLive(live, 0);
+      return unit;
+    }
+
+    // 벌레 — 바닥 링 없이 점구름만 (링만 보이던 문제). 기본 대비 ~30% 축소 스케일은 호출측
+    this.attachBlight(live, "bug", Math.max(0.6, 0.72 * s));
+    if (opts.showHp || maxHp > 1) {
+      live.hpBar = makeHpSprite();
+      this.stage.addOverlay(live.hpBar);
+      syncHpSprite(live.hpBar, 1);
     }
     this.placeLive(live, 0);
     return unit;
+  }
+
+  /** 얼룩 — purify_skill_balance.json 원흉 비주얼(A 구름+B 안개·핵) */
+  private attachStainPresence(live: Live): void {
+    const presence = new CulpritPresence({
+      scale: STAIN_FROM_CULPRIT.scale,
+      count: STAIN_FROM_CULPRIT.count,
+      size: STAIN_FROM_CULPRIT.size,
+      // 가운데 핵·안개는 그대로 · 점구름만 2배
+      cloudScaleMul: 2,
+      idlePulse: true,
+    });
+    live.presence = presence;
+    live.dots = presence.cloud;
+    live.emerged = true;
+    // 모이며 리젠
+    presence.cloud.purify = 0;
+    presence.cloud.purifyTo = 0;
+    presence.cloud.playRise();
+    presence.cloud.playGather();
+    this.stage.addOverlay(presence.group);
+  }
+
+  /** 얼룩·벌레·원흉 — BlightBody 한 길로 생성 후 리젠 */
+  private attachBlight(
+    live: Live,
+    kind: BlightKind,
+    scale: number,
+    opts?: { flatten?: number },
+  ): void {
+    void BlightBody.create(kind, { scale }).then((body) => {
+      if (!this.live.includes(live)) {
+        body.dispose();
+        return;
+      }
+      live.dots = body.cloud;
+      if (opts?.flatten != null && opts.flatten > 0) {
+        const f = opts.flatten;
+        body.group.scale.set(scale, scale * f, scale);
+      }
+      this.stage.addOverlay(body.group);
+      if (kind === "stain") {
+        // 처음부터 지상에 보이게 (접근 상승 연출 제거)
+        live.emerged = true;
+        body.cloud.gather = 1;
+        body.cloud.gatherTo = 1;
+        body.cloud.rise = 1;
+        body.cloud.riseTo = 1;
+        body.cloud.purify = 0;
+        body.cloud.purifyTo = 0;
+        body.cloud.tick(0);
+      } else if (kind === "bug") {
+        // 처음부터 바닥에 붙은 채 — rise로 공중에 뜨지 않음
+        body.cloud.purify = 0;
+        body.cloud.purifyTo = 0;
+        body.cloud.rise = 1;
+        body.cloud.riseTo = 1;
+        body.cloud.gather = 1;
+        body.cloud.gatherTo = 1;
+        body.cloud.tick(0);
+        const dx = this.core.x - live.unit.x;
+        const dz = this.core.z - live.unit.z;
+        if (dx * dx + dz * dz > 1e-6) {
+          live.faceYaw = Math.atan2(dx, dz) + Math.PI * 0.5;
+        }
+      } else if (kind === "matter" || kind === "human") {
+        // 흩어진 상태에서 모이며 올라옴
+        body.cloud.purify = 0;
+        body.cloud.purifyTo = 0;
+        body.cloud.playRise();
+        body.cloud.playGather();
+      } else {
+        body.spawn();
+      }
+      this.placeLive(live, 0);
+    });
   }
 
   private placeLive(l: Live, dt: number): void {
@@ -525,10 +913,12 @@ export class BlightWave {
     }
     const hover =
       l.look === "stain"
-        ? 0.08
-        : l.look === "boss"
-          ? 0.12 + Math.sin(l.bob) * 0.08
-          : 0.1 + Math.sin(l.bob) * 0.08;
+        ? 0.04
+        : l.look === "matter"
+          ? 0.08
+          : l.look === "boss"
+            ? 0.12 + Math.sin(l.bob) * 0.08
+            : 0.1 + Math.sin(l.bob) * 0.08;
     if (l.panel) {
       l.panel.position.set(l.unit.x, hover, l.unit.z);
       const cam = this.stage.getCamera().position;
@@ -538,14 +928,53 @@ export class BlightWave {
     if (l.ring) {
       l.ring.position.set(l.unit.x, 0.055, l.unit.z);
       const pulse = 1 + Math.sin(l.bob * 0.85) * 0.08;
-      const base = l.look === "bug" ? 1.9 : 1.5;
-      const dyingBoost = l.dying > 0 ? 1.45 : 1;
+      const base =
+        l.look === "stain"
+          ? Math.max(3, (l.w || 2) * 1.9)
+          : l.look === "bug"
+            ? 0.85
+            : 1.9;
+      const dyingBoost = l.dying > 0 ? 1.25 : 1;
       l.ring.scale.setScalar(base * pulse * dyingBoost);
       if (l.ringMat && l.dying > 0) l.ringMat.opacity = 0.55 + (1 - l.dying) * 0.45;
     }
-    if (l.dots) {
+    if (l.presence) {
+      l.presence.setWorld(l.unit.x, l.unit.z);
+      if (l.look === "stain" && l.dying > 0 && l.dieSpreadFrom != null) {
+        const dur = Math.max(0.2, l.dieSpreadDur ?? 2.15);
+        const u = 1 - Math.max(0, Math.min(1, l.dying / dur));
+        const s = l.dieSpreadFrom * (1 + u * 1.35);
+        l.presence.group.scale.setScalar(s / STAIN_FROM_CULPRIT.scale);
+      }
+      l.presence.tick(dt);
+    } else if (l.dots) {
       l.dots.setWorld(l.unit.x, l.unit.z);
+      if (l.look === "bug" && l.faceYaw != null) {
+        l.dots.group.rotation.y = l.faceYaw;
+      }
+      if (l.look === "stain" && l.dying > 0 && l.dieSpreadFrom != null) {
+        const dur = Math.max(0.2, l.dieSpreadDur ?? 2.15);
+        const u = 1 - Math.max(0, Math.min(1, l.dying / dur));
+        // 정화 — 바깥으로 확산되며 옅어짐
+        l.dots.group.scale.setScalar(l.dieSpreadFrom * (1 + u * 2.4));
+      }
       l.dots.tick(dt);
+    }
+    if (l.hpBar) {
+      const lift =
+        l.look === "matter"
+          ? Math.max(2.4, (l.h || 2) * 0.55)
+          : l.look === "stain"
+            ? 2.6
+            : l.look === "boss"
+              ? 3.2
+              : l.look === "bug"
+                ? Math.max(2.35, (l.h || 2) * 1.15) // 머리 위
+                : 1.35;
+      l.hpBar.position.set(l.unit.x, lift, l.unit.z);
+      const ratio = l.unit.maxHp > 0 ? Math.max(0, l.unit.hp) / l.unit.maxHp : 0;
+      syncHpSprite(l.hpBar, l.dying > 0 ? 0 : ratio);
+      l.hpBar.visible = l.dying <= 0 && l.unit.hp > 0;
     }
   }
 
@@ -586,14 +1015,74 @@ export class BlightWave {
   private disposeLive(l: Live): void {
     if (l.panel) this.stage.removeOverlay(l.panel);
     if (l.ring) this.stage.getPaintGroup().remove(l.ring);
+    if (l.hpBar) {
+      this.stage.removeOverlay(l.hpBar);
+      const mat = l.hpBar.material as THREE.SpriteMaterial;
+      mat.map?.dispose();
+      mat.dispose();
+    }
     l.mat?.dispose();
     l.ringMat?.dispose();
-    l.dots?.dispose();
+    if (l.presence) {
+      this.stage.removeOverlay(l.presence.group);
+      l.presence.dispose();
+      l.presence = undefined;
+      l.dots = undefined;
+    } else {
+      l.dots?.dispose();
+    }
   }
 }
 
 function clamp(n: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, n));
+}
+
+function shuffleInPlace<T>(arr: T[]): void {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = arr[i]!;
+    arr[i] = arr[j]!;
+    arr[j] = t;
+  }
+}
+
+function delayMs(ms: number): Promise<void> {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+function makeHpSprite(): THREE.Sprite {
+  const c = document.createElement("canvas");
+  c.width = 128;
+  c.height = 24;
+  const tex = new THREE.CanvasTexture(c);
+  tex.needsUpdate = true;
+  const mat = new THREE.SpriteMaterial({
+    map: tex,
+    transparent: true,
+    depthTest: false,
+    depthWrite: false,
+  });
+  const spr = new THREE.Sprite(mat);
+  spr.scale.set(2.8, 0.45, 1);
+  spr.renderOrder = 30;
+  spr.userData.hpCanvas = c;
+  return spr;
+}
+
+function syncHpSprite(spr: THREE.Sprite, ratio: number): void {
+  const c = spr.userData.hpCanvas as HTMLCanvasElement | undefined;
+  if (!c) return;
+  const g = c.getContext("2d")!;
+  g.clearRect(0, 0, c.width, c.height);
+  g.fillStyle = "rgba(0,0,0,0.55)";
+  g.fillRect(4, 6, 120, 12);
+  g.fillStyle = ratio > 0.45 ? "#6ddea0" : ratio > 0.2 ? "#ffd27a" : "#ff6b6b";
+  g.fillRect(4, 6, Math.max(0, 120 * ratio), 12);
+  g.strokeStyle = "rgba(255,255,255,0.45)";
+  g.strokeRect(4, 6, 120, 12);
+  const mat = spr.material as THREE.SpriteMaterial;
+  if (mat.map) mat.map.needsUpdate = true;
 }
 
 function makeFloorMarkTexture(inner: string, mid: string, rim: string): THREE.Texture {

@@ -305,6 +305,8 @@ export class JourneyStage3D {
   private disposed = false;
   private lastT = 0;
   private fallbackTimer = 0;
+  /** 게임 배속 (1 = 기본, 4 = 4배속) */
+  private timeScale = 1;
   private nearNodeId: string | null = null;
   private frozen = false;
   /** 「다음날」 자동 걷기 — 배경 충돌을 피해 웨이포인트로 */
@@ -363,6 +365,8 @@ export class JourneyStage3D {
       map: makeMountainSilhouetteTex(fogColor),
       transparent: true,
       depthWrite: false,
+      // 원경은 fog.far 근처에 있어 fog=true면 텍스처가 전부 안개색으로 덮여
+      // 정화전/후 PNG 차이가 안 보임 → 원경만 안개 제외
       fog: false,
       side: THREE.BackSide,
     });
@@ -420,14 +424,15 @@ export class JourneyStage3D {
 
     this.playerMat = new THREE.SpriteMaterial({
       transparent: true,
-      depthWrite: false,
+      depthWrite: true,
       depthTest: true,
       fog: true,
       color: 0xffffff,
     });
     this.player = new THREE.Sprite(this.playerMat);
     this.player.center.set(0.5, 0);
-    this.player.renderOrder = 8;
+    // 얼룩(12)·VFX보다 앞, depthWrite로 앞쪽 얼룩 알갱이를 가림
+    this.player.renderOrder = 28;
     this.playerShadow = new THREE.Mesh(
       new THREE.CircleGeometry(this.charH * 0.266, 16),
       new THREE.MeshBasicMaterial({
@@ -452,9 +457,9 @@ export class JourneyStage3D {
       const drive = (t?: number) => {
         if (this.disposed) return;
         const now = typeof t === "number" && t > 0 ? t : performance.now();
-        const dt = Math.min(0.05, (now - this.lastT) / 1000);
+        const raw = Math.min(0.05, (now - this.lastT) / 1000);
         this.lastT = now;
-        this.tick(Math.max(0, dt));
+        this.tick(Math.max(0, raw * this.timeScale));
       };
       this.renderer.setAnimationLoop(drive);
       // rAF가 멈추는 환경 폴백 — RegionBackdrop과 같은 방식
@@ -1081,7 +1086,20 @@ export class JourneyStage3D {
       this.applyPlayerScale();
       return;
     }
-    anim.elapsedMs += dt * 1000;
+    // idle만 1배 — 달리기·던지기(및 이동계)는 2배
+    const isIdle = anim === this.animIdle;
+    const isRunOrThrow =
+      anim === this.animMove ||
+      anim === this.animMoveBack ||
+      anim === this.animWalkL ||
+      anim === this.animWalkR ||
+      anim === this.animAimWalkF ||
+      anim === this.animAimWalkB ||
+      anim === this.animAimWalkL ||
+      anim === this.animAimWalkR ||
+      anim === this.animThrow;
+    const rate = isIdle ? 1 : isRunOrThrow ? 2 : 1;
+    anim.elapsedMs += dt * 1000 * rate;
     const cur = anim.sheet.frames[anim.frame] ?? anim.sheet.frames[0];
     if (anim.elapsedMs >= (cur?.durationMs ?? 120)) {
       anim.elapsedMs = 0;
@@ -1539,6 +1557,8 @@ export class JourneyStage3D {
     skipFloorWave?: boolean;
     /** 원경도 같은 반경으로 정화후 텍스처를 연다 */
     skyWave?: boolean;
+    /** 파도 진행에 맞춰 하늘 정화량을 여기까지 천천히 올림 (없으면 안개색만 보간) */
+    skyAmountTo?: number;
     /** 끝나면 파도를 남긴다. 호출측이 정착 후 clearPurifyWaves */
     holdWave?: boolean;
   }): Promise<void> {
@@ -1549,10 +1569,16 @@ export class JourneyStage3D {
     const radius = opts?.radiusM ?? 50;
     const duration = opts?.durationMs ?? 2800;
     const t0 = performance.now();
+    const skyFrom = this.skyPurifyAmount;
+    const skyTo = opts?.skyAmountTo;
     if (!opts?.skipFloorWave) this.island.setPurifyWave({ x: me.x, z: me.z, r: 0 });
     if (opts?.skyWave) this.setHorizonWave({ x: me.x, z: me.z, r: 0 });
-    const fogFrom = new THREE.Color(this.skyPolluted.fog);
-    const fogTo = new THREE.Color(this.skyPurified.fog);
+    // 안개도 "이번 단계 목표량"까지만 — 풀정화색으로 뛰면 1차가 3차처럼 보임
+    const fogFrom = this.fog.color.clone();
+    const fogTo = new THREE.Color(this.skyPolluted.fog).lerp(
+      new THREE.Color(this.skyPurified.fog),
+      skyTo != null ? Math.max(0, Math.min(1, skyTo)) : 1,
+    );
     return new Promise((resolve) => {
       const tick = () => {
         if (this.disposed) {
@@ -1562,13 +1588,26 @@ export class JourneyStage3D {
           return;
         }
         const elapsed = performance.now() - t0;
-        const waveR = (elapsed / duration) * radius;
+        // ease-out — 초반 천천히, 끝에서 여운
+        const raw = Math.min(1, elapsed / duration);
+        const ease = 1 - (1 - raw) * (1 - raw);
+        const waveR = ease * radius;
         if (!opts?.skipFloorWave) this.island.setPurifyWave({ x: me.x, z: me.z, r: waveR });
         if (opts?.skyWave) {
           this.setHorizonWave({ x: me.x, z: me.z, r: waveR });
-          const t = Math.min(1, waveR / radius);
-          this.fog.color.copy(fogFrom).lerp(fogTo, t);
+          this.fog.color.copy(fogFrom).lerp(fogTo, ease);
           this.renderer.setClearColor(this.fog.color, 1);
+          if (this.horizonMat.userData.uFogCurrent) {
+            this.horizonMat.userData.uFogCurrent.value.copy(this.fog.color);
+          }
+          if (skyTo != null) {
+            // 파도 중에는 양·원경만 — applySkyMood는 끝에서 한 번(안개/배경 점프 방지)
+            this.skyPurifyAmount = skyFrom + (skyTo - skyFrom) * ease;
+            this.skyIsPurified = this.skyPurifyAmount >= 0.92;
+            if (this.horizonMat.userData.uSettledPurified) {
+              this.horizonMat.userData.uSettledPurified.value = this.skyPurifyAmount;
+            }
+          }
         }
         for (const e of this.props) {
           if (e.residual && e.residualPending) continue; // 잔여 타깃은 파도에 안 일어남·안 칠함
@@ -1594,6 +1633,7 @@ export class JourneyStage3D {
               }
             }
           }
+          if (skyTo != null) this.setSkyPurifyAmount(skyTo);
           if (!opts?.holdWave) {
             if (!opts?.skipFloorWave) this.island.setPurifyWave(null);
             if (opts?.skyWave) this.setHorizonWave(null);
@@ -1656,6 +1696,14 @@ export class JourneyStage3D {
     this.opts.onTick = cb ?? undefined;
   }
 
+  setTimeScale(mul: number): void {
+    this.timeScale = Math.max(0.25, Math.min(8, mul));
+  }
+
+  getTimeScale(): number {
+    return this.timeScale;
+  }
+
   // ── 설정 ──────────────────────────────────────────────────────
 
   setViewMode(mode: ViewMode): void {
@@ -1676,7 +1724,8 @@ export class JourneyStage3D {
   private applyViewMode(): void {
     const tps = this.viewMode === "tps";
     this.player.visible = tps;
-    this.playerShadow.visible = tps;
+    // 발밑 그림자는 TPS/FPS 모두 유지 (FPS에서만 끄면 자주 사라진 것처럼 보임)
+    this.playerShadow.visible = true;
     this.camInit = false;
     this.applyPose();
   }
@@ -1711,28 +1760,56 @@ export class JourneyStage3D {
   setSkyPurified(purified: boolean): void {
     this.skyIsPurified = purified;
     this.skyPurifyAmount = purified ? 1 : 0;
+    this.applySkyMood();
     void this.ensureSkyMood(purified).then(() => {
       if (!this.disposed) this.applySkyMood();
     });
     void this.ensureSkyMood(!purified);
   }
 
-  /** 원 안=맑은 하늘, 원 밖=오염 하늘. 파도 중에는 건드리지 않는다. */
+  /** 하늘·원경 PNG 로드 대기 (미리보기·정화 연출 전) */
+  async waitSkyReady(): Promise<void> {
+    // 하단 알파 페이드 옛 텍스처 캐시 버림
+    this.skyMoodJobs = {};
+    this.horizonTexPolluted?.dispose();
+    this.horizonTexPurified?.dispose();
+    this.horizonTexPolluted = null;
+    this.horizonTexPurified = null;
+    await Promise.all([this.ensureSkyMood(true), this.ensureSkyMood(false)]);
+    if (!this.disposed) this.applySkyMood();
+  }
+
+  /** 하늘·안개 정화량을 강제로 맞춤 (원 안/밖 geo와 무관) */
+  setSkyPurifyAmount(amount: number): void {
+    const next = Math.max(0, Math.min(1, amount));
+    this.skyPurifyAmount = next;
+    this.skyIsPurified = next > 0.92;
+    // 텍스처 로드 전이라도 즉시 반영 — 파도 중 async then이 waving에 막히던 구멍 방지
+    this.applySkyMood();
+    void this.ensureSkyMood(true).then(() => {
+      if (!this.disposed) this.applySkyMood();
+    });
+    void this.ensureSkyMood(false);
+  }
+
+  /** 원 안=맑은 하늘(정화량만큼), 원 밖=오염 하늘. 파도 중에는 건드리지 않는다. */
   syncSkyFromFoci(force = false): void {
     const waving = (this.horizonMat.userData.uWaveActive?.value ?? 0) > 0.5;
     if (waving) return;
     const geo = purifyAmountAt(this.px, this.pz, this.island.getPurifyFoci());
     const amt = this.island.getPurifyColorAmt();
-    const next = amt >= 0.95 ? geo : 0;
+    // 원 안에서만 반영. (예전 amt≥0.2 폴백은 원 밖·입장 직후에도 하늘을 열어버림)
+    const next = geo > 0.01 ? Math.max(0, Math.min(1, amt)) : 0;
     if (!force && Math.abs(next - this.skyPurifyAmount) < 0.015) {
+      const skyReveal = skyRevealFromAmount(next);
       if (this.horizonMat.userData.uSettledPurified) {
-        this.horizonMat.userData.uSettledPurified.value = next;
+        this.horizonMat.userData.uSettledPurified.value = skyReveal;
       }
-      if (Math.abs(next - this.lastFogLerp) >= 0.002) this.lerpFogToAmount(next);
+      if (Math.abs(skyReveal - this.lastFogLerp) >= 0.002) this.lerpFogToAmount(skyReveal);
       return;
     }
     this.skyPurifyAmount = next;
-    this.skyIsPurified = next > 0.4;
+    this.skyIsPurified = next > 0.92;
     this.applySkyMood();
   }
 
@@ -1740,6 +1817,9 @@ export class JourneyStage3D {
     this.lastFogLerp = amount;
     this.fog.color.setHex(this.skyPolluted.fog).lerp(this.fogLerpColor.setHex(this.skyPurified.fog), amount);
     this.renderer.setClearColor(this.fog.color, 1);
+    if (this.horizonMat.userData.uFogCurrent) {
+      this.horizonMat.userData.uFogCurrent.value.copy(this.fog.color);
+    }
     this.applyWallPurifyTint();
   }
 
@@ -1770,10 +1850,10 @@ export class JourneyStage3D {
   }
 
   private async loadSkyMood(purified: boolean): Promise<void> {
-    const skyUrl = purified ? "/art/sky/sky_purified.png" : "/art/sky/sky_polluted.png";
+    const skyUrl = purified ? "/art/sky/sky_purified.png?v=10" : "/art/sky/sky_polluted.png?v=10";
     const hillUrl = purified
-      ? "/art/sky/horizon_mountains_purified.png"
-      : "/art/sky/horizon_mountains_polluted.png";
+      ? "/art/sky/horizon_mountains_purified.png?v=10"
+      : "/art/sky/horizon_mountains_polluted.png?v=10";
     try {
       const sky = await loadTexture(skyUrl);
       if (this.disposed) {
@@ -1807,22 +1887,35 @@ export class JourneyStage3D {
   }
 
   private applySkyMood(): void {
-    const waving = (this.horizonMat.userData.uWaveActive?.value ?? 0) > 0.5;
     const amount = this.skyPurifyAmount;
+    // 바닥 color_steps(0.22 등)는 약해서 원경이 거의 안 바뀜 → 하늘용으로 키운다
+    const skyReveal = skyRevealFromAmount(amount);
     this.island.setFogPurifiedColor(this.skyPurified.fog);
-    if (!waving) {
-      this.lerpFogToAmount(amount);
-      const painted = amount > 0.45 ? this.skyTexPurified : this.skyTexPolluted;
-      if (painted) {
-        this.scene.background = painted;
-      } else {
-        const prev = this.scene.background;
-        if (prev instanceof THREE.Texture && prev !== this.skyTexPolluted && prev !== this.skyTexPurified) {
-          prev.dispose();
-        }
-        const pal = amount > 0.45 ? this.skyPurified : this.skyPolluted;
-        this.scene.background = makeSkyTexture(pal.fog, pal.zenith, amount > 0.45);
+    // 파도 중이라도 배경·안개는 같이 연다 (이전엔 waving이면 오염 하늘 고정)
+    this.lerpFogToAmount(skyReveal);
+    // 정화될수록 시야를 살짝만 연다 (과하면 안개 띠·거리감이 깨짐)
+    {
+      const baseFar = Math.max(2, this.fogVisionM * this.fogFarMul);
+      const far = baseFar * (1 + 0.25 * skyReveal);
+      this.fog.far = far;
+      this.fog.near = Math.max(0.8, far * 0.08);
+      this.camera.far = Math.max(this.worldM * 2, far * 1.5);
+      this.camera.updateProjectionMatrix();
+      this.layoutHorizon();
+    }
+    // 풀정화 PNG는 3차(거의 1)에서만. 1·2차는 오염 하늘 + 안개/원경 블렌드로만 연다.
+    // 예전 0.12 컷은 1차(0.22)부터 맑은 하늘이 통째로 나와 "3차처럼 보였다 돌아옴".
+    const usePurifiedSky = amount >= 0.92;
+    const painted = usePurifiedSky ? this.skyTexPurified : this.skyTexPolluted;
+    if (painted) {
+      this.scene.background = painted;
+    } else {
+      const prev = this.scene.background;
+      if (prev instanceof THREE.Texture && prev !== this.skyTexPolluted && prev !== this.skyTexPurified) {
+        prev.dispose();
       }
+      const pal = usePurifiedSky ? this.skyPurified : this.skyPolluted;
+      this.scene.background = makeSkyTexture(pal.fog, pal.zenith, usePurifiedSky);
     }
     const polluted = this.horizonTexPolluted;
     const purified = this.horizonTexPurified || polluted;
@@ -1831,13 +1924,17 @@ export class JourneyStage3D {
       this.horizonMat.userData.purifiedMap.value = purified || this.horizonMat.map;
     }
     if (this.horizonMat.userData.uSettledPurified) {
-      this.horizonMat.userData.uSettledPurified.value = amount;
+      this.horizonMat.userData.uSettledPurified.value = skyReveal;
     }
     if (this.horizonMat.userData.uFogPolluted) {
       this.horizonMat.userData.uFogPolluted.value.setHex(this.skyPolluted.fog);
     }
     if (this.horizonMat.userData.uFogPurified) {
       this.horizonMat.userData.uFogPurified.value.setHex(this.skyPurified.fog);
+    }
+    // 지평선 하단 이음은 지금 안개색과 정확히 같아야 직선 끊김이 안 보임
+    if (this.horizonMat.userData.uFogCurrent) {
+      this.horizonMat.userData.uFogCurrent.value.copy(this.fog.color);
     }
     this.horizonMat.color.setHex(0xffffff);
     this.horizonMat.needsUpdate = true;
@@ -1862,11 +1959,11 @@ export class JourneyStage3D {
   }
 
   private layoutHorizon(): void {
-    const radius = Math.max(18, this.fog.far * 0.86);
-    const height = Math.max(16, this.charH * 18);
+    const radius = Math.max(18, this.fog.far * 0.82);
+    const height = Math.max(20, this.charH * 22);
     this.horizonMesh.scale.set(radius, height, radius);
-    // 텍스처 아래(땅 보카시)가 지면 y=0에 앉게. 아주 조금만 묻혀 이음 틈을 막는다.
-    this.horizonMesh.position.y = height * 0.5 - 0.22;
+    // 하단을 땅에 살짝 묻혀 틈을 막되, 과도한 매장은 안개 띠를 키움
+    this.horizonMesh.position.y = height * 0.5 - 1.05;
   }
 
   setMoveSpeed(mps: number): void {
@@ -1961,10 +2058,10 @@ export class JourneyStage3D {
   }
 
   private applyFog(): void {
-    // 시야 거리 = 완전 안개. 그 앞에서만 살짝 녹아들게 해서 30m 너머가 뚫려 보이지 않게.
+    // 시야 끝까지 부드럽게 — near를 너무 뒤로 두면 지평선에 직선 밴드가 생긴다.
     const far = Math.max(2, this.fogVisionM * this.fogFarMul);
     this.fog.far = far;
-    this.fog.near = far * 0.34;
+    this.fog.near = Math.max(0.8, far * 0.08);
     this.propStreamM = far * 1.12;
     this.camera.far = Math.max(this.worldM * 2, far * 1.5);
     this.camera.updateProjectionMatrix();
@@ -2644,6 +2741,7 @@ function wireHorizonWaveShader(mat: THREE.MeshBasicMaterial): void {
   const purifiedMap = { value: mat.map as THREE.Texture | null };
   const uFogPolluted = { value: new THREE.Color(0x6a7f88) };
   const uFogPurified = { value: new THREE.Color(0x8eb0bc) };
+  const uFogCurrent = { value: new THREE.Color(0x6a7f88) };
   mat.userData.uWaveActive = uWaveActive;
   mat.userData.uWaveCenter = uWaveCenter;
   mat.userData.uWaveR = uWaveR;
@@ -2651,6 +2749,7 @@ function wireHorizonWaveShader(mat: THREE.MeshBasicMaterial): void {
   mat.userData.purifiedMap = purifiedMap;
   mat.userData.uFogPolluted = uFogPolluted;
   mat.userData.uFogPurified = uFogPurified;
+  mat.userData.uFogCurrent = uFogCurrent;
   mat.onBeforeCompile = (shader) => {
     shader.uniforms.uWaveActive = uWaveActive;
     shader.uniforms.uWaveCenter = uWaveCenter;
@@ -2659,6 +2758,7 @@ function wireHorizonWaveShader(mat: THREE.MeshBasicMaterial): void {
     shader.uniforms.uPurifiedMap = purifiedMap;
     shader.uniforms.uFogPolluted = uFogPolluted;
     shader.uniforms.uFogPurified = uFogPurified;
+    shader.uniforms.uFogCurrent = uFogCurrent;
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
@@ -2681,7 +2781,8 @@ uniform vec2 uWaveCenter;
 uniform float uWaveR;
 uniform float uSettledPurified;
 uniform vec3 uFogPolluted;
-uniform vec3 uFogPurified;`,
+uniform vec3 uFogPurified;
+uniform vec3 uFogCurrent;`,
       )
       .replace(
         "#include <map_fragment>",
@@ -2689,10 +2790,12 @@ uniform vec3 uFogPurified;`,
         {
           vec3 purifiedRgb = texture2D(uPurifiedMap, vMapUv).rgb;
           float d = length(vHorizonWorld.xz - uWaveCenter);
+          // 정화 색량은 settled(단계 목표)만. 파도는 링·레이저만 — 1차에서 풀정화로 열리지 않게.
           float reveal = uSettledPurified;
           if (uWaveActive > 0.5) {
             float soft = 2.4;
-            reveal = 1.0 - smoothstep(uWaveR - soft, uWaveR + soft * 0.35, d);
+            float waveReveal = 1.0 - smoothstep(uWaveR - soft, uWaveR + soft * 0.35, d);
+            reveal = mix(uSettledPurified * 0.2, uSettledPurified, waveReveal);
           }
           diffuseColor.rgb = mix(diffuseColor.rgb, purifiedRgb, clamp(reveal, 0.0, 1.0));
           float lineW = 1.7;
@@ -2701,21 +2804,26 @@ uniform vec3 uFogPurified;`,
           vec3 spark = vec3(0.820, 0.345, 0.737);
           diffuseColor.rgb += laser * rim * 1.6;
           diffuseColor.rgb += spark * (rim * rim) * 0.3;
-          vec3 haze = mix(uFogPolluted, uFogPurified, clamp(reveal, 0.0, 1.0));
-          float r = clamp(reveal, 0.0, 1.0);
+
+          // 지평선↔안개 이음: 하단은 안개색으로만 녹임 (알파는 유지)
+          // 투명하게 빼면 뒤 하늘 PNG가 띠로 보여 직선 끊김이 생김
           float y = max(0.0, vHorizonWorld.y);
-          float nearH = 1.0 - smoothstep(0.0, 9.0, y);
-          float climb = 1.0 - smoothstep(1.5, 22.0, y);
-          float luma = dot(diffuseColor.rgb, vec3(0.30, 0.59, 0.11));
-          float bright = smoothstep(0.36, 0.58, luma);
-          // 정화후 그림의 흰 지평선 띠를 대기로 덮고, 발치는 불투명.
-          diffuseColor.rgb = mix(diffuseColor.rgb, haze, bright * nearH * mix(0.25, 0.94, r));
-          diffuseColor.rgb = mix(diffuseColor.rgb, haze, climb * mix(0.06, 0.30, r));
-          diffuseColor.a = max(diffuseColor.a, nearH * 0.97);
+          float uvFoot = 1.0 - smoothstep(0.02, 0.28, vMapUv.y);
+          float yFoot = 1.0 - smoothstep(0.5, 14.0, y);
+          float foot = max(uvFoot * 0.85, yFoot);
+          float footSoft = foot * foot * (3.0 - 2.0 * foot);
+          diffuseColor.rgb = mix(diffuseColor.rgb, uFogCurrent, footSoft);
+          diffuseColor.a = max(diffuseColor.a, 0.98);
         }`,
       );
   };
-  mat.customProgramCacheKey = () => "horizon-wave-v5-crush";
+  mat.customProgramCacheKey = () => "horizon-wave-v11-stepcap";
+}
+
+/** 1·2·3차 단계량이 그대로 보이도록 — 조기 부스트 없음 */
+function skyRevealFromAmount(amount: number): number {
+  if (amount <= 0.001) return 0;
+  return Math.max(0, Math.min(1, amount));
 }
 
 /** 지평선 산 — 뚫린 PNG는 알파 유지. 불투명 한 장(원경)은 하늘을 걷지 않는다. */
@@ -2783,8 +2891,8 @@ async function loadHorizonTex(src: string): Promise<THREE.Texture> {
     }
     ctx.putImageData(data, 0, 0);
   }
-  // 좌·우 알파/색 크로스페이드 — 원통 wrap 이음새 완화 (아트 seamless와 이중 안전)
-  const blend = Math.min(160, Math.floor(c.width / 8));
+  // 좌·우 알파/색 크로스페이드 — 원통 wrap 세로 이음새 완화
+  const blend = Math.min(280, Math.floor(c.width / 5));
   const img2 = ctx.getImageData(0, 0, c.width, c.height);
   const p2 = img2.data;
   for (let y = 0; y < c.height; y++) {
@@ -2797,11 +2905,12 @@ async function loadHorizonTex(src: string): Promise<THREE.Texture> {
         const L = p2[iL + k];
         const R = p2[iR + k];
         p2[iR + k] = (R * (1 - u) + L * u) | 0;
-        const u2 = Math.min(0.5, (1 - t) * 0.45);
+        const u2 = Math.min(0.65, (1 - t) * 0.55);
         p2[iL + k] = (L * (1 - u2) + R * u2) | 0;
       }
     }
   }
+  // 하단은 투명 페이드 하지 않음 — 뒤 하늘이 띠로 비치는 끊김의 원인
   ctx.putImageData(img2, 0, 0);
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;

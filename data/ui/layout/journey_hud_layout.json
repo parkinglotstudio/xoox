@@ -61,6 +61,17 @@
       "flow": "fill"
     },
     {
+      "id": "p_actor_status",
+      "label": "상태 칸",
+      "visible": true,
+      "x_pct": 17.2,
+      "y_pct": 6.5,
+      "w_pct": 12,
+      "h_pct": 12,
+      "z": 7,
+      "flow": "fill"
+    },
+    {
       "id": "p_compass",
       "label": "방위 칸",
       "visible": true,
@@ -80,6 +91,28 @@
       "w_pct": 33,
       "h_pct": 30,
       "z": 7,
+      "flow": "fill"
+    },
+    {
+      "id": "p_combat_dock",
+      "label": "전투 상태 칸",
+      "visible": true,
+      "x_pct": 84,
+      "y_pct": 20,
+      "w_pct": 15,
+      "h_pct": 14,
+      "z": 12,
+      "flow": "fill"
+    },
+    {
+      "id": "p_combat_cast",
+      "label": "정화 시도 칸",
+      "visible": true,
+      "x_pct": 32,
+      "y_pct": 42,
+      "w_pct": 36,
+      "h_pct": 10,
+      "z": 14,
       "flow": "fill"
     },
     {
@@ -245,6 +278,18 @@
       "h_pct": 100
     },
     {
+      "id": "actor_status",
+      "pillar_id": "p_actor_status",
+      "visible": true,
+      "overlap": true,
+      "lock": false,
+      "z": 7,
+      "x_pct": 0,
+      "y_pct": 0,
+      "w_pct": 100,
+      "h_pct": 100
+    },
+    {
       "id": "minimap",
       "pillar_id": "p_minimap",
       "visible": true,
@@ -252,6 +297,30 @@
       "lock": false,
       "keep_square": true,
       "z": 7,
+      "x_pct": 0,
+      "y_pct": 0,
+      "w_pct": 100,
+      "h_pct": 100
+    },
+    {
+      "id": "combat_dock",
+      "pillar_id": "p_combat_dock",
+      "visible": true,
+      "overlap": true,
+      "lock": false,
+      "z": 12,
+      "x_pct": 0,
+      "y_pct": 0,
+      "w_pct": 100,
+      "h_pct": 100
+    },
+    {
+      "id": "combat_cast",
+      "pillar_id": "p_combat_cast",
+      "visible": true,
+      "overlap": true,
+      "lock": false,
+      "z": 14,
       "x_pct": 0,
       "y_pct": 0,
       "w_pct": 100,

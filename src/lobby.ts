@@ -44,6 +44,8 @@ export interface LobbyRefreshInfo {
   gem?: number;
   stamina?: number;
   staminaMax?: number;
+  /** Tobby · Bolinha · Vrum — 배 위 점구름 */
+  fieldPets?: string[];
 }
 
 const HUB_BG_BEFORE = "/ui/lobby/lobby_hub_before.png";
@@ -79,6 +81,8 @@ export class LobbyView {
   private terminalApp: TerminalAppId = "scrapbook";
   private dockTab: LobbyDockTab = "boat";
   private purified = false;
+  private fieldPets: string[] = [];
+  private petCloudCleanups: (() => void)[] = [];
   private on = false;
   private layout: SceneLayout = FALLBACK_LAYOUT;
   private aspect: LayoutAspect = RUNTIME_LOBBY_ASPECT;
@@ -157,7 +161,7 @@ export class LobbyView {
             <img class="lobby-dock-ico" src="/ui/lobby/dock/dock_ico_party.png" alt="" draggable="false" />
             <span class="lobby-dock-label">파티</span>
           </button>
-          <button type="button" class="lobby-dock-tab" data-tab="record">
+          <button type="button" class="lobby-dock-tab" data-tab="record" style="display:none" aria-hidden="true">
             <img class="lobby-dock-ico" src="/ui/lobby/dock/dock_ico_record.png" alt="" draggable="false" />
             <span class="lobby-dock-label">기록</span>
           </button>
@@ -269,6 +273,7 @@ export class LobbyView {
 
   private renderLayout() {
     this.stopActorIdle();
+    this.clearBoatPets();
     const bg = this.purified ? HUB_BG_AFTER : HUB_BG_BEFORE;
     const worldW = Math.max(layoutWorldWPct(this.layout), 130);
     const pan = true;
@@ -283,10 +288,86 @@ export class LobbyView {
       world.appendChild(el);
       void this.attachActorIdle(el, actor.art);
     }
+    if (world) this.mountBoatPets(world);
     this.stageEl.classList.add("lobby-pan-on");
     this.syncPanHints(pan);
     this.panX = 0;
     this.applyPan();
+  }
+
+  private clearBoatPets(): void {
+    for (const fn of this.petCloudCleanups) fn();
+    this.petCloudCleanups = [];
+  }
+
+  /** 획득 펫을 배(하단 중앙) 위 점구름으로 노출 */
+  private mountBoatPets(world: HTMLElement): void {
+    const pets = this.fieldPets.slice(0, 3);
+    if (!pets.length) return;
+    const rack = document.createElement("div");
+    rack.className = "lobby-boat-pets";
+    rack.innerHTML = pets
+      .map(
+        (id, i) =>
+          `<div class="lobby-boat-pet" style="--i:${i}"><canvas class="lobby-pet-canvas" data-pet="${id}" width="160" height="160"></canvas><span class="lobby-boat-pet-name">${id}</span></div>`,
+      )
+      .join("");
+    world.appendChild(rack);
+    void this.paintBoatPetClouds(rack);
+  }
+
+  private async paintBoatPetClouds(rack: HTMLElement): Promise<void> {
+    const THREE = await import("three");
+    const cloudMod = await import("./stage/world3d/CulpritCloud");
+    for (const canvas of rack.querySelectorAll<HTMLCanvasElement>(".lobby-pet-canvas")) {
+      if (!canvas.isConnected) return;
+      const id = (canvas.dataset.pet || "Tobby") as "Tobby" | "Bolinha" | "Vrum";
+      try {
+        const loaded = await cloudMod.loadFieldPet(id);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+        renderer.setSize(160, 160, false);
+        renderer.setClearColor(0x000000, 0);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 40);
+        // 키비주얼 면(+Z) 고정 — 돌리지 않음
+        const lookY = 0.85;
+        camera.position.set(0, lookY + 0.3, 5.2);
+        camera.lookAt(0, lookY, 0);
+        const cloud = new cloudMod.CulpritCloud({
+          form: "pet",
+          count: loaded.count,
+          size: loaded.size,
+        });
+        cloud.setSize(loaded.size);
+        cloud.group.scale.setScalar(0.7);
+        cloud.gather = 1;
+        cloud.gatherTo = 1;
+        cloud.purify = 1;
+        cloud.purifyTo = 1;
+        cloud.rise = 1;
+        cloud.riseTo = 1;
+        cloud.setWorld(0, 0);
+        cloud.group.rotation.y = 0;
+        scene.add(cloud.group);
+        let alive = true;
+        const tick = () => {
+          if (!alive || !canvas.isConnected) return;
+          cloud.group.rotation.y = 0;
+          cloud.tick(1 / 30);
+          renderer.render(scene, camera);
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        this.petCloudCleanups.push(() => {
+          alive = false;
+          cloud.dispose();
+          renderer.dispose();
+        });
+      } catch {
+        /* 아트 없으면 이름만 */
+      }
+    }
   }
 
   /** 뷰포트에 고정된 좌우 팬 힌트(월드와 같이 움직이지 않음). */
@@ -461,6 +542,7 @@ export class LobbyView {
   hide() {
     this.on = false;
     this.stopActorIdle();
+    this.clearBoatPets();
     this.hideOverlays();
     this.layer.querySelector(".lobby-pan-hint")?.remove();
     this.root.querySelectorAll(".lobby-pan-hint").forEach((el) => el.remove());
@@ -545,6 +627,7 @@ export class LobbyView {
     this.zoneEl.textContent = info.zoneName || "여정 준비";
     this.partyEl.textContent = `${info.partyCount}/${info.partySlots}`;
     this.purified = (info.purifiedCount ?? 0) > 0;
+    this.fieldPets = [...(info.fieldPets ?? [])];
     this.layer.classList.toggle("lobby-color-heal", this.purified);
     const gem = info.gem ?? Math.max(0, info.memoryCount * 120 + info.day * 40);
     const sta = info.stamina ?? 78;

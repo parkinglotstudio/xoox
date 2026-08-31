@@ -3,3 +3,4 @@ br_i21_king,CHOICE,t_i21_king_fork,단서를 더 모은다,e_hp30,,남은 얼룩
 br_i21_path_adsorb,CHOICE,t_q_fork_adsorb,동쪽으로 바로,,,서쪽 물골부터,,,,,,,10
 br_i21_path_hunt,CHOICE,t_q_fork_hunt,다음으로 바로,,,이 자리 더 훑기,,,,,,,10
 br_i21_path_culprit,CHOICE,t_q_fork_culprit,가운데로,,,단서 한 바퀴,,,,,,,10
+br_i21_gather_or_go,CHOICE,t_q_gather_or_go,더 모은다,,,바로 간다,,,,,,,

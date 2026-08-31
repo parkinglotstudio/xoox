@@ -98,6 +98,7 @@ export function createInitialState(data: GameData): PlayerState {
     collectedMemories: [],
     clearedNodes: [],
     rescuedAnimals: [],
+    fieldPets: [],
     purifyAmmo: 0,
     throwAdsorb: 0,
     throwAdsorbCap: 0,
@@ -1097,6 +1098,8 @@ export type LoopHuntTune = {
   splashMul: number;
   eatMul: number;
   invadeMul: number;
+  /** 투척 미사일 속도 배율 */
+  missileMul: number;
 };
 
 function playerBaseNum(data: GameData, key: string, fallback: number): number {
@@ -1126,15 +1129,17 @@ export function loopStatMods(data: GameData, state: PlayerState): {
 
 /** 원 스킬(보폭·거리·확산) × 숨·흡착·억제. 서로 곱해서 같이 간다. */
 export function composeLoopHuntTune(
-  skills: { range: boolean; stride: boolean; spread: boolean },
+  skills: { range: boolean; stride: boolean; spread: boolean; speed?: boolean },
   mods: { adsorb: number; inhibit: number; breath: number },
 ): LoopHuntTune {
   return {
-    rangeAdd: (skills.range ? 3.5 : 0) + (mods.adsorb - 1) * 5,
+    // 기본 사거리는 raid layout(9). 사거리 스킬은 살짝만 가산
+    rangeAdd: (skills.range ? 1.6 : 0) + (mods.adsorb - 1) * 1.2,
     speedMul: (skills.stride ? 1.22 : 1) * (0.9 + mods.breath * 0.1),
     splashMul: (skills.spread ? 1.35 : 1) * mods.adsorb,
     eatMul: mods.inhibit * (0.65 + mods.breath * 0.35),
     invadeMul: 1 / Math.max(0.55, mods.inhibit),
+    missileMul: skills.speed ? 1.35 : 1,
   };
 }
 

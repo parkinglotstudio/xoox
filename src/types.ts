@@ -1024,6 +1024,8 @@ export interface PlayerState {
   clearedNodes: string[];
   /** 구조 조우로 정화 성공(구조 완료)한 animal_id 목록 — 스테이지 풀에서 제외됨 */
   rescuedAnimals: string[];
+  /** 필드에서 만난 점구름 펫 id (Tobby·Bolinha·Vrum) — 로비 배 위 표시 */
+  fieldPets: string[];
   /** 정화제 탄창 — 해금·감옥·습격이 같이 씀 */
   purifyAmmo: number;
   /** 들판 루프 투척 — 흡착(얼룩) */

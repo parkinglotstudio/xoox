@@ -80,7 +80,7 @@
   <body>
     <header class="bar">
       <h1>원흉 점구름</h1>
-      <span class="hint">원 · 세모 · 네모 · 네 박자</span>
+      <span class="hint">원 · 물방울 · 세모 · 네모 · Tobby · Bolinha · Vrum</span>
       <a href="/tools.html">← 툴 허브</a>
       <span class="status" id="status"></span>
     </header>
@@ -95,28 +95,37 @@
         <p class="keys">마우스 <b>드래그</b> 회전 · <b>휠</b> 줌</p>
       </div>
       <aside class="side">
+        <h2>반려동물 · 3</h2>
+        <button type="button" class="primary" id="btnPetTobby">Tobby</button>
+        <button type="button" id="btnPetBolinha">Bolinha</button>
+        <button type="button" id="btnPetVrum">Vrum</button>
         <h2>도형</h2>
         <button type="button" id="btnCircle">동그라미 · 얼룩</button>
-        <button type="button" id="btnTriangle">세모 · 벌레</button>
+        <button type="button" id="btnMatter">오염물질</button>
+        <button type="button" id="btnDrop">물방울</button>
+        <button type="button" id="btnTriangle">세모 · 오염 벌레</button>
         <button type="button" id="btnSquare">네모 · 원흉</button>
+        <button type="button" id="btnHuman">인간 원흉</button>
+        <h2>행동</h2>
+        <button type="button" id="btnHit">히트 · 피격</button>
+        <button type="button" id="btnRise">리젠 · 땅에서 올라오기</button>
         <h2>연출 4박자</h2>
         <button type="button" class="primary" id="btnGather">1 모으기</button>
         <button type="button" class="mag" id="btnBlight">2 정화전</button>
         <button type="button" class="go" id="btnPurify">3 정화후</button>
-        <button type="button" id="btnScatter">4 퍼지기</button>
-        <button type="button" id="btnRise">땅에서 올라오기</button>
+        <button type="button" id="btnScatter">4 퍼지기 · 죽음</button>
         <h2>점</h2>
         <div class="row">
-          <label>개수 <b id="countVal">2400</b></label>
-          <input id="dialCount" type="range" min="200" max="12000" step="200" value="2400" />
+          <label>개수 <b id="countVal">—</b></label>
+          <input id="dialCount" type="range" min="200" max="80000" step="200" value="20000" />
         </div>
         <div class="row">
-          <label>크기 <b id="sizeVal">0.10</b></label>
-          <input id="dialSize" type="range" min="0.04" max="0.22" step="0.01" value="0.10" />
+          <label>크기 <b id="sizeVal">—</b></label>
+          <input id="dialSize" type="range" min="0.01" max="0.22" step="0.01" value="0.02" />
         </div>
         <p class="help">
-          동그라미=얼룩, 세모=벌레, 네모=원흉.
-          본편도 이 네 박자: 모으기 → 정화전 → 정화후 → 퍼지기.
+          얼룩=오염물질 그림이 바닥에 붙은 동그라미. 오염물질은 그대로.
+          리젠=땅에서 올라오기, 히트=번쩍+점 풀림, 죽음=퍼지기.
         </p>
       </aside>
     </div>

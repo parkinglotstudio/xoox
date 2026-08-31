@@ -1404,10 +1404,19 @@ body {
 }
 .rescue-animal-wrap {
   position: relative;
-  width: 96px;
-  height: 96px;
+  width: 128px;
+  height: 128px;
+}
+.rescue-animal-wrap .rescue-pet-cloud-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  pointer-events: none;
 }
 .rescue-ring {
+  display: none; /* 구조 UI — 원 링 제거, 점구름만 */
   width: 96px;
   height: 96px;
   transform: rotate(-90deg);
@@ -3192,6 +3201,33 @@ body {
   justify-content: center;
   background: rgba(0, 0, 0, 0.78);
   cursor: pointer;
+}
+
+/* 동료 합류 — 배경 딤 거의 없음 · 점구름 타일 선명 */
+.reward-modal.pet-join-modal {
+  background: rgba(0, 0, 0, 0.12);
+}
+.reward-modal.pet-join-modal .reward-item-tile {
+  width: 132px;
+  height: 132px;
+  padding: 4px;
+  background: rgba(10, 14, 22, 0.55);
+  border: 2px solid rgba(180, 255, 240, 0.85);
+  box-shadow: 0 0 22px rgba(80, 255, 220, 0.35);
+}
+.reward-modal.pet-join-modal .reward-item-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.reward-modal.pet-join-modal .reward-pet-cloud-canvas {
+  width: 112px;
+  height: 112px;
+  display: block;
+  border-radius: 10px;
+  background: transparent;
 }
 
 .reward-modal-glow {
@@ -6382,6 +6418,269 @@ body {
 }
 .raid-teal { color: #2de0d0; }
 .raid-core { color: #c090ff; }
+
+/* 전투 HUD — 폰 전체 호스트(레이아웃 cqw 좌표용) */
+.combat-purify-hud-host {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 12;
+}
+.combat-purify-hud-host .combat-purify-hud {
+  position: absolute;
+  inset: 0;
+}
+/* ── 정화 전투 루프 (combat_loop) HUD */
+.combat-purify-hud {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+}
+/* 중앙 — 정화 시도 게이지만 */
+.combat-purify-hud .cph-cast-center {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  transform: translate(-50%, -50%);
+  width: min(58%, 280px);
+  padding: 10px 14px 12px;
+  border-radius: 12px;
+  background: rgba(4, 10, 16, 0.92);
+  border: 1px solid rgba(158, 232, 112, 0.55);
+  display: none;
+  gap: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.combat-purify-hud.live .cph-cast-center.on {
+  display: grid;
+}
+/* 지도 밑 — 시간·남은 적 (50% 크기) */
+.combat-purify-hud .cph-map-dock {
+  position: absolute;
+  top: calc(40px + var(--chat-w) + 6px);
+  right: calc(var(--chat-w) + 8px);
+  width: calc(var(--chat-w) * 0.5);
+  min-width: 72px;
+  padding: 4px 6px 5px;
+  border-radius: 8px;
+  background: rgba(4, 10, 16, 0.9);
+  border: 1px solid rgba(192, 144, 255, 0.4);
+  display: none;
+  gap: 3px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transform-origin: top right;
+  z-index: 12;
+}
+.combat-purify-hud.live .cph-map-dock.on {
+  display: grid;
+}
+.combat-purify-hud .cph-map-dock .cph-phase {
+  display: none;
+}
+.combat-purify-hud .cph-dock-phase {
+  display: block !important;
+  font-size: 8px;
+  font-weight: 800;
+  color: #dff0ff;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+.phone.shell-portrait .combat-purify-hud .cph-dock-phase {
+  font-size: 11px;
+}
+.combat-purify-hud .cph-phase {
+  font-size: 10px;
+  font-weight: 800;
+  color: #dff0ff;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+.combat-purify-hud.urgent .cph-map-dock,
+.combat-purify-hud.urgent .cph-cast-center {
+  border-color: rgba(255, 170, 60, 0.85);
+  box-shadow: 0 0 16px rgba(255, 140, 40, 0.4);
+  animation: cphPulse 1.1s ease-in-out infinite;
+}
+.combat-purify-hud.critical .cph-map-dock,
+.combat-purify-hud.critical .cph-cast-center {
+  border-color: rgba(255, 70, 90, 0.95);
+  box-shadow: 0 0 22px rgba(255, 40, 70, 0.5);
+  animation: cphPulse 0.55s ease-in-out infinite;
+}
+@keyframes cphPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+.combat-purify-hud .cph-cast-center {
+  animation: none;
+}
+.combat-purify-hud.urgent .cph-cast-center,
+.combat-purify-hud.critical .cph-cast-center {
+  animation: cphCastPulse 1.1s ease-in-out infinite;
+}
+.combat-purify-hud.critical .cph-cast-center {
+  animation-duration: 0.55s;
+}
+@keyframes cphCastPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.02); }
+}
+.phone.hud-laid-out .combat-purify-hud.urgent .cph-cast-center,
+.phone.hud-laid-out .combat-purify-hud.critical .cph-cast-center {
+  animation: cphCastPulseLaid 1.1s ease-in-out infinite;
+}
+.phone.hud-laid-out .combat-purify-hud.critical .cph-cast-center {
+  animation-duration: 0.55s;
+}
+@keyframes cphCastPulseLaid {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+.combat-purify-hud .cph-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #e8d8ff;
+  margin-bottom: 2px;
+}
+.combat-purify-hud .cph-label span:last-child {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.combat-purify-hud .cph-map-dock .cph-label {
+  font-size: 8px;
+  margin-bottom: 1px;
+}
+.phone.shell-portrait .combat-purify-hud .cph-map-dock .cph-label {
+  font-size: 10px;
+}
+.combat-purify-hud .cph-timer-head {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 2px;
+  flex-wrap: wrap;
+}
+.combat-purify-hud .cph-timer-tag {
+  font-size: 8px;
+  font-weight: 800;
+  color: #d8c4ff;
+  letter-spacing: 0.02em;
+}
+.phone.shell-portrait .combat-purify-hud .cph-timer-tag {
+  font-size: 10px;
+  color: #9ee8ff;
+}
+.combat-purify-hud .cph-timer-clock {
+  font-size: 12px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: #f2e8ff;
+  line-height: 1;
+  text-shadow: 0 0 8px rgba(200, 120, 255, 0.35);
+}
+.phone.shell-portrait .combat-purify-hud .cph-timer-clock {
+  font-size: 16px;
+  color: #e8fbff;
+  text-shadow: 0 0 10px rgba(80, 210, 255, 0.55);
+}
+.combat-purify-hud .cph-cast-center .cph-timer-clock {
+  font-size: 20px;
+}
+.combat-purify-hud.urgent .cph-timer-clock {
+  color: #ffd27a;
+  text-shadow: 0 0 14px rgba(255, 160, 40, 0.55);
+}
+.combat-purify-hud.critical .cph-timer-clock {
+  color: #ff8a9a;
+  text-shadow: 0 0 16px rgba(255, 50, 80, 0.65);
+  animation: cphClockBlink 0.7s ease-in-out infinite;
+}
+@keyframes cphClockBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.72; }
+}
+.combat-purify-hud .cph-timer-warn {
+  margin-left: auto;
+  font-size: 8px;
+  font-weight: 900;
+  color: #ffb04a;
+}
+.combat-purify-hud.critical .cph-timer-warn {
+  color: #ff6a7a;
+}
+.combat-purify-hud .cph-bar {
+  height: 7px;
+  border-radius: 99px;
+  background: #11161f;
+  border: 1px solid rgba(58, 68, 84, 0.8);
+  overflow: hidden;
+}
+.combat-purify-hud .cph-map-dock .cph-bar {
+  height: 4px;
+}
+.phone.shell-portrait .combat-purify-hud .cph-map-dock .cph-bar {
+  height: 7px;
+}
+.combat-purify-hud .cph-bar > i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.12s linear;
+}
+.combat-purify-hud .cph-bar.cast > i {
+  background: linear-gradient(90deg, #3a5a28, #9fe870 55%, #e8ffb0);
+}
+.combat-purify-hud .cph-bar.pollute > i {
+  background: linear-gradient(90deg, #6a2a88, #c878ff 50%, #ffe0ff);
+}
+.combat-purify-hud.urgent .cph-bar.pollute > i {
+  background: linear-gradient(90deg, #6a1a1a, #ff6a3a 55%, #ffd27a);
+}
+.combat-purify-hud.critical .cph-bar.pollute > i {
+  background: linear-gradient(90deg, #4a0810, #ff3050 50%, #ffb0a0);
+}
+.combat-purify-hud .cph-bar.combat > i {
+  background: linear-gradient(90deg, #6a3a18, #ffd27a);
+}
+.combat-purify-hud .cph-row.cph-tick {
+  animation: cphCountTick 0.35s ease-out;
+}
+@keyframes cphCountTick {
+  0% { transform: scale(1.12); filter: brightness(1.35); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+/* 전투 HUD 켜지면 상태 칩·미니맵 숨겨 시간 창과 겹침 방지 */
+.phone.view-3d:has(.combat-purify-hud.live) #actorStatusHud {
+  visibility: hidden !important;
+}
+.phone.view-3d:has(.combat-purify-hud.live) .explore-layer.minimap {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+/* 미니맵 숨긴 뒤에도 기본 폴백 좌표(레이아웃 미적용 시). 레이아웃 적용 시 cqw가 덮어씀 */
+.phone.shell-portrait:not(.hud-laid-out) .combat-purify-hud .cph-map-dock {
+  top: 5.5%;
+  right: 2.2%;
+  width: min(46%, 168px);
+  min-width: 124px;
+  padding: 6px 8px 7px;
+  border: 1px solid rgba(80, 210, 255, 0.55);
+  background: rgba(4, 12, 20, 0.94);
+}
+.phone.hud-laid-out .combat-purify-hud .cph-map-dock,
+.phone.hud-laid-out .combat-purify-hud .cph-cast-center {
+  /* journeyHudLayoutCss 가 left/top/width/height 지정 */
+  right: auto;
+  bottom: auto;
+}
 .raid-overlay.danger .raid-core { color: #ff8f8f; }
 
 /* 습격 중 — 구 턴제 무대(VS·HP·로그)와 대박/중박을 숨긴다 */
@@ -6589,6 +6888,7 @@ body {
 .phone.view-3d.hud-awaiting-layout .controls.shell-footer,
 .phone.view-3d.hud-awaiting-layout .explore-layer.minimap,
 .phone.view-3d.hud-awaiting-layout .party-hud,
+.phone.view-3d.hud-awaiting-layout .actor-status-hud,
 .phone.view-3d.hud-awaiting-layout .fps-compass,
 .phone.view-3d.hud-awaiting-layout .day-roadmap,
 .phone.view-3d.hud-awaiting-layout .catalyst-hud,
@@ -7591,6 +7891,14 @@ body {
   inset: 0;
   background: none;
 }
+/* 연타 전용 투명 캐처 — 상태 칩은 #actorStatusHud */
+.pick-overlay.pick-head.mash-catcher {
+  background: none;
+  pointer-events: none;
+}
+.pick-overlay.pick-head.mash-catcher.mash {
+  pointer-events: auto;
+}
 .pick-overlay.pick-head.actor-head-status {
   pointer-events: none;
 }
@@ -7618,6 +7926,22 @@ body {
   min-width: 132px;
   max-width: 200px;
   pointer-events: none;
+}
+/* 파티 카드 옆 도킹 — 상태/라벨만 상시, 게이지는 mash 때만 */
+.pick-overlay.pick-head.docked-party .pick-head-box {
+  transform: none;
+  align-items: flex-start;
+  min-width: 0;
+  max-width: 160px;
+  gap: 4px;
+}
+.pick-overlay.pick-head:not(.mash) .melt-meter,
+.pick-overlay.pick-head:not(.mash) .melt-pct {
+  display: none;
+}
+.pick-overlay.pick-head.mash .melt-meter,
+.pick-overlay.pick-head.mash .melt-pct {
+  display: block;
 }
 .pick-overlay.pick-head .pick-need {
   padding: 4px 10px;
@@ -8100,10 +8424,11 @@ body {
   inset: 0;
   z-index: 8;
   justify-content: center;
+  /* 뒤 3D·점구름이 딤에 가리지 않게 — 얇은 그라데이션만 */
   background: linear-gradient(
     180deg,
-    rgba(4, 14, 12, 0.2) 0%,
-    rgba(4, 14, 12, 0.58) 100%
+    rgba(4, 14, 12, 0.06) 0%,
+    rgba(4, 14, 12, 0.18) 100%
   );
 }
 .visual-stage.explore-on .stage-bars,
@@ -8738,21 +9063,41 @@ body {
   cursor: default;
   background: transparent;
 }
-.lobby-boat {
+.lobby-boat-pets {
   position: absolute;
-  left: 13%;
-  top: 74%;
-  z-index: 4;
-  width: min(46%, 420px);
-  transform: translate(-50%, -55%);
-  border: none;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
+  left: 50%;
+  top: 62%;
+  z-index: 5;
+  display: flex;
+  gap: 10px;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+}
+.lobby-boat-pet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 88px;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+  animation: lobbyPetBob 2.8s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 0.35s);
+}
+.lobby-pet-canvas {
+  width: 88px;
+  height: 88px;
   display: block;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
-  --boat-bob: 0px;
-  translate: 0 var(--boat-bob);
+}
+.lobby-boat-pet-name {
+  font-size: 10px;
+  font-weight: 900;
+  color: #e8fff8;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  letter-spacing: 0.04em;
+}
+@keyframes lobbyPetBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 .lobby-boat-img {
   display: block;
@@ -9481,8 +9826,8 @@ body {
   --shell-panel-soft: transparent;
   --shell-line: rgba(45, 224, 208, 0.45);
   --shell-magenta: #ff4ec8;
-  --footer-h: 88px;
-  --btn-h: 48px;
+  --footer-h: 72px;
+  --btn-h: 40px;
   --etch-glow: 0 0 10px rgba(45, 224, 208, 0.35);
   background: #05080e;
   border: 1px solid rgba(45, 224, 208, 0.22);
@@ -9678,6 +10023,31 @@ body {
   gap: 6px;
 }
 
+.shell-speed-btn {
+  pointer-events: auto;
+  height: 28px;
+  min-width: 40px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(120, 200, 220, 0.45);
+  background: rgba(8, 18, 24, 0.72);
+  color: #b8e8f0;
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  text-shadow: 0 0 6px rgba(45, 224, 208, 0.3);
+}
+.shell-speed-btn[aria-pressed="true"] {
+  border-color: rgba(255, 200, 90, 0.75);
+  background: rgba(48, 32, 8, 0.82);
+  color: #ffe08a;
+  box-shadow: 0 0 10px rgba(255, 180, 60, 0.35);
+}
+.shell-speed-btn:active {
+  transform: scale(0.96);
+}
+
 .phone[data-scene="journey"] .shell-top-chip {
   display: inline-flex;
   align-items: center;
@@ -9700,13 +10070,29 @@ body {
 .party-hud {
   display: none;
 }
+.actor-status-hud {
+  display: none;
+}
 .phone[data-scene="journey"] .party-hud {
   position: absolute;
   left: 10px;
   top: 10px;
   bottom: auto;
   z-index: 6;
-  width: 148px;
+  width: 196px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  pointer-events: none;
+  overflow: hidden;
+  min-width: 0;
+}
+.phone[data-scene="journey"] .actor-status-hud {
+  position: absolute;
+  left: 196px;
+  top: 14px;
+  z-index: 7;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -9714,6 +10100,70 @@ body {
   pointer-events: none;
   overflow: visible;
   min-width: 0;
+  max-width: 160px;
+}
+.phone[data-scene="journey"] .actor-status-hud .pick-need {
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(8, 12, 16, 0.88);
+  border: 1px solid rgba(180, 200, 210, 0.45);
+  color: #e8f0f4;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.phone[data-scene="journey"] .actor-status-hud .pick-need.choice {
+  border-color: rgba(125, 255, 238, 0.75);
+  color: #d8fff6;
+}
+.phone[data-scene="journey"] .actor-status-hud .pick-need.mash-hint {
+  border-color: rgba(255, 210, 122, 0.7);
+  color: #ffe6b0;
+  animation: pick-need-pulse 0.9s ease-in-out infinite;
+}
+.phone[data-scene="journey"] .actor-status-hud .melt-label {
+  position: static;
+  left: auto;
+  top: auto;
+  transform: none;
+  padding: 2px 7px;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: rgba(8, 18, 22, 0.82);
+  border: 1px solid rgba(45, 224, 208, 0.35);
+  border-radius: 6px;
+  color: #d8fff6;
+}
+.phone[data-scene="journey"] .actor-status-hud:not(.mash) .melt-meter,
+.phone[data-scene="journey"] .actor-status-hud:not(.mash) .melt-pct {
+  display: none;
+}
+.phone[data-scene="journey"] .actor-status-hud.mash {
+  pointer-events: auto;
+}
+.phone[data-scene="journey"] .actor-status-hud.mash .melt-meter,
+.phone[data-scene="journey"] .actor-status-hud.mash .melt-pct {
+  display: block;
+  position: static;
+  left: auto;
+  top: auto;
+  transform: none;
+}
+.phone[data-scene="journey"] .actor-status-hud .melt-meter {
+  width: 64px;
+  height: 5px;
+  border-radius: 99px;
+}
+.phone[data-scene="journey"] .actor-status-hud .melt-pct {
+  font-size: 9px;
+  opacity: 0.9;
+  color: #d8fff6;
+  font-weight: 800;
 }
 .phone[data-scene="journey"] .party-card {
   display: grid;
@@ -9744,12 +10194,12 @@ body {
 }
 .phone[data-scene="journey"] .party-self-wrap {
   position: relative;
-  width: fit-content;
-  max-width: calc(100% - 22px);
+  width: 100%;
+  max-width: 100%;
 }
 .phone[data-scene="journey"] .party-card.self {
-  grid-template-columns: 30px max-content;
-  width: max-content;
+  grid-template-columns: 30px 1fr;
+  width: 100%;
   max-width: 100%;
   border-color: var(--shell-teal);
   box-shadow: 0 0 12px rgba(45, 224, 208, 0.2);
@@ -9760,32 +10210,128 @@ body {
   font-weight: 800;
   color: #0FBEC7;
   white-space: nowrap;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.phone[data-scene="journey"] .party-purify-gauge,
+.phone[data-scene="journey"] .party-challenge-gauge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: rgba(8, 20, 24, 0.72);
+  border: 1px solid rgba(15, 190, 199, 0.4);
+}
+.phone[data-scene="journey"] .party-purify-gauge b,
+.phone[data-scene="journey"] .party-challenge-gauge b {
+  color: #e8fff6;
+  font-size: 10px;
+}
+.phone[data-scene="journey"] .party-purify-gauge i,
+.phone[data-scene="journey"] .party-challenge-gauge i {
+  font-style: normal;
+  opacity: 0.75;
+}
+.phone[data-scene="journey"] .party-challenge-gauge.low {
+  border-color: rgba(255, 140, 80, 0.7);
+  color: #ffd27a;
+  animation: partyAmmoLow 0.75s ease-in-out infinite;
 }
 .phone[data-scene="journey"] .party-ammo-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 3px;
-  margin-top: 2px;
-  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  align-items: stretch;
+  max-width: 100%;
 }
 .phone[data-scene="journey"] .party-ammo {
-  font-size: 7px;
-  font-weight: 700;
-  padding: 1px 4px;
-  border-radius: 999px;
-  border: 1px solid rgba(15, 190, 199, 0.45);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 7px;
+  border: 1px solid rgba(15, 190, 199, 0.55);
+  background: rgba(8, 28, 32, 0.88);
   color: #c8fff8;
+  line-height: 1.15;
+  box-shadow: 0 0 8px rgba(45, 224, 208, 0.12);
+}
+.phone[data-scene="journey"] .party-ammo em {
+  font-style: normal;
+  font-size: 8px;
+  font-weight: 800;
+  opacity: 0.82;
+  letter-spacing: 0.02em;
+}
+.phone[data-scene="journey"] .party-ammo b {
+  font-size: 12px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: #e8fffc;
+}
+.phone[data-scene="journey"] .party-ammo i {
+  font-style: normal;
+  font-size: 8px;
+  font-weight: 700;
+  opacity: 0.55;
+}
+.phone[data-scene="journey"] .party-ammo.adsorb {
+  border-color: rgba(45, 224, 208, 0.65);
 }
 .phone[data-scene="journey"] .party-ammo.inhibit {
-  border-color: rgba(209, 88, 188, 0.45);
+  border-color: rgba(209, 88, 188, 0.6);
+  background: rgba(40, 12, 36, 0.88);
   color: #ffe8f8;
+  box-shadow: 0 0 8px rgba(209, 88, 188, 0.12);
+}
+.phone[data-scene="journey"] .party-ammo.inhibit b {
+  color: #ffe0f4;
 }
 .phone[data-scene="journey"] .party-ammo.culprit {
-  border-color: rgba(209, 197, 29, 0.55);
+  border-color: rgba(209, 197, 29, 0.65);
+  background: rgba(36, 32, 8, 0.88);
   color: #fff4b0;
+  box-shadow: 0 0 8px rgba(209, 197, 29, 0.14);
+}
+.phone[data-scene="journey"] .party-ammo.culprit b {
+  color: #fff8d0;
+}
+.phone[data-scene="journey"] .party-ammo.low {
+  border-color: rgba(255, 170, 60, 0.75);
+  animation: partyAmmoLow 1.15s ease-in-out infinite;
+}
+.phone[data-scene="journey"] .party-ammo.empty {
+  border-color: rgba(255, 80, 100, 0.8);
+  background: rgba(48, 10, 16, 0.9);
+  color: #ffb0b8;
+  animation: partyAmmoLow 0.7s ease-in-out infinite;
+}
+.phone[data-scene="journey"] .party-ammo.empty b {
+  color: #ff8a9a;
+}
+@keyframes partyAmmoLow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.72; }
 }
 .phone[data-scene="journey"] .party-skills {
-  display: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 2px;
+  pointer-events: auto;
+  max-width: 100%;
+}
+.phone[data-scene="journey"] .party-skills-empty {
+  font-size: 8px;
+  font-weight: 800;
+  opacity: 0.45;
+  padding: 2px 4px;
+  color: #D1C51D;
 }
 .phone[data-scene="journey"] .party-skill-ico {
   width: 18px;
@@ -10104,7 +10650,7 @@ body {
 .phone[data-scene="journey"] .controls.shell-footer {
   display: block;
   min-height: var(--footer-h);
-  padding: 8px 18px 26px;
+  padding: 10px 16px 28px;
   background: transparent;
   border-top: none;
   box-shadow: none;
@@ -10217,16 +10763,62 @@ body {
   min-height: var(--btn-h);
   height: var(--btn-h);
   max-height: none;
-  padding: 6px 18px;
+  padding: 4px 14px;
   color: #f4fffc;
   font-weight: 900;
-  font-size: 14px;
-  letter-spacing: 0.06em;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.55);
   background: linear-gradient(180deg, #1e5c54 0%, #123832 100%);
   box-shadow:
-    0 3px 0 #0a221f,
+    0 2px 0 #0a221f,
+    0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.phone[data-scene="journey"] .main-btn.shell-btn .btn-main-label,
+.phone[data-scene="journey"] .choice-btn.shell-btn {
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.phone[data-scene="journey"] .choice-btn.shell-btn.secondary {
+  border-color: #3a6a64;
+  background: linear-gradient(180deg, #2a4844 0%, #1a2e2c 100%);
+  box-shadow:
+    0 3px 0 #0a1a18,
     0 6px 14px rgba(0, 0, 0, 0.35);
+}
+
+.phone[data-scene="journey"] .choice-btn.shell-btn small {
+  font-size: 12px;
+  font-weight: 800;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+@keyframes main-btn-urge-pulse {
+  0%,
+  100% {
+    filter: brightness(1);
+    box-shadow:
+      0 3px 0 #0a221f,
+      0 6px 14px rgba(0, 0, 0, 0.35),
+      0 0 0 0 rgba(90, 255, 200, 0);
+  }
+  50% {
+    filter: brightness(1.28);
+    box-shadow:
+      0 3px 0 #0a221f,
+      0 6px 14px rgba(0, 0, 0, 0.35),
+      0 0 18px 2px rgba(120, 255, 210, 0.55);
+  }
+}
+
+.phone[data-scene="journey"] .main-btn.shell-btn.mash,
+.phone[data-scene="journey"] .main-btn.shell-btn.pick,
+.phone[data-scene="journey"] .main-btn.shell-btn.find {
+  animation: main-btn-urge-pulse 0.85s ease-in-out infinite;
 }
 
 .phone[data-scene="journey"] .main-btn.shell-btn.idle {

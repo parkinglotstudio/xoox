@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XOOX 정화 스킬 프로토</title>
+    <style>
+      :root {
+        --bg: #12141a; --panel: #1c212b; --line: #3a4454; --text: #e8eef8;
+        --muted: #9aa8bc; --accent: #5ec8ff; --ok: #6ddea0; --warn: #ffd27a;
+        --teal: #2de0d0; --blight: #c090ff; --mag: #d158bc;
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0; height: 100%; background: var(--bg); color: var(--text);
+        font-family: "Pretendard", "Malgun Gothic", sans-serif;
+      }
+      body { display: grid; grid-template-rows: auto 1fr; }
+      .bar {
+        display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+        padding: 10px 14px; background: var(--panel); border-bottom: 1px solid var(--line);
+      }
+      .bar h1 { margin: 0; font-size: 15px; font-weight: 800; }
+      .bar .hint { color: var(--muted); font-size: 12px; }
+      .bar a { color: var(--accent); text-decoration: none; font-weight: 800; }
+      .bar button {
+        border: 1px solid var(--line); background: #11161f; color: var(--text);
+        border-radius: 8px; padding: 7px 12px; font-weight: 700; cursor: pointer;
+      }
+      .bar button.go { background: #164a3a; border-color: #2de0d0; color: #d8fff6; }
+      .bar button.phase { background: #2a1a3a; border-color: #c090ff; color: #f0e0ff; }
+      .status { font-size: 12px; color: var(--muted); margin-left: auto; }
+      .status.ok { color: var(--ok); }
+      .status.err { color: #ff8f8f; }
+      .workspace { display: grid; grid-template-columns: 1fr 300px; min-height: 0; }
+      .stage-col {
+        min-width: 0; min-height: 0; display: flex; flex-direction: column;
+        background: #06080c; padding: 12px; gap: 8px;
+      }
+      .stage-host {
+        flex: 1; min-height: 0; display: grid; place-items: center;
+        container-type: size; overflow: hidden;
+      }
+      .stage-frame {
+        position: relative;
+        width: min(100cqw, calc(100cqh * 16 / 9));
+        height: min(100cqh, calc(100cqw * 9 / 16));
+        border: 2px solid #2f7ea8; border-radius: 10px; overflow: hidden;
+        background: #000;
+      }
+      #protoCanvas { display: block; width: 100%; height: 100%; }
+      .crosshair {
+        position: absolute; left: 50%; top: 50%; z-index: 4;
+        width: 14px; height: 14px; margin: -7px 0 0 -7px; pointer-events: none;
+        border: 1px solid rgba(255, 224, 138, 0.85); border-radius: 50%;
+      }
+      .crosshair::after {
+        content: ""; position: absolute; left: 50%; top: 50%;
+        width: 2px; height: 2px; margin: -1px 0 0 -1px; background: #ffe08a;
+      }
+      .hud {
+        position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%);
+        z-index: 3; display: flex; gap: 10px; align-items: center;
+        padding: 7px 14px; border-radius: 999px;
+        background: rgba(6, 12, 18, 0.82); border: 1px solid rgba(45, 224, 208, 0.4);
+        font-size: 12px; font-weight: 700; color: #dff0ff; white-space: nowrap;
+      }
+      .hud .blight { color: var(--blight); }
+      .hud .teal { color: var(--teal); }
+      .banner {
+        position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%);
+        z-index: 5; display: none; padding: 10px 22px; border-radius: 10px;
+        background: rgba(6, 12, 18, 0.88); border: 1px solid var(--line);
+        font-size: 18px; font-weight: 900; letter-spacing: 0.04em; text-align: center;
+      }
+      .banner.on { display: block; }
+      .banner.warn { color: var(--warn); }
+      .banner.ok { color: var(--ok); }
+      .gauge {
+        position: absolute; left: 50%; top: 14px; transform: translateX(-50%);
+        z-index: 6; width: min(56%, 360px);
+        padding: 8px 12px; border-radius: 10px;
+        background: rgba(6, 12, 18, 0.86); border: 1px solid rgba(192, 144, 255, 0.45);
+        display: grid; gap: 7px;
+      }
+      .gauge .row .label {
+        display: flex; justify-content: space-between; font-size: 11px; font-weight: 800;
+        color: #e8d8ff; margin-bottom: 4px;
+      }
+      .gauge .bar {
+        height: 9px; border-radius: 99px; background: #11161f; overflow: hidden;
+        border: 1px solid var(--line); padding: 0;
+      }
+      .gauge .bar > i {
+        display: block; height: 100%; width: 100%;
+        transform-origin: left center; transform: scaleX(1);
+      }
+      .gauge .bar.pollute > i {
+        background: linear-gradient(90deg, #5a1a6a, #c050ff 55%, #ff9aef);
+      }
+      .gauge .bar.stop > i {
+        background: linear-gradient(90deg, #6a3a18, #ffd27a);
+      }
+      .gauge .bar.cast > i {
+        background: linear-gradient(90deg, #3a5a28, #9fe870 55%, #e8ffb0);
+      }
+      .gauge.urgent {
+        border-color: rgba(255, 170, 60, 0.75);
+        box-shadow: 0 0 18px rgba(255, 140, 40, 0.35);
+        animation: urgPulse 1.1s ease-in-out infinite;
+      }
+      .gauge.critical {
+        border-color: rgba(255, 70, 90, 0.9);
+        box-shadow: 0 0 22px rgba(255, 40, 70, 0.45);
+        animation: urgPulse 0.55s ease-in-out infinite;
+      }
+      @keyframes urgPulse {
+        0%, 100% { transform: translateX(-50%) scale(1); }
+        50% { transform: translateX(-50%) scale(1.02); }
+      }
+      .gauge .bar.pollute.urgent > i,
+      .gauge.urgent .bar.pollute > i {
+        background: linear-gradient(90deg, #6a1a1a, #ff6a3a 55%, #ffd27a);
+      }
+      .gauge.critical .bar.pollute > i {
+        background: linear-gradient(90deg, #4a0810, #ff3050 50%, #ffb0a0);
+      }
+      .hud .ammo { color: #9fe8ff; }
+      .hud .ammo.low { color: var(--warn); }
+      .fire {
+        position: absolute; right: 14px; bottom: 28px; z-index: 6;
+        width: 96px; height: 96px; border-radius: 50%;
+        border: 3px solid #7ff8e8;
+        background: radial-gradient(circle at 40% 32%, #3aefe0, #0d6a62 62%, #073a38);
+        color: #e8fffb; font-size: 15px; font-weight: 900;
+        cursor: pointer; user-select: none; touch-action: none;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45), 0 0 18px rgba(45, 224, 208, 0.35);
+      }
+      .fire:active, .fire.on {
+        transform: scale(0.96);
+        background: radial-gradient(circle at 40% 32%, #c8fff6, #2de0d0 58%, #0a5a54);
+      }
+      .fire:disabled { opacity: 0.35; cursor: default; }
+      .keys { font-size: 11px; color: var(--muted); text-align: center; }
+      .keys b { color: var(--text); }
+      .side {
+        border-left: 1px solid var(--line); background: var(--panel);
+        padding: 12px; overflow: auto; display: flex; flex-direction: column; gap: 8px;
+      }
+      .side h2 {
+        margin: 6px 0 0; font-size: 11px; color: var(--muted);
+        text-transform: uppercase; letter-spacing: 0.06em;
+      }
+      .skill {
+        display: grid; gap: 4px; text-align: left;
+        border: 1px solid var(--line); background: #11161f; color: var(--text);
+        border-radius: 10px; padding: 10px 12px; font-weight: 800; cursor: pointer;
+      }
+      .skill small { font-weight: 600; color: var(--muted); line-height: 1.35; }
+      .skill.on {
+        border-color: #2de0d0; background: #0f2a28; color: #d8fff6;
+        box-shadow: 0 0 0 1px rgba(45, 224, 208, 0.35);
+      }
+      .skill.attack.on {
+        border-color: #d158bc; background: #2a1428; color: #ffd6f4;
+        box-shadow: 0 0 0 1px rgba(209, 88, 188, 0.35);
+      }
+      .help {
+        font-size: 11px; line-height: 1.5; background: #11161f; border: 1px solid var(--line);
+        border-radius: 8px; padding: 8px 10px; color: var(--muted);
+      }
+      .help b { color: var(--warn); }
+      .steps {
+        display: flex; gap: 4px; flex-wrap: wrap;
+      }
+      .steps span {
+        font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 99px;
+        border: 1px solid var(--line); color: var(--muted);
+      }
+      .steps span.on { border-color: var(--teal); color: #d8fff6; background: #0f2a28; }
+      .steps span.done { border-color: #3a5a48; color: var(--ok); }
+    </style>
+  </head>
+  <body>
+    <div class="bar">
+      <h1>정화 스킬 프로토 · 탄 부족 컨셉</h1>
+      <a class="hint" href="/tools.html">← 툴 허브</a>
+      <button type="button" class="go" id="btnStart">0. 발사체 모으기</button>
+      <button type="button" class="phase" id="btnCast1">1차 캐스팅</button>
+      <button type="button" class="phase" id="btnCast2">2차 캐스팅</button>
+      <button type="button" class="phase" id="btnCast3">3차 캐스팅</button>
+      <button type="button" class="phase" id="btnBugs" disabled>벌레</button>
+      <button type="button" class="phase" id="btnCulprit" disabled>원흉</button>
+      <button type="button" class="phase" id="btnFinalCast" disabled>최종 캐스팅</button>
+      <button type="button" id="btnReset">리셋</button>
+      <span class="status" id="status">ready</span>
+    </div>
+
+    <div class="workspace">
+      <div class="stage-col">
+        <div class="stage-host">
+          <div class="stage-frame" id="stageFrame">
+            <canvas id="protoCanvas"></canvas>
+            <div class="crosshair" aria-hidden="true"></div>
+            <div class="gauge" id="gaugeBox">
+              <div class="row" id="castRow" style="display:none">
+                <div class="label">
+                  <span>정화를 시도 중입니다</span>
+                  <span id="castVal">0%</span>
+                </div>
+                <div class="bar cast"><i id="castFill"></i></div>
+              </div>
+              <div class="row" id="polluteRow">
+                <div class="label">
+                  <span>오염이 원을 먹음 (3분)</span>
+                  <span id="polluteVal">0%</span>
+                </div>
+                <div class="bar pollute"><i id="polluteFill"></i></div>
+              </div>
+              <div class="row" id="stopRow">
+                <div class="label">
+                  <span id="gaugeLabel">동쪽 멈춤</span>
+                  <span id="gaugeVal">6 / 6</span>
+                </div>
+                <div class="bar stop"><i id="gaugeFill"></i></div>
+              </div>
+            </div>
+            <div class="banner" id="banner"></div>
+            <div class="hud">
+              <span id="hudPhase">대기</span>
+              <span class="teal" id="hudSkill">스킬 · 기본</span>
+              <span class="ammo" id="hudAmmo">탄 14</span>
+              <span class="blight" id="hudTarget">목표 —</span>
+            </div>
+            <button type="button" class="fire" id="btnFire" disabled>발사</button>
+          </div>
+        </div>
+        <div class="keys">
+          <b>WASD</b> 이동 · 청록 구슬 = 발사체 · <b>스킬</b> · <b>발사</b><br />
+          모은다 → 캐스팅 → 띠 멈춤 → 벌레 → (또 모은다) → 다음 캐스팅. 서두르면 탄 부족.
+        </div>
+      </div>
+      <aside class="side">
+        <h2>차례</h2>
+        <div class="steps" id="steps">
+          <span data-step="gather">모으기</span>
+          <span data-step="purify">캐스팅·띠</span>
+          <span data-step="bugs">벌레</span>
+          <span data-step="culprit">원흉</span>
+        </div>
+
+        <h2>스킬 슬롯 · 클릭</h2>
+        <button type="button" class="skill on" data-skill="basic" id="skBasic">
+          기본 미사일
+          <small>1발 · 탄 −1</small>
+        </button>
+        <button type="button" class="skill attack" data-skill="multi" id="skMulti">
+          다연발
+          <small>3발 넓게 · 탄 −3</small>
+        </button>
+        <button type="button" class="skill attack" data-skill="boom" id="skBoom">
+          대폭발
+          <small>바닥 3배 폭발 · 탄 −2</small>
+        </button>
+        <button type="button" class="skill attack" data-skill="chain" id="skChain">
+          연쇄 터짐
+          <small>수제비 3연속 · 탄 −2</small>
+        </button>
+
+        <div class="help">
+          <b>컨셉</b>: 탄이 모자라는 게 정답. 서둘러 2차 캐스팅하면 다음 전투에서 막힌다.<br /><br />
+          <b>루프</b>: 모은다 → <b>캐스팅</b> 정화 → 띠 멈춤 → 벌레 → 다시 모은다<br />
+          원흉을 죽여도 정화는 자동이 아니다. <b>최종 캐스팅</b>으로 끝낸다.<br /><br />
+          시작 탄 14 · 멈춤 6 · 벌레 12×HP2 · 원흉 20 · 청록 구슬 줍기 +8<br />
+          오염 50%/75%에서 게이지가 급해진다.
+        </div>
+      </aside>
+    </div>
+    <script type="module" src="/src/tools/purifySkillProto/main.ts"></script>
+  </body>
+</html>

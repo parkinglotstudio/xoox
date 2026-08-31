@@ -609,14 +609,14 @@ float purifyReveal = 0.0;`,
           #ifdef FOG_EXP2
             float fogFactor = 1.0 - exp( - fogDensity * fogDensity * vFogDepth * vFogDepth );
           #else
-            float fogFactor = smoothstep( fogNear * 0.45, fogFar, vFogDepth );
-            fogFactor = clamp(fogFactor * 1.22, 0.0, 1.0);
+            float fogFactor = smoothstep( fogNear, fogFar * 1.08, vFogDepth );
+            fogFactor = pow(clamp(fogFactor, 0.0, 1.0), 1.35);
           #endif
           gl_FragColor.rgb = mix( gl_FragColor.rgb, groundFogColor, fogFactor );
         #endif`,
       );
   };
-  mat.customProgramCacheKey = () => "island-pollute-v17-coloramt";
+  mat.customProgramCacheKey = () => "island-pollute-v18-softfog";
 }
 
 export interface PurifyFocusWorld {
@@ -680,7 +680,8 @@ export class IslandTerrain {
   private foci: PurifyFocusWorld[] = [];
   private fogPurifiedHex = 0x8eb0bc;
   /** 원 안 색이 열리는 세기 0..1 — 1차/2차/완료 3단 */
-  private colorAmt = 1;
+  /** 기본 0 — 예전 기본 1이면 입장 직후 syncSky가 하늘을 풀정화로 열어버림 */
+  private colorAmt = 0;
 
   constructor(opts: IslandTerrainOpts = {}) {
     this.cellM = opts.cellSize ?? SECTOR_M;

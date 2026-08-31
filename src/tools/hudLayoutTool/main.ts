@@ -112,8 +112,14 @@ function mockBody(id: string): string {
   switch (id) {
     case "party":
       return `<b>모험가 (나)</b><br />ATK 3.4K · DEF 900`;
+    case "actor_status":
+      return `<b>상태</b><br /><small>탐색중</small>`;
     case "minimap":
       return `섹터 축소`;
+    case "combat_dock":
+      return `<b>전투 상태</b><br />남은 시간 5:00<br />남은 얼룩 5/5`;
+    case "combat_cast":
+      return `<b>정화 시도</b><br />42%`;
     case "log":
       return `<b>구조 로그</b><br />라디오에 잠들었다<br />최대HP -5%`;
     case "talk_them":

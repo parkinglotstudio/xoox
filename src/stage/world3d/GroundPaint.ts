@@ -66,11 +66,11 @@ export class GroundPaint {
     return null;
   }
 
-  stamp(x: number, z: number, kind: PaintKind, overwrite = 1): void {
+  stamp(x: number, z: number, kind: PaintKind, overwrite = 1, scaleMul = 1): void {
     const half = this.stage.getWorldScale() / 2;
     if (Math.abs(x) > half - 0.4 || Math.abs(z) > half - 0.4) return;
     this.paintCells(x, z, kind, overwrite);
-    this.placeStamp(x, z, kind);
+    this.placeStamp(x, z, kind, scaleMul);
   }
 
   /** 그 자리의 오염 데칼을 남기지 않고 걷는다 */
@@ -183,16 +183,20 @@ export class GroundPaint {
     }
   }
 
-  private placeStamp(x: number, z: number, kind: PaintKind): void {
+  private placeStamp(x: number, z: number, kind: PaintKind, scaleMul = 1): void {
     const s = this.stamps[this.cursor % this.stamps.length];
     if (!s) return;
     this.cursor += 1;
     s.used = true;
     s.mesh.visible = true;
     s.mesh.position.set(x, 0.04, z);
-    s.mesh.scale.setScalar(this.radiusM);
+    const mul = Math.max(0.2, scaleMul);
+    s.mesh.scale.setScalar(this.radiusM * mul);
     const mat = s.mesh.material as THREE.MeshBasicMaterial;
     mat.map = kind === "teal" ? this.tealTex : this.blightTex;
+    // 오염 바닥 원(핵)은 반투명 — 시안/보라 데칼이 너무 진하지 않게
+    // 타이어마크(작은 스케일)는 더 옅게
+    mat.opacity = mul < 0.7 ? 0.55 : 0.9;
     mat.needsUpdate = true;
   }
 

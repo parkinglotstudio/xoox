@@ -4,18 +4,18 @@ qs_i21_enter,qc_i21,1,20,TRUE,FILLER,,,center,0,근원으로,근원지,,,,,가�
 qs_i21_cause,qc_i21,1,30,TRUE,FILLER,,,center,0,원인,원인,t_q_i21_cause,,,웅덩이 한 장
 qs_i21_fork_ads,qc_i21,1,35,TRUE,BRANCH,br_i21_path_adsorb,,,0,갈림길 흡착,갈림길,,,,A 동 빠름 · B 서 느림
 qs_i21_adsorb,qc_i21,1,40,TRUE,SEARCH,catalyst,,,0,흡착 찾기,정화제 찾기,t_q_i21_adsorb,,,자리는 spot
-qs_i21_apply,qc_i21,1,50,TRUE,APPLY_STAINS,,,center,0,근원에 쓰기,정화,t_q_apply,,,쌓은 뒤에만
-qs_i21_tint1,qc_i21,1,60,TRUE,TINT,,1,center,0,1단계,1단계,t_q_tint1,,,가까운 땅만
+qs_i21_apply,qc_i21,1,50,TRUE,APPLY_STAINS,,,center,0,근원에 쓰기,얼룩 정화,t_q_apply,,,발견 후 가운데에서 바로 사냥
+qs_i21_tint1,qc_i21,1,60,FALSE,TINT,,1,center,0,1단계,1단계,t_q_tint1,,,APPLY직후 틴트·중복방지
 qs_i21_skill_t1,qc_i21,1,65,TRUE,CONTENT,skill,,center,0,정기 1,요령,t_q_skill_t1,,,1단계 직후 스킬
-qs_i21_invade1,qc_i21,1,70,TRUE,INVADE,,,center,4,벌레 1차,가장자리 벌레,t_q_invade,,,첫 벌레만 문장
+qs_i21_invade1,qc_i21,1,70,TRUE,INVADE,,,center,5,벌레 1차,가장자리 벌레,t_q_invade,,,첫 벌레만 문장
 qs_i21_fork_hunt,qc_i21,2,80,TRUE,BRANCH,br_i21_path_hunt,,,0,갈림길 사냥,갈림길,,,,
 qs_i21_inhibit,qc_i21,2,90,TRUE,SEARCH,inhibit,,,0,퇴치제 찾기,벌레 퇴치제,t_q_inhibit,,,
-qs_i21_invade2,qc_i21,2,100,TRUE,INVADE,,,west,4,벌레 2차,서쪽 벌레,,,,,문장 없음
+qs_i21_invade2,qc_i21,2,100,FALSE,INVADE,,,west,5,벌레 2차,서쪽 벌레,,,,,임시 off · 테스트
 qs_i21_skill_west,qc_i21,2,110,TRUE,CONTENT,skill,,west,0,정기 2,수련,t_q_skill_west,,,쉼 대신 스킬
 qs_i21_daily,qc_i21,2,120,TRUE,CONTENT,daily,,east,0,하루의 발견,하루의 발견,,,,대박이면 스킬 행운
 qs_i21_skill,qc_i21,2,130,TRUE,CONTENT,skill,,east,0,정기 3,수첩,t_q_skill,,,동쪽 수첩
-qs_i21_invade3,qc_i21,2,140,TRUE,INVADE,,,east,4,벌레 3차,동쪽 벌레,,,,,
-qs_i21_invade4,qc_i21,2,150,TRUE,INVADE,,,north,4,벌레 4차,북쪽 벌레,,,,,
+qs_i21_invade3,qc_i21,2,140,FALSE,INVADE,,,east,5,벌레 3차,동쪽 벌레,,,,,임시 off · 테스트
+qs_i21_invade4,qc_i21,2,150,FALSE,INVADE,,,north,5,벌레 4차,북쪽 벌레,,,,,임시 off · 테스트
 qs_i21_tint2,qc_i21,2,160,TRUE,TINT,,2,center,0,2단계,2단계,t_q_tint2,,,원 전체·기립
 qs_i21_memory,qc_i21,3,170,TRUE,CONTENT,memory,,east,0,희미한 기억,기억,t_q_mem,,,
 qs_i21_arena,qc_i21,3,180,TRUE,CONTENT,arena,,east,0,겨루기,겨루기,t_q_arena,,,
@@ -28,8 +28,8 @@ qs_i11_enter,qc_i11,1,20,TRUE,FILLER,,,center,0,근원으로,근원지,,,,,
 qs_i11_cause,qc_i11,1,30,TRUE,FILLER,,,center,0,원인,원인,t_q_i11_cause,,,
 qs_i11_fork_ads,qc_i11,1,35,TRUE,BRANCH,br_i21_path_adsorb,,,0,갈림길 흡착,갈림길,,,,
 qs_i11_adsorb,qc_i11,1,40,TRUE,SEARCH,catalyst,,,0,흡착 찾기,정화제 찾기,t_q_i21_adsorb,,,
-qs_i11_apply,qc_i11,1,50,TRUE,APPLY_STAINS,,,center,0,근원에 쓰기,정화,t_q_apply,,,
-qs_i11_tint1,qc_i11,1,60,TRUE,TINT,,1,center,0,1단계,1단계,t_q_tint1,,,
+qs_i11_apply,qc_i11,1,50,TRUE,APPLY_STAINS,,,center,0,근원에 쓰기,얼룩 정화,t_q_apply,,,
+qs_i11_tint1,qc_i11,1,60,FALSE,TINT,,1,center,0,1단계,1단계,t_q_tint1,,,APPLY직후 틴트·중복방지
 qs_i11_skill_t1,qc_i11,1,65,TRUE,CONTENT,skill,,center,0,정기 1,요령,t_q_skill_t1,,,
 qs_i11_invade1,qc_i11,1,70,TRUE,INVADE,,,center,4,벌레 1차,가장자리 벌레,t_q_invade,,,
 qs_i11_fork_hunt,qc_i11,2,80,TRUE,BRANCH,br_i21_path_hunt,,,0,갈림길 사냥,갈림길,,,,

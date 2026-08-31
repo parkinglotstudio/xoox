@@ -143,7 +143,10 @@ export const WIDGET_DEFS: WidgetDef[] = [
   { id: "header_gold", label: "보석", hint: "상단 재화 칩", selector: ".phone[data-scene='journey'] .shell-top-gold", tone: "#3d4a6a", compact: true },
   { id: "compass", label: "방위 띠", hint: "FPS/3인칭 나침반", selector: ".phone.view-3d .fps-compass", tone: "#2a5a6a" },
   { id: "party", label: "파티 정보", hint: "모험가 카드", selector: ".phone[data-scene='journey'] #partyHud", tone: "#1a4a44" },
+  { id: "actor_status", label: "상태", hint: "상태 · 탐색중 / 줍기 게이지", selector: ".phone[data-scene='journey'] #actorStatusHud", tone: "#2a3a48", compact: true },
   { id: "minimap", label: "미니맵", hint: "탑뷰 축소", selector: ".phone.view-3d .explore-layer.minimap", tone: "#1a3048", keep_square: true },
+  { id: "combat_dock", label: "전투 상태", hint: "시간·남은 얼룩/적 (정화 루프)", selector: ".phone .combat-purify-hud .cph-map-dock", tone: "#2a1a48" },
+  { id: "combat_cast", label: "정화 시도", hint: "가운데 캐스팅 게이지", selector: ".phone .combat-purify-hud .cph-cast-center", tone: "#1a3a28", compact: true },
   { id: "log", label: "구조 로그", hint: "오른쪽 필러", selector: ".phone[data-scene='journey'] #shellLog", tone: "#143038" },
   { id: "talk_them", label: "상대 대사", hint: "상단 연출 · 왼쪽 (올마스·파이퍼 등)", selector: ".phone.view-3d[data-scene='journey'] #stageFeedThem", tone: "#2a3a58" },
   { id: "talk_me", label: "방랑자 대사", hint: "상단 연출 · 오른쪽", selector: ".phone.view-3d[data-scene='journey'] #stageFeedMe", tone: "#3a2a48" },
@@ -191,8 +194,11 @@ export const HUD_LAYOUT_DEFAULTS: JourneyHudLayout = {
     { id: "p_hp", label: "HP 칸", visible: true, x_pct: 58, y_pct: 0.6, w_pct: 11, h_pct: 5.2, z: 8, flow: "fill" },
     { id: "p_gold", label: "보석 칸", visible: true, x_pct: 69.5, y_pct: 0.6, w_pct: 6.5, h_pct: 5.2, z: 8, flow: "fill" },
     { id: "p_party", label: "파티 칸", visible: true, x_pct: 0.8, y_pct: 6.4, w_pct: 16, h_pct: 18, z: 6, flow: "fill" },
+    { id: "p_actor_status", label: "상태 칸", visible: true, x_pct: 17.2, y_pct: 6.4, w_pct: 12, h_pct: 12, z: 7, flow: "fill" },
     { id: "p_compass", label: "방위 칸", visible: true, x_pct: 28, y_pct: 0.5, w_pct: 28, h_pct: 5, z: 9, flow: "fill" },
     { id: "p_minimap", label: "미니맵 칸", visible: true, x_pct: 84, y_pct: 1, w_pct: 15, h_pct: 18, z: 7, flow: "fill" },
+    { id: "p_combat_dock", label: "전투 상태 칸", visible: true, x_pct: 84, y_pct: 20, w_pct: 15, h_pct: 14, z: 12, flow: "fill" },
+    { id: "p_combat_cast", label: "정화 시도 칸", visible: true, x_pct: 32, y_pct: 42, w_pct: 36, h_pct: 10, z: 14, flow: "fill" },
     { id: "p_log", label: "로그 필러", visible: true, x_pct: 76.5, y_pct: 33, w_pct: 23.5, h_pct: 55, z: 5, flow: "fill" },
     { id: "p_talk_them", label: "상대 대사 칸", visible: false, x_pct: 1, y_pct: 18, w_pct: 22, h_pct: 16, z: 20, flow: "fill" },
     { id: "p_talk_me", label: "방랑자 대사 칸", visible: false, x_pct: 52, y_pct: 18, w_pct: 22, h_pct: 16, z: 20, flow: "fill" },
@@ -209,7 +215,10 @@ export const HUD_LAYOUT_DEFAULTS: JourneyHudLayout = {
     { id: "header_gold", pillar_id: "p_gold", visible: true, overlap: true, lock: false, z: 8, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
     { id: "compass", pillar_id: "p_compass", visible: true, overlap: true, lock: false, z: 9, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
     { id: "party", pillar_id: "p_party", visible: true, overlap: true, lock: false, z: 6, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
+    { id: "actor_status", pillar_id: "p_actor_status", visible: true, overlap: true, lock: false, z: 7, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
     { id: "minimap", pillar_id: "p_minimap", visible: true, overlap: true, lock: false, keep_square: true, z: 7, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
+    { id: "combat_dock", pillar_id: "p_combat_dock", visible: true, overlap: true, lock: false, z: 12, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
+    { id: "combat_cast", pillar_id: "p_combat_cast", visible: true, overlap: true, lock: false, z: 14, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
     { id: "log", pillar_id: "p_log", visible: true, overlap: true, lock: false, z: 5, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
     { id: "talk_them", pillar_id: "p_talk_them", visible: false, overlap: true, lock: false, z: 20, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
     { id: "talk_me", pillar_id: "p_talk_me", visible: false, overlap: true, lock: false, z: 20, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
@@ -237,16 +246,19 @@ export const HUD_LAYOUT_PORTRAIT_DEFAULTS: JourneyHudLayout = {
     { id: "p_hp", label: "HP 칸", visible: true, x_pct: 2, y_pct: 5.5, w_pct: 30, h_pct: 3.5, z: 8, flow: "fill" },
     { id: "p_brand", label: "무지개섬 칸", visible: false, x_pct: 2, y_pct: 20, w_pct: 28, h_pct: 3.5, z: 8, flow: "fill" },
     { id: "p_gold", label: "보석 칸", visible: false, x_pct: 32, y_pct: 5, w_pct: 18, h_pct: 3.5, z: 8, flow: "fill" },
-    { id: "p_party", label: "파티 칸", visible: true, x_pct: 1, y_pct: 5.5, w_pct: 38, h_pct: 15, z: 6, flow: "fill" },
-    { id: "p_minimap", label: "미니맵 칸", visible: true, x_pct: 89, y_pct: 5.5, w_pct: 9, h_pct: 5, z: 7, flow: "fill" },
-    { id: "p_toast", label: "활동 칸", visible: true, x_pct: 40, y_pct: 20.5, w_pct: 42, h_pct: 6, z: 10, flow: "fill" },
+    { id: "p_party", label: "파티 칸", visible: true, x_pct: 1, y_pct: 5.5, w_pct: 34, h_pct: 18, z: 6, flow: "fill" },
+    { id: "p_actor_status", label: "상태 칸", visible: true, x_pct: 1, y_pct: 24, w_pct: 28, h_pct: 9, z: 7, flow: "fill" },
+    { id: "p_minimap", label: "미니맵 칸", visible: true, x_pct: 81.5, y_pct: 5.5, w_pct: 16.5, h_pct: 8.5, z: 7, flow: "fill" },
+    { id: "p_combat_dock", label: "전투 상태 칸", visible: true, x_pct: 70, y_pct: 5.5, w_pct: 28, h_pct: 12, z: 12, flow: "fill" },
+    { id: "p_combat_cast", label: "정화 시도 칸", visible: true, x_pct: 18, y_pct: 40, w_pct: 64, h_pct: 8, z: 14, flow: "fill" },
+    { id: "p_toast", label: "활동 칸", visible: true, x_pct: 28, y_pct: 17.5, w_pct: 44, h_pct: 6.5, z: 10, flow: "fill" },
     { id: "p_prompt", label: "확인 프롬프트 칸", visible: true, x_pct: 18, y_pct: 54, w_pct: 64, h_pct: 4.5, z: 40, flow: "fill" },
-    { id: "p_log", label: "로그 필러", visible: true, x_pct: 0, y_pct: 60, w_pct: 100, h_pct: 28, z: 45, flow: "fill" },
+    { id: "p_log", label: "로그 필러", visible: true, x_pct: 0, y_pct: 51, w_pct: 100, h_pct: 40, z: 45, flow: "fill" },
     { id: "p_talk_them", label: "상대 대사 칸", visible: false, x_pct: 1, y_pct: 32, w_pct: 36, h_pct: 16, z: 20, flow: "fill" },
     { id: "p_talk_me", label: "방랑자 대사 칸", visible: false, x_pct: 63, y_pct: 32, w_pct: 36, h_pct: 16, z: 20, flow: "fill" },
-    { id: "p_jackpot", label: "대박 칸", visible: true, x_pct: 4, y_pct: 90, w_pct: 18, h_pct: 8, z: 11, flow: "fill" },
-    { id: "p_main", label: "메인 버튼 칸", visible: true, x_pct: 18, y_pct: 61.5, w_pct: 64, h_pct: 8.5, z: 42, flow: "fill" },
-    { id: "p_mid", label: "중박 칸", visible: true, x_pct: 78, y_pct: 90, w_pct: 18, h_pct: 8, z: 11, flow: "fill" },
+    { id: "p_jackpot", label: "대박 칸", visible: true, x_pct: 4, y_pct: 92.5, w_pct: 18, h_pct: 5.5, z: 11, flow: "fill" },
+    { id: "p_main", label: "메인 버튼 칸", visible: true, x_pct: 21, y_pct: 92.5, w_pct: 57, h_pct: 5.5, z: 42, flow: "fill" },
+    { id: "p_mid", label: "중박 칸", visible: true, x_pct: 78, y_pct: 92.5, w_pct: 18, h_pct: 5.5, z: 11, flow: "fill" },
   ],
   widgets: [
     { id: "header_brand", pillar_id: "p_brand", visible: true, overlap: true, lock: false, z: 8, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
@@ -255,7 +267,10 @@ export const HUD_LAYOUT_PORTRAIT_DEFAULTS: JourneyHudLayout = {
     { id: "header_gold", pillar_id: "p_gold", visible: true, overlap: true, lock: false, z: 8, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
     { id: "compass", pillar_id: "p_compass", visible: true, overlap: true, lock: false, z: 9, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
     { id: "party", pillar_id: "p_party", visible: true, overlap: true, lock: false, z: 6, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
+    { id: "actor_status", pillar_id: "p_actor_status", visible: true, overlap: true, lock: false, z: 7, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
     { id: "minimap", pillar_id: "p_minimap", visible: true, overlap: true, lock: false, keep_square: true, z: 7, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
+    { id: "combat_dock", pillar_id: "p_combat_dock", visible: true, overlap: true, lock: false, z: 12, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
+    { id: "combat_cast", pillar_id: "p_combat_cast", visible: true, overlap: true, lock: false, z: 14, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
     { id: "log", pillar_id: "p_log", visible: true, overlap: true, lock: false, z: 45, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
     { id: "talk_them", pillar_id: "p_talk_them", visible: false, overlap: true, lock: false, z: 20, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
     { id: "talk_me", pillar_id: "p_talk_me", visible: false, overlap: true, lock: false, z: 20, x_pct: 0, y_pct: 0, w_pct: 100, h_pct: 100 },
@@ -687,6 +702,29 @@ export function applyJourneyHudLayout(layout: JourneyHudLayout, phone: HTMLEleme
           `white-space:nowrap;display:none}` +
           `${def.selector}.on{display:flex!important;align-items:center;justify-content:center}` +
           `${def.selector}.hud-layout-hidden{display:none!important}`,
+      );
+    } else if (def.id === "actor_status" && r.visible) {
+      parts.push(cssBoxCq(def.selector, r));
+      parts.push(
+        `${def.selector}{display:flex!important;flex-direction:column;align-items:flex-start;` +
+          `justify-content:flex-start;gap:4px;overflow:visible;pointer-events:none;` +
+          `box-sizing:border-box;padding:2px 0}` +
+          `${def.selector}.mash{pointer-events:auto}` +
+          `${def.selector}.hud-layout-hidden{display:none!important}`,
+      );
+    } else if (def.id === "combat_dock" && r.visible) {
+      parts.push(cssBoxCq(def.selector, r));
+      parts.push(
+        `${def.selector}{box-sizing:border-box!important;width:${r.w.toFixed(1)}cqw!important;` +
+          `min-width:0!important;padding:6px 8px!important}` +
+          `.phone.hud-laid-out .combat-purify-hud.live ${def.selector}.on{display:grid!important}`,
+      );
+    } else if (def.id === "combat_cast" && r.visible) {
+      parts.push(cssBoxCq(def.selector, r));
+      parts.push(
+        `${def.selector}{box-sizing:border-box!important;transform:none!important;` +
+          `left:${r.x.toFixed(1)}cqw!important;top:${r.y.toFixed(1)}cqh!important}` +
+          `.phone.hud-laid-out .combat-purify-hud.live ${def.selector}.on{display:grid!important}`,
       );
     } else if (def.id === "talk_me" || def.id === "talk_them") {
       parts.push(`${def.selector}{display:none!important}`);

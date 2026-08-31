@@ -80,22 +80,25 @@ export function grantThrowMag(state: PlayerState, kind: ThrowMagKind, amount: nu
 }
 
 export function spendThrowMag(state: PlayerState, kind: ThrowMagKind, saveChance = 0): boolean {
+  const have =
+    kind === "THROW_ADSORB"
+      ? (state.throwAdsorb ?? 0)
+      : kind === "THROW_CULPRIT"
+        ? (state.throwCulprit ?? 0)
+        : (state.throwInhibit ?? 0);
+  if (have <= 0) return false;
+  // 탄이 있을 때만 절약 판정 (빈 탄창으로 발사 금지)
   if (saveChance > 0 && Math.random() < saveChance) return true;
   if (kind === "THROW_ADSORB") {
-    if ((state.throwAdsorb ?? 0) <= 0) return false;
     state.throwAdsorb -= 1;
     return true;
   }
   if (kind === "THROW_CULPRIT") {
-    if ((state.throwCulprit ?? 0) <= 0) return false;
     state.throwCulprit -= 1;
     return true;
   }
-  if ((state.throwInhibit ?? 0) > 0) {
-    state.throwInhibit -= 1;
-    return true;
-  }
-  return false;
+  state.throwInhibit -= 1;
+  return true;
 }
 
 export function refillThrowMags(state: PlayerState, frac = 0.25): void {

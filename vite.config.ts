@@ -19,6 +19,7 @@ export default defineConfig({
         fpvTool: resolve(__dirname, "fpv-tool.html"),
         wandererAnim: resolve(__dirname, "wanderer-anim.html"),
         purifyRaidTool: resolve(__dirname, "purify-raid-tool.html"),
+        purifySkillProto: resolve(__dirname, "purify-skill-proto-tool.html"),
         culpritCloudTool: resolve(__dirname, "culprit-cloud-tool.html"),
         playLogTool: resolve(__dirname, "play-log-tool.html"),
         mapProto: resolve(__dirname, "map-proto.html"),

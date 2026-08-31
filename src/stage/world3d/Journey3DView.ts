@@ -137,21 +137,33 @@ export class Journey3DView {
     this.needEl.setAttribute("aria-hidden", "true");
     this.lootEl = document.createElement("div");
     this.lootEl.className = "loot-paper";
+    // 폰 HUD(#actorStatusHud)에 상태 칩을 붙인다 — HUD 툴로 위치 조절
+    const statusHud = document.getElementById("actorStatusHud");
     this.headOverlay = document.createElement("div");
-    this.headOverlay.className = "melt-overlay pick-overlay pick-head actor-head-status";
-    this.headOverlay.innerHTML = `
-      <div class="pick-head-box">
+    this.headOverlay.className = "melt-overlay pick-overlay pick-head actor-head-status mash-catcher";
+    this.headOverlay.setAttribute("aria-hidden", "true");
+    if (statusHud) {
+      this.headBox = statusHud;
+      this.headNeed = statusHud.querySelector(".pick-need") as HTMLElement;
+      this.headLabelEl = statusHud.querySelector(".melt-label") as HTMLElement;
+      this.headFill = statusHud.querySelector("i") as HTMLElement;
+      this.headPctEl = statusHud.querySelector(".melt-pct") as HTMLElement;
+      this.headBox.classList.add("actor-status-hud", "pick-head-box");
+    } else {
+      this.headOverlay.innerHTML = `
+      <div class="pick-head-box" id="actorStatusHudFallback">
         <div class="pick-need">상태</div>
         <div class="melt-label">탐색중</div>
         <div class="melt-meter pick-meter" title="상태"><i></i></div>
         <div class="melt-pct">0%</div>
       </div>
     `;
-    this.headBox = this.headOverlay.querySelector(".pick-head-box") as HTMLElement;
-    this.headNeed = this.headOverlay.querySelector(".pick-need") as HTMLElement;
-    this.headLabelEl = this.headOverlay.querySelector(".melt-label") as HTMLElement;
-    this.headFill = this.headOverlay.querySelector("i") as HTMLElement;
-    this.headPctEl = this.headOverlay.querySelector(".melt-pct") as HTMLElement;
+      this.headBox = this.headOverlay.querySelector(".pick-head-box") as HTMLElement;
+      this.headNeed = this.headOverlay.querySelector(".pick-need") as HTMLElement;
+      this.headLabelEl = this.headOverlay.querySelector(".melt-label") as HTMLElement;
+      this.headFill = this.headOverlay.querySelector("i") as HTMLElement;
+      this.headPctEl = this.headOverlay.querySelector(".melt-pct") as HTMLElement;
+    }
     this.layer.append(this.canvas, this.prompt, this.needEl, this.lootEl, this.headOverlay);
     this.compass = new CompassHud(this.layer);
     /* 아치를 레이어로 옮겨 캔버스 위·확인버튼 아래 스택에 넣는다 */
@@ -236,6 +248,7 @@ export class Journey3DView {
     this.stage.setInputEnabled(true);
     this.fit();
     this.setHeadStatus("상태", "탐색중");
+    if (this.headBox.id === "actorStatusHud") this.headBox.classList.remove("hud-layout-hidden");
     this.kickHeadLoop();
   }
 
@@ -246,10 +259,21 @@ export class Journey3DView {
     this.hidePrompt();
     this.setNeedAnim(null);
     this.headOverlay.style.display = "none";
+    this.headMash = false;
+    this.headBox.classList.remove("mash", "mash-hint");
   }
 
   isOn() {
     return this.on;
+  }
+
+  /** 필드 연출용 오버레이 (펫 파편 등) */
+  addOverlay(obj: import("three").Object3D): void {
+    this.stage.addOverlay(obj);
+  }
+
+  removeOverlay(obj: import("three").Object3D): void {
+    this.stage.removeOverlay(obj);
   }
 
   /** 원 루프·노드 실행·자동 걷기 중 — 하단 「정화 지역 찾기」를 다시 누르면 안 된다 */
@@ -384,7 +408,13 @@ export class Journey3DView {
    * 첫 외출 입장 — 맵이름은 활동칸이 띄운다.
    */
   async playEnterReveal(_opts?: { title?: string; host?: HTMLElement }): Promise<void> {
-    this.stage.syncSkyFromFoci(true);
+    // 타임어택 루프 전 입장은 오염 하늘 유지 (이전 정화량/sync로 풀개방되지 않게)
+    if ((this.hooks.getPurifyFoci?.() ?? []).length === 0) {
+      this.stage.setPurifyColorAmt(0);
+      this.stage.setSkyPurifyAmount(0);
+    } else {
+      this.stage.syncSkyFromFoci(true);
+    }
     this.stage.setFrozen(false);
     this.stage.setInputEnabled(true);
   }
@@ -394,12 +424,20 @@ export class Journey3DView {
    */
   private async loadFloor(area: AreaDef) {
     const id = area.area_id;
+    const foci = this.fociToWorld();
     try {
-      await this.stage.setIslandFloor(id, { polluted: true, foci: this.fociToWorld() });
+      await this.stage.setIslandFloor(id, { polluted: true, foci });
     } catch (err) {
       console.warn("[3d] 섬 바닥 로드 실패", id, err);
     }
-    this.stage.syncSkyFromFoci(true);
+    // 입장 기본은 오염 하늘. 이미 클리어된 cozy 원만 정화량 반영.
+    if (foci.length > 0) {
+      this.stage.setPurifyColorAmt(1);
+      this.stage.syncSkyFromFoci(true);
+    } else {
+      this.stage.setPurifyColorAmt(0);
+      this.stage.setSkyPurifyAmount(0);
+    }
   }
 
   private fociToWorld(): PurifyFocusWorld[] {
@@ -544,6 +582,10 @@ export class Journey3DView {
 
   getPlayer() {
     return this.stage.getPlayer();
+  }
+
+  getPlayerWorld(): { x: number; z: number } {
+    return this.stage.getPlayerWorld();
   }
 
   /** 드러난 노드 + 이벤트 정화제를 방위 띠 위에 올린다 */
@@ -906,6 +948,7 @@ export class Journey3DView {
           else if (beat === "done") this.setHeadStatus("상태", "완료");
           opts.onBeat?.(beat);
         },
+        combatHudHost: document.getElementById("combatPurifyHudHost") ?? this.layer,
       },
       this.currentAreaId,
     );
@@ -1024,18 +1067,56 @@ export class Journey3DView {
     this.headRaf = requestAnimationFrame(step);
   }
 
+  private isHudLaidOut(): boolean {
+    return !!document.getElementById("phoneRoot")?.classList.contains("hud-laid-out");
+  }
+
+  /** 파티 카드 바로 오른쪽 — 레이아웃 없을 때 폴백 */
+  private partyStatusAnchor(): { x: number; y: number } | null {
+    const party = document.getElementById("partyHud");
+    if (!party) return null;
+    const layerRect = this.layer.getBoundingClientRect();
+    const pr = party.getBoundingClientRect();
+    if (pr.width < 2 || pr.height < 2) return null;
+    return {
+      x: pr.right - layerRect.left + 10,
+      y: pr.top - layerRect.top + Math.min(12, pr.height * 0.15),
+    };
+  }
+
   private syncHeadBox(): void {
     if (!this.on) return;
-    this.headOverlay.style.display = "";
+    this.headOverlay.style.display = this.headMash ? "" : "none";
     if (!this.headMash) this.paintHead();
+    this.headBox.classList.toggle("mash", !!this.headMash);
+    this.headOverlay.classList.toggle("mash", !!this.headMash);
+    this.headBox.style.opacity = "1";
+    // HUD 툴 레이아웃이 있으면 left/top 은 CSS가 맡김
+    if (this.isHudLaidOut() && this.headBox.id === "actorStatusHud") {
+      this.headBox.style.left = "";
+      this.headBox.style.top = "";
+      this.headBox.style.transform = "";
+      return;
+    }
+    const dock = this.partyStatusAnchor();
+    if (dock) {
+      // 폴백: 레이어 기준 좌표 (박스만 레이어 안일 때)
+      if (this.headBox.parentElement === this.headOverlay) {
+        this.headBox.style.left = `${dock.x}px`;
+        this.headBox.style.top = `${dock.y}px`;
+        this.headBox.style.transform = "none";
+      }
+      return;
+    }
     const p = this.stage.playerHeadScreen();
     if (!p) {
       this.headBox.style.opacity = "0";
       return;
     }
-    this.headBox.style.opacity = "1";
-    this.headBox.style.left = `${p.x}px`;
-    this.headBox.style.top = `${p.y}px`;
+    if (this.headBox.parentElement === this.headOverlay) {
+      this.headBox.style.left = `${p.x}px`;
+      this.headBox.style.top = `${p.y}px`;
+    }
   }
 
   private applyHudLabel(raw: string): void {
@@ -1054,6 +1135,8 @@ export class Journey3DView {
     lookXPct: number;
     lookYPct: number;
     seconds?: number;
+    /** 연타/버튼마다 */
+    onHit?: () => void;
   }): Promise<MashCollectResult> {
     this.hidePrompt();
     await this.walkToFillFront(opts.lookXPct, opts.lookYPct);
@@ -1066,8 +1149,19 @@ export class Journey3DView {
         host: this.layer,
         label: opts.label,
         seconds: opts.seconds ?? 6.2,
-        anchor: () => this.stage.playerHeadScreen(),
-        onBindHit: (hit) => this.hooks.onArenaMash?.(hit, opts.label),
+        anchor: this.isHudLaidOut() && this.headBox.id === "actorStatusHud"
+          ? undefined
+          : () => this.partyStatusAnchor() ?? this.stage.playerHeadScreen(),
+        onBindHit: (hit) => {
+          if (!hit) {
+            this.hooks.onArenaMash?.(null);
+            return;
+          }
+          this.hooks.onArenaMash?.(() => {
+            hit();
+          }, opts.label);
+        },
+        onPress: () => opts.onHit?.(),
         reuse: {
           overlay: this.headOverlay,
           box: this.headBox,
@@ -1127,6 +1221,14 @@ export class Journey3DView {
 
   boostMoveSpeed(mul: number): void {
     this.stage.setMoveSpeed(4.6 * Math.max(0.5, mul));
+  }
+
+  setTimeScale(mul: number): void {
+    this.stage.setTimeScale(mul);
+  }
+
+  getTimeScale(): number {
+    return this.stage.getTimeScale();
   }
 
   dispose() {

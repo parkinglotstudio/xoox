@@ -103,6 +103,8 @@ export async function playPickupGauge(opts: {
     labelEl: HTMLElement;
   };
   onPct?: (amt: number) => void;
+  /** 연타 성공마다 (쿨다운 통과 후) */
+  onPress?: () => void;
 }): Promise<MashCollectResult> {
   const idleCap = Math.max(1.6, opts.seconds ?? 6.2);
   const reused = opts.reuse;
@@ -153,6 +155,7 @@ export async function playPickupGauge(opts: {
     lastHit = now;
     hits += 1;
     amt = Math.min(1, amt + MASH_HIT);
+    opts.onPress?.();
   };
 
   opts.onBindHit?.(bump);

@@ -188,6 +188,8 @@ export class ExploreView {
   private busyGuard: number | null = null;
   /** 3D 뷰가 주연이면 탑뷰는 미니맵으로 내려간다 — 조작을 받지 않고 섹터 전체를 보여준다 */
   private minimapMode = false;
+  /** 3D→미니맵 첫 동기화 — 큰 점프를 transition 없이 스냅 */
+  private minimapSyncedOnce = false;
   /** 자동이동 피크 전에 탭으로 접혀 있었는지 */
   private minimapTravelFromDock = false;
   /** 콘텐츠 피크 — 새 발동이 오면 타이머를 연장한다 */
@@ -558,6 +560,7 @@ export class ExploreView {
       return;
     }
     this.currentAreaId = areaId;
+    this.minimapSyncedOnce = false;
     this.worldHPct = area.world_h_pct;
     this.artMode = !!area.background_asset;
 
@@ -1295,6 +1298,19 @@ export class ExploreView {
     const oy = this.yPct;
     const moved = Math.abs(nx - ox) >= 0.05 || Math.abs(ny - oy) >= 0.05;
     this.yawDeg = ((yawDeg % 360) + 360) % 360;
+
+    // 첫 동기화 또는 큰 점프: 걷기 transition 끄고 즉시 스냅 (미니맵 튐 방지)
+    const jump = !this.minimapSyncedOnce || Math.hypot(nx - ox, ny - oy) >= 4;
+    if (jump) {
+      this.minimapSyncedOnce = true;
+      this.actor.classList.remove("walking");
+      this.xPct = nx;
+      this.yPct = ny;
+      this.applyActor(false);
+      if (!this.minimapMode) this.applyCamera(false);
+      this.refreshFog();
+      return;
+    }
 
     if (moved) {
       if (this.artMode && this.currentAreaId) {

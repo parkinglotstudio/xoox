@@ -30,18 +30,29 @@ dlg_purify_full,PURIFY_PCT,100,2,방랑자,🐾,ME,여기 살던 것들이 돌�
 dlg_boat,VOYAGE_END,,1,,,MONO,배가 오는 소리가 들린다.
 dlg_boat,VOYAGE_END,,2,방랑자,🐾,ME,데리고 온 것들을 세어본다.
 dlg_i21_arrive,LOOP,i21_arrive,1,Olmas,🦉,BUBBLE,"저 웅덩이가 원인이다. 들판이 탁해진 목이야."
-dlg_i21_arrive,LOOP,i21_arrive,2,방랑자,🐾,ME,"원인을 봤어. 해결책부터 찾자."
+dlg_i21_arrive,LOOP,i21_arrive,2,방랑자,🐾,ME,"원인을 봤어. 발사체부터 찾아보자."
+dlg_i21_ammo_need,LOOP,i21_ammo_need,1,Olmas,🦉,BUBBLE,"맨손으로는 안 돼. 청록 구슬이 발사체다. 돌아다니며 모아."
+dlg_i21_ammo_need,LOOP,i21_ammo_need,2,방랑자,🐾,ME,"보여. 줍고 정화 지점으로 간다."
+dlg_i21_ammo_got,LOOP,i21_ammo_got,1,Piper,🐕‍🦺,BUBBLE,"손에 들었어. 가까이 가면 알아서 쏘아. 배운 정기는 그대로 붙는다. 모자라면 또 주워."
+dlg_i21_ammo_got,LOOP,i21_ammo_got,2,방랑자,🐾,ME,"알겠어. 모아 둔 걸로 싸운다."
+dlg_i21_ammo_low_rush,LOOP,i21_ammo_low_rush,1,Olmas,🦉,BUBBLE,"탄이 얇다. 지금 다음 정화를 켜면 벌레 앞에서 빌릴 거야."
+dlg_i21_ammo_low_rush,LOOP,i21_ammo_low_rush,2,방랑자,🐾,ME,"알아. 그래도 가볼게."
+dlg_i21_cast1,LOOP,i21_cast1,1,Piper,🐕‍🦺,BUBBLE,"여기다. 서서 정화를 시도해. 끝나기 전에 움직이지 마."
+dlg_i21_cast1,LOOP,i21_cast1,2,방랑자,🐾,ME,"정화를 시도한다."
 dlg_i21_adsorb_need,LOOP,i21_adsorb_need,1,Olmas,🦉,BUBBLE,"얼룩은 맨손으로는 안 걷혀. 저기 시안 방울이 흡착 정화제다. 가서 줍자."
 dlg_i21_adsorb_need,LOOP,i21_adsorb_need,2,방랑자,🐾,ME,"보여. 저기로 간다."
 dlg_i21_adsorb_use,LOOP,i21_adsorb_use,1,Piper,🐕‍🦺,BUBBLE,"손에 들었어. 얼룩을 향해 던지면 그 자리만 맑아져. 이제 걸어가서 쓴다."
 dlg_i21_adsorb_use,LOOP,i21_adsorb_use,2,방랑자,🐾,ME,"알겠어. 찾은 걸로 해결한다."
 dlg_i21_mission,LOOP,i21_mission,1,Piper,🐕‍🦺,BUBBLE,"손에 들었어. 얼룩을 향해 던지면 그 자리만 맑아져."
-dlg_i21_tint1,LOOP,i21_tint1,1,Olmas,🦉,BUBBLE,"1단계다. 얼룩은 걷혔다. 땅만 숨 쉰다. 원흉은 아직 가운데에 있다."
-dlg_i21_tint1,LOOP,i21_tint1,2,방랑자,🐾,ME,"하늘은 그대로네. 해결책을 더 모으자."
+dlg_i21_tint1,LOOP,i21_tint1,1,Olmas,🦉,BUBBLE,"1차 정화다. 보라 띠가 원을 그었다. 그런데 오염이 다시 먹어 들어온다."
+dlg_i21_tint1,LOOP,i21_tint1,2,방랑자,🐾,ME,"동쪽을 멈춰야 해. 시간이 없다."
+dlg_i21_band_warn,LOOP,i21_band_warn,1,Piper,🐕‍🦺,BUBBLE,"띠가 줄어든다. 표시된 쪽 게이지를 깨서 원을 세워. 늦으면 처음부터다."
+dlg_i21_band_stop,LOOP,i21_band_stop,1,Olmas,🦉,BUBBLE,"원이 멈췄다. 숨어 있던 벌레가 드러난다."
+dlg_i21_band_stop,LOOP,i21_band_stop,2,방랑자,🐾,ME,"이제 보이는 것만 친다."
 dlg_i21_inhibit,LOOP,i21_inhibit,1,Olmas,🦉,BUBBLE,"벌레가 다시 오면 흡착만으로는 부족해. 저기 분홍 점이 억제 미립이다. 가서 줍자."
 dlg_i21_inhibit_use,LOOP,i21_inhibit_use,1,Piper,🐕‍🦺,BUBBLE,"억제는 벌레 쪽에 던진다. 원 가운데를 먹으면 또 흐려지니 그걸 막아."
 dlg_i21_inhibit_use,LOOP,i21_inhibit_use,2,방랑자,🐾,ME,"이제 찾은 걸로 막는다."
-dlg_i21_stain_1,LOOP,i21_stain,1,Olmas,🦉,BUBBLE,그 자리 침출이 걷혔다. 흙이 숨을 쉬네.
+dlg_i21_stain_1,LOOP,i21_stain,1,Olmas,🦉,BUBBLE,그 자리 얼룩이 걷혔다. 흙이 숨을 쉬네.
 dlg_i21_stain_2,LOOP,i21_stain,1,Piper,🐕‍🦺,BUBBLE,흡착 잘 붙었어. 다음 얼룩.
 dlg_i21_stain_3,LOOP,i21_stain,1,Nashui,🐈,BUBBLE,거기가 맑아졌어요. 발밑만 보면 돼요.
 dlg_i21_stain_4,LOOP,i21_stain,1,Olmas,🦉,BUBBLE,한 줌으로 충분해. 원을 넓히지 마.
@@ -49,14 +60,28 @@ dlg_i21_stain_5,LOOP,i21_stain,1,Piper,🐕‍🦺,BUBBLE,냄새가 옅어진다
 dlg_i21_stain_6,LOOP,i21_stain,1,방랑자,🐾,ME,이 자리부터 살아나네.
 dlg_i21_stain_7,LOOP,i21_stain,1,Olmas,🦉,BUBBLE,1단계의 손맛이다. 서두르지 마.
 dlg_i21_stain_8,LOOP,i21_stain,1,Nashui,🐈,BUBBLE,탁한 띠가 끊어졌어요. 다음요.
-dlg_i21_invade,LOOP,i21_invade,1,Piper,🐕‍🦺,BUBBLE,가장자리에서 다시 기어온다. 억제로 원 가운데를 지켜.
-dlg_i21_tint2,LOOP,i21_tint2,1,Piper,🐕‍🦺,BUBBLE,"2단계다. 단서와 정기를 모았다. 이제 원흉에게 간다."
-dlg_i21_tint2,LOOP,i21_tint2,2,방랑자,🐾,ME,준비됐어.
-dlg_i21_king,LOOP,i21_king,1,Piper,🐕‍🦺,BUBBLE,"저게 이 원의 원흉이다. 저걸 정화하면 이 칸은 끝난다."
-dlg_i21_king,LOOP,i21_king,2,방랑자,🐾,ME,간다.
-dlg_i21_done,LOOP,i21_done,1,Olmas,🦉,BUBBLE,"3단계다. 원흉을 정화했다. 들판이 열렸다. 이게 보상이다."
+dlg_i21_invade,LOOP,i21_invade,1,Piper,🐕‍🦺,BUBBLE,"모래알 벌레다. 가까이 가면 자동으로 푼다. 배운 정기가 있으면 더 세게 붙는다."
+dlg_i21_bugs_clear,LOOP,i21_bugs_clear,1,Olmas,🦉,BUBBLE,"벌레가 풀렸다. 땅에서 청록이 퍼진다. 끝이 아니다."
+dlg_i21_bugs_clear,LOOP,i21_bugs_clear,2,방랑자,🐾,ME,"탄을 더 찾아서 다음 정화로."
+dlg_i21_gather_again,LOOP,i21_gather_again,1,Piper,🐕‍🦺,BUBBLE,"서두르면 다음에서 빈손이야. 구슬 몇 개만 더."
+dlg_i21_cast2,LOOP,i21_cast2,1,Olmas,🦉,BUBBLE,"2차 지점이다. 파란 띠를 열 거면 탄을 세어 보고 켜."
+dlg_i21_cast2,LOOP,i21_cast2,2,방랑자,🐾,ME,"정화를 시도한다."
+dlg_i21_tint2,LOOP,i21_tint2,1,Piper,🐕‍🦺,BUBBLE,"2차 정화. 파란 띠. 또 오염이 밀려온다. 서쪽을 멈춰."
+dlg_i21_tint2,LOOP,i21_tint2,2,방랑자,🐾,ME,"멈추고 벌레를 푼다."
+dlg_i21_cast3,LOOP,i21_cast3,1,Olmas,🦉,BUBBLE,"3차. 초록 띠. 그 뒤엔 가운데 원흉이 모습을 드러낸다."
+dlg_i21_cast3,LOOP,i21_cast3,2,방랑자,🐾,ME,"준비됐어."
+dlg_i21_tint3,LOOP,i21_tint3,1,Nashui,🐈,BUBBLE,"3차 정화예요. 초록 띠… 공기가 달라요."
+dlg_i21_tint3,LOOP,i21_tint3,2,방랑자,🐾,ME,"남쪽을 세우고 마지막 벌레를 푼다."
+dlg_i21_king,LOOP,i21_king,1,Piper,🐕‍🦺,BUBBLE,"저게 이 원의 원흉이다. 구름 아래 밝은 핵. 저걸 풀면… 아직 끝이 아니야."
+dlg_i21_king,LOOP,i21_king,2,Olmas,🦉,BUBBLE,"쓰러뜨려도 정화는 캐스팅으로 닫는다. 잊지 마."
+dlg_i21_king,LOOP,i21_king,3,방랑자,🐾,ME,간다.
+dlg_i21_culprit_down,LOOP,i21_culprit_down,1,Piper,🐕‍🦺,BUBBLE,"핵이 풀렸다. 안개가 퍼진다. 그런데 땅은 아직 숨을 다 못 쉬어."
+dlg_i21_need_final,LOOP,i21_need_final,1,Olmas,🦉,BUBBLE,"마지막 정화 지점으로. 캐스팅해야만 이 칸이 끝난다."
+dlg_i21_need_final,LOOP,i21_need_final,2,방랑자,🐾,ME,"정화를 시도한다."
+dlg_i21_fail_pollute,LOOP,i21_fail_pollute,1,Piper,🐕‍🦺,BUBBLE,"원이 다 먹혔다. 1차 정화부터 다시. 탄은 손에 남은 만큼만."
+dlg_i21_done,LOOP,i21_done,1,Olmas,🦉,BUBBLE,"최종 정화다. 원흉을 보냈고 들판이 열렸다. 이게 보상이다."
 dlg_i21_done,LOOP,i21_done,2,방랑자,🐾,ME,응. 여기 먼저 지키자.
-dlg_i21_skill_use,LOOP,i21_skill_use,1,Olmas,🦉,BUBBLE,"방금 익힌 정기는 이 원에서 쓴다. 숨·흡착·억제가 쌓인다. 원흉은 아직이다."
+dlg_i21_skill_use,LOOP,i21_skill_use,1,Olmas,🦉,BUBBLE,"방금 익힌 정기는 이 원에서 쓴다. 탄이 곧 숨이다다. 원흉은 마지막에."
 dlg_i21_skill_use,LOOP,i21_skill_use,2,방랑자,🐾,ME,알겠어. 단서를 더 모은다.
 dlg_i21_npc,LOOP,i21_npc,1,Olmas,🦉,BUBBLE,이 원 안에 남은 이야기까지 다 주웠다.
 dlg_i21_npc,LOOP,i21_npc,2,방랑자,🐾,ME,응. 하나씩.

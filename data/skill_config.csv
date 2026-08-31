@@ -48,3 +48,4 @@ sk_cat_range,투척 거리,일반,FALSE,,🎯,정화제가 조금 더 멀리 닿
 sk_cat_spread,확산,일반,FALSE,,💧,착탄이 조금 더 넓게 번진다,CATALYST,LOOP,얼룩을 한 번에 더 덮는다
 sk_cat_save,잔량 절약,일반,FALSE,,🧪,가끔 잔량이 안 줄어든다,CATALYST,LOOP,한 줌을 아껴 쓴다
 sk_cat_refill,재보충,일반,FALSE,,🧴,들고 있는 정화제가 조금 찬다,CATALYST,LOOP,통에 한 줌 더 따른다
+sk_cat_speed,발사체 속도,일반,FALSE,,🚀,정화제·퇴치제가 더 빨리 날아간다,CATALYST,LOOP,던진 순간 더 일찍 닿는다
