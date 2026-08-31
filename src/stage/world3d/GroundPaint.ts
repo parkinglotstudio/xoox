@@ -69,7 +69,8 @@ export class GroundPaint {
   stamp(x: number, z: number, kind: PaintKind, overwrite = 1, scaleMul = 1): void {
     const half = this.stage.getWorldScale() / 2;
     if (Math.abs(x) > half - 0.4 || Math.abs(z) > half - 0.4) return;
-    this.paintCells(x, z, kind, overwrite);
+    const mul = Math.max(0.2, scaleMul);
+    this.paintCells(x, z, kind, overwrite, this.radiusM * mul);
     this.placeStamp(x, z, kind, scaleMul);
   }
 
@@ -162,10 +163,10 @@ export class GroundPaint {
     }
   }
 
-  private paintCells(x: number, z: number, kind: PaintKind, overwrite: number): void {
+  private paintCells(x: number, z: number, kind: PaintKind, overwrite: number, radiusM = this.radiusM): void {
     const world = this.stage.getWorldScale();
     const cell = world / GRID;
-    const r = this.radiusM;
+    const r = radiusM;
     const code = kind === "teal" ? 1 : 2;
     const minX = Math.max(0, Math.floor((x - r) / world * GRID + GRID / 2));
     const maxX = Math.min(GRID - 1, Math.floor((x + r) / world * GRID + GRID / 2));

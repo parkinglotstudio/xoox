@@ -1543,6 +1543,24 @@ export class CulpritCloud {
     this.spreadDelay = 0;
   }
 
+  /** 모으기 애니가 거의 끝날 때까지 대기 (tick 필요) */
+  waitGatherDone(timeoutMs = 1500): Promise<void> {
+    const t0 = performance.now();
+    return new Promise((resolve) => {
+      const tick = () => {
+        const done =
+          this.gather >= 0.96 ||
+          (this.gatherTo >= 0.95 && Math.abs(this.gather - this.gatherTo) < 0.025);
+        if (done || performance.now() - t0 > timeoutMs) {
+          resolve();
+          return;
+        }
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+
   /** 2. 정화전 — 도형이 오염색으로 붙어 있음 */
   playBeforePurify(): void {
     this.gatherTo = 1;

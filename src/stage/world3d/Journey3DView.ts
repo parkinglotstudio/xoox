@@ -530,10 +530,20 @@ export class Journey3DView {
   }
 
   /** 정화 파도: 플레이어 주변 50m — 바닥 컬러 + 배경 기립 (잔여 타깃 제외) */
-  async playPurifyRevealWave(opts?: { xPct?: number; yPct?: number }): Promise<void> {
+  async playPurifyRevealWave(opts?: {
+    xPct?: number;
+    yPct?: number;
+    /** 들판 루프 3차 직후 — 이미 정화된 상태를 되돌리지 않고 디스크만 찍음 */
+    preservePurify?: boolean;
+  }): Promise<void> {
     const me = this.stage.getPlayer();
     const xPct = opts?.xPct ?? me.xPct;
     const yPct = opts?.yPct ?? me.yPct;
+    if (opts?.preservePurify) {
+      this.stage.stampPurifyDiskPct(xPct, yPct);
+      await this.refreshFloor();
+      return;
+    }
     this.stage.stampPurifyDiskPct(xPct, yPct);
     const at = this.stage.pctToWorld(xPct, yPct);
     const foci = this.fociToWorld();
@@ -544,13 +554,16 @@ export class Journey3DView {
     }, null);
     const radiusM = Math.max(8, hit?.r ?? this.cfg.world_m * 0.28);
     await this.stage.setIslandFloor(this.currentAreaId, { polluted: true, foci });
-    this.stage.setSkyPurified(false);
+    this.stage.setPurifyFoci([]);
     await this.stage.playPurifyStandWave({
       xPct,
       yPct,
       radiusM,
       durationMs: 2600,
       skyWave: true,
+      skyAmountFrom: 0,
+      skyAmountTo: 1,
+      fociWave: { x: at.x, z: at.z, maxR: radiusM },
       holdWave: true,
     });
     await this.refreshFloor();

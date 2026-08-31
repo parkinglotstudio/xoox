@@ -3,9 +3,11 @@ backups
 home
 plan_old
 docs
+docs.zip
 scripts/sprite_tool
 scripts/*.py
 scripts/*.ps1
+scripts/__pycache__
 .claude
 .git
 dist
@@ -14,3 +16,10 @@ tsconfig.tsbuildinfo
 HANDOFF.md
 NEXT_AI_PROMPT.md
 STRUCTURE_COMPARE.md
+_tmp_*.py
+**/__pycache__
+**/_bak_*/
+**/*.bak*
+**/*.tmp.png
+data/map_mask_tool/exports
+src/_bak_pre_portrait_v1

@@ -540,14 +540,18 @@ export class SectorPurifyLoop {
       this.stage.lookAtWorld(w.x, w.z);
       this.hooks.onHud?.(kind === "catalyst" ? "정화제 발견" : "퇴치제 발견");
       await sleep(220);
+      // 1) 물방울 모으기 → 2) 터짐 → 3) 보상 → 4) 퍼지기(clearPickup)
       this.pickupCloud?.playGather();
+      await (this.pickupCloud?.waitGatherDone() ?? sleep(650));
+      this.pickupCloud?.pulseHit();
+      this.stage.playPickupBurst(w.x, w.z);
+      await sleep(420);
       const granted = await this.hooks.onContent(kind, drop);
       const n = typeof granted === "number" ? granted : 0;
       if (n > 0) {
-        this.pickupCloud?.pulseHit();
         await this.flashPickupAmount(n, drop);
       } else {
-        await sleep(400);
+        await sleep(320);
       }
     } finally {
       this.pauseHunt = false;
@@ -873,17 +877,18 @@ export class SectorPurifyLoop {
     }
 
     this.stage.setPurifyColorAmt(amt);
-    // 초점을 파도 전에 먼저 열어 바닥이 반응. 하늘은 파도 동안 천천히 따라감(즉시 풀개방 금지)
-    this.stage.setPurifyFoci([{ x: this.core.x, z: this.core.z, r: radiusM }]);
+    const skyFrom = this.stage.getSkyPurifyAmount();
+    this.stage.setPurifyFoci([{ x: this.core.x, z: this.core.z, r: 0 }]);
     const me = this.stage.getPlayer();
     await this.stage.playPurifyStandWave({
       xPct: me.xPct,
       yPct: me.yPct,
       radiusM,
-      // 하늘이 바닥보다 빨리 바뀌지 않게 — 파도·하늘 동시·여유 있게
       durationMs: step === 1 ? 3600 : step === 2 ? 4200 : 5600,
       skyWave: true,
+      skyAmountFrom: skyFrom,
       skyAmountTo: amt,
+      fociWave: { x: this.core.x, z: this.core.z, maxR: radiusM },
       holdWave: true,
     });
     this.stage.setPurifyFoci([{ x: this.core.x, z: this.core.z, r: radiusM }]);

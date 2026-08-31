@@ -1587,6 +1587,7 @@ async function runMapNode(npc: {
             await journey3d.playPurifyRevealWave({
               xPct: row?.x_pct ?? 50,
               yPct: row?.y_pct ?? 50,
+              preservePurify: true,
             });
           }
           armNextPurifyButton(npc.npc_id);

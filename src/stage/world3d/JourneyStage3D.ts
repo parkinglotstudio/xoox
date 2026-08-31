@@ -1159,6 +1159,11 @@ export class JourneyStage3D {
     this.residualGrit?.emit(opts);
   }
 
+  /** 정화제·퇴치제 획득 — 모인 뒤 짧은 착탄 폭발 */
+  playPickupBurst(x: number, z: number): void {
+    this.stoneThrow?.playBurstAt(x, z, 0.62);
+  }
+
   applyStoneThrowConfig(cfg: PurifyRaidConfig): void {
     this.stoneThrow?.applyConfig(cfg);
   }
@@ -1557,8 +1562,12 @@ export class JourneyStage3D {
     skipFloorWave?: boolean;
     /** 원경도 같은 반경으로 정화후 텍스처를 연다 */
     skyWave?: boolean;
-    /** 파도 진행에 맞춰 하늘 정화량을 여기까지 천천히 올림 (없으면 안개색만 보간) */
+    /** 파도 시작 하늘 정화량 (없으면 현재값) */
+    skyAmountFrom?: number;
+    /** 파도 진행에 맞춰 하늘 정화량을 여기까지 — 라인이 지나간 자리만 */
     skyAmountTo?: number;
+    /** 바닥 cozy 원 반경 — 파도 반경과 같이 키움 (풀 반경을 미리 열지 않음) */
+    fociWave?: { x: number; z: number; maxR: number };
     /** 끝나면 파도를 남긴다. 호출측이 정착 후 clearPurifyWaves */
     holdWave?: boolean;
   }): Promise<void> {
@@ -1569,11 +1578,19 @@ export class JourneyStage3D {
     const radius = opts?.radiusM ?? 50;
     const duration = opts?.durationMs ?? 2800;
     const t0 = performance.now();
-    const skyFrom = this.skyPurifyAmount;
+    const skyFrom = opts?.skyAmountFrom ?? this.skyPurifyAmount;
     const skyTo = opts?.skyAmountTo;
+    const skyFromReveal = skyRevealFromAmount(skyFrom);
+    const skyToReveal = skyTo != null ? skyRevealFromAmount(skyTo) : skyFromReveal;
+    if (opts?.skyWave && this.horizonMat.userData.uPrevPurified) {
+      this.horizonMat.userData.uPrevPurified.value = skyFromReveal;
+      this.horizonMat.userData.uSettledPurified.value = skyToReveal;
+    }
+    if (opts?.fociWave) {
+      this.island.setPurifyFoci([{ x: opts.fociWave.x, z: opts.fociWave.z, r: 0 }]);
+    }
     if (!opts?.skipFloorWave) this.island.setPurifyWave({ x: me.x, z: me.z, r: 0 });
     if (opts?.skyWave) this.setHorizonWave({ x: me.x, z: me.z, r: 0 });
-    // 안개도 "이번 단계 목표량"까지만 — 풀정화색으로 뛰면 1차가 3차처럼 보임
     const fogFrom = this.fog.color.clone();
     const fogTo = new THREE.Color(this.skyPolluted.fog).lerp(
       new THREE.Color(this.skyPurified.fog),
@@ -1588,25 +1605,25 @@ export class JourneyStage3D {
           return;
         }
         const elapsed = performance.now() - t0;
-        // ease-out — 초반 천천히, 끝에서 여운
         const raw = Math.min(1, elapsed / duration);
         const ease = 1 - (1 - raw) * (1 - raw);
         const waveR = ease * radius;
+        if (opts?.fociWave) {
+          this.island.setPurifyFoci([
+            { x: opts.fociWave.x, z: opts.fociWave.z, r: Math.min(waveR, opts.fociWave.maxR) },
+          ]);
+        }
         if (!opts?.skipFloorWave) this.island.setPurifyWave({ x: me.x, z: me.z, r: waveR });
         if (opts?.skyWave) {
           this.setHorizonWave({ x: me.x, z: me.z, r: waveR });
-          this.fog.color.copy(fogFrom).lerp(fogTo, ease);
+          const dPlayer = Math.hypot(this.px - me.x, this.pz - me.z);
+          const wr = waveRevealAtDist(dPlayer, waveR);
+          const fogT =
+            skyTo != null ? skyFromReveal + (skyToReveal - skyFromReveal) * wr : ease;
+          this.fog.color.copy(fogFrom).lerp(fogTo, fogT);
           this.renderer.setClearColor(this.fog.color, 1);
           if (this.horizonMat.userData.uFogCurrent) {
             this.horizonMat.userData.uFogCurrent.value.copy(this.fog.color);
-          }
-          if (skyTo != null) {
-            // 파도 중에는 양·원경만 — applySkyMood는 끝에서 한 번(안개/배경 점프 방지)
-            this.skyPurifyAmount = skyFrom + (skyTo - skyFrom) * ease;
-            this.skyIsPurified = this.skyPurifyAmount >= 0.92;
-            if (this.horizonMat.userData.uSettledPurified) {
-              this.horizonMat.userData.uSettledPurified.value = this.skyPurifyAmount;
-            }
           }
         }
         for (const e of this.props) {
@@ -1790,6 +1807,10 @@ export class JourneyStage3D {
       if (!this.disposed) this.applySkyMood();
     });
     void this.ensureSkyMood(false);
+  }
+
+  getSkyPurifyAmount(): number {
+    return this.skyPurifyAmount;
   }
 
   /** 원 안=맑은 하늘(정화량만큼), 원 밖=오염 하늘. 파도 중에는 건드리지 않는다. */
@@ -2738,6 +2759,7 @@ function wireHorizonWaveShader(mat: THREE.MeshBasicMaterial): void {
   const uWaveCenter = { value: new THREE.Vector2(0, 0) };
   const uWaveR = { value: 0 };
   const uSettledPurified = { value: 0 };
+  const uPrevPurified = { value: 0 };
   const purifiedMap = { value: mat.map as THREE.Texture | null };
   const uFogPolluted = { value: new THREE.Color(0x6a7f88) };
   const uFogPurified = { value: new THREE.Color(0x8eb0bc) };
@@ -2746,6 +2768,7 @@ function wireHorizonWaveShader(mat: THREE.MeshBasicMaterial): void {
   mat.userData.uWaveCenter = uWaveCenter;
   mat.userData.uWaveR = uWaveR;
   mat.userData.uSettledPurified = uSettledPurified;
+  mat.userData.uPrevPurified = uPrevPurified;
   mat.userData.purifiedMap = purifiedMap;
   mat.userData.uFogPolluted = uFogPolluted;
   mat.userData.uFogPurified = uFogPurified;
@@ -2755,6 +2778,7 @@ function wireHorizonWaveShader(mat: THREE.MeshBasicMaterial): void {
     shader.uniforms.uWaveCenter = uWaveCenter;
     shader.uniforms.uWaveR = uWaveR;
     shader.uniforms.uSettledPurified = uSettledPurified;
+    shader.uniforms.uPrevPurified = uPrevPurified;
     shader.uniforms.uPurifiedMap = purifiedMap;
     shader.uniforms.uFogPolluted = uFogPolluted;
     shader.uniforms.uFogPurified = uFogPurified;
@@ -2780,6 +2804,7 @@ uniform float uWaveActive;
 uniform vec2 uWaveCenter;
 uniform float uWaveR;
 uniform float uSettledPurified;
+uniform float uPrevPurified;
 uniform vec3 uFogPolluted;
 uniform vec3 uFogPurified;
 uniform vec3 uFogCurrent;`,
@@ -2790,12 +2815,11 @@ uniform vec3 uFogCurrent;`,
         {
           vec3 purifiedRgb = texture2D(uPurifiedMap, vMapUv).rgb;
           float d = length(vHorizonWorld.xz - uWaveCenter);
-          // 정화 색량은 settled(단계 목표)만. 파도는 링·레이저만 — 1차에서 풀정화로 열리지 않게.
           float reveal = uSettledPurified;
           if (uWaveActive > 0.5) {
             float soft = 2.4;
             float waveReveal = 1.0 - smoothstep(uWaveR - soft, uWaveR + soft * 0.35, d);
-            reveal = mix(uSettledPurified * 0.2, uSettledPurified, waveReveal);
+            reveal = mix(uPrevPurified, uSettledPurified, waveReveal);
           }
           diffuseColor.rgb = mix(diffuseColor.rgb, purifiedRgb, clamp(reveal, 0.0, 1.0));
           float lineW = 1.7;
@@ -2817,7 +2841,19 @@ uniform vec3 uFogCurrent;`,
         }`,
       );
   };
-  mat.customProgramCacheKey = () => "horizon-wave-v11-stepcap";
+  mat.customProgramCacheKey = () => "horizon-wave-v12-wavefront";
+}
+
+/** 파도 링 안쪽만 정화 — 바깥은 uPrevPurified 유지 */
+function waveRevealAtDist(d: number, waveR: number, soft = 2.4): number {
+  if (waveR < 0.45) return 0;
+  const edge0 = waveR - soft;
+  const edge1 = waveR + soft * 0.35;
+  if (d <= edge0) return 1;
+  if (d >= edge1) return 0;
+  const t = (d - edge0) / (edge1 - edge0);
+  const s = t * t * (3 - 2 * t);
+  return 1 - s;
 }
 
 /** 1·2·3차 단계량이 그대로 보이도록 — 조기 부스트 없음 */

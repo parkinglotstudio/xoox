@@ -82,6 +82,11 @@ export class StoneThrow {
     return this.stones.length > 0;
   }
 
+  /** 픽업·착탄 등 — 구슬 없이 폭발만 */
+  playBurstAt(x: number, z: number, radiusM = 0.62): void {
+    this.burst.explode(x, z, radiusM);
+  }
+
   tick(dt: number): void {
     this.spinT += dt;
     const hits: { x: number; z: number }[] = [];

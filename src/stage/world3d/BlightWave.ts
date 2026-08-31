@@ -14,6 +14,8 @@ import { defaultPurifySkillBalance } from "./purifySkillBalance";
 export type BlightLook = "stain" | "matter" | "bug" | "boss";
 
 const HATCH_BUGS = 3;
+/** 벌레 이동 궤적 — 바닥 오염 데칼·격자 반경 배율 (기본 0.38 → 3배) */
+const BUG_TIRE_MARK_SCALE = 1.14;
 
 /** 프로토 툴 원흉 점구름 → 얼룩. 핵·안개 제외 · 알갱이 2배 · scale만 필드용 축소 */
 const STAIN_FROM_CULPRIT = (() => {
@@ -480,6 +482,10 @@ export class BlightWave {
         l.dieSpreadFrom = l.dots.group.scale.x;
         l.dots.playDiffuse();
       }
+    } else if (l.look === "bug") {
+      // 벌레 — 퍼지기 대기 없이 즉시 제거
+      l.dying = 0;
+      this.removeLiveVisual(l);
     } else {
       l.dying = l.dots ? 0.95 : 0.18;
       l.dots?.die();
@@ -665,7 +671,7 @@ export class BlightWave {
       l.drip += moved;
       if (l.drip > 0.28) {
         l.drip = 0;
-        this.paint.stamp(l.unit.x, l.unit.z, "blight", 0.55, 0.38);
+        this.paint.stamp(l.unit.x, l.unit.z, "blight", 0.55, BUG_TIRE_MARK_SCALE);
       }
     }
   }
@@ -858,7 +864,7 @@ export class BlightWave {
     opts?: { flatten?: number },
   ): void {
     void BlightBody.create(kind, { scale }).then((body) => {
-      if (!this.live.includes(live)) {
+      if (!this.live.includes(live) || live.unit.hp <= 0) {
         body.dispose();
         return;
       }
@@ -1012,25 +1018,32 @@ export class BlightWave {
     this.live = keep;
   }
 
-  private disposeLive(l: Live): void {
-    if (l.panel) this.stage.removeOverlay(l.panel);
-    if (l.ring) this.stage.getPaintGroup().remove(l.ring);
+  private removeLiveVisual(l: Live): void {
     if (l.hpBar) {
       this.stage.removeOverlay(l.hpBar);
       const mat = l.hpBar.material as THREE.SpriteMaterial;
       mat.map?.dispose();
       mat.dispose();
+      l.hpBar = undefined;
     }
-    l.mat?.dispose();
-    l.ringMat?.dispose();
     if (l.presence) {
       this.stage.removeOverlay(l.presence.group);
       l.presence.dispose();
       l.presence = undefined;
       l.dots = undefined;
-    } else {
-      l.dots?.dispose();
+    } else if (l.dots) {
+      this.stage.removeOverlay(l.dots.group);
+      l.dots.dispose();
+      l.dots = undefined;
     }
+  }
+
+  private disposeLive(l: Live): void {
+    if (l.panel) this.stage.removeOverlay(l.panel);
+    if (l.ring) this.stage.getPaintGroup().remove(l.ring);
+    this.removeLiveVisual(l);
+    l.mat?.dispose();
+    l.ringMat?.dispose();
   }
 }
 
