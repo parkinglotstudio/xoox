@@ -161,7 +161,7 @@ export class LobbyView {
             <img class="lobby-dock-ico" src="/ui/lobby/dock/dock_ico_party.png" alt="" draggable="false" />
             <span class="lobby-dock-label">파티</span>
           </button>
-          <button type="button" class="lobby-dock-tab" data-tab="record" style="display:none" aria-hidden="true">
+          <button type="button" class="lobby-dock-tab" data-tab="record">
             <img class="lobby-dock-ico" src="/ui/lobby/dock/dock_ico_record.png" alt="" draggable="false" />
             <span class="lobby-dock-label">기록</span>
           </button>
