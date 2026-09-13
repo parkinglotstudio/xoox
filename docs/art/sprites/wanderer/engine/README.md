@@ -14,8 +14,8 @@
 python scripts/sprite_tool/editor_server.py --char wanderer --port 8768
 # http://127.0.0.1:8768/studio.html
 npm run dev:wanderer-anim
-# same file wanderer-anim.html — test bank:
-# http://localhost:5173/wanderer-anim.html?bank=test
+# http://localhost:5173/wanderer-anim.html
+# 새 클립 버튼: 아이들2 총쏘기2 달리기2 줍기2 던지기2 승리2 패배2
 ```
 
 게임 복사본(폴백): `data/ui/actor/wanderer/`  
