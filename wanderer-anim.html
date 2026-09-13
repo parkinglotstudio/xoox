@@ -176,25 +176,31 @@
 
       async function loadTestIndex() {
         if (testIndex) return testIndex;
-        const res = await fetch(`${TEST_ROOT}/index.json?v=${Date.now()}`);
-        if (!res.ok) throw new Error(`test index ${res.status}`);
-        testIndex = await res.json();
+        testIndex = await readJson(`${TEST_ROOT}/index.json?v=${Date.now()}`, "test index 로드 실패");
         return testIndex;
+      }
+
+      async function readJson(url, missingHint) {
+        const res = await fetch(url);
+        const ct = (res.headers.get("content-type") || "").toLowerCase();
+        const text = await res.text();
+        const looksJson = ct.includes("json") || text.trimStart().startsWith("{") || text.trimStart().startsWith("[");
+        if (!res.ok || !looksJson) {
+          throw new Error(missingHint || `${url} ${res.status}`);
+        }
+        return JSON.parse(text);
       }
 
       async function load(id) {
         animId = id;
         status.textContent = `${id} 불러오는 중…`;
         const root = bank === "test" ? `${TEST_ROOT}/${id}` : `${GAME_ROOT}/${id}`;
-        const res = await fetch(`${root}/${id}.json?v=${Date.now()}`);
-        if (!res.ok) {
-          throw new Error(
-            bank === "test"
-              ? `${id} 시트 없음 — data/ui/wanderer/test_clips/_src 에 GIF를 넣고 python3 scripts/pack_wanderer_test_clips.py`
-              : `${id} ${res.status}`,
-          );
-        }
-        const m = await res.json();
+        const m = await readJson(
+          `${root}/${id}.json?v=${Date.now()}`,
+          bank === "test"
+            ? `${id} 시트 없음 — data/ui/wanderer/test_clips/_src 에 GIF를 넣고 python3 scripts/pack_wanderer_test_clips.py`
+            : `${id} 로드 실패`,
+        );
         const img = new Image();
         img.src = `${root}/${m.sheet}?v=${Date.now()}`;
         await img.decode();
@@ -246,6 +252,8 @@
 
       async function setBank(next) {
         bank = next;
+        manifest = null;
+        sheet = null;
         document.querySelectorAll("button.bank").forEach((b) => {
           b.classList.toggle("on", b.dataset.bank === next);
         });
@@ -287,10 +295,12 @@
         if (bank === "test") {
           hint.textContent = "테스트 뱅크 · 512×640 · 발 (256, 624) · 생산 시트 미변경";
         }
+        syncStage();
         await load(animId);
         requestAnimationFrame(loop);
       })().catch((e) => {
         status.textContent = `실패: ${e}`;
+        syncStage();
         requestAnimationFrame(loop);
       });
     </script>
