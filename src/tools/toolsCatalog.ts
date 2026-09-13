@@ -93,7 +93,7 @@ export const TOOLS: ToolEntry[] = [
     name: "방랑자 스프라이트",
     short: "방랑자애니",
     href: "/wanderer-anim.html",
-    blurb: "뒷모습 대기·뛰기 시트 미리보기. 로비 상단에서 연다.",
+    blurb: "뒷모습 대기·뛰기 + user4 테스트 클립(512×640 발 기준) 미리보기.",
     group: "art",
     npm: "dev:wanderer-anim",
   },

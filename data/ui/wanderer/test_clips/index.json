@@ -1,0 +1,35 @@
+{
+  "id": "wanderer_test_clips",
+  "bank": "test",
+  "note": "user4 normalized clips — test-only preview bank. Does not replace data/ui/actor/wanderer production sheets.",
+  "cell_w": 512,
+  "cell_h": 640,
+  "pivot": "bottom-center",
+  "foot_anchor": { "x": 256, "y": 624 },
+  "local_refs": [
+    "C:\\Users\\dmaxd\\xoox-anim-refs\\user4_normalized\\",
+    "C:\\Users\\dmaxd\\xoox-anim-refs\\gun-run\\game_ready\\ (run_loop — not imported)"
+  ],
+  "clips": [
+    {
+      "id": "a",
+      "label": "A",
+      "hint": "letter id only — production slot not assigned"
+    },
+    {
+      "id": "b",
+      "label": "B",
+      "hint": "letter id only — production slot not assigned"
+    },
+    {
+      "id": "c",
+      "label": "C",
+      "hint": "letter id only — production slot not assigned"
+    },
+    {
+      "id": "d",
+      "label": "D",
+      "hint": "letter id only — production slot not assigned"
+    }
+  ]
+}

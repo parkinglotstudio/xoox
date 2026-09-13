@@ -25,9 +25,10 @@
         border-radius: 999px; padding: 7px 12px; font-weight: 700; cursor: pointer;
       }
       .bar button.on { background: #3a2a14; color: #ffd27a; }
+      .bar button.bank.on { background: #243018; color: #d4f0a8; }
       .workspace { display: grid; place-items: center; padding: 24px; }
       .stage {
-        width: min(72vw, 512px); height: min(72vw, 512px);
+        width: min(72vw, 512px);
         background:
           linear-gradient(45deg, #3a3a48 25%, transparent 25%),
           linear-gradient(-45deg, #3a3a48 25%, transparent 25%),
@@ -47,64 +48,185 @@
     <header class="bar">
       <a href="/tools.html">← 툴 허브</a>
       <h1>방랑자 스프라이트</h1>
-      <span class="hint">게임 시트 미리보기 · 체크보드 = 투명</span>
-      <button type="button" data-anim="ingame_idle" class="on">대기</button>
-      <button type="button" data-anim="move">뛰기</button>
-      <button type="button" data-anim="throw">던지기</button>
-      <button type="button" data-anim="aim_fire">총쏘기</button>
-      <button type="button" data-anim="aim_walk_f">총앞걷기</button>
-      <button type="button" data-anim="aim_walk_b">총뒤걷기</button>
-      <button type="button" data-anim="aim_walk_l">총좌걷기</button>
-      <button type="button" data-anim="aim_walk_r">총우걷기</button>
-      <button type="button" data-anim="walk_l">좌걷기</button>
-      <button type="button" data-anim="walk_r">우걷기</button>
-      <button type="button" data-anim="move_back">뒤걷기</button>
-      <button type="button" data-anim="draw_holster">빼기</button>
-      <button type="button" data-anim="holster">넣기</button>
+      <span class="hint" id="hint">게임 시트 미리보기 · 체크보드 = 투명</span>
+      <button type="button" data-bank="game" class="bank on">게임</button>
+      <button type="button" data-bank="test" class="bank">테스트</button>
+      <span id="animBtns"></span>
       <button type="button" id="play">일시정지</button>
+      <button type="button" id="foot" class="on">발기준</button>
       <span class="status" id="status">불러오는 중…</span>
     </header>
     <div class="workspace">
-      <div class="stage"><canvas id="cv" width="512" height="512"></canvas></div>
+      <div class="stage" id="stage"><canvas id="cv" width="512" height="512"></canvas></div>
     </div>
     <script type="module">
-      const ROOT = "/ui/actor/wanderer";
+      const GAME_ROOT = "/ui/actor/wanderer";
+      const TEST_ROOT = "/ui/wanderer/test_clips";
+      const GAME_ANIMS = [
+        ["ingame_idle", "대기"],
+        ["move", "뛰기"],
+        ["throw", "던지기"],
+        ["aim_fire", "총쏘기"],
+        ["aim_walk_f", "총앞걷기"],
+        ["aim_walk_b", "총뒤걷기"],
+        ["aim_walk_l", "총좌걷기"],
+        ["aim_walk_r", "총우걷기"],
+        ["walk_l", "좌걷기"],
+        ["walk_r", "우걷기"],
+        ["move_back", "뒤걷기"],
+        ["draw_holster", "빼기"],
+        ["holster", "넣기"],
+      ];
+
       const cv = document.getElementById("cv");
       const ctx = cv.getContext("2d");
       const status = document.getElementById("status");
+      const hint = document.getElementById("hint");
       const playBtn = document.getElementById("play");
+      const footBtn = document.getElementById("foot");
+      const stage = document.getElementById("stage");
+      const animBtns = document.getElementById("animBtns");
 
-      let animId = "ingame_idle";
+      const params = new URLSearchParams(location.search);
+      let bank = params.get("bank") === "test" ? "test" : "game";
+      let animId = params.get("clip") || (bank === "test" ? "a" : "ingame_idle");
+      let testIndex = null;
       let manifest = null;
       let sheet = null;
       let idx = 0;
       let playing = true;
+      let showFoot = true;
       let acc = 0;
       let last = performance.now();
+
+      function cellSize(m) {
+        const w = m?.cell_w || m?.cell || 512;
+        const h = m?.cell_h || m?.cell || 512;
+        return { w, h };
+      }
+
+      function footOf(m, w, h) {
+        const f = m?.foot_anchor;
+        if (f && Number.isFinite(Number(f.x)) && Number.isFinite(Number(f.y))) {
+          return { x: Number(f.x), y: Number(f.y) };
+        }
+        return { x: Math.floor(w / 2), y: h };
+      }
+
+      function stageSize() {
+        if (bank === "test") {
+          const fa = testIndex?.foot_anchor || { x: 256, y: 624 };
+          return {
+            w: testIndex?.cell_w || 512,
+            h: testIndex?.cell_h || 640,
+            foot: { x: Number(fa.x) || 256, y: Number(fa.y) || 624 },
+          };
+        }
+        const { w, h } = cellSize(manifest);
+        return { w, h, foot: footOf(manifest, w, h) };
+      }
+
+      function syncStage() {
+        const st = stageSize();
+        cv.width = st.w;
+        cv.height = st.h;
+        stage.style.width = `min(72vw, ${st.w}px)`;
+        stage.style.aspectRatio = `${st.w} / ${st.h}`;
+      }
+
+      function drawFoot(st) {
+        if (!showFoot) return;
+        const { x, y } = st.foot;
+        ctx.save();
+        ctx.strokeStyle = "rgba(255, 72, 72, 0.92)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, y + 0.5);
+        ctx.lineTo(st.w, y + 0.5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x - 18, y);
+        ctx.lineTo(x + 18, y);
+        ctx.moveTo(x, y - 18);
+        ctx.lineTo(x, y + 18);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function renderAnimBtns() {
+        animBtns.replaceChildren();
+        const items = bank === "test"
+          ? (testIndex?.clips || []).map((c) => [c.id, c.label || c.id.toUpperCase()])
+          : GAME_ANIMS;
+        for (const [id, label] of items) {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.dataset.anim = id;
+          b.textContent = label;
+          if (id === animId) b.classList.add("on");
+          b.addEventListener("click", () => {
+            animBtns.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
+            void load(id).catch((e) => {
+              status.textContent = `실패: ${e}`;
+            });
+          });
+          animBtns.appendChild(b);
+        }
+      }
+
+      async function loadTestIndex() {
+        if (testIndex) return testIndex;
+        const res = await fetch(`${TEST_ROOT}/index.json?v=${Date.now()}`);
+        if (!res.ok) throw new Error(`test index ${res.status}`);
+        testIndex = await res.json();
+        return testIndex;
+      }
 
       async function load(id) {
         animId = id;
         status.textContent = `${id} 불러오는 중…`;
-        const m = await (await fetch(`${ROOT}/${id}/${id}.json?v=${Date.now()}`)).json();
+        const root = bank === "test" ? `${TEST_ROOT}/${id}` : `${GAME_ROOT}/${id}`;
+        const res = await fetch(`${root}/${id}.json?v=${Date.now()}`);
+        if (!res.ok) {
+          throw new Error(
+            bank === "test"
+              ? `${id} 시트 없음 — data/ui/wanderer/test_clips/_src 에 GIF를 넣고 python3 scripts/pack_wanderer_test_clips.py`
+              : `${id} ${res.status}`,
+          );
+        }
+        const m = await res.json();
         const img = new Image();
-        img.src = `${ROOT}/${id}/${m.sheet}?v=${Date.now()}`;
+        img.src = `${root}/${m.sheet}?v=${Date.now()}`;
         await img.decode();
         manifest = m;
         sheet = img;
         idx = 0;
         acc = 0;
-        status.textContent = `${id} · ${m.frame_count}프레임 · 셀 ${m.cell}`;
+        syncStage();
+        const { w, h } = cellSize(m);
+        const foot = footOf(m, w, h);
+        const paramsNext = new URLSearchParams(location.search);
+        paramsNext.set("bank", bank);
+        paramsNext.set("clip", id);
+        history.replaceState(null, "", `${location.pathname}?${paramsNext}`);
+        status.textContent = `${id} · ${m.frame_count}프레임 · 셀 ${w}×${h} · 발 (${foot.x}, ${foot.y})`;
       }
 
       function draw() {
-        if (!manifest || !sheet) return;
-        const cell = manifest.cell || 512;
-        const cols = manifest.cols || 1;
-        const i = manifest.frames[idx]?.index ?? idx;
-        const sx = (i % cols) * cell;
-        const sy = Math.floor(i / cols) * cell;
-        ctx.clearRect(0, 0, cell, cell);
-        ctx.drawImage(sheet, sx, sy, cell, cell, 0, 0, cell, cell);
+        const st = stageSize();
+        ctx.clearRect(0, 0, st.w, st.h);
+        if (manifest && sheet) {
+          const { w, h } = cellSize(manifest);
+          const cols = manifest.cols || 1;
+          const i = manifest.frames[idx]?.index ?? idx;
+          const sx = (i % cols) * w;
+          const sy = Math.floor(i / cols) * h;
+          const foot = footOf(manifest, w, h);
+          const dx = st.foot.x - foot.x;
+          const dy = st.foot.y - foot.y;
+          ctx.drawImage(sheet, sx, sy, w, h, dx, dy, w, h);
+        }
+        drawFoot(st);
       }
 
       function loop(now) {
@@ -122,10 +244,27 @@
         requestAnimationFrame(loop);
       }
 
-      document.querySelectorAll("button[data-anim]").forEach((b) => {
+      async function setBank(next) {
+        bank = next;
+        document.querySelectorAll("button.bank").forEach((b) => {
+          b.classList.toggle("on", b.dataset.bank === next);
+        });
+        if (next === "test") {
+          hint.textContent = "테스트 뱅크 · 512×640 · 발 (256, 624) · 생산 시트 미변경";
+          await loadTestIndex();
+          animId = GAME_ANIMS.some(([id]) => id === animId) ? (testIndex.clips?.[0]?.id || "a") : animId;
+        } else {
+          hint.textContent = "게임 시트 미리보기 · 체크보드 = 투명";
+          animId = (testIndex?.clips || []).some((c) => c.id === animId) ? "ingame_idle" : animId;
+        }
+        renderAnimBtns();
+        syncStage();
+        await load(animId);
+      }
+
+      document.querySelectorAll("button.bank").forEach((b) => {
         b.addEventListener("click", () => {
-          document.querySelectorAll("button[data-anim]").forEach((x) => x.classList.toggle("on", x === b));
-          void load(b.dataset.anim).catch((e) => {
+          void setBank(b.dataset.bank).catch((e) => {
             status.textContent = `실패: ${e}`;
           });
         });
@@ -134,12 +273,26 @@
         playing = !playing;
         playBtn.textContent = playing ? "일시정지" : "재생";
       });
+      footBtn.addEventListener("click", () => {
+        showFoot = !showFoot;
+        footBtn.classList.toggle("on", showFoot);
+      });
 
-      void load("ingame_idle")
-        .then(() => requestAnimationFrame(loop))
-        .catch((e) => {
-          status.textContent = `실패: ${e}`;
+      void (async () => {
+        if (bank === "test") await loadTestIndex();
+        renderAnimBtns();
+        document.querySelectorAll("button.bank").forEach((b) => {
+          b.classList.toggle("on", b.dataset.bank === bank);
         });
+        if (bank === "test") {
+          hint.textContent = "테스트 뱅크 · 512×640 · 발 (256, 624) · 생산 시트 미변경";
+        }
+        await load(animId);
+        requestAnimationFrame(loop);
+      })().catch((e) => {
+        status.textContent = `실패: ${e}`;
+        requestAnimationFrame(loop);
+      });
     </script>
   </body>
 </html>
