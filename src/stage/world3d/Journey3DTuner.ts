@@ -145,6 +145,10 @@ export class Journey3DTuner {
     this.stage.setInputEnabled(true);
   }
 
+  getStage(): JourneyStage3D {
+    return this.stage;
+  }
+
   /** 데이터·설정을 읽고 첫 구역을 세운다 */
   async init(): Promise<void> {
     const [cfg, scale, npcRows, propRows, areaRows, raid] = await Promise.all([

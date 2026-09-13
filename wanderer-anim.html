@@ -25,9 +25,11 @@
         border-radius: 999px; padding: 7px 12px; font-weight: 700; cursor: pointer;
       }
       .bar button.on { background: #3a2a14; color: #ffd27a; }
+      .bar button.v2 { border-color: rgba(160, 200, 90, 0.55); }
+      .bar button.v2.on { background: #243018; color: #d4f0a8; }
       .workspace { display: grid; place-items: center; padding: 24px; }
       .stage {
-        width: min(72vw, 512px); height: min(72vw, 512px);
+        width: min(72vw, 512px);
         background:
           linear-gradient(45deg, #3a3a48 25%, transparent 25%),
           linear-gradient(-45deg, #3a3a48 25%, transparent 25%),
@@ -47,64 +49,128 @@
     <header class="bar">
       <a href="/tools.html">← 툴 허브</a>
       <h1>방랑자 스프라이트</h1>
-      <span class="hint">게임 시트 미리보기 · 체크보드 = 투명</span>
-      <button type="button" data-anim="ingame_idle" class="on">대기</button>
-      <button type="button" data-anim="move">뛰기</button>
-      <button type="button" data-anim="throw">던지기</button>
-      <button type="button" data-anim="aim_fire">총쏘기</button>
-      <button type="button" data-anim="aim_walk_f">총앞걷기</button>
-      <button type="button" data-anim="aim_walk_b">총뒤걷기</button>
-      <button type="button" data-anim="aim_walk_l">총좌걷기</button>
-      <button type="button" data-anim="aim_walk_r">총우걷기</button>
-      <button type="button" data-anim="walk_l">좌걷기</button>
-      <button type="button" data-anim="walk_r">우걷기</button>
-      <button type="button" data-anim="move_back">뒤걷기</button>
-      <button type="button" data-anim="draw_holster">빼기</button>
-      <button type="button" data-anim="holster">넣기</button>
+      <span class="hint">숫자 2 = 새 클립</span>
+      <button type="button" data-anim="ingame_idle" data-bank="game" class="on">대기</button>
+      <button type="button" data-anim="move" data-bank="game">뛰기</button>
+      <button type="button" data-anim="throw" data-bank="game">던지기</button>
+      <button type="button" data-anim="aim_fire" data-bank="game">총쏘기</button>
+      <button type="button" data-anim="aim_walk_f" data-bank="game">총앞걷기</button>
+      <button type="button" data-anim="aim_walk_b" data-bank="game">총뒤걷기</button>
+      <button type="button" data-anim="aim_walk_l" data-bank="game">총좌걷기</button>
+      <button type="button" data-anim="aim_walk_r" data-bank="game">총우걷기</button>
+      <button type="button" data-anim="walk_l" data-bank="game">좌걷기</button>
+      <button type="button" data-anim="walk_r" data-bank="game">우걷기</button>
+      <button type="button" data-anim="move_back" data-bank="game">뒤걷기</button>
+      <button type="button" data-anim="draw_holster" data-bank="game">빼기</button>
+      <button type="button" data-anim="holster" data-bank="game">넣기</button>
+      <button type="button" class="v2" data-anim="idle" data-bank="test">아이들2</button>
+      <button type="button" class="v2" data-anim="shoot" data-bank="test">총쏘기2</button>
+      <button type="button" class="v2" data-anim="run" data-bank="test">달리기2</button>
+      <button type="button" class="v2" data-anim="pickup" data-bank="test">줍기2</button>
+      <button type="button" class="v2" data-anim="throw" data-bank="test">던지기2</button>
+      <button type="button" class="v2" data-anim="victory" data-bank="test">승리2</button>
+      <button type="button" class="v2" data-anim="fail" data-bank="test">패배2</button>
       <button type="button" id="play">일시정지</button>
+      <button type="button" id="foot" class="on">발기준</button>
       <span class="status" id="status">불러오는 중…</span>
     </header>
     <div class="workspace">
-      <div class="stage"><canvas id="cv" width="512" height="512"></canvas></div>
+      <div class="stage" id="stage"><canvas id="cv" width="512" height="512"></canvas></div>
     </div>
     <script type="module">
-      const ROOT = "/ui/actor/wanderer";
+      const GAME_ROOT = "/ui/actor/wanderer";
+      const TEST_ROOT = "/ui/wanderer/test_clips";
       const cv = document.getElementById("cv");
       const ctx = cv.getContext("2d");
       const status = document.getElementById("status");
       const playBtn = document.getElementById("play");
+      const footBtn = document.getElementById("foot");
+      const stage = document.getElementById("stage");
 
+      let bank = "game";
       let animId = "ingame_idle";
       let manifest = null;
       let sheet = null;
       let idx = 0;
       let playing = true;
+      let showFoot = true;
       let acc = 0;
       let last = performance.now();
 
-      async function load(id) {
+      function cellSize(m) {
+        const w = m?.cell_w || m?.cell || 512;
+        const h = m?.cell_h || m?.cell || 512;
+        return { w, h };
+      }
+
+      function footOf(m, w, h) {
+        const f = m?.foot_anchor;
+        if (f && Number.isFinite(Number(f.x)) && Number.isFinite(Number(f.y))) {
+          return { x: Number(f.x), y: Number(f.y) };
+        }
+        return { x: Math.floor(w / 2), y: h };
+      }
+
+      function syncStage(m) {
+        const { w, h } = cellSize(m);
+        cv.width = w;
+        cv.height = h;
+        stage.style.width = `min(72vw, ${w}px)`;
+        stage.style.aspectRatio = `${w} / ${h}`;
+      }
+
+      async function readJson(url) {
+        const res = await fetch(url);
+        const text = await res.text();
+        if (!res.ok || text.trimStart().startsWith("<")) throw new Error(`${url} ${res.status}`);
+        return JSON.parse(text);
+      }
+
+      async function load(id, nextBank) {
+        bank = nextBank || "game";
         animId = id;
         status.textContent = `${id} 불러오는 중…`;
-        const m = await (await fetch(`${ROOT}/${id}/${id}.json?v=${Date.now()}`)).json();
+        const root = bank === "test" ? `${TEST_ROOT}/${id}` : `${GAME_ROOT}/${id}`;
+        const m = await readJson(`${root}/${id}.json?v=${Date.now()}`);
         const img = new Image();
-        img.src = `${ROOT}/${id}/${m.sheet}?v=${Date.now()}`;
+        img.src = `${root}/${m.sheet}?v=${Date.now()}`;
         await img.decode();
         manifest = m;
         sheet = img;
         idx = 0;
         acc = 0;
-        status.textContent = `${id} · ${m.frame_count}프레임 · 셀 ${m.cell}`;
+        syncStage(m);
+        const { w, h } = cellSize(m);
+        const foot = footOf(m, w, h);
+        const loopNote = m.loop === false ? "원샷" : "루프";
+        status.textContent = `${id} · ${m.frame_count}프레임 · ${loopNote} · 셀 ${w}×${h} · 발 (${foot.x}, ${foot.y})`;
       }
 
       function draw() {
         if (!manifest || !sheet) return;
-        const cell = manifest.cell || 512;
+        const { w, h } = cellSize(manifest);
         const cols = manifest.cols || 1;
         const i = manifest.frames[idx]?.index ?? idx;
-        const sx = (i % cols) * cell;
-        const sy = Math.floor(i / cols) * cell;
-        ctx.clearRect(0, 0, cell, cell);
-        ctx.drawImage(sheet, sx, sy, cell, cell, 0, 0, cell, cell);
+        const sx = (i % cols) * w;
+        const sy = Math.floor(i / cols) * h;
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        ctx.drawImage(sheet, sx, sy, w, h, 0, 0, w, h);
+        if (!showFoot) return;
+        const foot = footOf(manifest, w, h);
+        ctx.save();
+        ctx.strokeStyle = "rgba(255, 72, 72, 0.92)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, foot.y + 0.5);
+        ctx.lineTo(w, foot.y + 0.5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(foot.x - 18, foot.y);
+        ctx.lineTo(foot.x + 18, foot.y);
+        ctx.moveTo(foot.x, foot.y - 18);
+        ctx.lineTo(foot.x, foot.y + 18);
+        ctx.stroke();
+        ctx.restore();
       }
 
       function loop(now) {
@@ -115,7 +181,8 @@
           const hold = manifest.frames[idx]?.duration_ms ?? 120;
           if (acc >= hold) {
             acc = 0;
-            idx = (idx + 1) % manifest.frames.length;
+            if (idx + 1 < manifest.frames.length) idx += 1;
+            else if (manifest.loop !== false) idx = 0;
           }
         }
         draw();
@@ -125,7 +192,7 @@
       document.querySelectorAll("button[data-anim]").forEach((b) => {
         b.addEventListener("click", () => {
           document.querySelectorAll("button[data-anim]").forEach((x) => x.classList.toggle("on", x === b));
-          void load(b.dataset.anim).catch((e) => {
+          void load(b.dataset.anim, b.dataset.bank).catch((e) => {
             status.textContent = `실패: ${e}`;
           });
         });
@@ -134,11 +201,16 @@
         playing = !playing;
         playBtn.textContent = playing ? "일시정지" : "재생";
       });
+      footBtn.addEventListener("click", () => {
+        showFoot = !showFoot;
+        footBtn.classList.toggle("on", showFoot);
+      });
 
-      void load("ingame_idle")
+      void load("ingame_idle", "game")
         .then(() => requestAnimationFrame(loop))
         .catch((e) => {
           status.textContent = `실패: ${e}`;
+          requestAnimationFrame(loop);
         });
     </script>
   </body>
