@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Pack user4 wanderer GIFs into a test-only 512×640 bank.
+"""Pack wanderer test GIFs into a test-only 512×640 bank.
 
-Keeps the already-normalized canvas. Does not re-fit, re-center, or
-overwrite data/ui/actor/wanderer production sheets.
+Does not overwrite data/ui/actor/wanderer production sheets.
+512×640 frames stay as-is. 480×480 frames are pasted (no scale) so
+source bottom-center (240, 480) maps to the bank foot (256, 624).
 """
 from __future__ import annotations
 
@@ -17,12 +18,27 @@ from PIL import Image
 REPO = Path(__file__).resolve().parents[1]
 DEFAULT_OUT = REPO / "data" / "ui" / "wanderer" / "test_clips"
 DEFAULT_SRC = DEFAULT_OUT / "_src"
-ATTACH_SRC = Path("/workspace/cursor-work/artifacts/user4/v4")
+ATTACH_DIRS = [
+    Path("/workspace/cursor-work/artifacts/seven"),
+    Path("/workspace/cursor-work/artifacts/user4/v4"),
+]
 
 CELL_W = 512
 CELL_H = 640
 FOOT = {"x": 256, "y": 624}
-CLIP_IDS = ("a", "b", "c", "d")
+GUN_CELL = 480  # older gun-run square cells
+
+CLIPS = (
+    {"id": "idle", "label": "아이들", "loop": True},
+    {"id": "shoot", "label": "총쏘기", "loop": False},
+    {"id": "run", "label": "달리기", "loop": True},
+    {"id": "pickup", "label": "줍기", "loop": False},
+    {"id": "throw", "label": "던지기", "loop": False},
+    {"id": "victory", "label": "승리", "loop": False},
+    {"id": "fail", "label": "패배", "loop": False},
+)
+CLIP_IDS = tuple(c["id"] for c in CLIPS)
+CLIP_META = {c["id"]: c for c in CLIPS}
 
 
 def load_gif(path: Path) -> tuple[list[Image.Image], list[int]]:
@@ -44,7 +60,6 @@ def load_gif(path: Path) -> tuple[list[Image.Image], list[int]]:
 
 
 def key_chroma(im: Image.Image, *, key: tuple[int, int, int], tol: int) -> Image.Image:
-    """Knock out a studio chroma (GIF green / sheet white) without moving pixels."""
     rgba = im.convert("RGBA")
     pixels = list(rgba.getdata())
     out = []
@@ -79,13 +94,28 @@ def maybe_key(im: Image.Image, *, key_green: bool, key_white: bool) -> Image.Ima
     return rgba
 
 
-def require_cell(im: Image.Image, label: str) -> Image.Image:
-    if im.size != (CELL_W, CELL_H):
-        raise SystemExit(
-            f"{label}: frame is {im.size[0]}×{im.size[1]}, expected {CELL_W}×{CELL_H}. "
-            "Refusing to re-anchor or scale."
-        )
-    return im
+def fit_to_bank(im: Image.Image, label: str) -> Image.Image:
+    """Place a frame on the 512×640 bank so its foot matches (256, 624).
+
+    - 512×640: keep pixels (already foot-normalized).
+    - 480×480: no scale. Source bottom-center (240, 480) → (256, 624),
+      i.e. paste at (16, 144).
+    """
+    rgba = im.convert("RGBA")
+    w, h = rgba.size
+    if (w, h) == (CELL_W, CELL_H):
+        return rgba
+    if (w, h) == (GUN_CELL, GUN_CELL):
+        src_foot = (GUN_CELL // 2, GUN_CELL)
+        dx = FOOT["x"] - src_foot[0]
+        dy = FOOT["y"] - src_foot[1]
+        canvas = Image.new("RGBA", (CELL_W, CELL_H), (0, 0, 0, 0))
+        canvas.paste(rgba, (dx, dy), rgba)
+        print(f"{label}: 480×480 → 512×640 foot map ({src_foot[0]},{src_foot[1]})→({FOOT['x']},{FOOT['y']}) paste ({dx},{dy})")
+        return canvas
+    raise SystemExit(
+        f"{label}: frame is {w}×{h}. Only 512×640 (keep) or 480×480 (foot-map) are allowed."
+    )
 
 
 def pack_sheet(frames: list[Image.Image]) -> Image.Image:
@@ -102,6 +132,7 @@ def write_clip(
     durs: list[int],
     *,
     source: str,
+    loop: bool,
 ) -> Path:
     dest = out_root / clip_id
     dest.mkdir(parents=True, exist_ok=True)
@@ -134,12 +165,12 @@ def write_clip(
         "pivot": "bottom-center",
         "foot_anchor": dict(FOOT),
         "sheet": sheet_name,
-        "loop": True,
+        "loop": loop,
         "source": source,
         "frames": recs,
     }
     (dest / f"{clip_id}.json").write_text(json.dumps(man, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"packed {clip_id}: {len(frames)} frames ← {source}")
+    print(f"packed {clip_id}: {len(frames)} frames loop={loop} ← {source}")
     return dest
 
 
@@ -152,26 +183,27 @@ def find_src(name: str, src_dirs: list[Path]) -> Path | None:
 
 
 def slice_clip_sheet(path: Path) -> list[Image.Image]:
-    """One clip per file: grid of 512×640 cells, left-to-right then top-to-bottom.
-
-    Empty trailing pad cells (fully transparent) are skipped.
-    """
+    """One clip per file. Accept 512×640 or 480×480 cell grids."""
     im = Image.open(path).convert("RGBA")
     w, h = im.size
-    if w % CELL_W or h % CELL_H:
+    if w % CELL_W == 0 and h % CELL_H == 0:
+        cw, ch = CELL_W, CELL_H
+    elif w % GUN_CELL == 0 and h % GUN_CELL == 0:
+        cw, ch = GUN_CELL, GUN_CELL
+    else:
         raise SystemExit(
-            f"{path.name}: sheet is {w}×{h}, not a {CELL_W}×{CELL_H} grid. Refusing to guess cell size."
+            f"{path.name}: sheet is {w}×{h}, not a 512×640 or 480×480 grid."
         )
-    cols, rows = w // CELL_W, h // CELL_H
+    cols, rows = w // cw, h // ch
     frames: list[Image.Image] = []
     for r in range(rows):
         for c in range(cols):
-            cell = im.crop((c * CELL_W, r * CELL_H, (c + 1) * CELL_W, (r + 1) * CELL_H))
+            cell = im.crop((c * cw, r * ch, (c + 1) * cw, (r + 1) * ch))
             if cell.getbbox() is None:
                 continue
             frames.append(cell)
     if not frames:
-        raise SystemExit(f"{path.name}: no non-empty {CELL_W}×{CELL_H} cells")
+        raise SystemExit(f"{path.name}: no non-empty cells")
     return frames
 
 
@@ -187,10 +219,9 @@ def main() -> None:
     ap.add_argument("--src", type=Path, default=DEFAULT_SRC)
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
     ap.add_argument("--no-key-green", action="store_true")
-    ap.add_argument("--key-white", action="store_true", help="also key white-background sheets")
     args = ap.parse_args()
 
-    src_dirs = [args.src, ATTACH_SRC]
+    src_dirs = [args.src, *ATTACH_DIRS]
     src = collect_src(src_dirs)
     args.out.mkdir(parents=True, exist_ok=True)
     bank_src = args.out / "_src"
@@ -198,8 +229,8 @@ def main() -> None:
 
     packed: dict[str, str] = {}
     key_green = not args.no_key_green
-
     search = [src, *src_dirs]
+
     for clip_id in CLIP_IDS:
         gif = find_src(f"{clip_id}.gif", search)
         if not gif:
@@ -207,11 +238,18 @@ def main() -> None:
         if gif.resolve() != (bank_src / gif.name).resolve():
             shutil.copy2(gif, bank_src / gif.name)
         frames, durs = load_gif(bank_src / gif.name)
-        cleaned = []
-        for i, fr in enumerate(frames):
-            fr = maybe_key(fr, key_green=key_green, key_white=False)
-            cleaned.append(require_cell(fr, f"{clip_id}.gif[{i}]"))
-        write_clip(args.out, clip_id, cleaned, durs, source=gif.name)
+        cleaned = [
+            fit_to_bank(maybe_key(fr, key_green=key_green, key_white=False), f"{clip_id}.gif[{i}]")
+            for i, fr in enumerate(frames)
+        ]
+        write_clip(
+            args.out,
+            clip_id,
+            cleaned,
+            durs,
+            source=gif.name,
+            loop=CLIP_META[clip_id]["loop"],
+        )
         packed[clip_id] = gif.name
 
     for clip_id in CLIP_IDS:
@@ -226,42 +264,57 @@ def main() -> None:
             shutil.copy2(sheet_path, dest_sheet)
         frames = slice_clip_sheet(dest_sheet)
         cleaned = [
-            require_cell(
-                maybe_key(fr, key_green=key_green, key_white=True),
-                f"{sheet_name}[{i}]",
-            )
+            fit_to_bank(maybe_key(fr, key_green=key_green, key_white=True), f"{sheet_name}[{i}]")
             for i, fr in enumerate(frames)
         ]
         durs = [80] * len(cleaned)
-        write_clip(args.out, clip_id, cleaned, durs, source=sheet_name)
+        write_clip(
+            args.out,
+            clip_id,
+            cleaned,
+            durs,
+            source=sheet_name,
+            loop=CLIP_META[clip_id]["loop"],
+        )
         packed[clip_id] = sheet_name
 
     still = [c for c in CLIP_IDS if c not in packed]
     if still:
+        names = " ".join(f"{c}.gif" for c in still)
         searched = ", ".join(str(d) for d in src_dirs)
         raise SystemExit(
-            "missing clips: "
-            + ", ".join(still)
-            + f". Drop a.gif/b.gif/c.gif/d.gif into {DEFAULT_SRC} (searched {searched})."
+            f"missing clips: {', '.join(still)}. Drop {names} into {DEFAULT_SRC} (searched {searched})."
         )
 
     index_path = args.out / "index.json"
     index = json.loads(index_path.read_text(encoding="utf-8")) if index_path.exists() else {}
-    index.setdefault("id", "wanderer_test_clips")
+    index["id"] = "wanderer_test_clips"
     index["bank"] = "test"
+    index["note"] = (
+        "Test-only seven clips. Does not replace data/ui/actor/wanderer. "
+        "512×640 kept; 480×480 foot-mapped (240,480)→(256,624) paste (16,144)."
+    )
     index["cell_w"] = CELL_W
     index["cell_h"] = CELL_H
     index["pivot"] = "bottom-center"
     index["foot_anchor"] = dict(FOOT)
+    index["fit_480"] = {
+        "src_cell": [GUN_CELL, GUN_CELL],
+        "src_foot": [GUN_CELL // 2, GUN_CELL],
+        "dst_cell": [CELL_W, CELL_H],
+        "dst_foot": [FOOT["x"], FOOT["y"]],
+        "paste": [FOOT["x"] - GUN_CELL // 2, FOOT["y"] - GUN_CELL],
+        "scale": 1,
+    }
     index["clips"] = [
         {
-            "id": cid,
-            "label": cid.upper(),
-            "hint": "letter id only — production slot not assigned",
-            "sheet": f"{cid}/{cid}_sheet.png",
-            "manifest": f"{cid}/{cid}.json",
+            "id": c["id"],
+            "label": c["label"],
+            "loop": c["loop"],
+            "sheet": f"{c['id']}/{c['id']}_sheet.png",
+            "manifest": f"{c['id']}/{c['id']}.json",
         }
-        for cid in CLIP_IDS
+        for c in CLIPS
     ]
     index_path.write_text(json.dumps(index, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"bank index → {index_path}")

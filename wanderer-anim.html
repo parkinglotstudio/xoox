@@ -89,7 +89,7 @@
 
       const params = new URLSearchParams(location.search);
       let bank = params.get("bank") === "test" ? "test" : "game";
-      let animId = params.get("clip") || (bank === "test" ? "a" : "ingame_idle");
+      let animId = params.get("clip") || (bank === "test" ? "idle" : "ingame_idle");
       let testIndex = null;
       let manifest = null;
       let sheet = null;
@@ -156,7 +156,7 @@
       function renderAnimBtns() {
         animBtns.replaceChildren();
         const items = bank === "test"
-          ? (testIndex?.clips || []).map((c) => [c.id, c.label || c.id.toUpperCase()])
+          ? (testIndex?.clips || []).map((c) => [c.id, c.label || c.id])
           : GAME_ANIMS;
         for (const [id, label] of items) {
           const b = document.createElement("button");
@@ -215,7 +215,8 @@
         paramsNext.set("bank", bank);
         paramsNext.set("clip", id);
         history.replaceState(null, "", `${location.pathname}?${paramsNext}`);
-        status.textContent = `${id} · ${m.frame_count}프레임 · 셀 ${w}×${h} · 발 (${foot.x}, ${foot.y})`;
+        const loopNote = m.loop === false ? "원샷" : "루프";
+        status.textContent = `${id} · ${m.frame_count}프레임 · ${loopNote} · 셀 ${w}×${h} · 발 (${foot.x}, ${foot.y})`;
       }
 
       function draw() {
@@ -243,7 +244,8 @@
           const hold = manifest.frames[idx]?.duration_ms ?? 120;
           if (acc >= hold) {
             acc = 0;
-            idx = (idx + 1) % manifest.frames.length;
+            if (idx + 1 < manifest.frames.length) idx += 1;
+            else if (manifest.loop !== false) idx = 0;
           }
         }
         draw();
@@ -260,7 +262,7 @@
         if (next === "test") {
           hint.textContent = "테스트 뱅크 · 512×640 · 발 (256, 624) · 생산 시트 미변경";
           await loadTestIndex();
-          animId = GAME_ANIMS.some(([id]) => id === animId) ? (testIndex.clips?.[0]?.id || "a") : animId;
+          animId = GAME_ANIMS.some(([id]) => id === animId) ? (testIndex.clips?.[0]?.id || "idle") : animId;
         } else {
           hint.textContent = "게임 시트 미리보기 · 체크보드 = 투명";
           animId = (testIndex?.clips || []).some((c) => c.id === animId) ? "ingame_idle" : animId;

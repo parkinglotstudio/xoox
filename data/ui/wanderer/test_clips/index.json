@@ -1,35 +1,30 @@
 {
   "id": "wanderer_test_clips",
   "bank": "test",
-  "note": "user4 normalized clips — test-only preview bank. Does not replace data/ui/actor/wanderer production sheets.",
+  "note": "Test-only seven clips. Does not replace data/ui/actor/wanderer. 512×640 kept; 480×480 foot-mapped (240,480)→(256,624) paste (16,144).",
   "cell_w": 512,
   "cell_h": 640,
   "pivot": "bottom-center",
   "foot_anchor": { "x": 256, "y": 624 },
+  "fit_480": {
+    "src_cell": [480, 480],
+    "src_foot": [240, 480],
+    "dst_cell": [512, 640],
+    "dst_foot": [256, 624],
+    "paste": [16, 144],
+    "scale": 1
+  },
   "local_refs": [
     "C:\\Users\\dmaxd\\xoox-anim-refs\\user4_normalized\\",
-    "C:\\Users\\dmaxd\\xoox-anim-refs\\gun-run\\game_ready\\ (run_loop — not imported)"
+    "C:\\Users\\dmaxd\\xoox-anim-refs\\gun-run\\game_ready\\"
   ],
   "clips": [
-    {
-      "id": "a",
-      "label": "A",
-      "hint": "letter id only — production slot not assigned"
-    },
-    {
-      "id": "b",
-      "label": "B",
-      "hint": "letter id only — production slot not assigned"
-    },
-    {
-      "id": "c",
-      "label": "C",
-      "hint": "letter id only — production slot not assigned"
-    },
-    {
-      "id": "d",
-      "label": "D",
-      "hint": "letter id only — production slot not assigned"
-    }
+    { "id": "idle", "label": "아이들", "loop": true },
+    { "id": "shoot", "label": "총쏘기", "loop": false },
+    { "id": "run", "label": "달리기", "loop": true },
+    { "id": "pickup", "label": "줍기", "loop": false },
+    { "id": "throw", "label": "던지기", "loop": false },
+    { "id": "victory", "label": "승리", "loop": false },
+    { "id": "fail", "label": "패배", "loop": false }
   ]
 }
