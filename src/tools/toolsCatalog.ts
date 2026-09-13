@@ -93,7 +93,7 @@ export const TOOLS: ToolEntry[] = [
     name: "방랑자 스프라이트",
     short: "방랑자애니",
     href: "/wanderer-anim.html",
-    blurb: "기존 게임 시트 + 새 클립(아이들2·총쏘기2·달리기2·줍기2·던지기2·승리2·패배2).",
+    blurb: "기존 게임 시트 + 새 클립(총쏘기2·줍기2·승리2·패배2).",
     group: "art",
     npm: "dev:wanderer-anim",
   },

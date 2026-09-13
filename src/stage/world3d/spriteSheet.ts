@@ -8,9 +8,9 @@
  * 게임에서 쓰려면 시트가 Vite publicDir(`data/`) 아래에 있어야 한다 —
  * 그래서 런타임 경로는 `/ui/actor/<char>/<anim>/<anim>.json` 규약을 쓴다.
  *
- * 방랑자(wanderer)만 테스트 7클립(`/ui/wanderer/test_clips`)이 있으면
- * idle/run/shoot/pickup/throw/victory/fail 을 필드 슬롯에 덮어쓴다.
- * 생산 시트 `data/ui/actor/wanderer/` 는 그대로 두고, 클립이 없을 때만 폴백한다.
+ * 방랑자(wanderer)만 테스트 클립(`/ui/wanderer/test_clips`)이 있으면
+ * shoot/pickup/victory/fail 을 필드 슬롯에 덮어쓴다.
+ * idle/run/throw 는 생산 시트를 쓴다.
  */
 import type { PlayerSprite, SpriteAnimSheet } from "./types";
 
@@ -31,10 +31,10 @@ interface RawManifest {
 /** 캐릭터 스프라이트 루트 — 아트가 들어오면 이 아래에 <char>/<anim>/ 로 넣는다 */
 export const ACTOR_SPRITE_ROOT = "/ui/actor";
 
-/** 방랑자 테스트 7클립 — 생산 actor 경로와 별도 */
+/** 방랑자 테스트 클립 — 생산 actor 경로와 별도 */
 export const WANDERER_TEST_CLIPS_ROOT = "/ui/wanderer/test_clips";
 
-const TEST_CLIP_IDS = ["idle", "shoot", "run", "pickup", "throw", "victory", "fail"] as const;
+const TEST_CLIP_IDS = ["shoot", "pickup", "victory", "fail"] as const;
 type TestClipId = (typeof TEST_CLIP_IDS)[number];
 
 function dirOf(url: string): string {
@@ -115,7 +115,7 @@ export type WandererTestClips = Partial<Record<TestClipId, SpriteAnimSheet>>;
 
 let testClipsOnce: Promise<WandererTestClips> | null = null;
 
-/** 테스트 7클립을 한 번만 읽는다. 없는 id 는 빠진다. */
+/** 테스트 클립을 한 번만 읽는다. 없는 id 는 빠진다. */
 export function loadWandererTestClips(root = WANDERER_TEST_CLIPS_ROOT): Promise<WandererTestClips> {
   if (!testClipsOnce) {
     testClipsOnce = Promise.all(
@@ -139,14 +139,12 @@ export function loadWandererTestClips(root = WANDERER_TEST_CLIPS_ROOT): Promise<
  * 다른 캐릭·로비 PNG 경로는 그대로.
  *
  * 매핑:
- *   idle → idle
- *   run → move
  *   shoot → shoot + aimFire (발사)
- *   throw → throw
  *   pickup / victory / fail → 신규 슬롯
+ *   idle / move / throw 는 생산 시트 유지
  *
- * 테스트 클립이 하나라도 있으면 생산 조준·홀스터·옆걸음 시트는 빼서
- * 512×512 / 512×640 발 디딤이 섞이지 않게 한다. 옆·뒤 걷기는 run 으로 폴백.
+ * shoot 가 있으면 생산 조준·홀스터·옆걸음 시트는 빼서
+ * 512×512 / 512×640 발 디딤이 섞이지 않게 한다.
  */
 export async function applyWandererTestClips(
   charId: string,
@@ -159,9 +157,6 @@ export async function applyWandererTestClips(
 
   const next: PlayerSprite = {
     ...sprite,
-    idle: test.idle ?? sprite.idle,
-    move: test.run ?? sprite.move,
-    throw: test.throw ?? sprite.throw,
     shoot: test.shoot ?? sprite.shoot,
     aimFire: test.shoot ?? sprite.aimFire,
     pickup: test.pickup ?? sprite.pickup,
