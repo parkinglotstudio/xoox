@@ -14,7 +14,8 @@
 python scripts/sprite_tool/editor_server.py --char wanderer --port 8768
 # http://127.0.0.1:8768/studio.html
 npm run dev:wanderer-anim
-# 테스트 7클립: http://localhost:5173/wanderer-anim.html?bank=test
+# same file wanderer-anim.html — test bank:
+# http://localhost:5173/wanderer-anim.html?bank=test
 ```
 
 게임 복사본(폴백): `data/ui/actor/wanderer/`  

@@ -14,7 +14,7 @@
     "dev:sector": "vite --open /sector-editor.html",
     "dev:mapmask": "vite --open /map-mask-tool.html",
     "dev:fpv": "vite --open /fpv-tool.html",
-    "dev:wanderer-anim": "vite --open /wanderer-anim.html",
+    "dev:wanderer-anim": "vite --open /wanderer-anim.html?bank=test",
     "dev:raid": "vite --open /purify-raid-tool.html",
     "dev:skillproto": "vite --open /purify-skill-proto-tool.html",
     "dev:culprit": "vite --open /culprit-cloud-tool.html",

@@ -92,7 +92,7 @@ export const TOOLS: ToolEntry[] = [
     id: "wanderer-anim",
     name: "방랑자 스프라이트",
     short: "방랑자애니",
-    href: "/wanderer-anim.html",
+    href: "/wanderer-anim.html?bank=test",
     blurb: "뒷모습 게임 시트 + 테스트 7클립(아이들·총쏘기·달리기·줍기·던지기·승/패) 미리보기.",
     group: "art",
     npm: "dev:wanderer-anim",
