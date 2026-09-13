@@ -22,7 +22,7 @@ import { PurifyRaidHud } from "./PurifyRaidHud";
 import { playPickupGauge, playPurifyMelt, type MashCollectResult } from "./PurifyMelt";
 import { loadPurifyRaidConfig, scaleRaidForTier } from "./purifyRaidConfig";
 import { loadRaidTables } from "./raidTables";
-import { loadActorSprite, loadActorSpriteExtras } from "./spriteSheet";
+import { applyWandererTestClips, loadActorSprite, loadActorSpriteExtras } from "./spriteSheet";
 import { spawnPctInArea } from "../spawnStart";
 import { ResidualColorHunt } from "./ResidualColorHunt";
 import { SectorPurifyLoop, type SectorLoopHooks } from "./SectorPurifyLoop";
@@ -232,7 +232,8 @@ export class Journey3DView {
     const core = await loadActorSprite("wanderer", "/ui/lobby/lobby_actor_idle.png", { extras: false });
     await this.stage.setPlayerSprite(core);
     const extra = await loadActorSpriteExtras("wanderer");
-    await this.stage.setPlayerSprite({ ...core, ...extra });
+    const merged = await applyWandererTestClips("wanderer", { ...core, ...extra });
+    await this.stage.setPlayerSprite(merged);
   }
 
   private fit() {
@@ -902,8 +903,11 @@ export class Journey3DView {
           },
           onPhase: (phase) => {
             hud.showPhase(phase);
+            if (phase === "won") void this.stage.playOutcome("victory");
+            if (phase === "lost") void this.stage.playOutcome("fail");
             if (phase === "won" || phase === "lost") {
-              window.setTimeout(() => resolve({ won: phase === "won" }), 800);
+              const hold = Math.max(800, this.stage.outcomeHoldMs() + 120);
+              window.setTimeout(() => resolve({ won: phase === "won" }), hold);
             }
           },
         },
@@ -925,6 +929,7 @@ export class Journey3DView {
       raid.setFiring(false);
       raid.dispose();
       hud.dispose();
+      this.stage.clearOutcome();
       this.stage.setFrozen(false);
       this.stage.setTurnMode(this.cfg.turn_mode);
       this.stage.setOnTick((dt) => {

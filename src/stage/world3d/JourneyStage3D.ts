@@ -241,7 +241,12 @@ export class JourneyStage3D {
   private animWalkR: AnimState | null = null;
   private animMoveBack: AnimState | null = null;
   private animThrow: AnimState | null = null;
+  private animPickup: AnimState | null = null;
+  private animVictory: AnimState | null = null;
+  private animFail: AnimState | null = null;
   private throwing = false;
+  private picking = false;
+  private outcome: "victory" | "fail" | null = null;
   private throwReleased = false;
   private throwAim: { x: number; z: number } | null = null;
   private stoneThrow: StoneThrow | null = null;
@@ -297,8 +302,10 @@ export class JourneyStage3D {
   private inputOn = false;
   private dragging = false;
   private lastDragX = 0;
-  /** 왼쪽 버튼을 누르고 있으면 분사. 드래그와 동시에 돌아도 된다 */
+  /** 왼쪽 버튼 또는 Z 를 누르고 있으면 분사. 드래그와 동시에 돌아도 된다 */
   private shooting = false;
+  private pointerShoot = false;
+  private keyShoot = false;
 
   private viewW = 1;
   private viewH = 1;
@@ -963,6 +970,19 @@ export class JourneyStage3D {
     if (sprite.throw) {
       this.animThrow = await this.takeAnim(this.animThrow, { ...sprite.throw, loop: false });
     }
+    const shootSheet = sprite.shoot ?? sprite.aimFire;
+    if (sprite.shoot && shootSheet) {
+      this.animAim = await this.takeAnim(this.animAim, { ...shootSheet, loop: shootSheet.loop });
+    }
+    if (sprite.pickup) {
+      this.animPickup = await this.takeAnim(this.animPickup, { ...sprite.pickup, loop: false });
+    }
+    if (sprite.victory) {
+      this.animVictory = await this.takeAnim(this.animVictory, { ...sprite.victory, loop: false });
+    }
+    if (sprite.fail) {
+      this.animFail = await this.takeAnim(this.animFail, { ...sprite.fail, loop: false });
+    }
     if (!hadIdle) this.gunPose = "holstered";
     this.applyAnimFrame(this.animIdle);
     this.applyPlayerScale();
@@ -1048,11 +1068,13 @@ export class JourneyStage3D {
   }
 
   private currentAnim(): AnimState | null {
+    if (this.outcome === "victory") return this.animVictory ?? this.animIdle;
+    if (this.outcome === "fail") return this.animFail ?? this.animIdle;
     if (this.throwing) return this.animThrow ?? this.animIdle;
+    if (this.picking) return this.animPickup ?? this.animIdle;
     if (this.gunPose === "draw") return this.animDraw ?? this.animAim ?? this.animIdle;
     if (this.gunPose === "holster") return this.animHolster ?? this.animIdle;
     if (this.gunPose === "aim") {
-      // 던지기: 이동 중에도 던지기 시트(이동은 walk 시트로 따로 안 섞음)
       return this.animAim ?? this.animIdle;
     }
     if (!this.moving) return this.animIdle;
@@ -1072,10 +1094,17 @@ export class JourneyStage3D {
     const img = anim?.texture.image as { width?: number; height?: number } | undefined;
     const cols = anim?.sheet.cols ?? 1;
     const rows = anim?.sheet.rows ?? 1;
-    const fw = (img?.width ?? 1) / cols;
-    const fh = (img?.height ?? 1) / rows;
+    const fw = anim?.sheet.cellW ?? (img?.width ?? 1) / cols;
+    const fh = anim?.sheet.cellH ?? (img?.height ?? 1) / rows;
     const h = this.charH;
     this.player.scale.set(h * (fw / Math.max(1, fh)), h, 1);
+    const foot = anim?.sheet.footAnchor;
+    if (foot && fw > 0 && fh > 0) {
+      // THREE.Sprite center (0,0) = 셀 왼쪽 아래. 발 디딤을 월드 원점에 맞춘다.
+      this.player.center.set(foot[0] / fw, (fh - foot[1]) / fh);
+    } else {
+      this.player.center.set(0.5, 0);
+    }
   }
 
   private stepAnim(dt: number): void {
@@ -1118,6 +1147,8 @@ export class JourneyStage3D {
             this.throwing = false;
             this.throwReleased = false;
             this.throwAim = null;
+          } else if (this.picking) {
+            this.picking = false;
           }
         }
       }
@@ -1159,9 +1190,45 @@ export class JourneyStage3D {
     this.residualGrit?.emit(opts);
   }
 
-  /** 정화제·퇴치제 획득 — 모인 뒤 짧은 착탄 폭발 */
+  /** 정화제·퇴치제 획득 — 모인 뒤 짧은 착탄 폭발 + 줍기 클립 */
   playPickupBurst(x: number, z: number): void {
     this.stoneThrow?.playBurstAt(x, z, 0.62);
+    this.beginPickup();
+  }
+
+  private beginPickup(): void {
+    if (this.outcome || this.throwing) return;
+    this.picking = true;
+    this.resetAnim(this.animPickup);
+    if (!this.animPickup) this.picking = false;
+  }
+
+  /** 승리·패배 원샷. 클립이 없으면 즉시 끝. 마지막 프레임은 clearOutcome 까지 유지. */
+  playOutcome(kind: "victory" | "fail"): Promise<void> {
+    this.picking = false;
+    this.outcome = kind;
+    const anim = kind === "victory" ? this.animVictory : this.animFail;
+    this.resetAnim(anim);
+    if (!anim) {
+      this.outcome = null;
+      return Promise.resolve();
+    }
+    const ms = Math.min(4000, Math.max(400, this.sheetDurationMs(anim) + 80));
+    return new Promise((resolve) => window.setTimeout(resolve, ms));
+  }
+
+  clearOutcome(): void {
+    this.outcome = null;
+  }
+
+  outcomeHoldMs(): number {
+    const anim = this.outcome === "fail" ? this.animFail : this.animVictory;
+    if (!anim) return 800;
+    return Math.min(4000, Math.max(400, this.sheetDurationMs(anim) + 80));
+  }
+
+  private sheetDurationMs(anim: AnimState): number {
+    return anim.sheet.frames.reduce((sum, f) => sum + f.durationMs, 0);
   }
 
   applyStoneThrowConfig(cfg: PurifyRaidConfig): void {
@@ -1402,6 +1469,7 @@ export class JourneyStage3D {
       this.syncNearNode();
       return Promise.resolve();
     }
+    this.picking = false;
     const restoreFrozen = this.autoWalk?.restoreFrozen ?? this.frozen;
     this.finishAutoWalk(false);
     this.setFrozen(true);
@@ -1704,7 +1772,9 @@ export class JourneyStage3D {
     this.frozen = on;
     if (on) {
       this.keys.clear();
-      this.shooting = false;
+      this.pointerShoot = false;
+      this.keyShoot = false;
+      this.syncShooting();
       this.dragging = false;
     }
   }
@@ -2109,9 +2179,15 @@ export class JourneyStage3D {
       window.removeEventListener("pointerup", this.onPointerUp);
       window.removeEventListener("pointercancel", this.onPointerUp);
       this.keys.clear();
-      this.shooting = false;
+      this.pointerShoot = false;
+      this.keyShoot = false;
+      this.syncShooting();
       this.dragging = false;
     }
+  }
+
+  private syncShooting(): void {
+    this.shooting = this.pointerShoot || this.keyShoot;
   }
 
   private onKeyDown = (e: KeyboardEvent) => {
@@ -2142,6 +2218,12 @@ export class JourneyStage3D {
       this.beginThrow();
       return;
     }
+    if (k === "z") {
+      e.preventDefault();
+      this.keyShoot = true;
+      this.syncShooting();
+      return;
+    }
     if (MOVE_KEYS.has(k)) {
       e.preventDefault();
       this.keys.add(k);
@@ -2149,13 +2231,19 @@ export class JourneyStage3D {
   };
 
   private onKeyUp = (e: KeyboardEvent) => {
-    this.keys.delete(e.key.toLowerCase());
+    const k = e.key.toLowerCase();
+    this.keys.delete(k);
+    if (k === "z") {
+      this.keyShoot = false;
+      this.syncShooting();
+    }
   };
 
   private onPointerDown = (e: PointerEvent) => {
     if (e.button !== 0) return;
     this.dragging = true;
-    this.shooting = true;
+    this.pointerShoot = true;
+    this.syncShooting();
     this.lastDragX = e.clientX;
   };
 
@@ -2169,7 +2257,8 @@ export class JourneyStage3D {
   private onPointerUp = (e: PointerEvent) => {
     if (e.button !== 0 && e.type === "pointerup") return;
     this.dragging = false;
-    this.shooting = false;
+    this.pointerShoot = false;
+    this.syncShooting();
   };
 
   // ── 루프 ──────────────────────────────────────────────────────
@@ -2225,7 +2314,12 @@ export class JourneyStage3D {
       }
     }
 
-    const poseLocked = this.gunPose === "draw" || this.gunPose === "holster" || this.throwing;
+    const poseLocked =
+      this.gunPose === "draw" ||
+      this.gunPose === "holster" ||
+      this.throwing ||
+      this.picking ||
+      this.outcome != null;
     const armed = this.gunPose === "aim";
     if (this.frozen || poseLocked) {
       fwd = 0;
@@ -2523,6 +2617,9 @@ export class JourneyStage3D {
     this.animWalkR?.texture.dispose();
     this.animMoveBack?.texture.dispose();
     this.animThrow?.texture.dispose();
+    this.animPickup?.texture.dispose();
+    this.animVictory?.texture.dispose();
+    this.animFail?.texture.dispose();
     this.playerMat.dispose();
     {
       const m = this.playerShadow.material as THREE.MeshBasicMaterial;

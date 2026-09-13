@@ -85,6 +85,11 @@ export interface SpriteAnimSheet {
   rows: number;
   frames: { index: number; durationMs: number }[];
   loop: boolean;
+  /** 셀 픽셀. 없으면 시트 크기 / cols·rows */
+  cellW?: number;
+  cellH?: number;
+  /** 셀 안 발 디딤. 픽셀, 왼쪽·위가 원점 */
+  footAnchor?: [number, number];
   /** 셀 안 총구. 0..1, 왼쪽·위가 원점 */
   muzzleUv?: [number, number];
 }
@@ -94,6 +99,8 @@ export interface PlayerSprite {
   move?: SpriteAnimSheet | string;
   /** 정화총 조준·사격 */
   aimFire?: SpriteAnimSheet;
+  /** 발사 원샷 — 있으면 aimFire 대신 쓴다 */
+  shoot?: SpriteAnimSheet;
   drawHolster?: SpriteAnimSheet;
   holster?: SpriteAnimSheet;
   aimWalkF?: SpriteAnimSheet;
@@ -102,6 +109,11 @@ export interface PlayerSprite {
   aimWalkR?: SpriteAnimSheet;
   /** 무총 던지기 (스킬용 시트) */
   throw?: SpriteAnimSheet;
+  /** 줍기 원샷 */
+  pickup?: SpriteAnimSheet;
+  /** 승리·패배 원샷 */
+  victory?: SpriteAnimSheet;
+  fail?: SpriteAnimSheet;
   /** 무총 좌/우/뒤 걷기 */
   walkL?: SpriteAnimSheet;
   walkR?: SpriteAnimSheet;

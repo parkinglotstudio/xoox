@@ -357,11 +357,15 @@ export class SectorPurifyLoop {
         const rec = loopRunEnd();
         if (verdict !== "pass") {
           this.stage.setPurifyColorAmt(0);
+          await this.stage.playOutcome("fail");
+          this.stage.clearOutcome();
           return { won: false };
         }
         this.setBeat("done");
         const label = this.areaId.includes("i11") ? "우물" : "들판";
         await this.hooks.onRunEnd?.(rec, loopRunLine(label));
+        await this.stage.playOutcome("victory");
+        this.stage.clearOutcome();
         return { won: true };
       }
       const hard = this.cfg.difficulty === "hard";
@@ -386,6 +390,8 @@ export class SectorPurifyLoop {
         if (verdict !== "pass") {
           this.stage.setPurifyColorAmt(0);
           loopRunEnd();
+          await this.stage.playOutcome("fail");
+          this.stage.clearOutcome();
           return { won: false };
         }
         await this.playTint(3);
@@ -396,6 +402,8 @@ export class SectorPurifyLoop {
           const label = this.areaId.includes("i11") ? "우물" : "들판";
           await this.hooks.onRunEnd?.(rec, loopRunLine(label));
         }
+        await this.stage.playOutcome("victory");
+        this.stage.clearOutcome();
         return { won: true };
     } finally {
       if (loopRunLive()) loopRunEnd();

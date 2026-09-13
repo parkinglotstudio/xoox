@@ -17,5 +17,6 @@ npm run dev:wanderer-anim
 # 테스트 7클립: http://localhost:5173/wanderer-anim.html?bank=test
 ```
 
-게임 복사본: `data/ui/actor/wanderer/`  
-테스트 전용 뱅크(생산 시트 미변경): `data/ui/wanderer/test_clips/`
+게임 복사본(폴백): `data/ui/actor/wanderer/`  
+필드에 덮어쓰는 테스트 7클립: `data/ui/wanderer/test_clips/`  
+들판 조작: 마우스 왼쪽 / **Z** 발사 · **Space** 던지기 · WASD 이동. 로비 액터는 이 뱅크를 쓰지 않는다.
