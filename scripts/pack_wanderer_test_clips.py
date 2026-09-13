@@ -27,6 +27,16 @@ CELL_W = 512
 CELL_H = 640
 FOOT = {"x": 256, "y": 624}
 GUN_CELL = 480  # older gun-run square cells
+# WebGL max texture is often 8192. A 36-frame 1-row strip is 18432px and gets
+# resized (UVs break). Wrap so neither side exceeds this.
+MAX_SHEET_PX = 4096
+MAX_COLS = MAX_SHEET_PX // CELL_W
+
+
+def grid_shape(n: int) -> tuple[int, int]:
+    cols = min(max(1, n), MAX_COLS)
+    rows = max(1, (n + cols - 1) // cols)
+    return cols, rows
 
 CLIPS = (
     {"id": "idle", "label": "아이들", "loop": True},
@@ -119,9 +129,11 @@ def fit_to_bank(im: Image.Image, label: str) -> Image.Image:
 
 
 def pack_sheet(frames: list[Image.Image]) -> Image.Image:
-    sheet = Image.new("RGBA", (CELL_W * len(frames), CELL_H), (0, 0, 0, 0))
+    cols, rows = grid_shape(len(frames))
+    sheet = Image.new("RGBA", (CELL_W * cols, CELL_H * rows), (0, 0, 0, 0))
     for i, fr in enumerate(frames):
-        sheet.paste(fr, (i * CELL_W, 0), fr)
+        c, r = i % cols, i // cols
+        sheet.paste(fr, (c * CELL_W, r * CELL_H), fr)
     return sheet
 
 
@@ -153,14 +165,15 @@ def write_clip(
                 "file": f"frames/{name}",
             }
         )
+    cols, rows = grid_shape(len(frames))
     man = {
         "id": clip_id,
         "bank": "test",
         "cell": CELL_W,
         "cell_w": CELL_W,
         "cell_h": CELL_H,
-        "cols": len(frames),
-        "rows": 1,
+        "cols": cols,
+        "rows": rows,
         "frame_count": len(frames),
         "pivot": "bottom-center",
         "foot_anchor": dict(FOOT),
@@ -170,7 +183,7 @@ def write_clip(
         "frames": recs,
     }
     (dest / f"{clip_id}.json").write_text(json.dumps(man, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"packed {clip_id}: {len(frames)} frames loop={loop} ← {source}")
+    print(f"packed {clip_id}: {len(frames)} frames {cols}x{rows} loop={loop} ← {source}")
     return dest
 
 
@@ -292,7 +305,8 @@ def main() -> None:
     index["bank"] = "test"
     index["note"] = (
         "Test-only seven clips. Does not replace data/ui/actor/wanderer. "
-        "512×640 kept; 480×480 foot-mapped (240,480)→(256,624) paste (16,144)."
+        "512×640 kept; 480×480 foot-mapped (240,480)→(256,624) paste (16,144). "
+        f"Sheets wrap at {MAX_COLS} cols so GPU textures stay ≤{MAX_SHEET_PX}px."
     )
     index["cell_w"] = CELL_W
     index["cell_h"] = CELL_H

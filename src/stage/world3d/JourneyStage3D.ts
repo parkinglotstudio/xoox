@@ -1004,6 +1004,23 @@ export class JourneyStage3D {
     return this.animAim != null;
   }
 
+  /** 필드 검증용 — 현재 얹힌 시트 URL */
+  playerSheetDebug(): Record<string, unknown> {
+    return {
+      idle: this.animIdle?.sheet.url ?? null,
+      move: this.animMove?.sheet.url ?? null,
+      shoot: this.animAim?.sheet.url ?? null,
+      throw: this.animThrow?.sheet.url ?? null,
+      pickup: this.animPickup?.sheet.url ?? null,
+      victory: this.animVictory?.sheet.url ?? null,
+      fail: this.animFail?.sheet.url ?? null,
+      cellH: this.animIdle?.sheet.cellH ?? null,
+      foot: this.animIdle?.sheet.footAnchor ?? null,
+      shooting: this.shooting,
+      gunPose: this.gunPose,
+    };
+  }
+
   /** 빌보드 셀 위 총구 → 월드. JSON muzzle_uv 가 있으면 높이를 쓴다. */
   muzzleOrigin(nx: number, nz: number): { x: number; y: number; z: number } {
     const anim = this.gunPose === "aim" ? this.currentAnim() : this.animAim;

@@ -31,6 +31,8 @@ When any test clip is present, production draw/holster/aim-walk/strafe sheets ar
 
 480×480 gun-run frames are **not scaled**. Source bottom-center (240, 480) is pasted so it lands on (256, 624): offset **(16, 144)**.
 
+Long clips wrap into a grid (max 8 columns, 4096px) so WebGL does not resize a 1-row strip (shoot was 18432px). UV math already uses `cols`/`rows`.
+
 ## How to run
 
 Sprite tool:

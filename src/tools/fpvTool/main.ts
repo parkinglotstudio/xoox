@@ -10,6 +10,7 @@
  * SSoT는 건드리지 않는다 — area_config / area_npc_config / sector_scale.json 은 읽기만.
  */
 import { Journey3DTuner } from "../../stage/world3d/Journey3DTuner";
+import type { JourneyStage3D } from "../../stage/world3d/JourneyStage3D";
 import type { WorldNode } from "../../stage/world3d/types";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -110,6 +111,7 @@ const tuner = new Journey3DTuner(canvas, dials, {
 
 async function boot() {
   await tuner.init();
+  (window as unknown as { __stage3d: JourneyStage3D }).__stage3d = tuner.getStage();
 
   sectorSel.innerHTML = tuner
     .sectorIds()

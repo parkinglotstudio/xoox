@@ -4,8 +4,8 @@
   "cell": 512,
   "cell_w": 512,
   "cell_h": 640,
-  "cols": 12,
-  "rows": 1,
+  "cols": 8,
+  "rows": 2,
   "frame_count": 12,
   "pivot": "bottom-center",
   "foot_anchor": {

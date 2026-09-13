@@ -1,7 +1,7 @@
 {
   "id": "wanderer_test_clips",
   "bank": "test",
-  "note": "Test-only seven clips. Does not replace data/ui/actor/wanderer. 512×640 kept; 480×480 foot-mapped (240,480)→(256,624) paste (16,144).",
+  "note": "Test-only seven clips. Does not replace data/ui/actor/wanderer. 512×640 kept; 480×480 foot-mapped (240,480)→(256,624) paste (16,144). Sheets wrap at 8 cols so GPU textures stay ≤4096px.",
   "cell_w": 512,
   "cell_h": 640,
   "pivot": "bottom-center",
