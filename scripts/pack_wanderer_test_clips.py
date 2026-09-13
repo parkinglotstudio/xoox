@@ -39,11 +39,8 @@ def grid_shape(n: int) -> tuple[int, int]:
     return cols, rows
 
 CLIPS = (
-    {"id": "idle", "label": "아이들", "loop": True},
     {"id": "shoot", "label": "총쏘기", "loop": False},
-    {"id": "run", "label": "달리기", "loop": True},
     {"id": "pickup", "label": "줍기", "loop": False},
-    {"id": "throw", "label": "던지기", "loop": False},
     {"id": "victory", "label": "승리", "loop": False},
     {"id": "fail", "label": "패배", "loop": False},
 )
