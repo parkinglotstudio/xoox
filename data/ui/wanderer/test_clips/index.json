@@ -5,13 +5,31 @@
   "cell_w": 512,
   "cell_h": 640,
   "pivot": "bottom-center",
-  "foot_anchor": { "x": 256, "y": 624 },
+  "foot_anchor": {
+    "x": 256,
+    "y": 624
+  },
   "fit_480": {
-    "src_cell": [480, 480],
-    "src_foot": [240, 480],
-    "dst_cell": [512, 640],
-    "dst_foot": [256, 624],
-    "paste": [16, 144],
+    "src_cell": [
+      480,
+      480
+    ],
+    "src_foot": [
+      240,
+      480
+    ],
+    "dst_cell": [
+      512,
+      640
+    ],
+    "dst_foot": [
+      256,
+      624
+    ],
+    "paste": [
+      16,
+      144
+    ],
     "scale": 1
   },
   "local_refs": [
@@ -19,12 +37,54 @@
     "C:\\Users\\dmaxd\\xoox-anim-refs\\gun-run\\game_ready\\"
   ],
   "clips": [
-    { "id": "idle", "label": "아이들", "loop": true },
-    { "id": "shoot", "label": "총쏘기", "loop": false },
-    { "id": "run", "label": "달리기", "loop": true },
-    { "id": "pickup", "label": "줍기", "loop": false },
-    { "id": "throw", "label": "던지기", "loop": false },
-    { "id": "victory", "label": "승리", "loop": false },
-    { "id": "fail", "label": "패배", "loop": false }
+    {
+      "id": "idle",
+      "label": "아이들",
+      "loop": true,
+      "sheet": "idle/idle_sheet.png",
+      "manifest": "idle/idle.json"
+    },
+    {
+      "id": "shoot",
+      "label": "총쏘기",
+      "loop": false,
+      "sheet": "shoot/shoot_sheet.png",
+      "manifest": "shoot/shoot.json"
+    },
+    {
+      "id": "run",
+      "label": "달리기",
+      "loop": true,
+      "sheet": "run/run_sheet.png",
+      "manifest": "run/run.json"
+    },
+    {
+      "id": "pickup",
+      "label": "줍기",
+      "loop": false,
+      "sheet": "pickup/pickup_sheet.png",
+      "manifest": "pickup/pickup.json"
+    },
+    {
+      "id": "throw",
+      "label": "던지기",
+      "loop": false,
+      "sheet": "throw/throw_sheet.png",
+      "manifest": "throw/throw.json"
+    },
+    {
+      "id": "victory",
+      "label": "승리",
+      "loop": false,
+      "sheet": "victory/victory_sheet.png",
+      "manifest": "victory/victory.json"
+    },
+    {
+      "id": "fail",
+      "label": "패배",
+      "loop": false,
+      "sheet": "fail/fail_sheet.png",
+      "manifest": "fail/fail.json"
+    }
   ]
 }
