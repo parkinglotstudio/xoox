@@ -25,7 +25,8 @@
         border-radius: 999px; padding: 7px 12px; font-weight: 700; cursor: pointer;
       }
       .bar button.on { background: #3a2a14; color: #ffd27a; }
-      .bar button.bank.on { background: #243018; color: #d4f0a8; }
+      .bar button.v2 { border-color: rgba(160, 200, 90, 0.55); }
+      .bar button.v2.on { background: #243018; color: #d4f0a8; }
       .workspace { display: grid; place-items: center; padding: 24px; }
       .stage {
         width: min(72vw, 512px);
@@ -48,9 +49,7 @@
     <header class="bar">
       <a href="/tools.html">← 툴 허브</a>
       <h1>방랑자 스프라이트</h1>
-      <span class="hint" id="hint">게임 시트 미리보기 · 체크보드 = 투명</span>
-      <button type="button" data-bank="game" class="bank on">게임</button>
-      <button type="button" data-bank="test" class="bank">테스트</button>
+      <span class="hint" id="hint">뒤쪽 숫자 2 = 이번에 넣은 새 클립</span>
       <span id="animBtns"></span>
       <button type="button" id="play">일시정지</button>
       <button type="button" id="foot" class="on">발기준</button>
@@ -77,6 +76,16 @@
         ["draw_holster", "빼기"],
         ["holster", "넣기"],
       ];
+      /** 새로 주신 7클립 — 기존 버튼과 구분하려고 이름 뒤에 2 */
+      const TEST_ANIMS = [
+        ["idle", "아이들2"],
+        ["shoot", "총쏘기2"],
+        ["run", "달리기2"],
+        ["pickup", "줍기2"],
+        ["throw", "던지기2"],
+        ["victory", "승리2"],
+        ["fail", "패배2"],
+      ];
 
       const cv = document.getElementById("cv");
       const ctx = cv.getContext("2d");
@@ -90,6 +99,10 @@
       const params = new URLSearchParams(location.search);
       let bank = params.get("bank") === "test" ? "test" : "game";
       let animId = params.get("clip") || (bank === "test" ? "idle" : "ingame_idle");
+      if (params.get("v") === "2" && !params.get("clip")) {
+        bank = "test";
+        animId = "idle";
+      }
       let testIndex = null;
       let manifest = null;
       let sheet = null;
@@ -153,25 +166,30 @@
         ctx.restore();
       }
 
+      function addAnimBtn(id, label, fromBank) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.dataset.anim = id;
+        b.dataset.bank = fromBank;
+        b.textContent = label;
+        if (fromBank === "test") b.classList.add("v2");
+        if (fromBank === bank && id === animId) b.classList.add("on");
+        b.addEventListener("click", () => {
+          animBtns.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
+          void load(id, fromBank).catch((e) => {
+            status.textContent = `실패: ${e}`;
+          });
+        });
+        animBtns.appendChild(b);
+      }
+
       function renderAnimBtns() {
         animBtns.replaceChildren();
-        const items = bank === "test"
-          ? (testIndex?.clips || []).map((c) => [c.id, c.label || c.id])
-          : GAME_ANIMS;
-        for (const [id, label] of items) {
-          const b = document.createElement("button");
-          b.type = "button";
-          b.dataset.anim = id;
-          b.textContent = label;
-          if (id === animId) b.classList.add("on");
-          b.addEventListener("click", () => {
-            animBtns.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
-            void load(id).catch((e) => {
-              status.textContent = `실패: ${e}`;
-            });
-          });
-          animBtns.appendChild(b);
-        }
+        for (const [id, label] of GAME_ANIMS) addAnimBtn(id, label, "game");
+        const extras = (testIndex?.clips || []).length
+          ? testIndex.clips.map((c) => [c.id, `${c.label || c.id}2`])
+          : TEST_ANIMS;
+        for (const [id, label] of extras) addAnimBtn(id, label, "test");
       }
 
       async function loadTestIndex() {
@@ -191,7 +209,8 @@
         return JSON.parse(text);
       }
 
-      async function load(id) {
+      async function load(id, nextBank = bank) {
+        bank = nextBank;
         animId = id;
         status.textContent = `${id} 불러오는 중…`;
         const root = bank === "test" ? `${TEST_ROOT}/${id}` : `${GAME_ROOT}/${id}`;
@@ -252,33 +271,6 @@
         requestAnimationFrame(loop);
       }
 
-      async function setBank(next) {
-        bank = next;
-        manifest = null;
-        sheet = null;
-        document.querySelectorAll("button.bank").forEach((b) => {
-          b.classList.toggle("on", b.dataset.bank === next);
-        });
-        if (next === "test") {
-          hint.textContent = "테스트 뱅크 · 512×640 · 발 (256, 624) · 생산 시트 미변경";
-          await loadTestIndex();
-          animId = GAME_ANIMS.some(([id]) => id === animId) ? (testIndex.clips?.[0]?.id || "idle") : animId;
-        } else {
-          hint.textContent = "게임 시트 미리보기 · 체크보드 = 투명";
-          animId = (testIndex?.clips || []).some((c) => c.id === animId) ? "ingame_idle" : animId;
-        }
-        renderAnimBtns();
-        syncStage();
-        await load(animId);
-      }
-
-      document.querySelectorAll("button.bank").forEach((b) => {
-        b.addEventListener("click", () => {
-          void setBank(b.dataset.bank).catch((e) => {
-            status.textContent = `실패: ${e}`;
-          });
-        });
-      });
       playBtn.addEventListener("click", () => {
         playing = !playing;
         playBtn.textContent = playing ? "일시정지" : "재생";
@@ -289,16 +281,12 @@
       });
 
       void (async () => {
-        if (bank === "test") await loadTestIndex();
-        renderAnimBtns();
-        document.querySelectorAll("button.bank").forEach((b) => {
-          b.classList.toggle("on", b.dataset.bank === bank);
+        await loadTestIndex().catch(() => {
+          testIndex = { clips: TEST_ANIMS.map(([id, label]) => ({ id, label: label.replace(/2$/, "") })) };
         });
-        if (bank === "test") {
-          hint.textContent = "테스트 뱅크 · 512×640 · 발 (256, 624) · 생산 시트 미변경";
-        }
+        renderAnimBtns();
         syncStage();
-        await load(animId);
+        await load(animId, bank);
         requestAnimationFrame(loop);
       })().catch((e) => {
         status.textContent = `실패: ${e}`;

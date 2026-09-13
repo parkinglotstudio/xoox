@@ -41,13 +41,9 @@ Sprite tool:
 npm run dev:wanderer-anim
 ```
 
-Opens the **same** page as the old preview, on the test bank:
+http://localhost:5173/wanderer-anim.html
 
-http://localhost:5173/wanderer-anim.html?bank=test
-
-Click **아이들 / 총쏘기 / 달리기 / 줍기 / 던지기 / 승리 / 패배**. Red crosshair is the shared foot plant.
-
-Without `?bank=test` (or after clicking **게임**) it still shows production `data/ui/actor/wanderer/` sheets — that is the old-looking bar, not a second tool.
+같은 툴 버튼 줄에 새 클립이 **아이들2 / 총쏘기2 / 달리기2 / 줍기2 / 던지기2 / 승리2 / 패배2** 로 붙어 있다. 숫자 없는 버튼은 예전 인게임 시트.
 
 Main field / prototype:
 
