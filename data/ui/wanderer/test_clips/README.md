@@ -21,28 +21,28 @@ Click **테스트** → **A / B / C / D**. Red crosshair is the shared foot plan
 
 ## How to pack
 
-Drop source GIFs (and optional composite sheets) into `_src/`:
+Drop source files here (this is the only path the packer reads on the VM):
 
 ```
 data/ui/wanderer/test_clips/_src/a.gif
 data/ui/wanderer/test_clips/_src/b.gif
 data/ui/wanderer/test_clips/_src/c.gif
 data/ui/wanderer/test_clips/_src/d.gif
+# optional fallback if a GIF is missing:
+data/ui/wanderer/test_clips/_src/a_sheet.png
+data/ui/wanderer/test_clips/_src/b_sheet.png
+data/ui/wanderer/test_clips/_src/c_sheet.png
+data/ui/wanderer/test_clips/_src/d_sheet.png
 ```
 
 ```bash
 python3 scripts/pack_wanderer_test_clips.py
 ```
 
-The packer keeps the 512×640 canvas as-is (no re-fit / re-center). Green chroma is keyed to alpha.  
+The packer keeps the 512×640 canvas as-is (no re-fit / re-center). Green chroma (GIF) / white (sheet) is keyed to alpha.  
 If a frame is not 512×640, the packer **stops** instead of guessing a new anchor.
 
-Optional composite-sheet fallback (only if a GIF is missing):
-
-- `a_sheet.png` rows → `a`, `b`
-- `b_sheet.png` rows → `c`, `d`
-
-Confirm that row mapping before treating it as final.
+`{id}_sheet.png` is that clip only (grid of 512×640 cells). Empty trailing cells are skipped. GIFs win when both exist.
 
 ## Local refs (not on the VM)
 

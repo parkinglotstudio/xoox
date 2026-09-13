@@ -24,12 +24,6 @@ CELL_H = 640
 FOOT = {"x": 256, "y": 624}
 CLIP_IDS = ("a", "b", "c", "d")
 
-# Optional fallback if a GIF is missing. Confirm before treating as final.
-SHEET_ROWS = {
-    "a_sheet.png": ("a", "b"),
-    "b_sheet.png": ("c", "d"),
-}
-
 
 def load_gif(path: Path) -> tuple[list[Image.Image], list[int]]:
     im = Image.open(path)
@@ -149,7 +143,19 @@ def write_clip(
     return dest
 
 
-def slice_sheet(path: Path, row_ids: tuple[str, ...]) -> dict[str, list[Image.Image]]:
+def find_src(name: str, src_dirs: list[Path]) -> Path | None:
+    for d in src_dirs:
+        cand = d / name
+        if cand.is_file():
+            return cand
+    return None
+
+
+def slice_clip_sheet(path: Path) -> list[Image.Image]:
+    """One clip per file: grid of 512×640 cells, left-to-right then top-to-bottom.
+
+    Empty trailing pad cells (fully transparent) are skipped.
+    """
     im = Image.open(path).convert("RGBA")
     w, h = im.size
     if w % CELL_W or h % CELL_H:
@@ -157,17 +163,16 @@ def slice_sheet(path: Path, row_ids: tuple[str, ...]) -> dict[str, list[Image.Im
             f"{path.name}: sheet is {w}×{h}, not a {CELL_W}×{CELL_H} grid. Refusing to guess cell size."
         )
     cols, rows = w // CELL_W, h // CELL_H
-    if rows != len(row_ids):
-        raise SystemExit(
-            f"{path.name}: {rows} rows, expected {len(row_ids)} ({', '.join(row_ids)}). Refusing to guess mapping."
-        )
-    out: dict[str, list[Image.Image]] = {}
-    for r, clip_id in enumerate(row_ids):
-        cells = []
+    frames: list[Image.Image] = []
+    for r in range(rows):
         for c in range(cols):
-            cells.append(im.crop((c * CELL_W, r * CELL_H, (c + 1) * CELL_W, (r + 1) * CELL_H)))
-        out[clip_id] = cells
-    return out
+            cell = im.crop((c * CELL_W, r * CELL_H, (c + 1) * CELL_W, (r + 1) * CELL_H))
+            if cell.getbbox() is None:
+                continue
+            frames.append(cell)
+    if not frames:
+        raise SystemExit(f"{path.name}: no non-empty {CELL_W}×{CELL_H} cells")
+    return frames
 
 
 def collect_src(src_dirs: list[Path]) -> Path:
@@ -194,13 +199,9 @@ def main() -> None:
     packed: dict[str, str] = {}
     key_green = not args.no_key_green
 
+    search = [src, *src_dirs]
     for clip_id in CLIP_IDS:
-        gif = None
-        for d in (src, *src_dirs):
-            cand = d / f"{clip_id}.gif"
-            if cand.is_file():
-                gif = cand
-                break
+        gif = find_src(f"{clip_id}.gif", search)
         if not gif:
             continue
         if gif.resolve() != (bank_src / gif.name).resolve():
@@ -213,36 +214,27 @@ def main() -> None:
         write_clip(args.out, clip_id, cleaned, durs, source=gif.name)
         packed[clip_id] = gif.name
 
-    missing = [c for c in CLIP_IDS if c not in packed]
-    if missing:
-        for sheet_name, row_ids in SHEET_ROWS.items():
-            sheet_path = None
-            for d in (src, *src_dirs):
-                cand = d / sheet_name
-                if cand.is_file():
-                    sheet_path = cand
-                    break
-            if not sheet_path:
-                continue
-            dest_sheet = bank_src / sheet_name
-            if sheet_path.resolve() != dest_sheet.resolve():
-                shutil.copy2(sheet_path, dest_sheet)
-            rows = slice_sheet(dest_sheet, row_ids)
-            for clip_id, frames in rows.items():
-                if clip_id in packed:
-                    continue
-                if clip_id not in missing:
-                    continue
-                cleaned = [
-                    require_cell(
-                        maybe_key(fr, key_green=key_green, key_white=args.key_white or True),
-                        f"{sheet_name}:{clip_id}[{i}]",
-                    )
-                    for i, fr in enumerate(frames)
-                ]
-                durs = [80] * len(cleaned)
-                write_clip(args.out, clip_id, cleaned, durs, source=f"{sheet_name} row {row_ids.index(clip_id)}")
-                packed[clip_id] = sheet_name
+    for clip_id in CLIP_IDS:
+        if clip_id in packed:
+            continue
+        sheet_name = f"{clip_id}_sheet.png"
+        sheet_path = find_src(sheet_name, search)
+        if not sheet_path:
+            continue
+        dest_sheet = bank_src / sheet_name
+        if sheet_path.resolve() != dest_sheet.resolve():
+            shutil.copy2(sheet_path, dest_sheet)
+        frames = slice_clip_sheet(dest_sheet)
+        cleaned = [
+            require_cell(
+                maybe_key(fr, key_green=key_green, key_white=True),
+                f"{sheet_name}[{i}]",
+            )
+            for i, fr in enumerate(frames)
+        ]
+        durs = [80] * len(cleaned)
+        write_clip(args.out, clip_id, cleaned, durs, source=sheet_name)
+        packed[clip_id] = sheet_name
 
     still = [c for c in CLIP_IDS if c not in packed]
     if still:
