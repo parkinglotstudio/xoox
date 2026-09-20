@@ -168,6 +168,36 @@ uniform float uPurifyFill;`,
   return u;
 }
 
+function wireAmbientPolluteShader(mat: THREE.MeshBasicMaterial): { value: number } {
+  const u = { value: 1 };
+  mat.userData.uAmbientPurify = u;
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.uAmbientPurify = u;
+    shader.fragmentShader = shader.fragmentShader
+      .replace(
+        "#include <common>",
+        `#include <common>
+uniform float uAmbientPurify;`,
+      )
+      .replace(
+        "#include <color_fragment>",
+        `#include <color_fragment>
+        {
+          vec3 baseCol = diffuseColor.rgb;
+          float g = dot(baseCol, vec3(0.299, 0.587, 0.114));
+          vec3 veiled = mix(baseCol, vec3(g), 0.88);
+          veiled *= vec3(0.26, 0.32, 0.34);
+          veiled = mix(veiled, vec3(0.10, 0.13, 0.14), 0.22);
+          veiled = clamp(veiled * 0.72, 0.0, 1.0);
+          diffuseColor.rgb = mix(veiled, baseCol, clamp(uAmbientPurify, 0.0, 1.0));
+        }`,
+      );
+  };
+  mat.customProgramCacheKey = () => "ambient-pollute-prop-v1";
+  mat.needsUpdate = true;
+  return u;
+}
+
 function setPropPurifyFill(e: PropEntry, fill: number): void {
   e.purifyFill = clamp(fill, 0, 1);
   const u = e.material.userData.uPurifyFill as { value: number } | undefined;
@@ -782,6 +812,7 @@ export class JourneyStage3D {
     if (ambient && p.art) {
       mat = stickerArtMaterial(p.art).clone();
       clonedArt = true;
+      wireAmbientPolluteShader(mat);
     } else if (shared && p.art) {
       mat = stickerArtMaterial(p.art);
     } else {
@@ -1807,8 +1838,9 @@ export class JourneyStage3D {
   private applyOneAmbientTint(e: PropEntry): void {
     if (!e.clonedArt || e.residual) return;
     const t = this.ambientPurifyAmount(e.wx, e.wz);
-    const c = AMBIENT_POLLUTED;
-    e.material.color.setRGB(c.r + (1 - c.r) * t, c.g + (1 - c.g) * t, c.b + (1 - c.b) * t);
+    const u = e.material.userData.uAmbientPurify as { value: number } | undefined;
+    if (u) u.value = t;
+    e.material.color.setHex(PROP_COLOR);
   }
 
   private applyAmbientPropTints(): void {
