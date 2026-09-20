@@ -502,7 +502,7 @@ export class JourneyStage3D {
     this.island.setFocus(id);
     await this.island.ensureLand(id);
     if (this.disposed) return;
-    if (opts?.foci) this.setPurifyFoci(opts.foci);
+    if (opts?.foci && opts.foci.length > 0) this.setPurifyFoci(opts.foci);
     else if (opts?.purifiedIds) this.island.setPurified(opts.purifiedIds);
     else if (opts?.polluted != null) {
       this.island.setPurified(opts.polluted ? [] : [id]);

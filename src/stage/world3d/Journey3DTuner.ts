@@ -228,7 +228,7 @@ export class Journey3DTuner {
     try {
       await this.stage.setFloor(
         url,
-        this.useAfterArt ? { polluted: false } : { polluted: true, foci: [] },
+        this.useAfterArt ? { polluted: false } : { polluted: true },
       );
     } catch (err) {
       console.warn("setFloor", err);
