@@ -570,10 +570,10 @@ float purifyReveal = 0.0;`,
         if (uPolluted > 0.5) {
           vec3 baseColor = diffuseColor.rgb;
           float g = dot(baseColor, vec3(0.299, 0.587, 0.114));
-          vec3 veiled = mix(baseColor, vec3(g), 0.72);
-          veiled *= vec3(0.52, 0.62, 0.72);
-          veiled = mix(veiled, vec3(0.35, 0.55, 0.62), 0.14);
-          veiled = clamp(veiled * 0.88, 0.0, 1.0);
+          vec3 veiled = mix(baseColor, vec3(g), 0.86);
+          veiled *= vec3(0.36, 0.42, 0.40);
+          veiled = mix(veiled, vec3(0.14, 0.18, 0.16), 0.20);
+          veiled = clamp(veiled * 0.62, 0.0, 1.0);
           vec2 local = vec2((vMapUv.x - 0.5) * uCellM, (0.5 - vMapUv.y) * uCellM);
           vec2 world = local + uWorldOffset;
           float reveal = 0.0;
@@ -616,7 +616,7 @@ float purifyReveal = 0.0;`,
         #endif`,
       );
   };
-  mat.customProgramCacheKey = () => "island-pollute-v18-softfog";
+  mat.customProgramCacheKey = () => "island-pollute-v19-murk";
 }
 
 export interface PurifyFocusWorld {
