@@ -17,6 +17,7 @@
  */
 import * as THREE from "three";
 import { PROP_DEFAULTS, stickerTexture, stickerArtTexture, stickerArtMaterial, stickerArtReady, disposePropTextures } from "./propArt";
+import { spawnPctInArea } from "../spawnStart";
 import type { Journey3DConfig } from "./journey3dConfig";
 import { IslandTerrain, sectorIdOf, purifyAmountAt, type PurifyFocusWorld } from "./IslandTerrain";
 import { findWorldPath, resolveCircleMove, type PathObstacle } from "./propPath";
@@ -454,7 +455,8 @@ export class JourneyStage3D {
     this.playerShadow.rotation.x = -Math.PI / 2;
     this.scene.add(this.player, this.playerShadow);
 
-    this.setPlayer(50, 88, 0);
+    const bootSpawn = spawnPctInArea([], "area_i21");
+    this.setPlayer(bootSpawn.xPct, bootSpawn.yPct, 0);
     this.applyFog();
     this.applyViewMode();
     this.resize(canvas.clientWidth || 640, canvas.clientHeight || 360);
@@ -701,7 +703,11 @@ export class JourneyStage3D {
     this.clearProps();
     this.propCatalog = props;
     this.rebuildObstacles();
-    this.rebuildWallBatch();
+    try {
+      this.rebuildWallBatch();
+    } catch (err) {
+      console.warn("rebuildWallBatch", err);
+    }
     this.lastStreamPx = 9999;
     this.syncPropStream(true);
   }
@@ -734,8 +740,12 @@ export class JourneyStage3D {
       if (spawned.has(p.id)) continue;
       const pos = this.pctToWorld(p.xPct, p.yPct);
       if (Math.hypot(pos.x - this.px, pos.z - this.pz) > r) continue;
-      this.spawnPropMesh(p);
-      spawned.add(p.id);
+      try {
+        this.spawnPropMesh(p);
+        spawned.add(p.id);
+      } catch (err) {
+        console.warn("spawnPropMesh", p.id, err);
+      }
     }
     for (let i = this.props.length - 1; i >= 0; i--) {
       const e = this.props[i]!;
@@ -2096,7 +2106,9 @@ export class JourneyStage3D {
     this.nodeHMul = clamp(mul, 0.2, 6);
     const h = this.charH * this.nodeHMul;
     for (const e of this.nodes) {
-      const img = e.texture.image as HTMLCanvasElement;
+      if (e.node.noMarker) continue;
+      const img = e.texture.image as HTMLCanvasElement | undefined;
+      if (!img || !img.width || !img.height) continue;
       e.sprite.scale.set(h * (img.width / img.height), h, 1);
     }
   }
