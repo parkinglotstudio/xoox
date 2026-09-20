@@ -738,6 +738,29 @@ export class IslandTerrain {
     return this.foci;
   }
 
+  /** 포커스 칸이 베일 없이 열린 상태(FPV after / 칸 전체 정화). */
+  isFocusUnveiled(): boolean {
+    const useFoci = this.foci.length > 0 || this.wave != null;
+    if (useFoci) return !this.tintFromPurify;
+    return !this.tintFromPurify || this.purified.has(this.focusId);
+  }
+
+  /**
+   * 바닥 베일과 같은 정화량 0..1. 원 밖·오염 칸=0, 원 안·정화 칸=1.
+   * 파도가 있으면 파도 원과도 max.
+   */
+  ambientPurifyAt(x: number, z: number): number {
+    if (this.isFocusUnveiled()) return 1;
+    let a = purifyAmountAt(x, z, this.foci);
+    if (this.wave) {
+      const d = Math.hypot(x - this.wave.x, z - this.wave.z);
+      const soft = Math.max(1.5, this.wave.r * 0.08);
+      const t = 1 - smoothstep01(this.wave.r - soft, this.wave.r + soft * 0.35, d);
+      if (t > a) a = t;
+    }
+    return a;
+  }
+
   setPurifyColorAmt(amt: number): void {
     this.colorAmt = Math.max(0, Math.min(1, amt));
     this.applyTints();

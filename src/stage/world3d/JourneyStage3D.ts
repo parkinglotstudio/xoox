@@ -112,6 +112,8 @@ interface PropEntry {
   residualRising: boolean;
   /** 0..1 — 아래→위로 차오르는 정화 비율 (약 10발) */
   purifyFill: number;
+  /** 공유 스티커 재질을 복제해 오염 틴트를  individually 칠함 */
+  clonedArt: boolean;
 }
 
 const COLLIDE_R: Record<string, number> = {
@@ -129,6 +131,13 @@ const COLLIDE_R: Record<string, number> = {
 
 const PROP_SKETCH = 0xd8d4cc;
 const PROP_COLOR = 0xffffff;
+/** 바닥 베일과 비슷한 탁한 청회색 — 텍스처에 곱함 */
+const AMBIENT_POLLUTED = { r: 0.32, g: 0.40, b: 0.43 };
+
+function wantsAmbientTint(p: WorldProp): boolean {
+  if (p.purifyTarget || p.groupId === "sea_wall") return false;
+  return p.kind === "bush" || p.kind === "tree";
+}
 /** 잔여 오브 1개 칠하는 데 필요한 착탄 수 */
 const RESIDUAL_HITS = 10;
 
@@ -331,6 +340,7 @@ export class JourneyStage3D {
     resolve: () => void;
   } | null = null;
   private areaPropsStanding = false;
+  private ambientTintMode: "auto" | "on" | "off" = "auto";
   private headScratch = new THREE.Vector3();
 
   private opts: JourneyStage3DOptions;
@@ -502,6 +512,7 @@ export class JourneyStage3D {
     this.island.setFocus(id);
     await this.island.ensureLand(id);
     if (this.disposed) return;
+    // [] is truthy — only non-empty foci count. Empty array must fall through to polluted.
     if (opts?.foci && opts.foci.length > 0) this.setPurifyFoci(opts.foci);
     else if (opts?.purifiedIds) this.island.setPurified(opts.purifiedIds);
     else if (opts?.polluted != null) {
@@ -509,6 +520,7 @@ export class JourneyStage3D {
       this.setPurifyFoci([]);
     }
     this.syncSkyFromFoci(true);
+    this.applyAmbientPropTints();
     this.floor.visible = false;
     this.detail.visible = false;
     this.island.cullLandByView(this.px, this.pz, this.fog.far + 12);
@@ -519,8 +531,8 @@ export class JourneyStage3D {
     for (const e of this.props) {
       e.waveStand = foci.some((f) => Math.hypot(e.wx - f.x, e.wz - f.z) <= f.r);
     }
-    this.areaPropsStanding = false;
     this.syncSkyFromFoci(true);
+    this.applyAmbientPropTints();
   }
 
   setPurifyColorAmt(amt: number): void {
@@ -762,10 +774,15 @@ export class JourneyStage3D {
     const w = h * (p.aspect ?? def.aspect);
     const pos = this.pctToWorld(p.xPct, p.yPct);
     const residual = !!p.purifyTarget;
-    const shared = !residual && !!p.art;
+    const ambient = wantsAmbientTint(p);
+    const shared = !residual && !ambient && !!p.art;
 
     let mat: THREE.MeshBasicMaterial;
-    if (shared && p.art) {
+    let clonedArt = false;
+    if (ambient && p.art) {
+      mat = stickerArtMaterial(p.art).clone();
+      clonedArt = true;
+    } else if (shared && p.art) {
       mat = stickerArtMaterial(p.art);
     } else {
       const tex = p.art ? stickerArtTexture(p.art) : stickerTexture(p.kind);
@@ -809,7 +826,9 @@ export class JourneyStage3D {
       residualPending: residual,
       residualRising: false,
       purifyFill: 0,
+      clonedArt,
     };
+    if (clonedArt) this.applyOneAmbientTint(entry);
     if (residual) {
       if (this.residualColoredIds.has(p.id)) {
         entry.residualPending = false;
@@ -827,7 +846,7 @@ export class JourneyStage3D {
     const e = this.props[i];
     if (!e) return;
     this.propGroup.remove(e.mesh);
-    if (e.residual || !e.prop.art) e.material.dispose();
+    if (e.residual || e.clonedArt || !e.prop.art) e.material.dispose();
     e.ownTexture?.dispose();
     this.props.splice(i, 1);
   }
@@ -1766,6 +1785,36 @@ export class JourneyStage3D {
     this.areaPropsStanding = on;
   }
 
+  propsKeepStanding(): boolean {
+    return this.areaPropsStanding;
+  }
+
+  setAmbientPropTintMode(mode: "auto" | "on" | "off"): void {
+    this.ambientTintMode = mode;
+    this.applyAmbientPropTints();
+  }
+
+  ambientPropTintMode(): "auto" | "on" | "off" {
+    return this.ambientTintMode;
+  }
+
+  private ambientPurifyAmount(wx: number, wz: number): number {
+    if (this.ambientTintMode === "on") return 0;
+    if (this.ambientTintMode === "off") return 1;
+    return this.island.ambientPurifyAt(wx, wz);
+  }
+
+  private applyOneAmbientTint(e: PropEntry): void {
+    if (!e.clonedArt || e.residual) return;
+    const t = this.ambientPurifyAmount(e.wx, e.wz);
+    const c = AMBIENT_POLLUTED;
+    e.material.color.setRGB(c.r + (1 - c.r) * t, c.g + (1 - c.g) * t, c.b + (1 - c.b) * t);
+  }
+
+  private applyAmbientPropTints(): void {
+    for (const e of this.props) this.applyOneAmbientTint(e);
+  }
+
   getPlayer(): { xPct: number; yPct: number; yawDeg: number } {
     const p = this.worldToPct(this.px, this.pz);
     return { ...p, yawDeg: ((this.yaw * 180) / Math.PI) % 360 };
@@ -1943,13 +1992,15 @@ export class JourneyStage3D {
 
   /** 해안 나무는 한 장씩. 정화량으로 스틸블루→시안만 올린다. */
   private applyWallPurifyTint(): void {
-    if (this.wallBatches.length === 0) return;
     const t = this.skyPurifyAmount;
-    if (Math.abs(t - this.lastWallTint) < 0.002) return;
-    this.lastWallTint = t;
-    for (const b of this.wallBatches) {
-      b.mat.color.setRGB(0.52 + 0.34 * t, 0.60 + 0.36 * t, 0.68 + 0.32 * t);
+    if (this.wallBatches.length > 0 && Math.abs(t - this.lastWallTint) >= 0.002) {
+      this.lastWallTint = t;
+      const c = AMBIENT_POLLUTED;
+      for (const b of this.wallBatches) {
+        b.mat.color.setRGB(c.r + (1 - c.r) * t, c.g + (1 - c.g) * t, c.b + (1 - c.b) * t);
+      }
     }
+    this.applyAmbientPropTints();
   }
 
   private async loadSkyArt(): Promise<void> {
@@ -2411,6 +2462,7 @@ export class JourneyStage3D {
     const vision = Math.max(4, this.fogVisionM);
     const riseAt = vision;
     const residualRise = 7;
+    this.applyAmbientPropTints();
     const restYaw = (e: PropEntry) => ((e.prop.yawDeg ?? 0) * Math.PI) / 180;
 
     for (const e of this.props) {

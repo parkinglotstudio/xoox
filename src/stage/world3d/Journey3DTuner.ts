@@ -437,6 +437,22 @@ export class Journey3DTuner {
     this.stage.setPlayer(spawn.xPct, spawn.yPct, 0);
   }
 
+  setPropsKeepStanding(on: boolean): void {
+    this.stage.setPropsKeepStanding(on);
+  }
+
+  propsKeepStanding(): boolean {
+    return this.stage.propsKeepStanding();
+  }
+
+  setAmbientPropTintMode(mode: "auto" | "on" | "off"): void {
+    this.stage.setAmbientPropTintMode(mode);
+  }
+
+  ambientPropTintMode(): "auto" | "on" | "off" {
+    return this.stage.ambientPropTintMode();
+  }
+
   private spawnOf(areaId: string) {
     return spawnPctInArea(
       this.npcRows.map((r) => ({

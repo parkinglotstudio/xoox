@@ -123,6 +123,17 @@ async function boot() {
 
   sectorSel.addEventListener("change", () => void tuner.applySector(sectorSel.value));
   artSel.addEventListener("change", () => tuner.setArtVariant(artSel.value === "after"));
+  const btnStandAll = $("btnStandAll");
+  btnStandAll.addEventListener("click", () => {
+    const on = !tuner.propsKeepStanding();
+    tuner.setPropsKeepStanding(on);
+    btnStandAll.classList.toggle("on", on);
+  });
+  const propTintSel = $<HTMLSelectElement>("propTintSel");
+  propTintSel.addEventListener("change", () => {
+    const v = propTintSel.value;
+    tuner.setAmbientPropTintMode(v === "on" || v === "off" ? v : "auto");
+  });
   $("btnReset").addEventListener("click", () => {
     tuner.resetPlayer();
     drawMini(50, 88, 0);
