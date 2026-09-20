@@ -506,7 +506,7 @@ export class JourneyStage3D {
     else if (opts?.purifiedIds) this.island.setPurified(opts.purifiedIds);
     else if (opts?.polluted != null) {
       this.island.setPurified(opts.polluted ? [] : [id]);
-      if (opts.polluted) this.setPurifyFoci([]);
+      this.setPurifyFoci([]);
     }
     this.syncSkyFromFoci(true);
     this.floor.visible = false;

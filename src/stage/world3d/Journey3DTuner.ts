@@ -223,12 +223,13 @@ export class Journey3DTuner {
     const url = this.floorUrl();
     const nodes = this.nodesOf(areaId);
     const spawn = this.spawnOf(areaId);
-    const at = this.stage.pctToWorld(spawn.xPct, spawn.yPct);
-    const foci = this.useAfterArt
-      ? [{ x: at.x, z: at.z, r: this.stage.getWorldScale() * 0.34 }]
-      : [];
+    // After dropdown shows the unveiled after splat (same albedo purify reveal uses).
+    // Before keeps the pollute veil. IslandTerrain still does not dual-load map_before.
     try {
-      await this.stage.setFloor(url, { polluted: true, foci });
+      await this.stage.setFloor(
+        url,
+        this.useAfterArt ? { polluted: false } : { polluted: true, foci: [] },
+      );
     } catch (err) {
       console.warn("setFloor", err);
       this.status(`바닥 아트 로드 실패: ${err instanceof Error ? err.message : url}`, "err");
@@ -236,7 +237,7 @@ export class Journey3DTuner {
     this.stage.setNodes(nodes);
     this.stage.setNodeHeightMul(this.cfg.node_height_mul);
     this.stage.setPlayer(spawn.xPct, spawn.yPct, 0);
-    this.stage.syncSkyFromFoci(true);
+    this.stage.setSkyPurifyAmount(this.useAfterArt ? 1 : 0);
     const propN = this.propRows.filter((r) => r.area_id === areaId).length;
     try {
       this.refreshProps();
