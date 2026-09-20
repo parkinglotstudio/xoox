@@ -52,5 +52,8 @@ export function aspectForPropArt(art: string | undefined): number | undefined {
     if (art.includes(t.file) || art.includes(t.id)) return t.aspect;
   }
   if (art.includes("life_mecha_dog")) return 985 / 900;
+  if (art.includes("prop_sticker_grass_03")) return 784 / 283;
+  if (art.includes("prop_sticker_grass_02")) return 803 / 580;
+  if (art.includes("prop_sticker_grass_01")) return 764 / 532;
   return undefined;
 }

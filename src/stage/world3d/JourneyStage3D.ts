@@ -2392,11 +2392,12 @@ export class JourneyStage3D {
 
   /**
    * 시야 안: 바닥(0°)에서 90°로 일어선다.
-   * 정화 파도(waveStand)면 시야와 무관하게 기립. 잔여 타깃은 7m에서만 기립(발견).
+   * 기립 거리(riseAt) = fog vision. 정화 파도(waveStand)면 시야와 무관하게 기립.
+   * 잔여 타깃은 7m에서만 기립(발견).
    */
   private stepPropPop(dt: number): void {
     const vision = Math.max(4, this.fogVisionM);
-    const riseAt = Math.min(3.8, vision * 0.38);
+    const riseAt = vision;
     const residualRise = 7;
     const restYaw = (e: PropEntry) => ((e.prop.yawDeg ?? 0) * Math.PI) / 180;
 
