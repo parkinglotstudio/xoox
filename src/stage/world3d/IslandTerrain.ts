@@ -570,10 +570,10 @@ float purifyReveal = 0.0;`,
         if (uPolluted > 0.5) {
           vec3 baseColor = diffuseColor.rgb;
           float g = dot(baseColor, vec3(0.299, 0.587, 0.114));
-          vec3 veiled = mix(baseColor, vec3(g), 0.72);
-          veiled *= vec3(0.52, 0.62, 0.72);
-          veiled = mix(veiled, vec3(0.35, 0.55, 0.62), 0.14);
-          veiled = clamp(veiled * 0.88, 0.0, 1.0);
+          vec3 veiled = mix(baseColor, vec3(g), 0.92);
+          veiled *= vec3(0.22, 0.27, 0.24);
+          veiled = mix(veiled, vec3(0.07, 0.09, 0.08), 0.28);
+          veiled = clamp(veiled * 0.45, 0.0, 1.0);
           vec2 local = vec2((vMapUv.x - 0.5) * uCellM, (0.5 - vMapUv.y) * uCellM);
           vec2 world = local + uWorldOffset;
           float reveal = 0.0;
@@ -616,7 +616,7 @@ float purifyReveal = 0.0;`,
         #endif`,
       );
   };
-  mat.customProgramCacheKey = () => "island-pollute-v18-softfog";
+  mat.customProgramCacheKey = () => "island-pollute-v20-murk";
 }
 
 export interface PurifyFocusWorld {
@@ -736,6 +736,29 @@ export class IslandTerrain {
 
   getPurifyFoci(): PurifyFocusWorld[] {
     return this.foci;
+  }
+
+  /** 포커스 칸이 베일 없이 열린 상태(FPV after / 칸 전체 정화). */
+  isFocusUnveiled(): boolean {
+    const useFoci = this.foci.length > 0 || this.wave != null;
+    if (useFoci) return !this.tintFromPurify;
+    return !this.tintFromPurify || this.purified.has(this.focusId);
+  }
+
+  /**
+   * 바닥 베일과 같은 정화량 0..1. 원 밖·오염 칸=0, 원 안·정화 칸=1.
+   * 파도가 있으면 파도 원과도 max.
+   */
+  ambientPurifyAt(x: number, z: number): number {
+    if (this.isFocusUnveiled()) return 1;
+    let a = purifyAmountAt(x, z, this.foci);
+    if (this.wave) {
+      const d = Math.hypot(x - this.wave.x, z - this.wave.z);
+      const soft = Math.max(1.5, this.wave.r * 0.08);
+      const t = 1 - smoothstep01(this.wave.r - soft, this.wave.r + soft * 0.35, d);
+      if (t > a) a = t;
+    }
+    return a;
   }
 
   setPurifyColorAmt(amt: number): void {
