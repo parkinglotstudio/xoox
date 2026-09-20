@@ -16,7 +16,12 @@
     "grass": [
       { "id": "grass_01", "file": "prop_sticker_grass_01.png", "name": "들풀 뭉치", "h_m": 1.2, "kind": "bush", "csv": 2 },
       { "id": "grass_02", "file": "prop_sticker_grass_02.png", "name": "갈대 들풀", "h_m": 1.5, "kind": "bush", "csv": 1 },
-      { "id": "grass_03", "file": "prop_sticker_grass_03.png", "name": "낮은 들풀", "h_m": 0.8, "kind": "bush", "csv": 1 }
+      { "id": "grass_03", "file": "prop_sticker_grass_03.png", "name": "낮은 들풀", "h_m": 0.8, "kind": "bush", "csv": 1 },
+      { "id": "grass_short_a", "file": "prop_sticker_grass_short_a.png", "name": "짧은 들풀 a", "h_m": 1.4, "kind": "bush", "group_id": "grass_short" },
+      { "id": "grass_short_b", "file": "prop_sticker_grass_short_b.png", "name": "짧은 들풀 b", "h_m": 1.5, "kind": "bush", "group_id": "grass_short" },
+      { "id": "grass_short_c", "file": "prop_sticker_grass_short_c.png", "name": "짧은 들풀 c", "h_m": 1.6, "kind": "bush", "group_id": "grass_short" },
+      { "id": "grass_short_d", "file": "prop_sticker_grass_short_d.png", "name": "짧은 들풀 d", "h_m": 1.7, "kind": "bush", "group_id": "grass_short" },
+      { "id": "grass_short_e", "file": "prop_sticker_grass_short_e.png", "name": "짧은 들풀 e", "h_m": 1.8, "kind": "bush", "group_id": "grass_short" }
     ],
     "flowers": [
       { "id": "flower_01", "file": "prop_sticker_flower_01.png", "name": "홍꽃 군락", "h_m": 1.1, "kind": "bush", "csv": 3 },
