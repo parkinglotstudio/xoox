@@ -28,8 +28,8 @@ export interface AmbientCloudTick {
   aim?: { x: number; z: number } | null;
 }
 
-const COAST_COOL = 0x9aabbb;
-const COAST_WHITE = 0xc8d4dc;
+const COAST_COOL = 0xc5d2dc;
+const COAST_WHITE = 0xe8f1f6;
 const PURE_A = 0x7fe0d8;
 const PURE_B = 0xb8fff4;
 
@@ -113,8 +113,8 @@ export function placeCoastSaltMist(
       const along = (hash(i, 2) - 0.5) * (inner ? 2.6 : 1.8);
       const x = pos.x + axis.ix * inland + axis.tx * along;
       const z = pos.z + axis.iz * inland + axis.tz * along;
-      const y = 0.1 + hash(i, 4) * 0.5 + (hash(i, 8) > 0.88 ? 0.2 : 0);
-      const s = 0.08 + hash(i, 5) * 0.1;
+      const y = 0.16 + hash(i, 4) * 0.55 + (hash(i, 8) > 0.88 ? 0.22 : 0);
+      const s = 0.16 + hash(i, 5) * 0.18;
       const hex = hash(i, 6) > 0.35 ? COAST_WHITE : COAST_COOL;
       out.push({ x, y, z, s, hex });
     }
@@ -126,9 +126,7 @@ export class AmbientBlockCloud {
   readonly group = new THREE.Group();
   private mesh: THREE.InstancedMesh | null = null;
   private geo: THREE.BoxGeometry;
-  private mat: THREE.MeshStandardMaterial;
-  private hemi: THREE.HemisphereLight;
-  private dir: THREE.DirectionalLight;
+  private mat: THREE.MeshBasicMaterial;
   private dummy = new THREE.Object3D();
   private color = new THREE.Color();
   private rest: Float32Array = new Float32Array(0);
@@ -144,19 +142,16 @@ export class AmbientBlockCloud {
 
   constructor() {
     this.geo = new THREE.BoxGeometry(1, 1, 1);
-    this.mat = new THREE.MeshStandardMaterial({
-      roughness: 0.72,
-      metalness: 0.05,
-      flatShading: true,
+    // 무대는 무광 MeshBasic. Standard는 라이트 없이 안개색에 묻힌다.
+    this.mat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
       fog: true,
-      emissive: 0x3a4650,
-      emissiveIntensity: 0.28,
     });
-    this.hemi = new THREE.HemisphereLight(0x88aacc, 0x221811, 0.95);
-    this.dir = new THREE.DirectionalLight(0xffffff, 0.42);
-    this.dir.position.set(6, 10, 3);
-    this.group.add(this.hemi, this.dir);
     this.group.name = "ambient-block-cloud";
+  }
+
+  blockCount(): number {
+    return this.count;
   }
 
   rebuild(blocks: readonly AmbientBlockSpec[]): void {
@@ -170,8 +165,9 @@ export class AmbientBlockCloud {
     this.baseCol = new Float32Array(this.count * 3);
     this.live = new Uint8Array(this.count);
     const mesh = new THREE.InstancedMesh(this.geo, this.mat, this.count);
+    mesh.name = "coast-salt-mist";
     mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    mesh.frustumCulled = true;
+    mesh.frustumCulled = false;
     mesh.castShadow = false;
     mesh.receiveShadow = false;
     mesh.renderOrder = 3;

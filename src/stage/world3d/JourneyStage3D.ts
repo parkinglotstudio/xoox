@@ -946,6 +946,7 @@ export class JourneyStage3D {
   /** 근처 나무 메시·텍스처가 다 올라올 때까지. 페이드 인 전에 호출 */
   async waitPropsReady(): Promise<void> {
     this.rebuildWallBatch();
+    this.rebuildAmbientCloud();
     this.syncPropStream(true);
     const arts = new Set(
       this.props.map((e) => e.prop.art).filter((a): a is string => !!a),
@@ -1274,6 +1275,15 @@ export class JourneyStage3D {
   /** 정화총·던지기 착탄 — 근처 대기 블록을 흩뜨린다. */
   shockAmbientCloud(x: number, z: number, y = 0.52): void {
     this.ambientCloud.shockAt(x, y, z);
+  }
+
+  ambientCloudCount(): number {
+    return this.ambientCloud.blockCount();
+  }
+
+  debugAmbientCloud(): { blocks: number; walls: number } {
+    const walls = this.propCatalog.filter((p) => p.groupId === "sea_wall");
+    return { blocks: this.ambientCloud.blockCount(), walls: walls.length };
   }
 
   private bindStoneLand(): void {
@@ -2124,7 +2134,8 @@ export class JourneyStage3D {
     this.nodeHMul = clamp(mul, 0.2, 6);
     const h = this.charH * this.nodeHMul;
     for (const e of this.nodes) {
-      const img = e.texture.image as HTMLCanvasElement;
+      const img = e.texture.image as { width: number; height: number } | undefined;
+      if (!img || !img.width || !img.height) continue;
       e.sprite.scale.set(h * (img.width / img.height), h, 1);
     }
   }
