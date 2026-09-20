@@ -223,22 +223,25 @@ export class Journey3DTuner {
     const url = this.floorUrl();
     const nodes = this.nodesOf(areaId);
     const spawn = this.spawnOf(areaId);
+    const at = this.stage.pctToWorld(spawn.xPct, spawn.yPct);
+    const foci = this.useAfterArt
+      ? [{ x: at.x, z: at.z, r: this.stage.getWorldScale() * 0.34 }]
+      : [];
+    let floorOk = true;
     try {
-      const at = this.stage.pctToWorld(spawn.xPct, spawn.yPct);
-      const foci = this.useAfterArt
-        ? [{ x: at.x, z: at.z, r: this.stage.getWorldScale() * 0.34 }]
-        : [];
       await this.stage.setFloor(url, { polluted: true, foci });
-      this.stage.setNodes(nodes);
-      this.stage.setNodeHeightMul(this.cfg.node_height_mul);
-      this.refreshProps();
-      this.stage.setPlayer(spawn.xPct, spawn.yPct, 0);
-      this.stage.syncSkyFromFoci(true);
-      this.status(`${this.sectorLabel(areaId)} · 노드 ${nodes.length}개`, "ok");
-      this.opts.onSectorApplied?.(areaId, url, nodes);
-    } catch {
+    } catch (err) {
+      floorOk = false;
+      console.error("setFloor failed", url, err);
       this.status(`바닥 아트 로드 실패: ${url}`, "err");
     }
+    this.stage.setNodes(nodes);
+    this.refreshProps();
+    this.stage.setNodeHeightMul(this.cfg.node_height_mul);
+    this.stage.setPlayer(spawn.xPct, spawn.yPct, 0);
+    this.stage.syncSkyFromFoci(true);
+    if (floorOk) this.status(`${this.sectorLabel(areaId)} · 노드 ${nodes.length}개`, "ok");
+    this.opts.onSectorApplied?.(areaId, url, nodes);
   }
 
   private nodesOf(areaId: string): WorldNode[] {

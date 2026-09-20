@@ -108,6 +108,7 @@ const tuner = new Journey3DTuner(canvas, dials, {
     loadMiniBg(floorUrl);
   },
 });
+(window as unknown as { __stage3d: JourneyStage3D }).__stage3d = tuner.getStage();
 
 async function boot() {
   await tuner.init();

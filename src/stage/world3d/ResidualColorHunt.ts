@@ -162,6 +162,7 @@ export class ResidualColorHunt {
 
     const hits = this.gun.tick(dt, false);
     for (const h of hits) {
+      this.stage.shockAmbientCloud(h.x, h.z);
       for (const p of this.listPending()) {
         if (Math.hypot(p.wx - h.x, p.wz - h.z) > HIT_R) continue;
         const done = this.stage.hitResidualProp(p.id);

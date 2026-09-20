@@ -20,6 +20,7 @@ import { PROP_DEFAULTS, stickerTexture, stickerArtTexture, stickerArtMaterial, s
 import type { Journey3DConfig } from "./journey3dConfig";
 import { IslandTerrain, sectorIdOf, purifyAmountAt, type PurifyFocusWorld } from "./IslandTerrain";
 import { findWorldPath, resolveCircleMove, type PathObstacle } from "./propPath";
+import { AmbientBlockCloud, placeCoastSaltMist } from "./AmbientBlockCloud";
 import { GritBurst, type GritEmitOpts } from "./fx/GritBurst";
 import { SAND_DISSOLVE_CACHE_KEY, SAND_DISSOLVE_GLSL } from "./fx/sandDissolve";
 import { StoneThrow } from "./StoneThrow";
@@ -212,6 +213,8 @@ export class JourneyStage3D {
     live: { wx: number; wz: number; w: number; h: number }[];
   }[] = [];
   private wallDummy = new THREE.Object3D();
+  private ambientCloud = new AmbientBlockCloud();
+  private stoneLandUser: ((x: number, z: number) => void) | null = null;
   private lastBillboardCx = 9999;
   private lastBillboardCz = 9999;
   private lastBillboardYaw = 9999;
@@ -426,8 +429,10 @@ export class JourneyStage3D {
     this.decalTex = makeDecalTexture();
     this.paintGroup.position.y = 0.02;
     this.scene.add(this.nodeGroup, this.propGroup, this.paintGroup, this.overlayGroup);
+    this.scene.add(this.ambientCloud.group);
     this.residualGrit = new GritBurst(this);
     this.stoneThrow = new StoneThrow(this);
+    this.bindStoneLand();
 
     this.playerMat = new THREE.SpriteMaterial({
       transparent: true,
@@ -560,6 +565,7 @@ export class JourneyStage3D {
     }
     this.rebuildObstacles();
     this.rebuildWallBatch();
+    this.rebuildAmbientCloud();
     this.setPlayer(at.xPct, at.yPct);
   }
 
@@ -702,6 +708,7 @@ export class JourneyStage3D {
     this.propCatalog = props;
     this.rebuildObstacles();
     this.rebuildWallBatch();
+    this.rebuildAmbientCloud();
     this.lastStreamPx = 9999;
     this.syncPropStream(true);
   }
@@ -827,6 +834,7 @@ export class JourneyStage3D {
     this.propCatalog = [];
     this.obstacleCache = [];
     this.clearWallBatch();
+    this.ambientCloud.rebuild([]);
   }
 
   private clearWallBatch(): void {
@@ -871,6 +879,12 @@ export class JourneyStage3D {
     this.applyWallPurifyTint();
     this.streamWallVisible();
     this.faceBillboards(true);
+  }
+
+  /** 해안 나무는 그대로 두고, 그 자리만 읽어 소금 티끌 블록을 얹는다. */
+  private rebuildAmbientCloud(): void {
+    const walls = this.propCatalog.filter((p) => p.groupId === "sea_wall");
+    this.ambientCloud.rebuild(placeCoastSaltMist(walls, (x, y) => this.pctToWorld(x, y)));
   }
 
   /** 안개 안 나무만 인스턴스에 넣는다. 섹터 전체를 매 프레임 돌리면 남쪽 들판에서도 버벅인다. */
@@ -932,6 +946,7 @@ export class JourneyStage3D {
   /** 근처 나무 메시·텍스처가 다 올라올 때까지. 페이드 인 전에 호출 */
   async waitPropsReady(): Promise<void> {
     this.rebuildWallBatch();
+    this.rebuildAmbientCloud();
     this.syncPropStream(true);
     const arts = new Set(
       this.props.map((e) => e.prop.art).filter((a): a is string => !!a),
@@ -1253,7 +1268,30 @@ export class JourneyStage3D {
   }
 
   setOnStoneLand(cb: ((x: number, z: number) => void) | null): void {
-    if (this.stoneThrow) this.stoneThrow.onLand = cb;
+    this.stoneLandUser = cb;
+    this.bindStoneLand();
+  }
+
+  /** 정화총·던지기 착탄 — 근처 대기 블록을 흩뜨린다. */
+  shockAmbientCloud(x: number, z: number, y = 0.52): void {
+    this.ambientCloud.shockAt(x, y, z);
+  }
+
+  ambientCloudCount(): number {
+    return this.ambientCloud.blockCount();
+  }
+
+  debugAmbientCloud(): { blocks: number; walls: number } {
+    const walls = this.propCatalog.filter((p) => p.groupId === "sea_wall");
+    return { blocks: this.ambientCloud.blockCount(), walls: walls.length };
+  }
+
+  private bindStoneLand(): void {
+    if (!this.stoneThrow) return;
+    this.stoneThrow.onLand = (x, z) => {
+      this.ambientCloud.shockAt(x, 0.52, z);
+      this.stoneLandUser?.(x, z);
+    };
   }
 
   stampPurifyDiskPct(xPct: number, yPct: number): void {
@@ -2096,7 +2134,8 @@ export class JourneyStage3D {
     this.nodeHMul = clamp(mul, 0.2, 6);
     const h = this.charH * this.nodeHMul;
     for (const e of this.nodes) {
-      const img = e.texture.image as HTMLCanvasElement;
+      const img = e.texture.image as { width: number; height: number } | undefined;
+      if (!img || !img.width || !img.height) continue;
       e.sprite.scale.set(h * (img.width / img.height), h, 1);
     }
   }
@@ -2298,6 +2337,7 @@ export class JourneyStage3D {
       this.stepPropPop(dt);
       this.fadeNearCamera();
       this.stepPropStream(dt);
+      this.stepAmbientCloud(dt);
       return;
     }
 
@@ -2388,6 +2428,21 @@ export class JourneyStage3D {
     this.stepPropPop(dt);
     this.fadeNearCamera();
     this.stepPropStream(dt);
+    this.stepAmbientCloud(dt);
+  }
+
+  private stepAmbientCloud(dt: number): void {
+    const shooting = this.isShooting();
+    this.ambientCloud.tick({
+      dt,
+      px: this.px,
+      py: this.charH * 0.38,
+      pz: this.pz,
+      streamR: this.propStreamM,
+      foci: this.island.getPurifyFoci(),
+      shooting,
+      aim: shooting ? this.aimFloor() : null,
+    });
   }
 
   /**
@@ -2620,6 +2675,7 @@ export class JourneyStage3D {
     }
     this.clearNodes();
     this.clearProps();
+    this.ambientCloud.dispose();
     this.stoneThrow?.dispose();
     this.stoneThrow = null;
     this.residualGrit?.dispose();
