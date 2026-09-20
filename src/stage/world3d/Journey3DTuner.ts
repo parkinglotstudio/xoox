@@ -110,6 +110,8 @@ export interface Journey3DTunerOptions {
   onNodeActivate?: (node: WorldNode) => void;
   /** 섹터를 갈아 끼운 뒤 — 미니맵 배경 등을 다시 그릴 자리 */
   onSectorApplied?: (areaId: string, floorUrl: string, nodes: WorldNode[]) => void;
+  /** FPV 리뷰용 — 거리와 무관하게 풀·나무를 세워 둔다 */
+  keepPropsStanding?: boolean;
 }
 
 export class Journey3DTuner {
@@ -172,6 +174,7 @@ export class Journey3DTuner {
 
     this.renderPanel();
     this.ready = true;
+    if (this.opts.keepPropsStanding) this.stage.setPropsKeepStanding(true);
     await this.applySector(this.areaId);
     this.resize();
   }
@@ -218,6 +221,14 @@ export class Journey3DTuner {
     return this.nodesOf(this.areaId);
   }
 
+  artVariantAfter(): boolean {
+    return this.useAfterArt;
+  }
+
+  propCount(areaId = this.areaId): number {
+    return this.propRows.filter((r) => r.area_id === areaId).length;
+  }
+
   async applySector(areaId: string): Promise<void> {
     this.areaId = areaId;
     const url = this.floorUrl();
@@ -225,6 +236,7 @@ export class Journey3DTuner {
     const spawn = this.spawnOf(areaId);
     // After dropdown shows the unveiled after splat (same albedo purify reveal uses).
     // Before keeps the pollute veil. IslandTerrain still does not dual-load map_before.
+    let floorErr: string | null = null;
     try {
       await this.stage.setFloor(
         url,
@@ -232,25 +244,44 @@ export class Journey3DTuner {
       );
     } catch (err) {
       console.warn("setFloor", err);
-      this.status(`바닥 아트 로드 실패: ${err instanceof Error ? err.message : url}`, "err");
+      floorErr = err instanceof Error ? err.message : url;
     }
-    this.stage.setNodes(nodes);
-    this.stage.setNodeHeightMul(this.cfg.node_height_mul);
+    try {
+      this.stage.setNodes(nodes);
+      this.stage.setNodeHeightMul(this.cfg.node_height_mul);
+    } catch (err) {
+      console.warn("setNodes", err);
+      this.status(`노드 배치 실패: ${err instanceof Error ? err.message : String(err)}`, "err");
+    }
     this.stage.setPlayer(spawn.xPct, spawn.yPct, 0);
     this.stage.setSkyPurifyAmount(this.useAfterArt ? 1 : 0);
-    const propN = this.propRows.filter((r) => r.area_id === areaId).length;
     try {
       this.refreshProps();
       await this.stage.waitPropsReady();
-      this.status(
-        `${this.sectorLabel(areaId)} · spawn ${spawn.xPct.toFixed(1)},${spawn.yPct.toFixed(1)} · 프롭 ${propN}개`,
-        "ok",
-      );
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       this.status(`프롭 로드 실패: ${msg}`, "err");
+      this.opts.onSectorApplied?.(areaId, url, nodes);
+      return;
     }
+    this.reportReviewStatus(floorErr);
     this.opts.onSectorApplied?.(areaId, url, nodes);
+  }
+
+  /** 상단 상태줄 — 지금 켜진 이펙트를 한국어로. */
+  reportReviewStatus(floorErr: string | null = null): void {
+    const floor = this.useAfterArt ? "정화 바닥" : "오염 바닥";
+    const stand = this.stage.propsKeepStanding() ? "풀·나무 기립 ON" : "풀·나무 기립 OFF";
+    const propN = this.propCount();
+    if (floorErr) {
+      this.status(`바닥 아트 로드 실패: ${floorErr} · ${stand} · 프롭 ${propN}개`, "err");
+      return;
+    }
+    if (propN === 0) {
+      this.status(`${floor} · ${stand} · 프롭 0개`, "err");
+      return;
+    }
+    this.status(`${floor} · ${stand} · 프롭 ${propN}개`, "ok");
   }
 
   private nodesOf(areaId: string): WorldNode[] {
@@ -435,6 +466,10 @@ export class Journey3DTuner {
   resetPlayer(): void {
     const spawn = this.spawnOf(this.areaId);
     this.stage.setPlayer(spawn.xPct, spawn.yPct, 0);
+  }
+
+  setPlayer(xPct: number, yPct: number, yawDeg = 0): void {
+    this.stage.setPlayer(xPct, yPct, yawDeg);
   }
 
   setPropsKeepStanding(on: boolean): void {

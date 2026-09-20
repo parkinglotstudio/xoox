@@ -29,6 +29,10 @@
       .bar button.on, .bar button.primary {
         background: #1a4a63; border-color: #2f7ea8; color: #dff4ff;
       }
+      .bar button.ghost {
+        color: var(--muted); font-weight: 600;
+      }
+      .bar .fx { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
       .status { font-size: 12px; color: var(--muted); margin-left: auto; }
       .status.ok { color: var(--ok); }
       .status.err { color: #ff8f8f; }
@@ -111,21 +115,17 @@
   <body>
     <div class="bar">
       <h1>3D 여정 뷰 프로토</h1>
-      <span class="hint">항공 지도를 바닥에 눕히고 2D 빌보드를 세운다 (둠 방식)</span>
       <select id="sectorSel" title="섹터"></select>
-      <select id="artSel" title="정화 전/후">
-        <option value="before" selected>before (오염)</option>
-        <option value="after">after (정화후)</option>
-      </select>
-      <button type="button" id="btnStandAll" title="거리와 무관하게 프롭을 세운다">프롭 전부 기립</button>
-      <select id="propTintSel" title="프롭 오염 틴트">
-        <option value="auto" selected>틴트 자동</option>
-        <option value="on">오염 틴트 강제</option>
-        <option value="off">오염 틴트 끄기</option>
-      </select>
-      <button type="button" id="btnReset">위치 초기화</button>
-      <button type="button" id="btnDefaults">기본값</button>
-      <button type="button" id="btnRevert">되돌리기</button>
+      <div class="fx" role="group" aria-label="이펙트">
+        <button type="button" id="btnFloorPolluted" class="on" title="오염 베일">오염 바닥</button>
+        <button type="button" id="btnFloorPurified" title="정화 후 스플랫 · 베일 끔">정화 바닥</button>
+        <button type="button" id="btnStandAll" class="on" title="거리와 무관하게 풀·나무를 세운다">풀·나무 보이기 ON</button>
+        <button type="button" id="btnTint" title="프롭 오염 틴트 A/B">오염 틴트 자동</button>
+        <button type="button" id="btnGoSpawn">스폰으로</button>
+        <button type="button" id="btnGoCoast" title="남서쪽 해안 나무 앞">해안으로</button>
+      </div>
+      <button type="button" class="ghost" id="btnDefaults">기본값</button>
+      <button type="button" class="ghost" id="btnRevert">되돌리기</button>
       <button type="button" class="primary" id="btnSave">저장</button>
       <span class="status" id="status">ready</span>
     </div>

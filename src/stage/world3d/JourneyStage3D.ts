@@ -936,6 +936,15 @@ export class JourneyStage3D {
   /** 안개 안 나무만 인스턴스에 넣는다. 섹터 전체를 매 프레임 돌리면 남쪽 들판에서도 버벅인다. */
   private streamWallVisible(): void {
     if (this.wallBatches.length === 0) return;
+    // FPV 전부 기립: 거리 컬링을 끄고 해안 나무를 전부 넣는다.
+    if (this.areaPropsStanding) {
+      for (const b of this.wallBatches) {
+        b.live = b.items;
+        b.mesh.count = b.items.length;
+      }
+      this.wallSphereDirty = true;
+      return;
+    }
     const r = this.propStreamM;
     const drop = r * 1.25;
     const px = this.px;
@@ -1814,6 +1823,8 @@ export class JourneyStage3D {
 
   setPropsKeepStanding(on: boolean): void {
     this.areaPropsStanding = on;
+    this.streamWallVisible();
+    this.faceBillboards(true);
   }
 
   propsKeepStanding(): boolean {

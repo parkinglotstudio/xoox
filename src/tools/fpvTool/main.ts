@@ -21,8 +21,19 @@ const statusEl = $<HTMLElement>("status");
 const hudPos = $<HTMLElement>("hudPos");
 const hudNear = $<HTMLElement>("hudNear");
 const sectorSel = $<HTMLSelectElement>("sectorSel");
-const artSel = $<HTMLSelectElement>("artSel");
 const dials = $<HTMLElement>("dials");
+
+/** 남쪽 해안 나무 앞 — 남쪽 중앙(50,88)은 나무 공백이라 물을 본다. */
+const COAST_X_PCT = 22;
+const COAST_Y_PCT = 90;
+const COAST_YAW_DEG = 180;
+
+const TINT_CYCLE: Array<"auto" | "on" | "off"> = ["auto", "on", "off"];
+const TINT_LABEL: Record<"auto" | "on" | "off", string> = {
+  auto: "오염 틴트 자동",
+  on: "오염 틴트 강제",
+  off: "오염 틴트 끄기",
+};
 
 function setStatus(msg: string, kind: "" | "ok" | "err" = "") {
   statusEl.textContent = msg;
@@ -42,7 +53,8 @@ function loadMiniBg(url: string) {
   const img = new Image();
   img.onload = () => {
     miniBg = img;
-    drawMini(50, 88, 0);
+    const me = tuner.getPlayer();
+    drawMini(me.xPct, me.yPct, me.yawDeg);
   };
   img.src = url;
 }
@@ -91,9 +103,15 @@ function drawMini(xPct: number, yPct: number, yawDeg: number) {
   miniCtx.restore();
 }
 
+function syncMiniFromPlayer() {
+  const me = tuner.getPlayer();
+  drawMini(me.xPct, me.yPct, me.yawDeg);
+}
+
 // ── 부팅 ────────────────────────────────────────────────────────
 
 const tuner = new Journey3DTuner(canvas, dials, {
+  keepPropsStanding: true,
   onStatus: setStatus,
   onMove: (x, y, yaw) => {
     hudPos.textContent = `x ${x.toFixed(1)} · y ${y.toFixed(1)} · ${Math.round(((yaw % 360) + 360) % 360)}°`;
@@ -106,8 +124,30 @@ const tuner = new Journey3DTuner(canvas, dials, {
   onSectorApplied: (_areaId, floorUrl, nodes) => {
     miniNodes = nodes;
     loadMiniBg(floorUrl);
+    syncFloorButtons();
+    syncStandButton();
   },
 });
+
+function syncFloorButtons() {
+  const after = tuner.artVariantAfter();
+  $("btnFloorPolluted").classList.toggle("on", !after);
+  $("btnFloorPurified").classList.toggle("on", after);
+}
+
+function syncStandButton() {
+  const on = tuner.propsKeepStanding();
+  const btn = $("btnStandAll");
+  btn.classList.toggle("on", on);
+  btn.textContent = on ? "풀·나무 보이기 ON" : "풀·나무 보이기 OFF";
+}
+
+function syncTintButton() {
+  const mode = tuner.ambientPropTintMode();
+  const btn = $("btnTint");
+  btn.textContent = TINT_LABEL[mode];
+  btn.classList.toggle("on", mode !== "auto");
+}
 
 async function boot() {
   await tuner.init();
@@ -122,25 +162,43 @@ async function boot() {
     .join("");
 
   sectorSel.addEventListener("change", () => void tuner.applySector(sectorSel.value));
-  artSel.addEventListener("change", () => tuner.setArtVariant(artSel.value === "after"));
-  const btnStandAll = $("btnStandAll");
-  btnStandAll.addEventListener("click", () => {
+  $("btnFloorPolluted").addEventListener("click", () => {
+    if (!tuner.artVariantAfter()) return;
+    tuner.setArtVariant(false);
+    syncFloorButtons();
+  });
+  $("btnFloorPurified").addEventListener("click", () => {
+    if (tuner.artVariantAfter()) return;
+    tuner.setArtVariant(true);
+    syncFloorButtons();
+  });
+  $("btnStandAll").addEventListener("click", () => {
     const on = !tuner.propsKeepStanding();
     tuner.setPropsKeepStanding(on);
-    btnStandAll.classList.toggle("on", on);
+    syncStandButton();
+    tuner.reportReviewStatus();
   });
-  const propTintSel = $<HTMLSelectElement>("propTintSel");
-  propTintSel.addEventListener("change", () => {
-    const v = propTintSel.value;
-    tuner.setAmbientPropTintMode(v === "on" || v === "off" ? v : "auto");
+  $("btnTint").addEventListener("click", () => {
+    const cur = tuner.ambientPropTintMode();
+    const next = TINT_CYCLE[(TINT_CYCLE.indexOf(cur) + 1) % TINT_CYCLE.length]!;
+    tuner.setAmbientPropTintMode(next);
+    syncTintButton();
   });
-  $("btnReset").addEventListener("click", () => {
+  $("btnGoSpawn").addEventListener("click", () => {
     tuner.resetPlayer();
-    drawMini(50, 88, 0);
+    syncMiniFromPlayer();
+  });
+  $("btnGoCoast").addEventListener("click", () => {
+    tuner.setPlayer(COAST_X_PCT, COAST_Y_PCT, COAST_YAW_DEG);
+    syncMiniFromPlayer();
   });
   $("btnSave").addEventListener("click", () => void tuner.save());
   $("btnRevert").addEventListener("click", () => void tuner.reload());
   $("btnDefaults").addEventListener("click", () => tuner.resetToDefaults());
+
+  syncFloorButtons();
+  syncStandButton();
+  syncTintButton();
 
   const fit = () => tuner.resize();
   window.addEventListener("resize", fit);
