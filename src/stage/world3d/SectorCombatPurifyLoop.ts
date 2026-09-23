@@ -1,6 +1,6 @@
 /**
  * 들판 combat_loop — 툴 연출(캐스팅·띠·벌레·원흉)을 **기존 본편 규칙** 위에 얹음.
- * - 기본 공격: 자동 (StoneThrow)
+ * - 기본 공격: 1차 정화제 던지기(곡선) → 이후 총쏘기2(직선)
  * - 스킬: 보상/이벤트 3택1 → learnedSkills → huntTune (사거리·이속·스플래시)
  * - Space / multi·boom·chain 수동 슬롯 없음 (그건 프로토 툴 전용)
  */
@@ -365,7 +365,9 @@ export class SectorCombatPurifyLoop {
       ...this.raidCfg,
       paint_radius_m: this.raidCfg.paint_radius_m * tune.splashMul,
     });
-    this.stage.throwAt(target.x, target.z);
+    const useGun = this.phase === "bugs" || this.phase === "culprit";
+    if (useGun) this.stage.shootAt(target.x, target.z);
+    else this.stage.throwAt(target.x, target.z);
   }
 
   private pickAutoTarget(): { x: number; z: number } | null {

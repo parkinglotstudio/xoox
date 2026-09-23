@@ -8,9 +8,9 @@
  * 게임에서 쓰려면 시트가 Vite publicDir(`data/`) 아래에 있어야 한다 —
  * 그래서 런타임 경로는 `/ui/actor/<char>/<anim>/<anim>.json` 규약을 쓴다.
  *
- * 방랑자(wanderer)만 테스트 클립(`/ui/wanderer/test_clips`)이 있으면
- * shoot/pickup/victory/fail 을 필드 슬롯에 덮어쓴다.
- * idle/run/throw 는 생산 시트를 쓴다.
+ * 인게임·필드·튜너·습격툴은 생산 actor 를 읽는다.
+ * 방랑자 필드 예외: `test_clips` 의 shoot(총쏘기2)·pickup·victory·fail.
+ * 예전 aim_fire 는 쓰지 않는다. 그 외 테스트 클립은 툴 전용.
  */
 import type { PlayerSprite, SpriteAnimSheet } from "./types";
 
@@ -31,7 +31,7 @@ interface RawManifest {
 /** 캐릭터 스프라이트 루트 — 아트가 들어오면 이 아래에 <char>/<anim>/ 로 넣는다 */
 export const ACTOR_SPRITE_ROOT = "/ui/actor";
 
-/** 방랑자 테스트 클립 — 생산 actor 경로와 별도 */
+/** 방랑자 테스트 클립. 필드에는 shoot·pickup·victory·fail 만. */
 export const WANDERER_TEST_CLIPS_ROOT = "/ui/wanderer/test_clips";
 
 const TEST_CLIP_IDS = ["shoot", "pickup", "victory", "fail"] as const;
@@ -135,45 +135,27 @@ export function loadWandererTestClips(root = WANDERER_TEST_CLIPS_ROOT): Promise<
 }
 
 /**
- * 방랑자만 테스트 뱅크를 필드 슬롯에 덮어쓴다.
- * 다른 캐릭·로비 PNG 경로는 그대로.
- *
- * 매핑:
- *   shoot → shoot + aimFire (발사)
- *   pickup / victory / fail → 신규 슬롯
- *   idle / move / throw 는 생산 시트 유지
- *
- * shoot 가 있으면 생산 조준·홀스터·옆걸음 시트는 빼서
- * 512×512 / 512×640 발 디딤이 섞이지 않게 한다.
+ * 방랑자 필드 클립 = 총쏘기2·줍기2·승리·패배.
+ * 예전 aim_fire 는 뺀다. 걷기·홀스터 시트는 그대로 둔다.
  */
-export async function applyWandererTestClips(
+export async function attachWandererShoot(
   charId: string,
   sprite: PlayerSprite,
   root = WANDERER_TEST_CLIPS_ROOT,
 ): Promise<PlayerSprite> {
   if (charId !== "wanderer") return sprite;
-  const test = await loadWandererTestClips(root);
-  if (!Object.keys(test).length) return sprite;
-
-  const next: PlayerSprite = {
-    ...sprite,
-    shoot: test.shoot ?? sprite.shoot,
-    aimFire: test.shoot ?? sprite.aimFire,
-    pickup: test.pickup ?? sprite.pickup,
-    victory: test.victory ?? sprite.victory,
-    fail: test.fail ?? sprite.fail,
-  };
-
-  // 발 디딤이 다른 생산 extras 를 끼우지 않는다
-  delete next.drawHolster;
-  delete next.holster;
-  delete next.aimWalkF;
-  delete next.aimWalkB;
-  delete next.aimWalkL;
-  delete next.aimWalkR;
-  delete next.walkL;
-  delete next.walkR;
-  delete next.moveBack;
+  const [shoot, pickup, victory, fail] = await Promise.all([
+    loadSpriteSheet(`${root}/shoot/shoot.json`),
+    loadSpriteSheet(`${root}/pickup/pickup.json`),
+    loadSpriteSheet(`${root}/victory/victory.json`),
+    loadSpriteSheet(`${root}/fail/fail.json`),
+  ]);
+  const next: PlayerSprite = { ...sprite };
+  if (shoot) next.shoot = shoot;
+  if (pickup) next.pickup = pickup;
+  if (victory) next.victory = victory;
+  if (fail) next.fail = fail;
+  delete next.aimFire;
   return next;
 }
 
@@ -200,9 +182,9 @@ export async function loadActorSprite(
     idle: idle ?? fallbackIdle,
     move: move ?? undefined,
   };
-  if (opts?.extras === false) return applyWandererTestClips(charId, core);
+  if (opts?.extras === false) return core;
   const extra = await loadActorSpriteExtras(charId, { root });
-  return applyWandererTestClips(charId, { ...core, ...extra });
+  return attachWandererShoot(charId, { ...core, ...extra });
 }
 
 /** 조준·홀스터·옆걸음 등 — 들판에서 걷기 시작한 뒤에 이어서 붙인다. */
@@ -224,7 +206,9 @@ export async function loadActorSpriteExtras(
     walkR,
     moveBack,
   ] = await Promise.all([
-    loadSpriteSheet(`${root}/${charId}/aim_fire/aim_fire.json`),
+    charId === "wanderer"
+      ? Promise.resolve(null)
+      : loadSpriteSheet(`${root}/${charId}/aim_fire/aim_fire.json`),
     loadSpriteSheet(`${root}/${charId}/draw_holster/draw_holster.json`),
     loadSpriteSheet(`${root}/${charId}/holster/holster.json`),
     loadSpriteSheet(`${root}/${charId}/aim_walk_f/aim_walk_f.json`),

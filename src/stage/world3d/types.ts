@@ -97,9 +97,9 @@ export interface SpriteAnimSheet {
 export interface PlayerSprite {
   idle: SpriteAnimSheet | string;
   move?: SpriteAnimSheet | string;
-  /** 정화총 조준·사격 */
+  /** 정화총 조준·사격 (방랑자는 쓰지 않음) */
   aimFire?: SpriteAnimSheet;
-  /** 발사 원샷 — 있으면 aimFire 대신 쓴다 */
+  /** 발사 원샷 — 방랑자 총쏘기2. 있으면 aimFire 대신 쓴다 */
   shoot?: SpriteAnimSheet;
   drawHolster?: SpriteAnimSheet;
   holster?: SpriteAnimSheet;

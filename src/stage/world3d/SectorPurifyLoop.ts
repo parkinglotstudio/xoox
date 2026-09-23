@@ -364,8 +364,6 @@ export class SectorPurifyLoop {
         this.setBeat("done");
         const label = this.areaId.includes("i11") ? "우물" : "들판";
         await this.hooks.onRunEnd?.(rec, loopRunLine(label));
-        await this.stage.playOutcome("victory");
-        this.stage.clearOutcome();
         return { won: true };
       }
       const hard = this.cfg.difficulty === "hard";
@@ -402,8 +400,6 @@ export class SectorPurifyLoop {
           const label = this.areaId.includes("i11") ? "우물" : "들판";
           await this.hooks.onRunEnd?.(rec, loopRunLine(label));
         }
-        await this.stage.playOutcome("victory");
-        this.stage.clearOutcome();
         return { won: true };
     } finally {
       if (loopRunLive()) loopRunEnd();
@@ -563,7 +559,7 @@ export class SectorPurifyLoop {
       await (this.pickupCloud?.waitGatherDone() ?? sleep(650));
       this.pickupCloud?.pulseHit();
       this.stage.playPickupBurst(w.x, w.z);
-      await sleep(420);
+      await sleep(this.stage.pickupHoldMs());
       const granted = await this.hooks.onContent(kind, drop);
       const n = typeof granted === "number" ? granted : 0;
       if (n > 0) {
@@ -898,6 +894,7 @@ export class SectorPurifyLoop {
     const skyFrom = this.stage.getSkyPurifyAmount();
     this.stage.setPurifyFoci([{ x: this.core.x, z: this.core.z, r: 0 }]);
     const me = this.stage.getPlayer();
+    if (step === 1) void this.stage.playOutcome("victory");
     await this.stage.playPurifyStandWave({
       xPct: me.xPct,
       yPct: me.yPct,
@@ -915,6 +912,7 @@ export class SectorPurifyLoop {
     this.stage.setSkyPurifyAmount(amt);
     if (step === 3 || amt >= 0.95) this.stage.setSkyPurified(true);
     this.stage.syncSkyFromFoci(true);
+    if (step === 1) this.stage.clearOutcome();
 
     if (this.cfg.combat_loop && step === 1) {
       await this.combatPollutionDefend(radiusM);
@@ -1794,7 +1792,7 @@ export class SectorPurifyLoop {
     done();
   }
 
-  /** 띠 멈춤 게이지 — 기존 자동 투척으로 방향 지점만 */
+  /** 띠 멈춤 게이지 — 1차 정화제 곡선 투척 */
   private autoHuntBand(dt: number): void {
     if (this.pauseHunt || this.talking) return;
     if (this.throwSettleLeft > 0) return;
@@ -1856,9 +1854,9 @@ export class SectorPurifyLoop {
     }
     if (!this.stage.inForwardCone(target.x, target.z, THROW_FORWARD_DEG)) return;
     if (this.stage.isThrowing()) return;
-    // 발사체 2종: 정화제(adsorb) · 퇴치제(inhibit). 원흉도 정화제.
+    // 1차(얼룩) = 정화제 곡선. 이후 벌레·원흉·오염방어 = 직선 총.
     const mag: "adsorb" | "inhibit" = this.beat === "invade" ? "inhibit" : "adsorb";
-    // 잔량만 먼저 확인 — throw 실패 시 탄 낭비 방지
+    // 잔량만 먼저 확인 — 발사 실패 시 탄 낭비 방지
     if (mag === "inhibit") {
       if ((this.hooks.getInhibitAmmo?.() ?? 0) <= 0) {
         this.hooks.onHud?.("퇴치제가 없다");
@@ -1873,7 +1871,10 @@ export class SectorPurifyLoop {
       paint_radius_m: this.raidCfg.paint_radius_m * tune.splashMul,
       missile_speed_mps: this.raidCfg.missile_speed_mps * (tune.missileMul ?? 1),
     });
-    const launched = this.stage.throwAt(target.x, target.z);
+    const useGun = this.polluteDefend || this.beat === "invade" || this.beat === "king";
+    const launched = useGun
+      ? this.stage.shootAt(target.x, target.z)
+      : this.stage.throwAt(target.x, target.z);
     if (!launched) return;
     const spent = this.hooks.onThrowSpend ? this.hooks.onThrowSpend(mag) : true;
     if (!spent) {

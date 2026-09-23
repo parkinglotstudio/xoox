@@ -9,6 +9,8 @@ export const PURIFY_GRIT = {
   teal: [0x2de0d0, 0x7ff0c0, 0xa8fff0] as const,
   /** 폭단 터짐 — 시안 주, 마젠타·옐로 점 */
   life: [0x0fbec7, 0x0ed3d9, 0xd158bc, 0xd1c51d] as const,
+  /** 승리 전신 — 흰빛·시안 */
+  glow: [0xffffff, 0xe8fff8, 0xa8fff0, 0x7ff0c0] as const,
 };
 
 /**

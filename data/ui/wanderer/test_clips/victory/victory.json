@@ -3,18 +3,22 @@
   "bank": "test",
   "cell": 512,
   "cell_w": 512,
-  "cell_h": 640,
+  "cell_h": 512,
   "cols": 8,
   "rows": 2,
   "frame_count": 13,
   "pivot": "bottom-center",
   "foot_anchor": {
     "x": 256,
-    "y": 624
+    "y": 500
   },
   "sheet": "victory_sheet.png",
   "loop": false,
   "source": "victory.gif",
+  "trim_start": 0,
+  "trim_end": null,
+  "match_idle": true,
+  "scale_to_idle": 0.9271,
   "frames": [
     {
       "index": 0,

@@ -19,8 +19,8 @@ export interface GritEmitOpts {
   lifeSec?: number;
   sizeMin?: number;
   sizeMax?: number;
-  /** 정화(teal) vs 오염(blight) vs 폭단 생명색. 기본 teal */
-  palette?: "teal" | "blight" | "life";
+  /** 정화(teal) vs 오염(blight) vs 폭단 생명색 vs 승리 흰빛. 기본 teal */
+  palette?: "teal" | "blight" | "life" | "glow";
 }
 
 interface Grit {
@@ -52,7 +52,9 @@ export class GritBurst {
         ? PURIFY_GRIT.blight
         : opts.palette === "life"
           ? PURIFY_GRIT.life
-          : PURIFY_GRIT.teal;
+          : opts.palette === "glow"
+            ? PURIFY_GRIT.glow
+            : PURIFY_GRIT.teal;
     const sizeMin = opts.sizeMin ?? 0.04;
     const sizeMax = opts.sizeMax ?? 0.09;
 

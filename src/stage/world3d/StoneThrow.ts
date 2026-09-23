@@ -142,7 +142,7 @@ export class StoneThrow {
     const range = Math.max(this.cfg.gun_range_m, dist, 1);
     const nx = dist > 0.01 ? dx / dist : -Math.sin(me.yaw);
     const nz = dist > 0.01 ? dz / dist : -Math.cos(me.yaw);
-    const origin = this.stage.muzzleOrigin(nx, nz);
+    const origin = this.stage.throwOrigin(nx, nz);
     const mesh = this.takeStone();
     const dur = Math.max(0.28, Math.max(dist, 1.2) / Math.max(4, this.cfg.missile_speed_mps));
     mesh.visible = true;

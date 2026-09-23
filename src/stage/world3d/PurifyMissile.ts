@@ -83,6 +83,10 @@ export class PurifyMissilePool {
     });
   }
 
+  isFlying(): boolean {
+    return this.live.length > 0;
+  }
+
   /** 이번 틱에 떨어진 착탄점 */
   tick(dt: number): MissileImpact[] {
     const hits: MissileImpact[] = [];

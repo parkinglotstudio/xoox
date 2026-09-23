@@ -123,6 +123,13 @@ async function boot() {
 
   sectorSel.addEventListener("change", () => void tuner.applySector(sectorSel.value));
   artSel.addEventListener("change", () => tuner.setArtVariant(artSel.value === "after"));
+  let propsStanding = false;
+  $("btnPropsStand").addEventListener("click", () => {
+    propsStanding = !propsStanding;
+    tuner.getStage().setPropsKeepStanding(propsStanding);
+    $("btnPropsStand").textContent = propsStanding ? "프롭 기립 ON" : "프롭 전부 기립";
+    setStatus(propsStanding ? "프롭 전부 기립 (거리 무시)" : "프롭 기립 거리 복귀");
+  });
   $("btnReset").addEventListener("click", () => {
     tuner.resetPlayer();
     drawMini(50, 88, 0);

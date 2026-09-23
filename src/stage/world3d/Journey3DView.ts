@@ -22,7 +22,7 @@ import { PurifyRaidHud } from "./PurifyRaidHud";
 import { playPickupGauge, playPurifyMelt, type MashCollectResult } from "./PurifyMelt";
 import { loadPurifyRaidConfig, scaleRaidForTier } from "./purifyRaidConfig";
 import { loadRaidTables } from "./raidTables";
-import { applyWandererTestClips, loadActorSprite, loadActorSpriteExtras } from "./spriteSheet";
+import { attachWandererShoot, loadActorSprite, loadActorSpriteExtras } from "./spriteSheet";
 import { spawnPctInArea } from "../spawnStart";
 import { ResidualColorHunt } from "./ResidualColorHunt";
 import { SectorPurifyLoop, type SectorLoopHooks } from "./SectorPurifyLoop";
@@ -232,7 +232,7 @@ export class Journey3DView {
     const core = await loadActorSprite("wanderer", "/ui/lobby/lobby_actor_idle.png", { extras: false });
     await this.stage.setPlayerSprite(core);
     const extra = await loadActorSpriteExtras("wanderer");
-    const merged = await applyWandererTestClips("wanderer", { ...core, ...extra });
+    const merged = await attachWandererShoot("wanderer", { ...core, ...extra });
     await this.stage.setPlayerSprite(merged);
   }
 

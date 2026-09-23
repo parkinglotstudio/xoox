@@ -20,10 +20,12 @@ import { PROP_DEFAULTS, stickerTexture, stickerArtTexture, stickerArtMaterial, s
 import type { Journey3DConfig } from "./journey3dConfig";
 import { IslandTerrain, sectorIdOf, purifyAmountAt, type PurifyFocusWorld } from "./IslandTerrain";
 import { findWorldPath, resolveCircleMove, type PathObstacle } from "./propPath";
+import { AmbientBlockCloud, placeCoastSaltMist } from "./AmbientBlockCloud";
 import { GritBurst, type GritEmitOpts } from "./fx/GritBurst";
 import { SAND_DISSOLVE_CACHE_KEY, SAND_DISSOLVE_GLSL } from "./fx/sandDissolve";
 import { StoneThrow } from "./StoneThrow";
-import type { PurifyRaidConfig } from "./purifyRaidConfig";
+import { PurifyMissilePool } from "./PurifyMissile";
+import { PURIFY_RAID_DEFAULTS, type PurifyRaidConfig } from "./purifyRaidConfig";
 import {
   asSheet,
   type PlayerSprite,
@@ -194,10 +196,15 @@ export class JourneyStage3D {
   private overlayGroup = new THREE.Group();
   /** 잔여 정화 착탄 grit (모래식) */
   private residualGrit: GritBurst | null = null;
+  private gunBolts: PurifyMissilePool | null = null;
+  private throwMissiles: PurifyMissilePool | null = null;
+  private gunShotCfg: PurifyRaidConfig = { ...PURIFY_RAID_DEFAULTS };
+  private projectileLand: ((x: number, z: number) => void) | null = null;
   private nodes: NodeEntry[] = [];
   private props: PropEntry[] = [];
   /** 섹터 CSV 전체 — 메시는 50m 안에만 만든다 */
   private propCatalog: WorldProp[] = [];
+  private ambientCloud = new AmbientBlockCloud();
   private propStreamAcc = 0;
   private lastStreamPx = 9999;
   private lastStreamPz = 9999;
@@ -246,6 +253,10 @@ export class JourneyStage3D {
   private animFail: AnimState | null = null;
   private throwing = false;
   private picking = false;
+  /** 총쏘기2 단발. 홀드 조준이 아니다. */
+  private shootBurst = false;
+  private shootReleased = false;
+  private shootAim: { x: number; z: number } | null = null;
   private outcome: "victory" | "fail" | null = null;
   private throwReleased = false;
   private throwAim: { x: number; z: number } | null = null;
@@ -330,6 +341,8 @@ export class JourneyStage3D {
     resolve: () => void;
   } | null = null;
   private areaPropsStanding = false;
+  private ambientMurkyScratch: THREE.Color | null = null;
+  private ambientCleanScratch: THREE.Color | null = null;
   private headScratch = new THREE.Vector3();
 
   private opts: JourneyStage3DOptions;
@@ -415,6 +428,7 @@ export class JourneyStage3D {
       initialFocus: opts.initialFocus ?? "i21",
     });
     this.scene.add(this.island.group);
+    this.scene.add(this.ambientCloud.group);
     void this.island.ready.then(() => {
       if (this.disposed) return;
       this.floor.visible = false;
@@ -428,6 +442,8 @@ export class JourneyStage3D {
     this.scene.add(this.nodeGroup, this.propGroup, this.paintGroup, this.overlayGroup);
     this.residualGrit = new GritBurst(this);
     this.stoneThrow = new StoneThrow(this);
+    this.gunBolts = new PurifyMissilePool(this);
+    this.throwMissiles = new PurifyMissilePool(this);
 
     this.playerMat = new THREE.SpriteMaterial({
       transparent: true,
@@ -500,9 +516,15 @@ export class JourneyStage3D {
     this.island.setFocus(id);
     await this.island.ensureLand(id);
     if (this.disposed) return;
-    if (opts?.foci) this.setPurifyFoci(opts.foci);
-    else if (opts?.purifiedIds) this.island.setPurified(opts.purifiedIds);
-    else if (opts?.polluted != null) {
+    if (opts?.foci !== undefined) {
+      this.setPurifyFoci(opts.foci);
+      // [] is truthy in JS — still force polluted set so before/after contrast works
+      if (opts.foci.length === 0) {
+        this.island.setPurified(opts.polluted === false ? [id] : []);
+      }
+    } else if (opts?.purifiedIds) {
+      this.island.setPurified(opts.purifiedIds);
+    } else if (opts?.polluted != null) {
       this.island.setPurified(opts.polluted ? [] : [id]);
       if (opts.polluted) this.setPurifyFoci([]);
     }
@@ -518,11 +540,13 @@ export class JourneyStage3D {
       e.waveStand = foci.some((f) => Math.hypot(e.wx - f.x, e.wz - f.z) <= f.r);
     }
     this.areaPropsStanding = false;
+    this.syncAmbientPropMood();
     this.syncSkyFromFoci(true);
   }
 
   setPurifyColorAmt(amt: number): void {
     this.island.setPurifyColorAmt(amt);
+    this.syncAmbientPropMood();
     this.syncSkyFromFoci(true);
   }
 
@@ -560,6 +584,7 @@ export class JourneyStage3D {
     }
     this.rebuildObstacles();
     this.rebuildWallBatch();
+    this.rebuildAmbientCloud();
     this.setPlayer(at.xPct, at.yPct);
   }
 
@@ -699,11 +724,33 @@ export class JourneyStage3D {
 
   setProps(props: WorldProp[]): void {
     this.clearProps();
+    this.ambientCloud.dispose();
     this.propCatalog = props;
     this.rebuildObstacles();
     this.rebuildWallBatch();
+    this.rebuildAmbientCloud();
     this.lastStreamPx = 9999;
     this.syncPropStream(true);
+    this.syncAmbientPropMood();
+  }
+
+
+  private rebuildAmbientCloud(): void {
+    const walls = this.propCatalog.filter((p) => p.groupId === "sea_wall");
+    this.ambientCloud.rebuild(placeCoastSaltMist(walls, (x, y) => this.pctToWorld(x, y)));
+  }
+
+  shockAmbientCloud(x: number, z: number, y = 0.52): void {
+    this.ambientCloud.shockAt(x, y, z);
+  }
+
+  ambientCloudCount(): number {
+    return this.ambientCloud.blockCount();
+  }
+
+  debugAmbientCloud(): { blocks: number; walls: number } {
+    const walls = this.propCatalog.filter((p) => p.groupId === "sea_wall");
+    return { blocks: this.ambientCloud.blockCount(), walls: walls.length };
   }
 
   private rebuildObstacles(): void {
@@ -756,7 +803,9 @@ export class JourneyStage3D {
 
     let mat: THREE.MeshBasicMaterial;
     if (shared && p.art) {
-      mat = stickerArtMaterial(p.art);
+      // clone ambient flora so polluted tint can differ per prop without shared-mat bleed
+      const ambient = p.kind === "bush" || p.kind === "tree";
+      mat = ambient ? stickerArtMaterial(p.art).clone() : stickerArtMaterial(p.art);
     } else {
       const tex = p.art ? stickerArtTexture(p.art) : stickerTexture(p.kind);
       mat = new THREE.MeshBasicMaterial({
@@ -827,6 +876,7 @@ export class JourneyStage3D {
     this.propCatalog = [];
     this.obstacleCache = [];
     this.clearWallBatch();
+    this.ambientCloud.rebuild([]);
   }
 
   private clearWallBatch(): void {
@@ -880,10 +930,15 @@ export class JourneyStage3D {
     const drop = r * 1.25;
     const px = this.px;
     const pz = this.pz;
+    const showAll = this.areaPropsStanding;
     for (const b of this.wallBatches) {
       const was = b.live;
       const next: typeof was = [];
       for (const it of b.items) {
+        if (showAll) {
+          next.push(it);
+          continue;
+        }
         const d = Math.hypot(it.wx - px, it.wz - pz);
         if (d <= r || (d <= drop && was.includes(it))) next.push(it);
       }
@@ -891,6 +946,7 @@ export class JourneyStage3D {
       b.mesh.count = next.length;
     }
     this.wallSphereDirty = true;
+    if (showAll) this.faceWallBatch();
   }
 
   private faceBillboards(force = false): void {
@@ -932,6 +988,7 @@ export class JourneyStage3D {
   /** 근처 나무 메시·텍스처가 다 올라올 때까지. 페이드 인 전에 호출 */
   async waitPropsReady(): Promise<void> {
     this.rebuildWallBatch();
+    this.rebuildAmbientCloud();
     this.syncPropStream(true);
     const arts = new Set(
       this.props.map((e) => e.prop.art).filter((a): a is string => !!a),
@@ -972,7 +1029,7 @@ export class JourneyStage3D {
     }
     const shootSheet = sprite.shoot ?? sprite.aimFire;
     if (sprite.shoot && shootSheet) {
-      this.animAim = await this.takeAnim(this.animAim, { ...shootSheet, loop: shootSheet.loop });
+      this.animAim = await this.takeAnim(this.animAim, { ...shootSheet, loop: false });
     }
     if (sprite.pickup) {
       this.animPickup = await this.takeAnim(this.animPickup, { ...sprite.pickup, loop: false });
@@ -1030,6 +1087,12 @@ export class JourneyStage3D {
     return { x: this.px + nx * along, y, z: this.pz + nz * along };
   }
 
+  /** 정화제 던지기 — 손 높이에서 곡선으로 나간다. */
+  throwOrigin(nx: number, nz: number): { x: number; y: number; z: number } {
+    const along = 0.32;
+    return { x: this.px + nx * along, y: this.charH * 0.36, z: this.pz + nz * along };
+  }
+
   private async loadAnim(sheet: SpriteAnimSheet): Promise<AnimState> {
     const tex = await loadTexture(sheet.url);
     tex.colorSpace = THREE.SRGBColorSpace;
@@ -1063,7 +1126,8 @@ export class JourneyStage3D {
   }
 
   private gunWanted(): boolean {
-    return this.wantAim || this.shooting;
+    if (this.shootBurst) return false;
+    return this.wantAim;
   }
 
   private stepGunPose(): void {
@@ -1089,6 +1153,7 @@ export class JourneyStage3D {
     if (this.outcome === "fail") return this.animFail ?? this.animIdle;
     if (this.throwing) return this.animThrow ?? this.animIdle;
     if (this.picking) return this.animPickup ?? this.animIdle;
+    if (this.shootBurst) return this.animAim ?? this.animIdle;
     if (this.gunPose === "draw") return this.animDraw ?? this.animAim ?? this.animIdle;
     if (this.gunPose === "holster") return this.animHolster ?? this.animIdle;
     if (this.gunPose === "aim") {
@@ -1160,6 +1225,8 @@ export class JourneyStage3D {
             this.resetAnim(this.animAim);
           } else if (this.gunPose === "holster") {
             this.gunPose = "holstered";
+          } else if (this.shootBurst) {
+            this.finishShootClip();
           } else if (this.throwing) {
             this.throwing = false;
             this.throwReleased = false;
@@ -1175,8 +1242,20 @@ export class JourneyStage3D {
       const releaseAt = Math.max(1, Math.floor(n * 0.55));
       if (this.animThrow.frame >= releaseAt) {
         this.throwReleased = true;
-        if (this.throwAim) this.stoneThrow?.launchAt(this.throwAim.x, this.throwAim.z);
-        else this.stoneThrow?.launch();
+        if (this.throwAim) this.launchThrowMissile(this.throwAim.x, this.throwAim.z);
+        else {
+          const aim = this.aimFloor();
+          this.launchThrowMissile(aim.x, aim.z);
+        }
+      }
+    }
+    if (this.shootBurst && this.animAim && !this.shootReleased) {
+      const n = this.animAim.sheet.frames.length;
+      const releaseAt = Math.max(0, Math.floor(n * 0.35));
+      if (this.animAim.frame >= releaseAt) {
+        this.shootReleased = true;
+        if (this.shootAim) this.launchGunBolt(this.shootAim.x, this.shootAim.z);
+        this.emitShootMuzzle();
       }
     }
     this.applyAnimFrame(this.currentAnim());
@@ -1200,7 +1279,7 @@ export class JourneyStage3D {
   }
 
   isShooting(): boolean {
-    return this.shooting && !this.frozen && this.inputOn;
+    return this.shootBurst && !this.frozen && this.inputOn;
   }
 
   emitPurifyGrit(opts: GritEmitOpts): void {
@@ -1210,11 +1289,27 @@ export class JourneyStage3D {
   /** 정화제·퇴치제 획득 — 모인 뒤 짧은 착탄 폭발 + 줍기 클립 */
   playPickupBurst(x: number, z: number): void {
     this.stoneThrow?.playBurstAt(x, z, 0.62);
+    this.emitPurifyGrit({
+      x: this.px,
+      z: this.pz,
+      y: 0.55,
+      count: 12,
+      spreadM: 0.32,
+      lifeSec: 0.4,
+      palette: "teal",
+      sizeMin: 0.03,
+      sizeMax: 0.07,
+    });
     this.beginPickup();
   }
 
+  pickupHoldMs(): number {
+    if (!this.animPickup) return 420;
+    return Math.min(2500, Math.max(420, this.sheetDurationMs(this.animPickup)));
+  }
+
   private beginPickup(): void {
-    if (this.outcome || this.throwing) return;
+    if (this.outcome || this.throwing || this.shootBurst) return;
     this.picking = true;
     this.resetAnim(this.animPickup);
     if (!this.animPickup) this.picking = false;
@@ -1223,9 +1318,26 @@ export class JourneyStage3D {
   /** 승리·패배 원샷. 클립이 없으면 즉시 끝. 마지막 프레임은 clearOutcome 까지 유지. */
   playOutcome(kind: "victory" | "fail"): Promise<void> {
     this.picking = false;
+    this.throwing = false;
+    this.shootBurst = false;
+    this.shooting = false;
+    this.shootAim = null;
+    this.shootReleased = false;
     this.outcome = kind;
     const anim = kind === "victory" ? this.animVictory : this.animFail;
     this.resetAnim(anim);
+    if (kind === "victory") this.emitVictoryGlow();
+    else {
+      this.emitPurifyGrit({
+        x: this.px,
+        z: this.pz,
+        y: 0.4,
+        count: 10,
+        spreadM: 0.35,
+        lifeSec: 0.45,
+        palette: "blight",
+      });
+    }
     if (!anim) {
       this.outcome = null;
       return Promise.resolve();
@@ -1249,10 +1361,12 @@ export class JourneyStage3D {
   }
 
   applyStoneThrowConfig(cfg: PurifyRaidConfig): void {
+    this.gunShotCfg = cfg;
     this.stoneThrow?.applyConfig(cfg);
   }
 
   setOnStoneLand(cb: ((x: number, z: number) => void) | null): void {
+    this.projectileLand = cb;
     if (this.stoneThrow) this.stoneThrow.onLand = cb;
   }
 
@@ -1261,8 +1375,19 @@ export class JourneyStage3D {
     this.stoneThrow?.stampAt(p.x, p.z);
   }
 
+  private beginShoot(): void {
+    if (this.frozen || this.shootBurst || this.throwing || this.picking || this.outcome) return;
+    if (!this.animAim) return;
+    this.shootAim = this.aimFloor();
+    this.shootReleased = false;
+    this.shootBurst = true;
+    this.shooting = true;
+    this.gunPose = "holstered";
+    this.resetAnim(this.animAim);
+  }
+
   private beginThrow(): void {
-    if (this.frozen || this.throwing) return;
+    if (this.frozen || this.throwing || this.shootBurst || this.outcome) return;
     this.throwAim = null;
     this.startThrow();
   }
@@ -1275,13 +1400,138 @@ export class JourneyStage3D {
     return true;
   }
 
+  /**
+   * 벌레 이후 — 총쏘기2 + 직선 탄.
+   * frozen이어도 나간다. 시트가 없으면 던지기로 폴백.
+   */
+  shootAt(x: number, z: number): boolean {
+    if (this.isThrowBusy()) return false;
+    if (!this.animAim) return this.throwAt(x, z);
+    this.shootAim = { x, z };
+    this.shootReleased = false;
+    this.shootBurst = true;
+    this.shooting = true;
+    this.gunPose = "holstered";
+    this.resetAnim(this.animAim);
+    return true;
+  }
+
   isThrowing(): boolean {
     return this.throwing;
   }
 
-  /** 던지는 모션이거나 폭단이 아직 날아가는 중 */
+  /** 던지거나 쏘는 모션, 또는 탄이 아직 날아가는 중 */
   isThrowBusy(): boolean {
-    return this.throwing || !!this.stoneThrow?.isFlying();
+    return this.throwing || this.shootBurst || !!this.stoneThrow?.isFlying() || !!this.gunBolts?.isFlying() || !!this.throwMissiles?.isFlying();
+  }
+
+  private finishShootClip(): void {
+    if (this.shootAim && !this.shootReleased) {
+      this.launchGunBolt(this.shootAim.x, this.shootAim.z);
+      this.emitShootMuzzle();
+    }
+    this.shootBurst = false;
+    this.shooting = false;
+    this.gunPose = "holstered";
+    this.shootReleased = false;
+    this.shootAim = null;
+  }
+
+  private launchThrowMissile(x: number, z: number): void {
+    if (!this.throwMissiles) return;
+    const aim = this.clampToForwardCone(x, z);
+    const dx = aim.x - this.px;
+    const dz = aim.z - this.pz;
+    const dist = Math.hypot(dx, dz);
+    const range = Math.max(this.gunShotCfg.gun_range_m, dist, 1);
+    const nx = dist > 0.01 ? dx / dist : -Math.sin(this.yaw);
+    const nz = dist > 0.01 ? dz / dist : -Math.cos(this.yaw);
+    const origin = this.muzzleOrigin(nx, nz);
+    const reach = Math.min(Math.max(dist, 1.2), range);
+    const arc = this.gunShotCfg.missile_arc_m * (0.45 + 0.55 * (reach / range));
+    this.throwMissiles.launch(origin, { x: aim.x, z: aim.z }, arc, this.gunShotCfg.missile_speed_mps);
+  }
+
+  private tickThrowMissiles(dt: number): void {
+    if (!this.throwMissiles) return;
+    for (const h of this.throwMissiles.tick(dt)) {
+      this.stoneThrow?.playBurstAt(h.x, h.z, this.gunShotCfg.paint_radius_m);
+      this.projectileLand?.(h.x, h.z);
+    }
+  }
+
+  private launchGunBolt(x: number, z: number): void {
+    if (!this.gunBolts) return;
+    const aim = this.clampToForwardCone(x, z);
+    const dx = aim.x - this.px;
+    const dz = aim.z - this.pz;
+    const dist = Math.hypot(dx, dz);
+    const nx = dist > 0.01 ? dx / dist : -Math.sin(this.yaw);
+    const nz = dist > 0.01 ? dz / dist : -Math.cos(this.yaw);
+    const origin = this.muzzleOrigin(nx, nz);
+    const speed = Math.max(16, this.gunShotCfg.missile_speed_mps * 1.85);
+    this.gunBolts.launch(origin, { x: aim.x, z: aim.z }, 0, speed);
+  }
+
+  private tickGunBolts(dt: number): void {
+    if (!this.gunBolts) return;
+    for (const h of this.gunBolts.tick(dt)) {
+      this.emitGunImpact(h.x, h.z);
+      this.projectileLand?.(h.x, h.z);
+    }
+  }
+
+  private emitGunImpact(x: number, z: number): void {
+    this.emitPurifyGrit({
+      x,
+      z,
+      y: 0.28,
+      count: 10,
+      spreadM: 0.18,
+      lifeSec: 0.28,
+      palette: "life",
+      sizeMin: 0.02,
+      sizeMax: 0.055,
+    });
+  }
+
+  private emitShootMuzzle(): void {
+    const fx = -Math.sin(this.yaw);
+    const fz = -Math.cos(this.yaw);
+    const m = this.muzzleOrigin(fx, fz);
+    this.emitPurifyGrit({
+      x: m.x,
+      z: m.z,
+      y: m.y,
+      count: 14,
+      spreadM: 0.16,
+      lifeSec: 0.28,
+      palette: "life",
+      sizeMin: 0.025,
+      sizeMax: 0.06,
+    });
+  }
+
+  private emitVictoryGlow(): void {
+    const bursts: Array<{ y: number; count: number; spreadM: number; mode: "burst" | "erosion" }> = [
+      { y: 0.35, count: 22, spreadM: 0.5, mode: "burst" },
+      { y: 1.05, count: 26, spreadM: 0.42, mode: "burst" },
+      { y: 1.75, count: 18, spreadM: 0.32, mode: "erosion" },
+    ];
+    for (const b of bursts) {
+      this.emitPurifyGrit({
+        x: this.px,
+        z: this.pz,
+        y: b.y,
+        count: b.count,
+        spreadM: b.spreadM,
+        lifeSec: 0.85,
+        mode: b.mode,
+        palette: "glow",
+        sizeMin: 0.04,
+        sizeMax: 0.11,
+      });
+    }
   }
 
   private startThrow(): void {
@@ -1290,8 +1540,11 @@ export class JourneyStage3D {
     this.resetAnim(this.animThrow);
     if (!this.animThrow) {
       this.throwReleased = true;
-      if (this.throwAim) this.stoneThrow?.launchAt(this.throwAim.x, this.throwAim.z);
-      else this.stoneThrow?.launch();
+      if (this.throwAim) this.launchThrowMissile(this.throwAim.x, this.throwAim.z);
+      else {
+        const aim = this.aimFloor();
+        this.launchThrowMissile(aim.x, aim.z);
+      }
       this.throwing = false;
       this.throwAim = null;
     }
@@ -1752,8 +2005,34 @@ export class JourneyStage3D {
     });
   }
 
+  /** bush/tree sticker mood: murky outside purify foci, clean inside */
+  syncAmbientPropMood(): void {
+    const foci = this.island.getPurifyFoci();
+    const colorAmt = this.island.getPurifyColorAmt();
+    const murky = this.ambientMurkyScratch ?? (this.ambientMurkyScratch = new THREE.Color(0x3a4a42));
+    const clean = this.ambientCleanScratch ?? (this.ambientCleanScratch = new THREE.Color(0xffffff));
+    for (const e of this.props) {
+      if (e.residual) continue;
+      if (e.prop.kind !== "bush" && e.prop.kind !== "tree") continue;
+      const reveal = purifyAmountAt(e.wx, e.wz, foci) * colorAmt;
+      // no foci => fully murky (polluted field)
+      const tReveal = foci.length === 0 ? 0 : reveal;
+      e.material.color.copy(murky).lerp(clean, clamp(tReveal, 0, 1));
+    }
+  }
+
   setPropsKeepStanding(on: boolean): void {
     this.areaPropsStanding = on;
+    this.streamWallVisible();
+    this.faceBillboards(true);
+  }
+
+  propCatalogCount(): number {
+    return this.propCatalog.length;
+  }
+
+  livePropCount(): number {
+    return this.props.length;
   }
 
   getPlayer(): { xPct: number; yPct: number; yawDeg: number } {
@@ -1791,7 +2070,8 @@ export class JourneyStage3D {
       this.keys.clear();
       this.pointerShoot = false;
       this.keyShoot = false;
-      this.syncShooting();
+      this.shootBurst = false;
+      this.shooting = false;
       this.dragging = false;
     }
   }
@@ -2096,7 +2376,9 @@ export class JourneyStage3D {
     this.nodeHMul = clamp(mul, 0.2, 6);
     const h = this.charH * this.nodeHMul;
     for (const e of this.nodes) {
-      const img = e.texture.image as HTMLCanvasElement;
+      if (e.node.noMarker) continue;
+      const img = e.texture.image as HTMLCanvasElement | null;
+      if (!img || !img.height) continue;
       e.sprite.scale.set(h * (img.width / img.height), h, 1);
     }
   }
@@ -2198,13 +2480,64 @@ export class JourneyStage3D {
       this.keys.clear();
       this.pointerShoot = false;
       this.keyShoot = false;
-      this.syncShooting();
+      this.shootBurst = false;
+      this.shooting = false;
       this.dragging = false;
     }
   }
 
   private syncShooting(): void {
-    this.shooting = this.pointerShoot || this.keyShoot;
+    this.shooting = this.shootBurst;
+  }
+
+  /** 들판 미리보기. 정화 루프가 얼린 동안에는 안 나간다. */
+  private handlePreviewMotionKey(k: string, e: KeyboardEvent): boolean {
+    if (k < "1" || k > "8") return false;
+    e.preventDefault();
+    if (e.repeat || this.frozen) return true;
+    if (k === "1") this.clearPreviewPose();
+    else if (k === "2") this.beginThrow();
+    else if (k === "3") {
+      this.beginShoot();
+      this.syncShooting();
+    } else if (k === "4") {
+      if (!this.outcome && !this.throwing && !this.shootBurst) this.beginPickup();
+    } else if (k === "5") void this.playOutcome("victory");
+    else if (k === "6") void this.playOutcome("fail");
+    else if (k === "7") this.previewDraw();
+    else if (k === "8") this.previewHolster();
+    return true;
+  }
+
+  private clearPreviewPose(): void {
+    this.outcome = null;
+    this.picking = false;
+    this.throwing = false;
+    this.throwReleased = false;
+    this.throwAim = null;
+    this.shootBurst = false;
+    this.shooting = false;
+    this.shootReleased = false;
+    this.shootAim = null;
+    this.wantAim = false;
+    this.gunPose = "holstered";
+    this.resetAnim(this.animIdle);
+    this.applyAnimFrame(this.animIdle);
+    this.applyPlayerScale();
+  }
+
+  private previewDraw(): void {
+    if (this.outcome || this.throwing || this.shootBurst || this.picking) return;
+    this.wantAim = true;
+    this.gunPose = this.animDraw ? "draw" : "aim";
+    this.resetAnim(this.animDraw ?? this.animAim);
+  }
+
+  private previewHolster(): void {
+    if (this.outcome || this.throwing || this.shootBurst || this.picking) return;
+    this.wantAim = false;
+    this.gunPose = this.animHolster ? "holster" : "holstered";
+    this.resetAnim(this.animHolster);
   }
 
   private onKeyDown = (e: KeyboardEvent) => {
@@ -2237,10 +2570,12 @@ export class JourneyStage3D {
     }
     if (k === "z") {
       e.preventDefault();
-      this.keyShoot = true;
+      if (e.repeat) return;
+      this.beginShoot();
       this.syncShooting();
       return;
     }
+    if (this.handlePreviewMotionKey(k, e)) return;
     if (MOVE_KEYS.has(k)) {
       e.preventDefault();
       this.keys.add(k);
@@ -2252,14 +2587,13 @@ export class JourneyStage3D {
     this.keys.delete(k);
     if (k === "z") {
       this.keyShoot = false;
-      this.syncShooting();
     }
   };
 
   private onPointerDown = (e: PointerEvent) => {
     if (e.button !== 0) return;
     this.dragging = true;
-    this.pointerShoot = true;
+    this.beginShoot();
     this.syncShooting();
     this.lastDragX = e.clientX;
   };
@@ -2275,7 +2609,6 @@ export class JourneyStage3D {
     if (e.button !== 0 && e.type === "pointerup") return;
     this.dragging = false;
     this.pointerShoot = false;
-    this.syncShooting();
   };
 
   // ── 루프 ──────────────────────────────────────────────────────
@@ -2288,6 +2621,8 @@ export class JourneyStage3D {
   private step(dt: number): void {
     this.residualGrit?.tick(dt);
     this.stoneThrow?.tick(dt);
+    this.tickThrowMissiles(dt);
+    this.tickGunBolts(dt);
     this.moving = false;
     this.opts.onTick?.(dt);
 
@@ -2298,6 +2633,7 @@ export class JourneyStage3D {
       this.stepPropPop(dt);
       this.fadeNearCamera();
       this.stepPropStream(dt);
+    this.stepAmbientCloud(dt);
       return;
     }
 
@@ -2336,6 +2672,7 @@ export class JourneyStage3D {
       this.gunPose === "holster" ||
       this.throwing ||
       this.picking ||
+      this.shootBurst ||
       this.outcome != null;
     const armed = this.gunPose === "aim";
     if (this.frozen || poseLocked) {
@@ -2388,6 +2725,7 @@ export class JourneyStage3D {
     this.stepPropPop(dt);
     this.fadeNearCamera();
     this.stepPropStream(dt);
+    this.stepAmbientCloud(dt);
   }
 
   /**
@@ -2396,7 +2734,7 @@ export class JourneyStage3D {
    */
   private stepPropPop(dt: number): void {
     const vision = Math.max(4, this.fogVisionM);
-    const riseAt = Math.min(3.8, vision * 0.38);
+    const riseAt = vision; // fog-matched stand-up (was min(3.8, vision*0.38))
     const residualRise = 7;
     const restYaw = (e: PropEntry) => ((e.prop.yawDeg ?? 0) * Math.PI) / 180;
 
@@ -2457,6 +2795,7 @@ export class JourneyStage3D {
     if (this.propStreamAcc < 0.18) return;
     this.propStreamAcc = 0;
     this.syncPropStream();
+    this.syncAmbientPropMood();
   }
 
   private stepAutoWalk(dt: number): void {
@@ -2609,6 +2948,22 @@ export class JourneyStage3D {
     this.camera.updateProjectionMatrix();
   }
 
+
+  private stepAmbientCloud(dt: number): void {
+    const shooting = this.isShooting();
+    this.ambientCloud.tick({
+      dt,
+      px: this.px,
+      py: this.charH * 0.38,
+      pz: this.pz,
+      streamR: this.propStreamM,
+      foci: this.island.getPurifyFoci(),
+      shooting,
+      aim: shooting ? this.aimFloor() : null,
+    });
+  }
+
+
   dispose(): void {
     this.disposed = true;
     this.finishAutoWalk(false);
@@ -2622,6 +2977,10 @@ export class JourneyStage3D {
     this.clearProps();
     this.stoneThrow?.dispose();
     this.stoneThrow = null;
+    this.gunBolts?.dispose();
+    this.gunBolts = null;
+    this.throwMissiles?.dispose();
+    this.throwMissiles = null;
     this.residualGrit?.dispose();
     this.residualGrit = null;
     disposePropTextures();

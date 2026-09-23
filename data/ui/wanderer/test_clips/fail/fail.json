@@ -3,18 +3,22 @@
   "bank": "test",
   "cell": 512,
   "cell_w": 512,
-  "cell_h": 640,
+  "cell_h": 512,
   "cols": 7,
   "rows": 1,
   "frame_count": 7,
   "pivot": "bottom-center",
   "foot_anchor": {
     "x": 256,
-    "y": 624
+    "y": 500
   },
   "sheet": "fail_sheet.png",
   "loop": false,
   "source": "fail.gif",
+  "trim_start": 0,
+  "trim_end": null,
+  "match_idle": true,
+  "scale_to_idle": 1.0827,
   "frames": [
     {
       "index": 0,

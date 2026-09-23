@@ -1,47 +1,42 @@
 prop_id,area_id,kind,x_pct,y_pct,yaw_deg,h_m,group_id,collide,purify_target,life_blight_id,art,note
-sea_i21_0001,area_i21,tree,4.0,96.4,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
-sea_i21_0002,area_i21,tree,9.8,96.4,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
-sea_i21_0003,area_i21,tree,15.6,96.4,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,south
-sea_i21_0004,area_i21,tree,21.4,96.4,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
-sea_i21_0005,area_i21,tree,27.2,96.4,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
-sea_i21_0006,area_i21,tree,33.0,96.4,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,south
-sea_i21_0007,area_i21,tree,67.8,96.4,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
-sea_i21_0008,area_i21,tree,73.6,96.4,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,south
-sea_i21_0009,area_i21,tree,79.4,96.4,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
-sea_i21_0010,area_i21,tree,85.2,96.4,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
-sea_i21_0011,area_i21,tree,91.0,96.4,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,south
-sea_i21_0012,area_i21,tree,3.6,4.0,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0013,area_i21,tree,3.6,9.8,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0014,area_i21,tree,3.6,15.6,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,west
-sea_i21_0015,area_i21,tree,3.6,21.4,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0016,area_i21,tree,3.6,27.2,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0017,area_i21,tree,3.6,33.0,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,west
-sea_i21_0018,area_i21,tree,3.6,38.8,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0019,area_i21,tree,3.6,44.6,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0020,area_i21,tree,3.6,50.4,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,west
-sea_i21_0021,area_i21,tree,3.6,56.2,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0022,area_i21,tree,3.6,62.0,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0023,area_i21,tree,3.6,67.8,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,west
-sea_i21_0024,area_i21,tree,3.6,73.6,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0025,area_i21,tree,3.6,79.4,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0026,area_i21,tree,3.6,85.2,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,west
-sea_i21_0027,area_i21,tree,3.6,91.0,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0028,area_i21,tree,96.4,4.0,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0029,area_i21,tree,96.4,9.8,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0030,area_i21,tree,96.4,15.6,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,east
-sea_i21_0031,area_i21,tree,96.4,21.4,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0032,area_i21,tree,96.4,27.2,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0033,area_i21,tree,96.4,33.0,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,east
-sea_i21_0034,area_i21,tree,96.4,38.8,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0035,area_i21,tree,96.4,44.6,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0036,area_i21,tree,96.4,50.4,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,east
-sea_i21_0037,area_i21,tree,96.4,56.2,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0038,area_i21,tree,96.4,62.0,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0039,area_i21,tree,96.4,67.8,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,east
-sea_i21_0040,area_i21,tree,96.4,73.6,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0041,area_i21,tree,96.4,79.4,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0042,area_i21,tree,96.4,85.2,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,east
-sea_i21_0043,area_i21,tree,96.4,91.0,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
+sea_i21_0003,area_i21,tree,15.6,96.4,8,4.6,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0004,area_i21,tree,21.4,96.4,-12,9.6,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0005,area_i21,tree,27.2,96.4,0,7.4,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0006,area_i21,tree,33.0,96.4,0,6.6,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0007,area_i21,tree,67.8,96.4,0,4.6,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0008,area_i21,tree,73.6,96.4,0,5.0,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0009,area_i21,tree,79.4,96.4,8,7.4,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0010,area_i21,tree,85.2,96.4,-8,6.6,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0011,area_i21,tree,91.0,96.4,0,6.6,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0012,area_i21,tree,3.6,4.0,0,9.6,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0013,area_i21,tree,3.6,9.8,-8,5.0,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0014,area_i21,tree,3.6,15.6,0,5.0,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0015,area_i21,tree,3.6,21.4,-8,5.8,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0016,area_i21,tree,3.6,27.2,0,6.6,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0017,area_i21,tree,3.6,33.0,0,4.6,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0018,area_i21,tree,3.6,38.8,-8,4.6,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0019,area_i21,tree,3.6,44.6,0,6.6,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0020,area_i21,tree,3.6,50.4,0,8.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0022,area_i21,tree,3.6,62.0,0,5.4,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0023,area_i21,tree,3.6,67.8,-12,9.6,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0024,area_i21,tree,3.6,73.6,-8,7.4,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0025,area_i21,tree,3.6,79.4,0,4.6,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0026,area_i21,tree,3.6,85.2,8,5.0,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0027,area_i21,tree,3.6,91.0,0,8.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0028,area_i21,tree,96.4,4.0,8,5.4,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0029,area_i21,tree,96.4,9.8,15,4.6,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0030,area_i21,tree,96.4,15.6,0,8.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0031,area_i21,tree,96.4,21.4,0,5.8,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0032,area_i21,tree,96.4,27.2,0,8.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0033,area_i21,tree,96.4,33.0,8,5.8,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0034,area_i21,tree,96.4,38.8,-8,5.8,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0035,area_i21,tree,96.4,44.6,15,7.4,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0037,area_i21,tree,96.4,56.2,-8,9.6,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0038,area_i21,tree,96.4,62.0,-12,7.4,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0040,area_i21,tree,96.4,73.6,8,6.6,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0041,area_i21,tree,96.4,79.4,-8,7.4,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0042,area_i21,tree,96.4,85.2,0,8.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0043,area_i21,tree,96.4,91.0,0,8.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
 sea_i10_0044,area_i10,tree,4.0,96.4,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
 sea_i10_0045,area_i10,tree,9.8,96.4,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
 sea_i10_0046,area_i10,tree,15.6,96.4,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,south
@@ -186,45 +181,44 @@ sea_i01_0184,area_i01,tree,96.4,73.6,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.
 sea_i01_0185,area_i01,tree,96.4,79.4,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
 sea_i01_0186,area_i01,tree,96.4,85.2,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,east
 sea_i01_0187,area_i01,tree,96.4,91.0,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0188,area_i21,tree,6.9,93.2,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,south
-sea_i21_0189,area_i21,tree,12.7,93.2,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
-sea_i21_0190,area_i21,tree,18.5,93.2,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
-sea_i21_0191,area_i21,tree,24.3,93.2,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,south
-sea_i21_0192,area_i21,tree,30.1,93.2,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
-sea_i21_0193,area_i21,tree,70.7,93.2,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
-sea_i21_0194,area_i21,tree,76.5,93.2,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
-sea_i21_0195,area_i21,tree,82.3,93.2,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,south
-sea_i21_0196,area_i21,tree,88.1,93.2,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
-sea_i21_0197,area_i21,tree,6.8,6.9,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,west
-sea_i21_0198,area_i21,tree,6.8,12.7,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0199,area_i21,tree,6.8,18.5,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0200,area_i21,tree,6.8,24.3,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,west
-sea_i21_0201,area_i21,tree,6.8,30.1,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0202,area_i21,tree,6.8,35.9,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0203,area_i21,tree,6.8,41.7,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,west
-sea_i21_0204,area_i21,tree,6.8,47.5,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0205,area_i21,tree,6.8,53.3,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0206,area_i21,tree,6.8,59.1,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,west
-sea_i21_0207,area_i21,tree,6.8,64.9,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0208,area_i21,tree,6.8,70.7,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0209,area_i21,tree,6.8,76.5,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,west
-sea_i21_0210,area_i21,tree,6.8,82.3,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0211,area_i21,tree,6.8,88.1,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,west
-sea_i21_0212,area_i21,tree,93.2,6.9,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,east
-sea_i21_0213,area_i21,tree,93.2,12.7,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0214,area_i21,tree,93.2,18.5,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0215,area_i21,tree,93.2,24.3,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,east
-sea_i21_0216,area_i21,tree,93.2,30.1,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0217,area_i21,tree,93.2,35.9,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0218,area_i21,tree,93.2,41.7,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,east
-sea_i21_0219,area_i21,tree,93.2,47.5,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0220,area_i21,tree,93.2,53.3,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0221,area_i21,tree,93.2,59.1,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,east
-sea_i21_0222,area_i21,tree,93.2,64.9,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0223,area_i21,tree,93.2,70.7,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0224,area_i21,tree,93.2,76.5,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,east
-sea_i21_0225,area_i21,tree,93.2,82.3,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
-sea_i21_0226,area_i21,tree,93.2,88.1,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
+sea_i21_0188,area_i21,tree,6.9,93.2,-12,5.8,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0189,area_i21,tree,12.7,93.2,0,7.4,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0190,area_i21,tree,18.5,93.2,0,5.0,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0191,area_i21,tree,24.3,93.2,-8,9.6,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0192,area_i21,tree,30.1,93.2,15,7.4,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0193,area_i21,tree,70.7,93.2,-8,9.6,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0194,area_i21,tree,76.5,93.2,15,8.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0195,area_i21,tree,82.3,93.2,8,6.6,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0196,area_i21,tree,88.1,93.2,0,4.6,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0198,area_i21,tree,6.8,12.7,0,7.4,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0199,area_i21,tree,6.8,18.5,15,5.8,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0200,area_i21,tree,6.8,24.3,0,5.4,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0201,area_i21,tree,6.8,30.1,-8,9.6,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0202,area_i21,tree,6.8,35.9,-12,7.4,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0203,area_i21,tree,6.8,41.7,0,5.8,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0204,area_i21,tree,6.8,47.5,8,5.8,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0205,area_i21,tree,6.8,53.3,0,5.8,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0206,area_i21,tree,6.8,59.1,-12,5.0,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0207,area_i21,tree,6.8,64.9,0,5.8,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0208,area_i21,tree,6.8,70.7,15,9.0,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0209,area_i21,tree,6.8,76.5,8,4.6,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0210,area_i21,tree,6.8,82.3,0,5.0,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0211,area_i21,tree,6.8,88.1,8,5.4,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0212,area_i21,tree,93.2,6.9,15,4.6,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0213,area_i21,tree,93.2,12.7,0,5.0,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0214,area_i21,tree,93.2,18.5,0,9.0,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0215,area_i21,tree,93.2,24.3,-12,7.4,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0216,area_i21,tree,93.2,30.1,15,9.6,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0217,area_i21,tree,93.2,35.9,-12,9.0,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0218,area_i21,tree,93.2,41.7,0,9.0,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0219,area_i21,tree,93.2,47.5,0,5.8,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0220,area_i21,tree,93.2,53.3,-8,9.6,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0221,area_i21,tree,93.2,59.1,8,6.6,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0222,area_i21,tree,93.2,64.9,0,6.6,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0223,area_i21,tree,93.2,70.7,-8,7.4,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0224,area_i21,tree,93.2,76.5,0,5.4,sea_wall,TRUE,,,prop_sticker_tree_06.png,sea_wall rhythm+corner thin
+sea_i21_0225,area_i21,tree,93.2,82.3,15,5.4,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
+sea_i21_0226,area_i21,tree,93.2,88.1,0,8.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,sea_wall rhythm+corner thin
 sea_i10_0227,area_i10,tree,6.9,93.2,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,south
 sea_i10_0228,area_i10,tree,12.7,93.2,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
 sea_i10_0229,area_i10,tree,18.5,93.2,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,south
@@ -360,3 +354,157 @@ sea_i01_0358,area_i01,tree,93.2,70.7,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.
 sea_i01_0359,area_i01,tree,93.2,76.5,0,9.2,sea_wall,TRUE,,,prop_sticker_tree_06.png,east
 sea_i01_0360,area_i01,tree,93.2,82.3,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
 sea_i01_0361,area_i01,tree,93.2,88.1,0,5.2,sea_wall,TRUE,,,prop_sticker_tree_07.png,east
+grass_i21_s00,area_i21,bush,53.2,50.0,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_s01,area_i21,bush,54.1,51.1,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_s02,area_i21,bush,54.5,52.6,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_s03,area_i21,bush,54.4,54.4,0,1.8,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_s04,area_i21,bush,53.6,56.2,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_s05,area_i21,bush,50.8,53.1,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_s06,area_i21,bush,50.0,54.2,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_s07,area_i21,bush,48.7,55.0,0,1.8,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_s08,area_i21,bush,46.9,55.4,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_s09,area_i21,bush,44.9,55.1,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_s10,area_i21,bush,47.2,51.6,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_s11,area_i21,bush,45.9,51.1,0,1.8,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_s12,area_i21,bush,44.8,50.0,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_s13,area_i21,bush,44.0,48.4,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_s14,area_i21,bush,43.8,46.4,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_s15,area_i21,bush,47.7,47.7,0,1.8,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_s16,area_i21,bush,47.9,46.4,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_s17,area_i21,bush,48.7,45.0,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_s18,area_i21,bush,50.0,43.8,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_s19,area_i21,bush,51.9,43.0,0,1.8,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_s20,area_i21,bush,51.6,47.2,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_s21,area_i21,bush,53.0,47.0,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_s22,area_i21,bush,54.5,47.4,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_s23,area_i21,bush,56.0,48.4,0,1.8,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g000,area_i21,bush,24.5,64.4,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g001,area_i21,bush,28.4,72.2,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g002,area_i21,bush,73.4,50.9,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g003,area_i21,bush,50.4,29.9,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g004,area_i21,bush,12.2,40.2,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g005,area_i21,bush,56.5,17.3,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g006,area_i21,bush,72.3,29.7,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g007,area_i21,bush,29.7,15.2,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g008,area_i21,bush,87.8,68.1,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g009,area_i21,bush,78.5,58.8,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g010,area_i21,bush,49.8,20.8,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g011,area_i21,bush,84.3,40.0,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g012,area_i21,bush,23.8,74.1,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g013,area_i21,bush,21.5,82.5,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g014,area_i21,bush,38.1,48.8,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g015,area_i21,bush,77.8,29.8,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g016,area_i21,bush,85.6,79.9,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g017,area_i21,bush,69.4,70.0,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g018,area_i21,bush,56.1,67.5,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g019,area_i21,bush,21.3,48.2,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g020,area_i21,bush,43.1,39.8,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g021,area_i21,bush,14.0,19.1,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g022,area_i21,bush,66.6,87.5,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g023,area_i21,bush,28.9,58.3,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g024,area_i21,bush,25.7,24.9,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g025,area_i21,bush,38.5,82.5,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g026,area_i21,bush,38.3,57.4,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g027,area_i21,bush,35.3,19.8,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g028,area_i21,bush,17.0,73.8,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g029,area_i21,bush,71.1,40.5,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g030,area_i21,bush,63.9,63.4,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g031,area_i21,bush,80.3,84.8,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g032,area_i21,bush,42.9,87.2,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g033,area_i21,bush,85.1,56.9,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g034,area_i21,bush,79.1,49.3,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g035,area_i21,bush,40.5,30.8,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g036,area_i21,bush,78.6,24.3,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g037,area_i21,bush,75.6,16.0,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g038,area_i21,bush,31.6,34.0,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g039,area_i21,bush,43.9,25.0,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g040,area_i21,bush,17.3,37.7,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g041,area_i21,bush,68.7,48.4,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g042,area_i21,bush,31.2,84.9,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g043,area_i21,bush,14.2,28.1,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g044,area_i21,bush,75.7,72.4,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g045,area_i21,bush,76.5,35.4,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g046,area_i21,bush,70.4,12.8,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g047,area_i21,bush,13.8,57.1,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g048,area_i21,bush,60.9,76.7,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g049,area_i21,bush,56.4,31.5,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g050,area_i21,bush,19.2,19.1,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g051,area_i21,bush,13.9,46.0,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g052,area_i21,bush,61.8,21.6,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g053,area_i21,bush,52.9,36.6,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g054,area_i21,bush,40.7,66.0,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g055,area_i21,bush,66.0,78.4,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g056,area_i21,bush,31.2,65.0,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g057,area_i21,bush,35.8,15.2,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g058,area_i21,bush,41.6,35.5,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g059,area_i21,bush,84.1,19.5,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g060,area_i21,bush,36.2,87.5,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g061,area_i21,bush,59.2,13.5,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g062,area_i21,bush,61.0,45.6,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g063,area_i21,bush,74.1,67.0,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g064,area_i21,bush,60.0,85.2,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g065,area_i21,bush,49.4,66.5,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g066,area_i21,bush,74.7,85.2,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g067,area_i21,bush,87.2,12.5,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g068,area_i21,bush,65.5,27.6,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g069,area_i21,bush,63.8,31.8,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g070,area_i21,bush,31.3,76.2,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g071,area_i21,bush,33.1,40.8,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g072,area_i21,bush,83.5,47.5,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g073,area_i21,bush,33.3,25.3,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g074,area_i21,bush,26.3,85.0,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g075,area_i21,bush,83.0,65.5,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g076,area_i21,bush,46.5,80.0,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g077,area_i21,bush,40.1,22.3,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g078,area_i21,bush,52.2,15.7,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g079,area_i21,bush,26.3,42.6,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g080,area_i21,bush,73.0,76.1,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g081,area_i21,bush,74.0,58.1,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g082,area_i21,bush,17.1,50.9,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g083,area_i21,bush,24.0,19.9,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g084,area_i21,bush,82.7,52.9,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g085,area_i21,bush,73.3,80.9,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g086,area_i21,bush,52.5,81.0,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g087,area_i21,bush,79.1,39.5,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g088,area_i21,bush,18.3,42.8,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g089,area_i21,bush,25.5,53.0,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g090,area_i21,bush,22.0,14.1,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g091,area_i21,bush,14.0,62.6,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g092,area_i21,bush,21.3,30.2,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g093,area_i21,bush,44.2,60.7,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g094,area_i21,bush,56.6,73.0,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g095,area_i21,bush,41.9,12.3,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g096,area_i21,bush,62.5,56.2,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g097,area_i21,bush,55.8,87.8,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g098,area_i21,bush,27.0,29.3,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g099,area_i21,bush,40.2,74.8,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g100,area_i21,bush,82.5,27.1,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g101,area_i21,bush,67.1,57.2,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g102,area_i21,bush,60.4,60.3,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g103,area_i21,bush,36.8,37.0,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g104,area_i21,bush,28.8,20.5,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g105,area_i21,bush,51.6,62.4,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g106,area_i21,bush,12.7,35.0,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g107,area_i21,bush,56.1,25.8,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g108,area_i21,bush,24.5,37.9,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g109,area_i21,bush,45.6,29.6,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g110,area_i21,bush,63.6,70.7,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g111,area_i21,bush,87.8,36.9,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g112,area_i21,bush,79.9,74.6,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g113,area_i21,bush,85.7,61.8,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g114,area_i21,bush,46.5,70.0,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g115,area_i21,bush,34.5,45.9,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g116,area_i21,bush,66.1,43.4,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g117,area_i21,bush,86.4,31.5,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g118,area_i21,bush,59.5,35.8,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g119,area_i21,bush,33.2,71.5,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g120,area_i21,bush,73.0,25.2,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g121,area_i21,bush,69.8,19.4,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g122,area_i21,bush,82.6,35.4,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g123,area_i21,bush,18.4,66.3,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g124,area_i21,bush,16.8,84.3,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
+grass_i21_g125,area_i21,bush,35.8,31.9,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_a.png,safe-density full i21
+grass_i21_g126,area_i21,bush,44.5,16.3,0,1.4,grass_short,FALSE,,,prop_sticker_grass_short_b.png,safe-density full i21
+grass_i21_g127,area_i21,bush,69.5,33.5,0,1.5,grass_short,FALSE,,,prop_sticker_grass_short_c.png,safe-density full i21
+grass_i21_g128,area_i21,bush,59.8,52.3,0,1.6,grass_short,FALSE,,,prop_sticker_grass_short_d.png,safe-density full i21
+grass_i21_g129,area_i21,bush,85.6,85.2,0,1.7,grass_short,FALSE,,,prop_sticker_grass_short_e.png,safe-density full i21
