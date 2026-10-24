@@ -1,0 +1,141 @@
+{
+  "counts": {
+    "A_shoot_0.018": [
+      {
+        "weapon": "gun",
+        "glow": 18,
+        "smoke": 3
+      },
+      {
+        "weapon": "gunL",
+        "glow": 0,
+        "smoke": 0
+      },
+      {
+        "weapon": "rifle",
+        "glow": 0,
+        "smoke": 0
+      }
+    ],
+    "A_shoot_0.085": [
+      {
+        "weapon": "gun",
+        "glow": 8,
+        "smoke": 3
+      },
+      {
+        "weapon": "gunL",
+        "glow": 18,
+        "smoke": 3
+      },
+      {
+        "weapon": "rifle",
+        "glow": 0,
+        "smoke": 0
+      }
+    ],
+    "A_shoot2_0.05": [
+      {
+        "weapon": "gun",
+        "glow": 0,
+        "smoke": 0
+      },
+      {
+        "weapon": "gunL",
+        "glow": 0,
+        "smoke": 0
+      },
+      {
+        "weapon": "rifle",
+        "glow": 19,
+        "smoke": 8
+      }
+    ],
+    "A_walk_shoot_0.145": [
+      {
+        "weapon": "gun",
+        "glow": 5,
+        "smoke": 3
+      },
+      {
+        "weapon": "gunL",
+        "glow": 18,
+        "smoke": 3
+      },
+      {
+        "weapon": "rifle",
+        "glow": 0,
+        "smoke": 0
+      }
+    ],
+    "D_shoot_0.018": [
+      {
+        "weapon": "gun",
+        "glow": 18,
+        "smoke": 3
+      },
+      {
+        "weapon": "gunL",
+        "glow": 0,
+        "smoke": 0
+      },
+      {
+        "weapon": "rifle",
+        "glow": 0,
+        "smoke": 0
+      }
+    ],
+    "D_shoot_0.085": [
+      {
+        "weapon": "gun",
+        "glow": 8,
+        "smoke": 3
+      },
+      {
+        "weapon": "gunL",
+        "glow": 18,
+        "smoke": 3
+      },
+      {
+        "weapon": "rifle",
+        "glow": 0,
+        "smoke": 0
+      }
+    ],
+    "D_shoot2_0.05": [
+      {
+        "weapon": "gun",
+        "glow": 0,
+        "smoke": 0
+      },
+      {
+        "weapon": "gunL",
+        "glow": 0,
+        "smoke": 0
+      },
+      {
+        "weapon": "rifle",
+        "glow": 19,
+        "smoke": 8
+      }
+    ],
+    "D_walk_shoot_0.145": [
+      {
+        "weapon": "gun",
+        "glow": 5,
+        "smoke": 3
+      },
+      {
+        "weapon": "gunL",
+        "glow": 18,
+        "smoke": 3
+      },
+      {
+        "weapon": "rifle",
+        "glow": 0,
+        "smoke": 0
+      }
+    ]
+  },
+  "errors": []
+}

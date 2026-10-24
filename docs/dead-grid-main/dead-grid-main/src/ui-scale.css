@@ -1,0 +1,1098 @@
+/* Action-game legibility. Values are logical CSS pixels, independent of GPU DPR. */
+body {
+  font-size: 16px;
+}
+.text-button,
+.primary,
+.secondary,
+.difficulty,
+.difficulty button {
+  font-size: 16px;
+}
+.icon-button {
+  min-width: 44px;
+  min-height: 44px;
+}
+.menu-fine,
+.sector-tag,
+.select-heading > span,
+.controls-summary {
+  font-size: 14px;
+}
+.mission {
+  width: 300px;
+  padding: 20px;
+  top: 13%;
+}
+.mission-header,
+.mission-time small,
+.mission-stages,
+.mission-stat,
+.best,
+.mission > .difficulty-note {
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+.mission > p {
+  font-size: 16px;
+  margin: 12px 0;
+}
+.mission-time {
+  font-size: 66px;
+}
+.mission-stages {
+  margin-top: 14px;
+}
+.mission-stat {
+  padding: 5px 0;
+}
+.mission-stat b {
+  font-size: 20px;
+}
+.difficulty button {
+  min-height: 38px;
+}
+.character strong {
+  font-size: 18px;
+}
+.character small,
+.character em,
+.select-heading > b {
+  font-size: 14px;
+}
+.character {
+  min-height: 94px;
+}
+.selection-bar {
+  padding-top: 18px;
+  padding-bottom: 22px;
+}
+.survivor-hud > div {
+  width: 230px;
+}
+.hud-name {
+  font-size: 18px;
+}
+.hud-name small {
+  font-size: 14px;
+}
+.health-label {
+  font-size: 16px;
+  margin-top: 9px;
+}
+.health-label > span {
+  font-size: 14px;
+}
+.health-label svg {
+  width: 16px;
+  height: 16px;
+}
+.health-track {
+  height: 9px;
+}
+.time-hud strong {
+  font-size: 60px;
+}
+.time-hud > span,
+.time-hud small,
+.kill-hud span {
+  font-size: 14px;
+}
+.kill-hud strong {
+  font-size: 32px;
+}
+.xp-track {
+  height: 24px;
+}
+.xp-track small {
+  font-size: 14px;
+}
+.field-panel {
+  width: 180px;
+  top: 192px;
+}
+.minimap {
+  width: 180px;
+  height: 180px;
+}
+.wave-label > span {
+  font-size: 14px;
+}
+.wave-label > b {
+  font-size: 18px;
+}
+.boss-progress {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+}
+.boss-progress span {
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0;
+}
+.boss-progress svg {
+  width: 16px;
+  height: 16px;
+}
+.boss-hud {
+  top: 210px;
+  width: 430px;
+}
+.boss-hud > span {
+  font-size: 18px;
+}
+.boss-hud b {
+  font-size: 14px;
+}
+.boss-hud > div {
+  height: 10px;
+}
+.notice {
+  top: 210px;
+  font-size: 16px;
+  padding: 10px 18px;
+  max-width: 58%;
+  text-align: center;
+}
+.extraction-notice {
+  font-size: 16px;
+  top: 315px;
+  max-width: 60%;
+  text-align: center;
+}
+.weapon-slot {
+  width: 76px;
+  height: 86px;
+  gap: 8px;
+}
+.weapon-slot > svg {
+  width: 28px;
+  height: 28px;
+}
+.weapon-slot > span,
+.passives-row > span {
+  font-size: 14px;
+}
+.passives-row {
+  height: 24px;
+  gap: 16px;
+}
+.passives-row svg {
+  width: 20px;
+  height: 20px;
+}
+.level-dots i {
+  width: 6px;
+  height: 4px;
+}
+.ability-hud > div {
+  min-width: 136px;
+  padding: 14px;
+}
+.ability-hud kbd {
+  font-size: 14px;
+}
+.ability-hud b {
+  font-size: 18px;
+}
+.combo span {
+  font-size: 14px;
+}
+.overlay p,
+.upgrade-card p,
+.guide-callout p,
+.guide-content > p,
+.weapon-guide p,
+.research-item p {
+  font-size: 16px;
+  line-height: 1.7;
+}
+.modal-kicker,
+.upgrade-card-top > span,
+.upgrade-level,
+.evo-recipe,
+.upgrade-footer,
+.pause-panel > small,
+.settings-note,
+.recipe,
+.timeline small,
+.result-stats span,
+.result-loadout > span,
+.earned,
+.earned > span {
+  font-size: 14px;
+}
+.settings-note {
+  font-size: 14px !important;
+}
+.overlay h2 {
+  font-size: 36px;
+}
+.upgrade-panel {
+  max-width: 1050px;
+}
+.upgrade-card {
+  min-height: 380px;
+  padding: 22px 24px 0;
+}
+.upgrade-card h3 {
+  font-size: 26px;
+}
+.upgrade-card-top kbd,
+.card-select {
+  font-size: 16px;
+}
+.upgrade-icon {
+  margin: 16px 0;
+}
+.settings-list strong,
+.weapon-guide h3,
+.research-item h3 {
+  font-size: 20px;
+}
+.settings-list small,
+.control-list small {
+  font-size: 16px;
+}
+.settings-list select,
+.guide-tabs button,
+.control-list b,
+.timeline b {
+  font-size: 16px;
+}
+.control-list kbd {
+  font-size: 14px;
+}
+.settings-list > div {
+  padding: 16px 0;
+}
+.guide-panel {
+  width: min(900px, 100%);
+}
+.modal-panel {
+  max-height: 90dvh;
+  overflow: auto;
+}
+@media (max-width: 800px) {
+  .mission {
+    width: 190px;
+    padding: 14px;
+    top: 17%;
+  }
+  .mission-time {
+    font-size: 52px;
+  }
+  .mission-header {
+    font-size: 12px;
+  }
+  .mission-stages {
+    font-size: 12px;
+  }
+  .character strong {
+    font-size: 16px;
+  }
+  .character small {
+    font-size: 12px;
+  }
+  .field-panel {
+    width: 130px;
+    right: 18px;
+    top: 190px;
+  }
+  .minimap {
+    width: 130px;
+    height: 130px;
+  }
+  .weapon-slot {
+    width: 60px;
+    height: 76px;
+  }
+  .ability-hud {
+    bottom: 160px;
+  }
+  .upgrade-card {
+    padding: 18px;
+    min-height: 350px;
+  }
+  .upgrade-card h3 {
+    font-size: 22px;
+  }
+  .overlay {
+    padding: 18px;
+  }
+}
+@media (max-width: 520px) {
+  .topbar {
+    padding: 12px 16px;
+  }
+  .brand b {
+    font-size: 24px;
+  }
+  .top-actions {
+    gap: 3px;
+  }
+  .top-actions .text-button {
+    min-width: 40px;
+    min-height: 44px;
+  }
+  .top-actions .icon-button {
+    min-width: 40px;
+  }
+  .menu-copy {
+    top: 14%;
+    left: 6%;
+    width: 65%;
+  }
+  .menu-copy h1 {
+    font-size: clamp(110px, 29vw, 145px);
+  }
+  .sector-tag {
+    font-size: 12px;
+  }
+  .tagline {
+    font-size: 22px;
+  }
+  .menu-fine {
+    font-size: 14px;
+    max-width: 208px;
+    line-height: 1.7;
+  }
+  .mission {
+    top: auto;
+    bottom: 184px;
+    right: 5%;
+    width: 132px;
+    padding: 12px;
+  }
+  .mission-header,
+  .mission-stages,
+  .best {
+    display: none;
+  }
+  .mission-time {
+    font-size: 38px;
+    margin-top: 0;
+  }
+  .mission-time small {
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+  .difficulty {
+    font-size: 12px;
+    gap: 5px;
+    margin-top: 10px;
+  }
+  .difficulty button {
+    font-size: 14px;
+    min-height: 38px;
+    padding: 5px 8px;
+  }
+  .selection-bar {
+    min-height: 166px;
+    padding: 16px 5% 20px;
+  }
+  .select-heading > span,
+  .select-heading > b {
+    font-size: 12px;
+  }
+  .character {
+    min-height: 85px;
+    padding: 8px 5px;
+  }
+  .character strong {
+    font-size: 14px;
+  }
+  .character small {
+    font-size: 12px;
+  }
+  .character .avatar {
+    width: 24px;
+    transform: scale(0.7);
+  }
+  .characters {
+    gap: 5px;
+  }
+  .hud-top {
+    top: 66px;
+    left: 12px;
+    right: 12px;
+  }
+  .survivor-hud {
+    padding: 10px 9px;
+    gap: 0;
+  }
+  .survivor-hud > .avatar {
+    display: none;
+  }
+  .survivor-hud > div {
+    width: 116px;
+  }
+  .hud-name {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .hud-name small {
+    font-size: 12px;
+  }
+  .health-label {
+    font-size: 14px;
+    gap: 3px;
+  }
+  .health-label > span {
+    display: none;
+  }
+  .health-label svg {
+    width: 14px;
+    height: 14px;
+  }
+  .time-hud {
+    left: 56%;
+    padding: 3px 6px 10px;
+    width: 120px;
+  }
+  .time-hud strong {
+    font-size: 40px;
+  }
+  .time-hud > span,
+  .time-hud small {
+    font-size: 12px;
+  }
+  .time-hud small {
+    display: block;
+    line-height: 1.4;
+    max-width: 105px;
+    margin: 0 auto;
+  }
+  .kill-hud {
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 0;
+  }
+  .kill-hud strong {
+    font-size: 24px;
+  }
+  .kill-hud span {
+    font-size: 12px;
+  }
+  .kill-hud svg {
+    display: none;
+  }
+  .xp-track {
+    height: 22px;
+  }
+  .xp-track small {
+    font-size: 12px;
+  }
+  .field-panel {
+    top: 177px;
+    width: 108px;
+    right: 12px;
+  }
+  .minimap {
+    width: 108px;
+    height: 108px;
+  }
+  .wave-label {
+    padding: 8px;
+  }
+  .wave-label > span {
+    font-size: 12px;
+  }
+  .wave-label > b {
+    font-size: 14px;
+  }
+  .boss-progress {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+  }
+  .boss-progress span {
+    font-size: 12px;
+    flex-direction: row;
+    gap: 2px;
+  }
+  .boss-progress svg {
+    width: 12px;
+    height: 12px;
+  }
+  .notice {
+    top: 150px;
+    max-width: 94%;
+    width: max-content;
+    font-size: 14px;
+    padding: 7px 10px;
+  }
+  .boss-hud {
+    top: 148px;
+    width: calc(100% - 28px);
+  }
+  .boss-hud > span {
+    font-size: 16px;
+  }
+  .boss-hud b {
+    font-size: 12px;
+  }
+  .boss-hud + .notice {
+    top: 207px;
+    max-width: 62%;
+  }
+  .extraction-notice {
+    top: 245px;
+    max-width: 62%;
+    font-size: 14px;
+  }
+  .loadout {
+    left: 12px;
+    bottom: 30px;
+  }
+  .weapon-slot {
+    width: 46px;
+    height: 66px;
+    gap: 5px;
+  }
+  .weapon-slot > svg {
+    width: 23px;
+    height: 23px;
+  }
+  .weapon-slot > span {
+    font-size: 12px;
+  }
+  .level-dots {
+    gap: 2px;
+  }
+  .level-dots i {
+    width: 4px;
+    height: 3px;
+  }
+  .passives-row {
+    gap: 9px;
+  }
+  .passives-row > span {
+    font-size: 12px;
+  }
+  .passives-row svg {
+    width: 16px;
+    height: 16px;
+  }
+  .ability-hud {
+    right: 12px;
+    bottom: 150px;
+    gap: 8px;
+  }
+  .ability-hud > div {
+    min-width: 104px;
+    padding: 10px;
+  }
+  .ability-hud b {
+    font-size: 14px;
+  }
+  .ability-hud kbd {
+    font-size: 12px;
+  }
+  .combo span {
+    font-size: 12px;
+  }
+  .overlay {
+    padding: 14px;
+    place-items: safe center;
+  }
+  .overlay h2 {
+    font-size: 30px;
+  }
+  .upgrade-panel {
+    max-width: 480px;
+    padding: 12px 0;
+  }
+  .upgrade-panel > p {
+    font-size: 16px;
+    margin-bottom: 18px;
+  }
+  .upgrade-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .upgrade-card {
+    position: relative;
+    padding: 15px 16px 15px 68px;
+    min-height: 160px;
+  }
+  .upgrade-icon {
+    position: absolute;
+    width: 36px;
+    left: 15px;
+    top: 28px;
+    margin: 0;
+  }
+  .upgrade-icon svg {
+    width: 34px;
+    height: 34px;
+  }
+  .upgrade-card h3 {
+    font-size: 22px;
+    margin-top: 8px;
+  }
+  .upgrade-card-top > span {
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+  .upgrade-card-top kbd {
+    font-size: 14px;
+  }
+  .upgrade-level,
+  .evo-recipe {
+    font-size: 14px;
+  }
+  .upgrade-card p {
+    font-size: 16px;
+    min-height: 0;
+    margin: 8px 0;
+  }
+  .evo-recipe {
+    padding-top: 6px;
+    line-height: 1.6;
+  }
+  .card-select {
+    display: none;
+  }
+  .upgrade-footer {
+    font-size: 12px;
+    gap: 10px;
+  }
+  .upgrade-footer > span {
+    font-size: 12px;
+  }
+  .modal-panel {
+    padding: 24px 20px;
+    max-height: 92dvh;
+  }
+  .modal-panel h2 {
+    font-size: 28px;
+  }
+  .guide-tabs button {
+    font-size: 14px;
+    padding: 9px 10px;
+  }
+  .guide-content {
+    max-height: 62dvh;
+  }
+  .control-list > span {
+    grid-template-columns: 76px 1fr;
+    gap: 10px;
+  }
+  .control-list kbd {
+    font-size: 12px;
+  }
+  .control-list b,
+  .control-list small {
+    font-size: 14px;
+  }
+  .weapon-guide h3 {
+    font-size: 18px;
+  }
+  .weapon-guide h3 small,
+  .recipe,
+  .timeline small {
+    font-size: 14px;
+  }
+  .timeline time,
+  .timeline b {
+    font-size: 16px;
+  }
+  .settings-list strong {
+    font-size: 18px;
+  }
+  .settings-list small {
+    font-size: 14px;
+  }
+  .settings-list select {
+    font-size: 14px;
+    max-width: 115px;
+  }
+  .research-item h3 {
+    font-size: 20px;
+  }
+  .result-panel {
+    padding: 24px 20px;
+  }
+  .result-panel h2 {
+    font-size: 34px;
+  }
+  .result-stats {
+    gap: 12px;
+  }
+  .result-stats span {
+    font-size: 14px;
+  }
+  .result-stats strong {
+    font-size: 30px;
+  }
+}
+@media (pointer: coarse) {
+  .touch-controls {
+    bottom: 132px;
+  }
+  .touch-actions button {
+    font-size: 14px;
+  }
+  .ability-hud {
+    display: none;
+  }
+}
+@media (max-height: 610px) and (max-width: 800px) {
+  .menu-copy {
+    top: 17%;
+  }
+  .menu-copy h1 {
+    font-size: 95px;
+  }
+  .tagline {
+    font-size: 18px;
+    margin-top: 12px;
+  }
+  .mission {
+    top: 19%;
+    bottom: auto;
+    right: 4%;
+    width: 180px;
+  }
+  .mission-time {
+    font-size: 42px;
+  }
+  .selection-bar {
+    padding: 10px 5%;
+    min-height: 108px;
+  }
+  .select-heading {
+    margin-bottom: 6px;
+  }
+  .character {
+    min-height: 64px;
+  }
+  .menu-fine {
+    display: none;
+  }
+  .hud-top {
+    top: 55px;
+  }
+  .field-panel {
+    top: 165px;
+    width: 104px;
+  }
+  .minimap {
+    width: 104px;
+    height: 104px;
+  }
+  .wave-label,
+  .boss-progress {
+    display: none;
+  }
+  .notice {
+    top: 137px;
+  }
+  .boss-hud {
+    top: 139px;
+  }
+  .ability-hud {
+    bottom: 32px;
+    right: 14px;
+  }
+  .weapon-slot {
+    width: 48px;
+    height: 60px;
+  }
+  .loadout {
+    bottom: 28px;
+  }
+  .touch-controls {
+    bottom: 105px;
+  }
+  .upgrade-panel .upgrade-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .upgrade-panel .upgrade-card {
+    min-height: 250px;
+    padding: 12px;
+  }
+  .upgrade-panel .upgrade-icon {
+    position: static;
+    margin: 8px 0;
+    height: 32px;
+  }
+  .upgrade-panel .upgrade-card h3 {
+    font-size: 20px;
+  }
+  .upgrade-panel .upgrade-card p {
+    font-size: 14px;
+    min-height: 0;
+  }
+  .upgrade-panel .upgrade-card-top kbd {
+    position: static;
+  }
+  .upgrade-panel .evo-recipe {
+    font-size: 12px;
+  }
+  .upgrade-panel > p {
+    display: block;
+  }
+}
+
+@media (min-width: 521px) {
+  .boss-hud ~ .notice {
+    top: 270px;
+  }
+}
+
+@media (max-width: 520px) {
+  .character {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    padding: 8px 10px;
+  }
+  .character .avatar {
+    display: none;
+  }
+  .character > span:not(.avatar) {
+    gap: 6px;
+  }
+  .kill-hud span {
+    display: block;
+  }
+  .notice {
+    top: 179px;
+  }
+  .field-panel {
+    top: 223px;
+  }
+  .boss-hud {
+    top: 178px;
+  }
+  .boss-hud + .notice {
+    top: 235px;
+    left: 12px;
+    transform: none;
+    width: 230px;
+    max-width: 60%;
+  }
+  .extraction-notice {
+    top: 300px;
+    left: 12px;
+    transform: none;
+    width: 230px;
+    max-width: 60%;
+  }
+}
+@media (max-height: 610px) and (max-width: 800px) {
+  .notice {
+    top: 150px;
+  }
+  .field-panel {
+    top: 172px;
+  }
+  .boss-hud {
+    top: 151px;
+  }
+  .boss-hud + .notice {
+    top: 206px;
+  }
+}
+
+.app {
+  min-height: 0;
+}
+.overlay p {
+  word-break: keep-all;
+  text-wrap: pretty;
+}
+.minimap .fog-cell {
+  transition: fill 0.35s ease-out;
+}
+@media (max-height: 610px) and (max-width: 1000px) {
+  .survivor-hud > div {
+    width: 185px;
+  }
+  .menu-copy {
+    top: 17%;
+    left: 5%;
+    width: 53%;
+  }
+  .menu-copy h1 {
+    display: flex;
+    gap: 12px;
+    font-size: 80px;
+    line-height: 0.9;
+  }
+  .menu-copy h1 > span + span {
+    margin-top: 0;
+  }
+  .sector-tag {
+    margin-top: 8px;
+    font-size: 12px;
+  }
+  .tagline {
+    margin-top: 8px;
+    font-size: 18px;
+    line-height: 1.4;
+  }
+  .start-row {
+    margin-top: 12px;
+  }
+  .start {
+    min-height: 46px;
+    padding: 10px 20px;
+  }
+  .menu-fine {
+    display: none;
+  }
+  .mission {
+    top: 18%;
+    bottom: auto;
+    width: 220px;
+    padding: 12px 16px;
+  }
+  .mission-header {
+    font-size: 12px;
+  }
+  .mission-time {
+    font-size: 42px;
+    margin-top: 8px;
+  }
+  .mission > p,
+  .mission-stat,
+  .mission-stages,
+  .best {
+    display: none;
+  }
+  .difficulty {
+    margin-top: 10px;
+    padding-top: 8px;
+    font-size: 14px;
+  }
+  .selection-bar {
+    min-height: 92px;
+    padding: 8px 5%;
+  }
+  .select-heading {
+    display: none;
+  }
+  .character {
+    min-height: 64px;
+  }
+  .controls-summary {
+    display: none;
+  }
+  .overlay {
+    padding: 16px;
+  }
+  .upgrade-panel {
+    padding: 8px 0;
+  }
+  .upgrade-panel .upgrade-cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .upgrade-panel .upgrade-card {
+    min-height: 250px;
+    padding: 12px;
+  }
+  .upgrade-panel .upgrade-icon {
+    position: static;
+    margin: 8px 0;
+    height: 32px;
+    width: 36px;
+  }
+  .upgrade-panel .upgrade-icon svg {
+    width: 30px;
+    height: 30px;
+  }
+  .upgrade-panel .upgrade-card h3 {
+    font-size: 20px;
+  }
+  .upgrade-panel .upgrade-card p {
+    font-size: 14px;
+    min-height: 0;
+    margin: 10px 0;
+  }
+  .upgrade-panel .upgrade-card-top > span {
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+  .upgrade-panel .upgrade-card-top kbd {
+    position: static;
+    font-size: 14px;
+  }
+  .upgrade-panel .upgrade-level,
+  .upgrade-panel .evo-recipe {
+    font-size: 12px;
+  }
+  .upgrade-panel .upgrade-level {
+    margin-top: 6px;
+  }
+  .upgrade-panel .card-select {
+    display: none;
+  }
+  .upgrade-panel h2 {
+    font-size: 28px;
+    margin: 0 0 8px;
+  }
+  .upgrade-panel > p {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  .upgrade-footer {
+    font-size: 12px;
+    margin-top: 12px;
+  }
+}
+
+.notice {
+  white-space: normal;
+  line-height: 1.6;
+}
+/* Overtime guidance is a one-line banner above the lower controls. */
+.extraction-notice {
+  top: auto;
+  bottom: 160px;
+  height: auto;
+  white-space: normal;
+  line-height: 1.6;
+}
+@media (max-width: 520px) {
+  .extraction-notice {
+    top: auto;
+    bottom: 250px;
+    width: calc(100% - 24px);
+    max-width: calc(100% - 24px);
+  }
+}
+@media (max-height: 610px) and (max-width: 1000px) {
+  .extraction-notice {
+    top: auto;
+    bottom: 115px;
+    font-size: 14px;
+  }
+}
+
+/* Rarity is also written on the card so it never relies on color alone. */
+.upgrade-card.rarity-common {
+  --rarity-color: #f2f2f2;
+}
+.upgrade-card.rarity-uncommon {
+  --rarity-color: #92e0a0;
+}
+.upgrade-card.rarity-rare {
+  --rarity-color: #80b8ff;
+}
+.upgrade-card[class*="rarity-"] {
+  border-top: 3px solid var(--rarity-color);
+}
+.upgrade-card[class*="rarity-"] .upgrade-card-top > span,
+.upgrade-card[class*="rarity-"] h3 {
+  color: var(--rarity-color);
+}
+.upgrade-card[class*="rarity-"]:hover,
+.upgrade-card[class*="rarity-"]:focus-visible {
+  border-color: var(--rarity-color);
+}

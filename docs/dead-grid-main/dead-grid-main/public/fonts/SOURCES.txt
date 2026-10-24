@@ -1,0 +1,5 @@
+Project-specific glyph subsets served by the official Google Fonts API.
+Families: Barlow Condensed, IBM Plex Mono, Noto Sans KR.
+License: SIL Open Font License 1.1.
+Upstream: https://github.com/google/fonts
+[('Barlow Condensed', 'font-0.ttf', 30696), ('Barlow Condensed', 'font-1.ttf', 30836), ('Barlow Condensed', 'font-2.ttf', 31196), ('Barlow Condensed', 'font-3.ttf', 28240), ('Barlow Condensed', 'font-4.ttf', 30620), ('IBM Plex Mono', 'font-5.ttf', 20552), ('IBM Plex Mono', 'font-6.ttf', 20472), ('IBM Plex Mono', 'font-7.ttf', 23440), ('Noto Sans KR', 'font-8.ttf', 66724), ('Noto Sans KR', 'font-9.ttf', 66800), ('Noto Sans KR', 'font-10.ttf', 66744), ('Noto Sans KR', 'font-11.ttf', 66828), ('Noto Sans KR', 'font-12.ttf', 66780)]

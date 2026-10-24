@@ -20,6 +20,7 @@ import {
 import { loadActorSprite } from "../../stage/world3d/spriteSheet";
 import { csvRowToWorldProp } from "../../stage/world3d/propFromCsv";
 import type { Pillar, WorldNode } from "../../stage/world3d/types";
+import { blockAssetUrl, readBlockMapManifest } from "../../maps/blockMap/BlockMap";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -97,16 +98,7 @@ let lastYaw = 0;
 const miniCtx = miniCanvas.getContext("2d")!;
 const compass = new CompassHud($("stageFrame"));
 
-const stage = new JourneyStage3D(canvas, {
-  onMove: (x, y, yaw) => {
-    lastX = x;
-    lastY = y;
-    lastYaw = yaw;
-    compass.setYaw(yaw);
-    drawMini();
-  },
-});
-stage.setInputEnabled(true);
+let stage!: JourneyStage3D;
 
 let raid: PurifyRaid | null = null;
 
@@ -278,6 +270,7 @@ async function applySector(id: string) {
   const nodes = nodesOf(id);
   try {
     await stage.setFloor(url, { polluted: !useAfterArt });
+    stage.setSkyMoodOverride(useAfterArt);
     stage.setNodes(nodes);
     if (viewCfg) {
       stage.setNodeHeightMul(viewCfg.node_height_mul);
@@ -349,14 +342,31 @@ function resize() {
 }
 
 async function boot() {
-  const [cfg, view, sc, npc, props, area] = await Promise.all([
+  const [cfg, view, sc, npc, props, area, mapManifest] = await Promise.all([
     loadPurifyRaidConfig(),
     loadJourney3DConfig(),
     loadScale(),
     loadCsv("area_npc_config"),
     loadCsv("area_prop_config"),
     loadCsv("area_config"),
+    readBlockMapManifest(),
   ]);
+  const before = blockAssetUrl(mapManifest.states.polluted.backdrop, mapManifest.revision);
+  const after = blockAssetUrl(mapManifest.states.purified.backdrop, mapManifest.revision);
+  stage = new JourneyStage3D(canvas, {
+    skyArt: {
+      polluted: { sky: before, horizon: before },
+      purified: { sky: after, horizon: after },
+    },
+    onMove: (x, y, yaw) => {
+      lastX = x;
+      lastY = y;
+      lastYaw = yaw;
+      compass.setYaw(yaw);
+      drawMini();
+    },
+  });
+  stage.setInputEnabled(true);
   raidCfg = cfg;
   viewCfg = view;
   scale = sc;
@@ -381,6 +391,7 @@ async function boot() {
   sectorSel.addEventListener("change", () => void applySector(sectorSel.value));
   artSel.addEventListener("change", () => {
     useAfterArt = artSel.value === "after";
+    stage.setSkyMoodOverride(useAfterArt);
     void applySector(areaId);
   });
   $("btnStart").addEventListener("click", () => {

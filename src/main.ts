@@ -1,4 +1,5 @@
 import "./style.css";
+import { loadForestCourse, type ForestCourse } from "./maps/forest150/ForestCourse";
 import { loadGameData } from "./data";
 import { installPlayLog, playLog } from "./dev/playLog";
 import {
@@ -902,16 +903,10 @@ function journeyAreaLabel(areaId?: string): string {
   return data.areas.find((a) => a.area_id === id)?.display_name ?? "무지개섬";
 }
 
-/** 원흉 원 첫 도달: 가운데 큰 미니맵. 부두 입장에서는 안 띄운다. */
+/** 예전 섬 미니맵은 쓰지 않는다. 호출만 남기고 지도는 계속 숨긴다. */
 async function playCulpritArriveSequence(areaId: string): Promise<void> {
-  if (!explore) return;
-  if (culpritMapIntroDone.has(areaId)) {
-    explore.showMinimapDocked();
-    return;
-  }
-  culpritMapIntroDone.add(areaId);
-  await explore.playCulpritMapIntro();
-  explore.showMinimapDocked();
+  void areaId;
+  explore?.suppressMinimap(true);
 }
 
 function syncShellActivity(title?: string | null, subtitle?: string | null) {
@@ -985,14 +980,17 @@ function syncPartyHud() {
   const skills = state.learnedSkills
     .map((id) => data.skills.find((s) => s.skill_id === id))
     .filter((s): s is SkillDef => !!s);
-  const skillHtml = skills.length
-    ? skills
+  const growHtml = partyGrowList()
+    .map(([k, n]) => `<button type="button" class="party-skill-ico party-grow-ico" title="성장 ${k}${n ? " +" + n : ""}">${PARTY_SKILL_ICON[k] ?? "✦"}${n ? `<sup>+${n}</sup>` : ""}</button>`)
+    .join("");
+  const skillHtml = skills.length || growHtml
+    ? growHtml + skills
         .map(
           (s) =>
             `<button type="button" class="party-skill-ico" data-skill-id="${s.skill_id}" title="${s.skill_name} — ${s.effect_text || ""}">${s.icon || "✦"}</button>`,
         )
         .join("")
-    : `<span class="party-skills-empty" title="배운 스킬 없음">스킬</span>`;
+    : `<span class="party-skills-empty" title="성장 없음">성장</span>`;
   const mates = state.joinedPartyMembers
     .map((id) => data.partyMembers.find((m) => m.member_id === id))
     .filter((m): m is PartyMemberDef => !!m)
@@ -1000,17 +998,17 @@ function syncPartyHud() {
   const selfCard = `
     <div class="party-self-wrap">
       <div class="party-card self">
-        <div class="party-face party-face-wanderer" aria-hidden="true"></div>
+        <div class="party-face party-face-wanderer" aria-hidden="true" style="background:url('/tools/unit_lab/character/A/reference_face.png') center 20% / cover no-repeat, rgba(4, 12, 18, 0.9)"></div>
         <div class="party-meta">
-          <div class="party-name">방랑자</div>
+          <div class="party-name">루온</div>
           <div class="party-record">
-            <span class="party-purify-gauge" title="섬 정화">정화 <b>${p.done}</b><i>/${p.total}</i></span>
+            ${forestPurifyGauge() ?? `<span class="party-purify-gauge" title="섬 정화">정화 <b>${p.done}</b><i>/${p.total}</i></span>`}
             <span class="party-challenge-gauge${left <= 1 ? " low" : ""}" title="남은 도전">도전 <b>${left}</b><i>/${cap}</i></span>
           </div>
           <div class="party-ammo-row">${ammoBits}${pipHtml ? `<span class="culprit-pips">${pipHtml}</span>` : ""}</div>
         </div>
       </div>
-      <div class="party-skills" title="배운 스킬" aria-label="배운 스킬">${skillHtml}</div>
+      <div class="party-skills" title="성장" aria-label="성장">${skillHtml}</div>
     </div>`;
   const mateCards = mates
     .map(
@@ -2480,6 +2478,2762 @@ function enterLobby(opts?: { note?: string }) {
   if (note) lobby?.flashNote(note);
 }
 
+
+function askPillarChoices(labels: string[]): Promise<number> {
+  return new Promise((resolve) => {
+    journey3d?.setHeadStatus("선택", "고르는중");
+    const buttons = labels.map((label, index) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "choice-btn shell-btn" + (index === 0 ? "" : " secondary");
+      b.textContent = label;
+      b.onclick = async () => {
+        await playActivate(b);
+        choiceButtons.style.display = "none";
+        choiceButtons.innerHTML = "";
+        setGaugesVisible(true);
+        syncFillerChrome();
+        journey3d?.setHeadChoice(label);
+        resolve(index);
+      };
+      return b;
+    });
+    choiceButtons.innerHTML = "";
+    for (const b of buttons) choiceButtons.appendChild(b);
+    choiceButtons.style.display = "flex";
+    mainBtn.style.display = "none";
+    setGaugesVisible(false);
+    slideIn(choiceButtons);
+  });
+}
+
+/**
+ * 외출 숲 배경. forest-play-tool 인게임 미리보기와 같은 길로 그린다.
+ * MapView(땅·나무·소품·길·설치판) + ForestSky(원경) + 오염 조명·안개.
+ * 캐릭터는 그 위에 그대로 선다. 정지 그림은 쓰지 않는다.
+ */
+const FOREST_MANIFEST_URL = "/maps/forest150/manifest.json";
+const FOREST_BG_STAGE = "purified";
+/** forest-play-tool과 같은 버섯 축소값 */
+const FOREST_BG_MUSHROOM_SCALE = 0.3;
+/** 본게임 숲 밝기. forest-play-tool 조명값(manifest)에 곱하기만 한다. 오염 색은 그대로 둔다 */
+const FOREST_BG_MAIN_LIGHT = { on: true, hemiMul: 1.15, sunMul: 1, fogMul: 1, shadow: true };
+type ForestLight = {
+  sky: string;
+  sun: string;
+  sunIntensity: number;
+  hemiSky: string;
+  hemiGround: string;
+  hemiIntensity: number;
+  fogColor?: string;
+  fogNear?: number;
+  fogFar?: number;
+  backdropTint?: string;
+};
+type ForestBg = {
+  root: import("three").Group;
+  view: { root: import("three").Object3D; grassFar: number; updateVisibility(cam: import("three").Vector3): void };
+  skyMesh: import("three").Object3D | null;
+  fog: import("three").Fog;
+  background: import("three").Color;
+  spawn: { x: number; y: number };
+  inner: import("three").Group;
+  terrain: import("three").Object3D[];
+  hemi: import("three").HemisphereLight;
+  sun: import("three").DirectionalLight;
+  base: { hemi: number; sun: number; near: number; far: number };
+  zones: Array<{ x: number; y: number; rx: number; ry: number }>;
+};
+type ForestStageLike = {
+  scene?: import("three").Scene;
+  camera?: import("three").PerspectiveCamera;
+  renderer?: import("three").WebGLRenderer;
+  horizonMesh?: import("three").Object3D;
+  getPlayerWorld?: () => { x: number; z: number; yaw: number };
+  [k: string]: unknown;
+};
+let forestBg: ForestBg | null = null;
+let forestCourse: ForestCourse | null = null;
+let forestBgLoad: Promise<ForestBg | null> | null = null;
+let forestBackdropOn = false;
+let forestBgRaf = 0;
+let forestBgPrev: {
+  fog: import("three").Scene["fog"];
+  background: import("three").Scene["background"];
+  far: number;
+  horizon: boolean | null;
+  toneMapping: number | null;
+  lights: Array<[import("three").Light, number]>;
+} | null = null;
+
+function forestStage(): ForestStageLike | null {
+  return ((journey3d as unknown as { stage?: ForestStageLike } | null)?.stage ?? null) as ForestStageLike | null;
+}
+
+function forestShrinkMushrooms(THREE: typeof import("three"), root: import("three").Object3D) {
+  root.traverse((object) => {
+    const mesh = object as import("three").Mesh;
+    const objectName = object.name.toLowerCase();
+    const geometryName = mesh.isMesh ? (mesh.geometry?.name ?? "").toLowerCase() : "";
+    if (!objectName.includes("flower_mushroom") && !geometryName.includes("flower_mushroom")) return;
+    const inst = mesh as import("three").InstancedMesh;
+    if (inst.isInstancedMesh) {
+      const m = new THREE.Matrix4();
+      const p = new THREE.Vector3();
+      const q = new THREE.Quaternion();
+      const s = new THREE.Vector3();
+      for (let i = 0; i < inst.count; i++) {
+        inst.getMatrixAt(i, m);
+        m.decompose(p, q, s);
+        s.multiplyScalar(FOREST_BG_MUSHROOM_SCALE);
+        m.compose(p, q, s);
+        inst.setMatrixAt(i, m);
+      }
+      inst.instanceMatrix.needsUpdate = true;
+      inst.computeBoundingBox();
+      inst.computeBoundingSphere();
+      return;
+    }
+    object.scale.multiplyScalar(FOREST_BG_MUSHROOM_SCALE);
+  });
+}
+
+function loadForestBg(): Promise<ForestBg | null> {
+  if (forestBgLoad) return forestBgLoad;
+  forestBgLoad = (async () => {
+    try {
+      const THREE = await import("three");
+      const { MapView } = await import("./maps/blockMap/BlockMapView");
+      const { ForestSky } = await import("./tools/forestMap/ForestSky");
+      const manifest = (await (await fetch(FOREST_MANIFEST_URL, { cache: "no-store" })).json()) as {
+        revision: string;
+        navigation: string;
+        construction?: string;
+        states: Record<string, string>;
+        lighting: Record<string, ForestLight>;
+        backdrops?: Record<string, { url: string; sky: string; radius: number; height: number; footY: number; repeat?: number }>;
+      };
+      if (manifest.construction) forestCourse = await loadForestCourse(manifest.navigation, manifest.construction);
+      let spawn = { x: 75, y: 26 };
+      let zones: Array<{ x: number; y: number; rx: number; ry: number }> = [];
+      try {
+        const nav = (await (await fetch(manifest.navigation, { cache: "no-store" })).json()) as {
+          spawn?: { x: number; y: number };
+          zones?: Array<{ id: string; x: number; y: number; radiusX: number; radiusY: number }>;
+        };
+        if (nav.spawn) spawn = { x: nav.spawn.x, y: nav.spawn.y };
+        zones = (nav.zones ?? [])
+          .slice()
+          .sort((p, q) => Number(p.id) - Number(q.id))
+          .map((z) => ({ x: z.x, y: z.y, rx: z.radiusX, ry: z.radiusY }));
+      } catch {
+        /* 기본 시작점 */
+      }
+      const light = manifest.lighting[FOREST_BG_STAGE] ?? manifest.lighting.purified!;
+      const backdrop = manifest.backdrops?.[FOREST_BG_STAGE];
+      const glbUrl = (manifest.states[FOREST_BG_STAGE] ?? manifest.states.purified) + "?rev=" + manifest.revision;
+      const view = await MapView.load(glbUrl, undefined, undefined, undefined, {
+        blockM: 0.5,
+        personM: 1.5,
+        stand: { x: spawn.x, y: spawn.y, z: 0, yaw: 0 },
+        backdrop: backdrop ?? { radius: 420, height: 360, footY: 255 },
+      });
+      const sky = backdrop ? await ForestSky.load(backdrop, light.backdropTint) : null;
+      forestShrinkMushrooms(THREE, view.root);
+      view.grassFar = 58;
+
+      // 시작점 땅 높이. bl(x, y, z) = (x, z, -y)
+      view.root.updateMatrixWorld(true);
+      const ray = new THREE.Raycaster(new THREE.Vector3(spawn.x, 200, -spawn.y), new THREE.Vector3(0, -1, 0));
+      const hit = ray.intersectObject(view.root, true).find((h) => /terrain/i.test(h.object.name)) ?? ray.intersectObject(view.root, true)[0];
+      const groundY = hit ? hit.point.y : 0;
+      const inner = new THREE.Group();
+      inner.add(view.root);
+      inner.position.set(-spawn.x, -groundY, spawn.y);
+      const terrain: import("three").Object3D[] = [];
+      view.root.traverse((o) => {
+        if ((o as import("three").Mesh).isMesh && /terrain/i.test(o.name)) terrain.push(o);
+      });
+      const root = new THREE.Group();
+      root.name = "forestBackdrop";
+      root.add(inner);
+      // forest-play-tool과 같은 조명: 반구광 + 해. 해는 캐릭터 기준 (-40, 90, 35)
+      const hemi = new THREE.HemisphereLight(light.hemiSky, light.hemiGround, light.hemiIntensity);
+      const sun = new THREE.DirectionalLight(light.sun, light.sunIntensity);
+      sun.position.set(-40, 90, 35);
+      sun.target.position.set(0, 0, 0);
+      root.add(hemi, sun, sun.target);
+      // 본게임만: 해 그림자. 그림자 상자는 매 프레임 루온을 따라간다
+      sun.shadow.mapSize.set(2048, 2048);
+      const sc = sun.shadow.camera;
+      sc.left = -16;
+      sc.right = 16;
+      sc.top = 16;
+      sc.bottom = -16;
+      sc.near = 1;
+      sc.far = 260;
+      sc.updateProjectionMatrix();
+      sun.shadow.bias = -0.0006;
+      sun.shadow.normalBias = 0.03;
+      view.root.traverse((o) => {
+        if ((o as import("three").Mesh).isMesh) o.receiveShadow = true;
+      });
+      return {
+        root,
+        view,
+        skyMesh: sky?.mesh ?? null,
+        fog: new THREE.Fog(light.fogColor ?? light.sky, light.fogNear ?? 90, light.fogFar ?? 300),
+        background: new THREE.Color(backdrop?.sky ?? light.sky),
+        spawn,
+        inner,
+        terrain,
+        zones,
+        hemi,
+        sun,
+        base: { hemi: light.hemiIntensity, sun: light.sunIntensity, near: light.fogNear ?? 90, far: light.fogFar ?? 300 },
+      };
+    } catch (e) {
+      console.warn("forest backdrop load failed", e);
+      forestBgLoad = null;
+      return null;
+    }
+  })();
+  return forestBgLoad;
+}
+
+/** 숲이 켜진 동안 섬 바닥·소품을 끈다. 안 끄면 섬 바닥이 숲을 가린다 */
+let forestHiddenPrev: Array<[{ visible: boolean }, boolean]> | null = null;
+function setIslandHiddenForForest(hide: boolean) {
+  const st = forestStage();
+  if (!st) return;
+  if (hide) {
+    if (forestHiddenPrev) return;
+    const island = st.island as { group?: { visible: boolean } } | undefined;
+    const ambient = st.ambientCloud as { group?: { visible: boolean } } | undefined;
+    const list = [st.floor, st.detail, island?.group, ambient?.group, st.propGroup, st.paintGroup].filter(
+      (o): o is { visible: boolean } => !!o && typeof (o as { visible?: unknown }).visible === "boolean",
+    );
+    forestHiddenPrev = list.map((o) => [o, o.visible]);
+    for (const o of list) o.visible = false;
+  } else if (forestHiddenPrev) {
+    for (const [o, v] of forestHiddenPrev) o.visible = v;
+    forestHiddenPrev = null;
+    const island = st.island as { group?: { visible: boolean } } | undefined;
+    if (island?.group) island.group.visible = false;
+    const floor = st.floor as { visible?: boolean } | undefined;
+    const detail = st.detail as { visible?: boolean } | undefined;
+    if (floor) floor.visible = false;
+    if (detail) detail.visible = false;
+  }
+}
+
+/** 본게임 숲 밝기·안개·그림자. FOREST_BG_MAIN_LIGHT.on을 끄면 forest-play-tool 값 그대로다 */
+const forestShadowMarked = new WeakSet<object>();
+const forestSunTmp: { v: import("three").Vector3 | null } = { v: null };
+function forestMarkShadow(o: import("three").Object3D | null | undefined) {
+  if (!o || forestShadowMarked.has(o)) return;
+  forestShadowMarked.add(o);
+  o.traverse((n) => {
+    const m = n as import("three").Mesh;
+    if (m.isMesh && !(m.material as { isMeshBasicMaterial?: boolean }).isMeshBasicMaterial) m.castShadow = true;
+  });
+}
+function forestApplyMainLight(bg: ForestBg, st: ForestStageLike) {
+  const L = FOREST_BG_MAIN_LIGHT;
+  bg.hemi.intensity = bg.base.hemi * (L.on ? L.hemiMul : 1);
+  bg.sun.intensity = bg.base.sun * (L.on ? L.sunMul : 1);
+  bg.fog.near = bg.base.near * (L.on ? L.fogMul : 1);
+  bg.fog.far = bg.base.far * (L.on ? L.fogMul : 1);
+  const sh = L.on && L.shadow && !!party;
+  if (sh && st.renderer && !st.renderer.shadowMap.enabled) {
+    st.renderer.shadowMap.enabled = true;
+    st.renderer.shadowMap.type = 2 as import("three").ShadowMapType;
+  }
+  bg.sun.castShadow = sh;
+  if (!sh || !party) return;
+  forestMarkShadow(party.ruon.root);
+  forestMarkShadow(party.ria.root);
+  forestMarkShadow(party.pet.root);
+  for (const m of partyCombat.mobs) forestMarkShadow(m.mesh);
+  if (!forestSunTmp.v) forestSunTmp.v = bg.sun.position.clone();
+  const v = party.ruon.root.getWorldPosition(forestSunTmp.v);
+  bg.root.worldToLocal(v);
+  bg.sun.target.position.copy(v);
+  bg.sun.position.set(v.x - 40, v.y + 90, v.z + 35);
+}
+
+/** 매 프레임 숲 하늘·안개·시야를 잡고, 풀 청크를 카메라 기준으로 켠다 */
+const forestCamTmp: { v: import("three").Vector3 | null } = { v: null };
+function forestBgFrame() {
+  forestBgRaf = 0;
+  const bg = forestBg;
+  const st = forestStage();
+  if (!forestBackdropOn || !bg || !st?.scene || !st.camera) return;
+  st.scene.fog = bg.fog;
+  st.scene.background = bg.background;
+  if (!forestPurCam.v) forestPurCam.v = st.camera.position.clone();
+  st.camera.getWorldPosition(forestPurCam.v);
+  forestPurifyTick(bg, forestPurCam.v);
+  forestApplyMainLight(bg, st);
+  if (st.camera.far !== 700) {
+    st.camera.far = 700;
+    st.camera.updateProjectionMatrix();
+  }
+  if (st.horizonMesh) st.horizonMesh.visible = false;
+  if (!forestCamTmp.v) forestCamTmp.v = st.camera.position.clone();
+  st.camera.getWorldPosition(forestCamTmp.v);
+  bg.view.updateVisibility(forestCamTmp.v);
+  forestBgRaf = requestAnimationFrame(forestBgFrame);
+}
+
+async function setForestBackdrop(on: boolean) {
+  forestBackdropOn = on;
+  const st = forestStage();
+  if (!on) {
+    if (forestBgRaf) cancelAnimationFrame(forestBgRaf);
+    forestBgRaf = 0;
+    if (forestBg) {
+      journey3d?.removeOverlay(forestBg.root);
+      forestBg.skyMesh?.removeFromParent();
+    }
+    setIslandHiddenForForest(false);
+    if (st && forestBgPrev) {
+      if (st.scene) {
+        st.scene.fog = forestBgPrev.fog;
+        st.scene.background = forestBgPrev.background;
+      }
+      if (st.camera) {
+        st.camera.far = forestBgPrev.far;
+        st.camera.updateProjectionMatrix();
+      }
+      if (st.horizonMesh && forestBgPrev.horizon != null) st.horizonMesh.visible = forestBgPrev.horizon;
+      if (st.renderer && forestBgPrev.toneMapping != null) st.renderer.toneMapping = forestBgPrev.toneMapping as import("three").ToneMapping;
+      for (const [l, i] of forestBgPrev.lights) l.intensity = i;
+      if (forestBg) forestBg.sun.castShadow = false;
+    }
+    forestBgPrev = null;
+    journey3d?.clearForestPins();
+    journey3d?.refreshNodes();
+    return;
+  }
+  const bg = await loadForestBg();
+  if (!bg || !journey3d || !forestBackdropOn || !st?.scene || !st.camera) return;
+  forestBg = bg;
+  void forestPurLoad(bg);
+  const me = st.getPlayerWorld?.();
+  if (me) {
+    bg.root.position.set(me.x, 0, me.z);
+    bg.root.rotation.y = me.yaw;
+  }
+  partyResetForest(bg);
+  if (!forestBgPrev) {
+    // 섬 조명은 끄고 숲 조명만 쓴다. 톤매핑도 forest-play-tool처럼 끈다
+    const lights: Array<[import("three").Light, number]> = [];
+    st.scene.traverse((o) => {
+      const l = o as import("three").Light;
+      if (l.isLight) lights.push([l, l.intensity]);
+    });
+    for (const [l] of lights) l.intensity = 0;
+    forestBgPrev = {
+      fog: st.scene.fog,
+      background: st.scene.background,
+      far: st.camera.far,
+      horizon: st.horizonMesh ? st.horizonMesh.visible : null,
+      toneMapping: st.renderer ? st.renderer.toneMapping : null,
+      lights,
+    };
+    if (st.renderer) st.renderer.toneMapping = 0 as import("three").ToneMapping;
+  }
+  journey3d.addOverlay(bg.root);
+  if (bg.skyMesh && !bg.skyMesh.parent) st.scene.add(bg.skyMesh);
+  setIslandHiddenForForest(true);
+  if (!forestBgRaf) forestBgRaf = requestAnimationFrame(forestBgFrame);
+  (window as unknown as { __forestBg?: unknown }).__forestBg = { spawn: bg.spawn, me: me ?? null };
+}
+/**
+ * 숲 정화 5단계. 한 페이지 웨이브를 막으면 그 구역이 정화된다(한 단계 = 20%).
+ * forest-play-tool의 오염 → 정화중 → 정화완료를 그대로 쓴다.
+ * 땅·나무는 forest_polluted / forest_purified GLB 두 장을 겹쳐 두고, 정화된 구역 안만 정화 맵을 그린다.
+ * 하늘·조명·안개는 manifest의 세 단계를 단계 수만큼 섞는다(오염 → 정화중 → 정화완료).
+ * 다섯째는 5페이지 정화탑: 탑에서 원이 퍼지며 맵 전체가 정화완료가 된다.
+ * 정화된 구역은 새로고침 전까지 남는다. 저장은 아직 하지 않는다.
+ */
+const forestPurCam: { v: import("three").Vector3 | null } = { v: null };
+const FOREST_PURIFY = { steps: 5, grow: 1.6, rim: 0.8, ahead: 8, light: 1.2, allGrow: 3.2, flash: 0.7 };
+type ForestPurAssets = { view: ForestBg["view"]; skies: Record<string, import("three").Object3D | null>; light: Record<string, ForestLight> };
+const forestPurify = {
+  done: new Set<number>(),
+  all: false,
+  tower: null as import("three").Object3D | null,
+  assets: null as Promise<ForestPurAssets | null> | null,
+  ready: null as ForestPurAssets | null,
+  grow: new Map<number, number>(),
+  allT0: 0,
+  light: { from: null as ForestLight | null, to: null as ForestLight | null, t0: 0, cur: null as ForestLight | null },
+  skyKey: "polluted",
+};
+const forestMask = {
+  zones: { value: [] as import("three").Vector4[] },
+  dirs: { value: [] as import("three").Vector4[] },
+  on: { value: [0, 0, 0, 0, 0, 0, 0, 0] as number[] },
+  allC: { value: null as import("three").Vector3 | null },
+  inv: { value: null as import("three").Matrix4 | null },
+};
+
+function forestPurifyStage(): number {
+  return forestPurify.all ? FOREST_PURIFY.steps : Math.min(FOREST_PURIFY.steps - 1, forestPurify.done.size);
+}
+
+/** mode 0 = 오염 맵(정화된 곳을 지운다), 1 = 정화 맵(정화 안 된 곳을 지운다) */
+function forestMaskMaterial(m: import("three").Material, mode: 0 | 1) {
+  if (m.userData.xzMask) return;
+  m.userData.xzMask = true;
+  const prev = m.onBeforeCompile;
+  const prevKey = m.customProgramCacheKey.call(m);
+  m.onBeforeCompile = (sh, r) => {
+    prev.call(m, sh, r);
+    sh.uniforms.uXzZone = forestMask.zones;
+    sh.uniforms.uXzOn = forestMask.on;
+    sh.uniforms.uXzDir = forestMask.dirs;
+    sh.uniforms.uXzAllC = forestMask.allC;
+    sh.uniforms.uXzInv = forestMask.inv;
+    sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nvarying vec3 vXzW;").replace(
+      "#include <project_vertex>",
+      `#include <project_vertex>
+{
+  vec4 xzw = vec4(transformed, 1.0);
+#ifdef USE_INSTANCING
+  xzw = instanceMatrix * xzw;
+#endif
+  vXzW = (modelMatrix * xzw).xyz;
+}`,
+    );
+    sh.fragmentShader = sh.fragmentShader
+      .replace(
+        "#include <common>",
+        `#include <common>
+varying vec3 vXzW;
+uniform vec4 uXzZone[8];
+uniform float uXzOn[8];
+uniform vec4 uXzDir[8];
+uniform vec3 uXzAllC;
+uniform mat4 uXzInv;`,
+      )
+      .replace(
+        "void main() {",
+        `void main() {
+{
+  vec3 xzl = (uXzInv * vec4(vXzW, 1.0)).xyz;
+  vec2 xzf = vec2(xzl.x, -xzl.z);
+  float xzk = 0.0;
+  if (uXzAllC.z > 0.0 && length(xzf - uXzAllC.xy) < uXzAllC.z) xzk = 1.0;
+  for (int i = 0; i < 8; i++) {
+    if (uXzOn[i] <= 0.0) continue;
+    vec2 rel = xzf - uXzZone[i].xy;
+    vec2 d = rel / uXzZone[i].zw;
+    float wob = 0.05 * sin(atan(d.y, d.x) * 7.0 + float(i) * 1.7);
+    float fw = dot(rel, uXzDir[i].xy) + 0.9 * sin(dot(rel, vec2(-uXzDir[i].y, uXzDir[i].x)) * 0.45 + float(i));
+    // 이 페이지 땅까지만: 다음 페이지 쪽 앞길은 uXzDir.z m 앞에서 끊는다
+    if (length(d) + wob < uXzOn[i] * ${FOREST_PURIFY.rim.toFixed(3)} && fw < uXzDir[i].z * uXzOn[i]) xzk = 1.0;
+  }
+  if (${mode === 0 ? "xzk > 0.5" : "xzk < 0.5"}) discard;
+}`,
+      );
+  };
+  m.customProgramCacheKey = () => `${prevKey}|xz-mask-${mode}`;
+  m.needsUpdate = true;
+}
+
+function forestMaskTree(root: import("three").Object3D, mode: 0 | 1) {
+  root.traverse((o) => {
+    const ms = o as import("three").Mesh;
+    if (!ms.isMesh) return;
+    for (const mat of Array.isArray(ms.material) ? ms.material : [ms.material]) forestMaskMaterial(mat, mode);
+  });
+}
+
+/** 정화 맵·하늘을 미리 받아 둔다. 오염 맵에도 구역 지우개를 건다 */
+function forestPurLoad(bg: ForestBg): Promise<ForestPurAssets | null> {
+  if (forestPurify.assets) return forestPurify.assets;
+  forestPurify.assets = (async () => {
+    try {
+      const THREE = await import("three");
+      const { MapView } = await import("./maps/blockMap/BlockMapView");
+      const { ForestSky } = await import("./tools/forestMap/ForestSky");
+      const manifest = (await (await fetch(FOREST_MANIFEST_URL, { cache: "no-store" })).json()) as {
+        revision: string;
+        states: Record<string, string>;
+        lighting: Record<string, ForestLight>;
+        backdrops?: Record<string, { url: string; sky: string; radius: number; height: number; footY: number; repeat?: number }>;
+      };
+      forestMask.zones.value = Array.from({ length: 8 }, (_, i) => {
+        const z = bg.zones[i];
+        return z ? new THREE.Vector4(z.x, z.y, z.rx, z.ry) : new THREE.Vector4(0, 0, 1, 1);
+      });
+      forestMask.dirs.value = Array.from({ length: 8 }, (_, i) => {
+        const z = bg.zones[i];
+        const n = bg.zones[i + 1];
+        const p = bg.zones[i - 1];
+        if (!z) return new THREE.Vector4(0, 1, 1e4, 0);
+        const dx = n ? n.x - z.x : p ? z.x - p.x : 0;
+        const dy = n ? n.y - z.y : p ? z.y - p.y : 1;
+        const l = Math.hypot(dx, dy) || 1;
+        return new THREE.Vector4(dx / l, dy / l, FOREST_PURIFY.ahead, 0);
+      });
+      forestMask.allC.value = new THREE.Vector3(0, 0, 0);
+      forestMask.inv.value = new THREE.Matrix4();
+      const view = await MapView.load(manifest.states.purified + "?rev=" + manifest.revision, undefined, undefined, undefined, {
+        blockM: 0.5,
+        personM: 1.5,
+        stand: { x: bg.spawn.x, y: bg.spawn.y, z: 0, yaw: 0 },
+        backdrop: { radius: 420, height: 360, footY: 255 },
+      });
+      forestShrinkMushrooms(THREE, view.root);
+      view.grassFar = 58;
+      view.root.traverse((o) => {
+        if ((o as import("three").Mesh).isMesh) o.receiveShadow = true;
+      });
+      forestMaskTree(bg.view.root, 0);
+      forestMaskTree(view.root, 1);
+      view.root.visible = false;
+      bg.inner.add(view.root);
+      const skies: Record<string, import("three").Object3D | null> = { polluted: bg.skyMesh };
+      for (const k of ["mid", "purified"]) {
+        const b = manifest.backdrops?.[k];
+        skies[k] = b ? (await ForestSky.load(b, manifest.lighting[k]?.backdropTint)).mesh : null;
+      }
+      forestPurify.light.cur = { ...manifest.lighting.polluted! };
+      const a = { view, skies, light: manifest.lighting };
+      forestPurify.ready = a;
+      return a;
+    } catch (e) {
+      console.warn("forest purify assets failed", e);
+      forestPurify.assets = null;
+      return null;
+    }
+  })();
+  return forestPurify.assets;
+}
+
+function forestHexLerp(a: string, b: string, u: number): string {
+  const pa = parseInt(a.slice(1), 16);
+  const pb = parseInt(b.slice(1), 16);
+  const ch = (sh: number) => Math.round(((pa >> sh) & 255) * (1 - u) + ((pb >> sh) & 255) * u);
+  return "#" + ((ch(16) << 16) | (ch(8) << 8) | ch(0)).toString(16).padStart(6, "0");
+}
+function forestLerpLight(a: ForestLight, b: ForestLight, u: number): ForestLight {
+  const n = (x: number | undefined, y: number | undefined, d: number) => (x ?? d) + ((y ?? d) - (x ?? d)) * u;
+  return {
+    sky: forestHexLerp(a.sky, b.sky, u),
+    sun: forestHexLerp(a.sun, b.sun, u),
+    sunIntensity: n(a.sunIntensity, b.sunIntensity, 1),
+    hemiSky: forestHexLerp(a.hemiSky, b.hemiSky, u),
+    hemiGround: forestHexLerp(a.hemiGround, b.hemiGround, u),
+    hemiIntensity: n(a.hemiIntensity, b.hemiIntensity, 1),
+    fogColor: forestHexLerp(a.fogColor ?? a.sky, b.fogColor ?? b.sky, u),
+    fogNear: n(a.fogNear, b.fogNear, 90),
+    fogFar: n(a.fogFar, b.fogFar, 300),
+    backdropTint: forestHexLerp(a.backdropTint ?? "#ffffff", b.backdropTint ?? "#ffffff", u),
+  };
+}
+/** 단계 k(0..5)의 조명. 0 = 오염, 2.5 = 정화중, 5 = 정화완료 */
+function forestLightAt(L: Record<string, ForestLight>, k: number): ForestLight {
+  const t = k / FOREST_PURIFY.steps;
+  return t <= 0.5 ? forestLerpLight(L.polluted!, L.mid!, t * 2) : forestLerpLight(L.mid!, L.purified!, (t - 0.5) * 2);
+}
+function forestApplyStageLight(bg: ForestBg, l: ForestLight) {
+  bg.hemi.color.set(l.hemiSky);
+  bg.hemi.groundColor.set(l.hemiGround);
+  bg.sun.color.set(l.sun);
+  bg.base.hemi = l.hemiIntensity;
+  bg.base.sun = l.sunIntensity;
+  bg.base.near = l.fogNear ?? 90;
+  bg.base.far = l.fogFar ?? 300;
+  bg.fog.color.set(l.fogColor ?? l.sky);
+  bg.background.set(l.sky);
+}
+
+/** forest-play-tool pulsePurifyFlash처럼 화면이 한 번 밝아진다 */
+function forestPurifyFlash() {
+  const d = document.createElement("div");
+  d.style.cssText = `position:fixed;inset:0;z-index:50;pointer-events:none;background:radial-gradient(circle at 50% 40%, rgba(255,250,225,.7), rgba(200,255,240,.25) 45%, transparent 75%);opacity:1;transition:opacity ${FOREST_PURIFY.flash}s ease-out`;
+  document.body.appendChild(d);
+  requestAnimationFrame(() => requestAnimationFrame(() => (d.style.opacity = "0")));
+  setTimeout(() => d.remove(), FOREST_PURIFY.flash * 1000 + 200);
+}
+
+/** 지금 단계로 조명·하늘을 바꾼다(1.2초) */
+function forestPurifyRelight() {
+  const a = forestPurify.ready;
+  const bg = forestBg;
+  if (!a || !bg) return;
+  const k = forestPurifyStage();
+  const to = forestLightAt(a.light, k);
+  forestPurify.light.from = { ...(forestPurify.light.cur ?? a.light.polluted!) };
+  forestPurify.light.to = to;
+  forestPurify.light.t0 = performance.now();
+  // 하늘 그림: 0~1 오염, 2~4 정화중, 5 정화완료
+  const key = k >= FOREST_PURIFY.steps ? "purified" : k >= 2 ? "mid" : "polluted";
+  const next = a.skies[key];
+  if (key !== forestPurify.skyKey && next) {
+    const parent = bg.skyMesh?.parent;
+    bg.skyMesh?.removeFromParent();
+    bg.skyMesh = next;
+    if (parent) parent.add(next);
+    forestPurify.skyKey = key;
+  }
+}
+
+/** 한 페이지 웨이브를 막으면 그 구역이 정화된다. 이미 정화된 구역이면 아무것도 안 한다 */
+async function forestPurifyPage(page: number, say: (b: string) => Promise<void>) {
+  const bg = forestBg;
+  if (!bg || !bg.zones[page] || forestPurify.all || forestPurify.done.has(page)) return;
+  if (!(await forestPurLoad(bg))) return;
+  forestPurify.done.add(page);
+  forestPurify.grow.set(page, performance.now());
+  forestPurifyFlash();
+  forestPurifyRelight();
+  syncPartyHud();
+  await say(`이 구역이 정화된다. 정화 ${forestPurifyStage()}/${FOREST_PURIFY.steps}.`);
+  await sleep(FOREST_PURIFY.grow * 1000);
+}
+
+/** 5페이지 맨 끝에 정화탑을 세운다. 탑에서 원이 퍼지며 맵 전체가 정화완료가 된다 */
+async function forestPurifyTower(page: number) {
+  const bg = forestBg;
+  const z = bg?.zones[page];
+  if (!bg || !z || !(await forestPurLoad(bg))) return;
+  const prev = bg.zones[page - 1] ?? { x: bg.spawn.x, y: bg.spawn.y };
+  const dl = Math.hypot(z.x - prev.x, z.y - prev.y) || 1;
+  const fx = z.x + ((z.x - prev.x) / dl) * z.ry * 0.55;
+  const fy = z.y + ((z.y - prev.y) / dl) * z.ry * 0.55;
+  if (!forestPurify.tower) {
+    const T = await import("three");
+    const { model } = await partyDefModel("base");
+    const holder = new T.Group();
+    holder.name = "forestPurifyTower";
+    model.scale.multiplyScalar(1.5);
+    holder.add(model);
+    // 빛기둥
+    const beam = new T.Mesh(
+      new T.CylinderGeometry(0.5, 0.9, 26, 20, 1, true),
+      new T.MeshBasicMaterial({ color: 0x9ffff0, transparent: true, opacity: 0.35, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide, fog: false }),
+    );
+    beam.position.y = 13;
+    holder.add(beam);
+    const h = partyHeightLocal(bg, fx, fy) ?? -bg.inner.position.y;
+    holder.position.set(fx, h, -fy);
+    bg.inner.add(holder);
+    forestPurify.tower = holder;
+    // 솟아오른다
+    const t0 = performance.now();
+    await new Promise<void>((done) => {
+      const up = () => {
+        const u = Math.min(1, (performance.now() - t0) / 900);
+        holder.position.y = h - 5 * (1 - u) * (1 - u);
+        if (u < 1) requestAnimationFrame(up);
+        else done();
+      };
+      up();
+    });
+  }
+  forestMask.allC.value!.set(fx, fy, 0.01);
+  forestPurify.allT0 = performance.now();
+  forestPurify.all = true;
+  forestPurifyFlash();
+  forestPurifyRelight();
+  syncPartyHud();
+  await sleep(FOREST_PURIFY.allGrow * 1000);
+}
+
+/** 매 프레임: 지우개 행렬, 구역 원이 퍼지는 것, 조명 섞기 */
+function forestPurifyTick(bg: ForestBg, cam: import("three").Vector3) {
+  const a = forestPurify.ready;
+  if (!a) return;
+  const now = performance.now();
+  bg.view.root.updateWorldMatrix(true, false);
+  forestMask.inv.value!.copy(bg.view.root.matrixWorld).invert();
+  for (const [i, t0] of forestPurify.grow) {
+    const u = Math.min(1, (now - t0) / (FOREST_PURIFY.grow * 1000));
+    forestMask.on.value[i] = 1 - (1 - u) * (1 - u);
+  }
+  const c = forestMask.allC.value!;
+  if (forestPurify.all) {
+    const u = Math.min(1, (now - forestPurify.allT0) / (FOREST_PURIFY.allGrow * 1000));
+    c.z = u >= 1 ? 1e5 : 2 + 220 * u * u;
+  }
+  const anyOn = forestPurify.done.size > 0 || forestPurify.all;
+  a.view.root.visible = anyOn;
+  bg.view.root.visible = c.z < 1e4;
+  if (anyOn) a.view.updateVisibility(cam);
+  const L = forestPurify.light;
+  if (L.to && L.from) {
+    const u = Math.min(1, (now - L.t0) / (FOREST_PURIFY.light * 1000));
+    const e = u * u * (3 - 2 * u);
+    L.cur = forestLerpLight(L.from, L.to, e);
+    if (u >= 1) L.to = null;
+  }
+  if (L.cur) forestApplyStageLight(bg, L.cur);
+}
+/** 본게임 파티: 루온·리아·펫 BCAT02. 모델과 클립은 forest-play-tool과 같은 파일을 쓴다. */
+type PartyWeapon = "pistol" | "bazooka" | "throw";
+/** 누가 무엇을 드는지는 아직 정하지 않았다. 정해지면 여기만 채운다. 비어 있으면 기본 사격 클립을 쓴다 */
+const partyWeapon: { RUON: PartyWeapon | null; RIA: PartyWeapon | null } = { RUON: null, RIA: null };
+const PARTY_PET_URL = "/tools/unit_lab/pets/block_cat/block_cat.glb?v=BCAT02";
+const PARTY_PET_HEIGHT_M = 0.72;
+/** 본게임 파티 크기. forest-play-tool 키(1.95 m)에 곱한다. 펫도 같이 줄인다 */
+const PARTY_CHAR_SCALE = 0.7;
+type PartyChar = import("./tools/forestPlay/PlayCharacter").PlayCharacter;
+type PartyPet = {
+  root: import("three").Group;
+  mixer: import("three").AnimationMixer;
+  actions: Map<string, import("three").AnimationAction>;
+  current: string;
+  clips: string[];
+  play(name: string): void;
+  tick(dt: number): void;
+};
+type PartyMemberState = { x: number; z: number; lockUntil: number; drawn: boolean };
+type PartyForce = { clip: string; faceCam: boolean };
+let party: {
+  stage: ForestStageLike;
+  ruon: PartyChar;
+  ria: PartyChar;
+  pet: PartyPet;
+  st: { RUON: PartyMemberState; RIA: PartyMemberState; PET: PartyMemberState };
+} | null = null;
+let partyLoading = false;
+let partyAttack = false;
+let partyLast = 0;
+let partyPage = 0;
+let partyOutCount = 0;
+let partyAnchor = { x: 75, y: 26 };
+let partyTravel: { from: { x: number; y: number }; to: { x: number; y: number }; t: number; dur: number; done: () => void } | null = null;
+const partyForce = new Map<string, PartyForce>();
+const partyHeightCache = new Map<string, number>();
+
+async function loadPartyPet(): Promise<PartyPet> {
+  const THREE = await import("three");
+  const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
+  const gltf = await new GLTFLoader().loadAsync(PARTY_PET_URL);
+  const scene = gltf.scene;
+  scene.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(scene);
+  const size = box.getSize(new THREE.Vector3());
+  const scale = PARTY_PET_HEIGHT_M / Math.max(0.1, size.y);
+  scene.scale.setScalar(scale);
+  scene.position.y = -box.min.y * scale;
+  const root = new THREE.Group();
+  root.name = "partyPet";
+  root.add(scene);
+  const mixer = new THREE.AnimationMixer(scene);
+  const actions = new Map<string, import("three").AnimationAction>();
+  for (const clip of gltf.animations) actions.set(clip.name, mixer.clipAction(clip));
+  const pet: PartyPet = {
+    root,
+    mixer,
+    actions,
+    current: "",
+    clips: gltf.animations.map((c) => c.name),
+    // PlayPet.play와 같다: 0.15초 교차, 반복
+    play(name: string) {
+      if (pet.current === name) return;
+      const action = pet.actions.get(name);
+      if (!action) return;
+      pet.current = name;
+      for (const [n, a] of pet.actions) {
+        if (n === name) {
+          a.reset().fadeIn(0.15);
+          a.setLoop(THREE.LoopRepeat, Infinity);
+          a.play();
+        } else {
+          a.fadeOut(0.15);
+        }
+      }
+    },
+    tick(dt: number) {
+      pet.mixer.update(dt);
+    },
+  };
+  pet.play("idle_sit");
+  return pet;
+}
+
+async function ensureParty(st: ForestStageLike) {
+  if (partyLoading || (party && party.stage === st)) return;
+  partyLoading = true;
+  try {
+    const { PlayCharacter } = await import("./tools/forestPlay/PlayCharacter");
+    const ruon = new PlayCharacter();
+    const ria = new PlayCharacter();
+    const [, , pet] = await Promise.all([ruon.load("RUON_35"), ria.load("RIA"), loadPartyPet()]);
+    if (party) {
+      party.ruon.dispose();
+      party.ria.dispose();
+      party.pet.root.removeFromParent();
+    }
+    const me = st.getPlayerWorld?.() ?? { x: 0, z: 0, yaw: 0 };
+    const fresh = (): PartyMemberState => ({ x: me.x, z: me.z, lockUntil: 0, drawn: false });
+    party = { stage: st, ruon, ria, pet, st: { RUON: fresh(), RIA: fresh(), PET: fresh() } };
+    journey3d?.addOverlay(ruon.root);
+    ruon.root.scale.setScalar(PARTY_CHAR_SCALE);
+    ria.root.visible = false;
+    pet.root.visible = false;
+  } catch (e) {
+    console.warn("party load failed", e);
+  } finally {
+    partyLoading = false;
+  }
+}
+
+/* ── 파티 자동 공격 (외출 웨이브 + forest-play-tool 탄) ── */
+/** 정화 장면용 기본 크기. 전투 숫자·종류는 data/outing/party_wave.json */
+const PARTY_MOB = { url: "/tools/unit_lab/monsters_anim/mushnub.glb", scale: 0.26, hp: 2, speed: 3, count: 10, ranks: 2, lat: 1.7, dep: 2, front: 6, regen: 0.85 };
+const PARTY_WAVE_URL = "/outing/party_wave.json";
+type PartyWaveTier = "normal" | "mid" | "boss";
+type PartyWaveKind = { id: string; url: string; tier: PartyWaveTier; hpMul: number; speedMul: number };
+type PartyWaveFile = {
+  scale: number;
+  speed: number;
+  spawnAhead: number;
+  spawnSpread: number;
+  aliveCap: number;
+  spawnGap: number;
+  spawnGroup: number;
+  bossAfter: number;
+  midEvery: number;
+  quota: Record<PartyWaveTier, number>;
+  pool: Record<PartyWaveTier, number>;
+  tiers: Record<PartyWaveTier, { hp: number; scale: number; speed: number; bite: number }>;
+  kinds: PartyWaveKind[];
+  marker: { url: string; scale: number; emissive: string };
+};
+const PARTY_WAVE_FALLBACK: PartyWaveFile = {
+  scale: 0.26,
+  speed: 3,
+  spawnAhead: 38,
+  spawnSpread: 12,
+  aliveCap: 16,
+  spawnGap: 0.8,
+  spawnGroup: 2,
+  bossAfter: 8,
+  midEvery: 5,
+  quota: { normal: 32, mid: 8, boss: 1 },
+  pool: { normal: 14, mid: 6, boss: 2 },
+  tiers: {
+    normal: { hp: 2, scale: 1, speed: 1, bite: 1 },
+    mid: { hp: 8, scale: 1.55, speed: 0.82, bite: 2 },
+    boss: { hp: 22, scale: 2.4, speed: 0.62, bite: 4 },
+  },
+  kinds: [
+    { id: "pink_slime", url: "/tools/unit_lab/monsters_anim/pink_slime.glb", tier: "normal", hpMul: 0.85, speedMul: 0.9 },
+    { id: "green_blob", url: "/tools/unit_lab/monsters_anim/green_blob.glb", tier: "normal", hpMul: 1.1, speedMul: 0.95 },
+    { id: "mushnub", url: "/tools/unit_lab/monsters_anim/mushnub.glb", tier: "normal", hpMul: 1, speedMul: 0.85 },
+    { id: "cactoro", url: "/tools/unit_lab/monsters_anim/cactoro.glb", tier: "mid", hpMul: 1.16, speedMul: 0.86 },
+    { id: "green_spiky_blob", url: "/tools/unit_lab/monsters_anim/green_spiky_blob.glb", tier: "mid", hpMul: 1.24, speedMul: 0.8 },
+    { id: "boss_cactoro", url: "/tools/unit_lab/monsters_anim/cactoro.glb", tier: "boss", hpMul: 1, speedMul: 0.7 },
+  ],
+  marker: { url: "/tools/unit_lab/units_free/k_tile_crystal.glb", scale: 0.45, emissive: "7EF0FF" },
+};
+/** 탄 = forest-play-tool PlayCombat.tryFire 값. 권총은 두 총구에서 2발이 나가고 피해는 첫 발만 */
+const PARTY_SHOT: Record<PartyWeapon, { speed: number; color: number; radius: number; cd: number; arc: number; trail?: number }> = {
+  pistol: { speed: 22, color: 0x7dffee, radius: 0.07, cd: 0.55, arc: 0, trail: 0.7 },
+  bazooka: { speed: 14, color: 0xffc14a, radius: 0.16, cd: 1.05, arc: 0 },
+  throw: { speed: 9, color: 0xd1c51d, radius: 0.07, cd: 0.9, arc: 2.4 },
+};
+const PARTY_RANGE_M = 9;
+const PARTY_HIT_RAD = 0.85;
+type PartyMob = {
+  mesh: import("three").Object3D;
+  mixer: import("three").AnimationMixer | null;
+  clips: import("three").AnimationClip[];
+  cur: string;
+  x: number;
+  z: number;
+  hp: number;
+  alive: boolean;
+  dieT: number;
+  flinch: number;
+  fade: import("three").Material[] | null;
+  rank: number;
+  lat: number;
+  tier: PartyWaveTier;
+  /** 죽을 때 줄어드는 기준 크기 */
+  baseScale: number;
+  speed: number;
+  bite: number;
+  hpMul: number;
+  speedMul: number;
+};
+type PartyMissile = {
+  mesh: import("three").Mesh;
+  /** 권총 탄 빛 꼬리. 탄 크기는 그대로 두고 뒤로만 늘인다 */
+  trail?: import("three").Mesh;
+  trailLen?: number;
+  o: import("three").Vector3;
+  d: import("three").Vector3;
+  speed: number;
+  arc: number;
+  traveled: number;
+  maxDist: number;
+  damage: boolean;
+  ox: number;
+  oz: number;
+  fx: number;
+  fz: number;
+  /** 전투 버튼 효과. 관통 = 남은 명중 수, 분열·범위 = 터질 때, 유도 = 쫓을 대상 */
+  pierce?: number;
+  skip?: Set<PartyMob>;
+  split?: { n: number; dist: number };
+  splash?: number;
+  home?: { m: PartyMob; rate: number };
+  color?: number;
+};
+type PartyShooter = { key: "RUON" | "RIA"; c: PartyChar; s: PartyMemberState };
+const partyCombat = {
+  T: null as typeof import("three") | null,
+  root: null as import("three").Group | null,
+  mobs: [] as PartyMob[],
+  missiles: [] as PartyMissile[],
+  loading: null as Promise<void> | null,
+  cd: { RUON: 0, RIA: 0 },
+  aim: { RUON: null as number | null, RIA: null as number | null },
+  shots: { RUON: 0, RIA: 0 },
+  kills: 0,
+  waves: 0,
+  regenT: 0,
+  mobH: 0,
+  f0: { x: 0, z: -1 },
+  props: new WeakMap<object, import("three").Object3D[]>(),
+};
+let partyGround: (x: number, z: number) => number = () => 0.08;
+const partyWave = {
+  cfg: null as PartyWaveFile | null,
+  on: false,
+  left: { normal: 0, mid: 0, boss: 0 } as Record<PartyWaveTier, number>,
+  sent: { normal: 0, mid: 0, boss: 0 } as Record<PartyWaveTier, number>,
+  t: 0,
+};
+
+async function partyWaveFile(): Promise<PartyWaveFile> {
+  try {
+    const r = await fetch(PARTY_WAVE_URL, { cache: "no-store" });
+    if (!r.ok) return PARTY_WAVE_FALLBACK;
+    const j = (await r.json()) as PartyWaveFile;
+    if (!j.kinds?.length || !j.quota || !j.tiers) return PARTY_WAVE_FALLBACK;
+    return j;
+  } catch {
+    return PARTY_WAVE_FALLBACK;
+  }
+}
+
+function partyCombatLoad(): Promise<void> {
+  if (partyCombat.loading) return partyCombat.loading;
+  partyCombat.loading = (async () => {
+    const T = await import("three");
+    const { loadVoxelMonster, cloneVoxelMonster, voxelMonsterId } = await import("./stage/monsters/voxelMonster");
+    partyCombat.T = T;
+    const root = new T.Group();
+    root.name = "partyCombat";
+    partyCombat.root = root;
+    const cfg = await partyWaveFile();
+    partyWave.cfg = cfg;
+    PARTY_MOB.scale = cfg.scale;
+    const protos = new Map<string, { scene: import("three").Object3D; clips: import("three").AnimationClip[]; footY: number }>();
+    for (const kind of cfg.kinds) {
+      const vid = voxelMonsterId(kind.id);
+      if (protos.has(vid)) continue;
+      const scene = await loadVoxelMonster(vid);
+      scene.updateMatrixWorld(true);
+      const box = new T.Box3().setFromObject(scene);
+      const h = Math.max(0.2, box.getSize(new T.Vector3()).y);
+      scene.scale.setScalar(1.15 / h);
+      if (!partyCombat.mobH) partyCombat.mobH = 1.15;
+      protos.set(vid, { scene, clips: [], footY: 0 });
+    }
+    const order: PartyWaveTier[] = ["normal", "mid", "boss"];
+    for (const tier of order) {
+      const kinds = cfg.kinds.filter((k) => k.tier === tier);
+      const n = cfg.pool[tier] ?? 0;
+      for (let i = 0; i < n; i++) {
+        const kind = kinds[i % Math.max(1, kinds.length)];
+        const proto = kind ? protos.get(voxelMonsterId(kind.id)) : undefined;
+        if (!kind || !proto) continue;
+        const inner = cloneVoxelMonster(proto.scene);
+        inner.position.y = proto.footY;
+        const mesh = new T.Group();
+        mesh.add(inner);
+        mesh.visible = false;
+        root.add(mesh);
+        partyCombat.mobs.push({
+          mesh,
+          mixer: proto.clips.length ? new T.AnimationMixer(inner) : null,
+          clips: proto.clips,
+          cur: "",
+          x: 0,
+          z: 0,
+          hp: 0,
+          alive: false,
+          dieT: 0,
+          flinch: 0,
+          fade: null,
+          rank: 0,
+          lat: 0,
+          tier,
+          baseScale: cfg.tiers[tier].scale,
+          speed: cfg.speed * cfg.tiers[tier].speed * kind.speedMul,
+          bite: cfg.tiers[tier].bite,
+          hpMul: kind.hpMul,
+          speedMul: kind.speedMul,
+        });
+      }
+    }
+  })();
+  return partyCombat.loading;
+}
+
+/** 5페이지 정화 장면 중에만 쓰는 줄 간격. null이면 보통 전투 */
+let partyFormation: { front: number; dep: number } | null = null;
+function partyMobSlot(m: PartyMob, me: { x: number; z: number }, minRank: number) {
+  const f = partyCombat.f0;
+  const dep = (partyFormation?.front ?? PARTY_MOB.front) + Math.max(0, m.rank - minRank) * (partyFormation?.dep ?? PARTY_MOB.dep);
+  return { x: me.x + f.x * dep - f.z * m.lat, z: me.z + f.z * dep + f.x * m.lat };
+}
+
+function partyMobShow(m: PartyMob) {
+  m.alive = true;
+  m.dieT = 0;
+  m.flinch = 0;
+  m.mesh.visible = true;
+  m.mesh.scale.setScalar(m.baseScale || PARTY_MOB.scale);
+  if (m.fade) for (const mat of m.fade) {
+    mat.opacity = 1;
+    mat.depthWrite = true;
+  }
+}
+
+/** 시야 밖, 바라보는 쪽 끝에서 한 마리를 걷게 한다 */
+function partyWavePlace(m: PartyMob, me: { x: number; z: number; yaw: number }) {
+  const cfg = partyWave.cfg ?? PARTY_WAVE_FALLBACK;
+  const tier = cfg.tiers[m.tier];
+  const fx = -Math.sin(me.yaw);
+  const fz = -Math.cos(me.yaw);
+  const lat = (Math.random() - 0.5) * cfg.spawnSpread;
+  m.x = me.x + fx * cfg.spawnAhead - fz * lat;
+  m.z = me.z + fz * cfg.spawnAhead + fx * lat;
+  m.hp = Math.max(1, Math.round(tier.hp * m.hpMul));
+  m.baseScale = cfg.scale * tier.scale;
+  m.speed = cfg.speed * tier.speed * m.speedMul;
+  m.bite = tier.bite;
+  partyCombat.f0 = { x: fx, z: fz };
+  partyMobShow(m);
+}
+
+function partyWavePick(): PartyWaveTier | null {
+  const cfg = partyWave.cfg;
+  if (!cfg) return null;
+  const left = partyWave.left;
+  const alive = partyCombat.mobs.filter((m) => m.alive).length;
+  const bossUp = partyCombat.mobs.some((m) => m.alive && m.tier === "boss");
+  // 일반이 충분히 나온 뒤, 또는 마릿수가 차면 최종을 넣는다
+  if (left.boss > 0 && !bossUp && (partyWave.sent.normal >= cfg.bossAfter || alive >= cfg.aliveCap)) return "boss";
+  const sent = partyWave.sent.normal + partyWave.sent.mid + partyWave.sent.boss;
+  if (left.mid > 0 && cfg.midEvery > 0 && sent > 0 && sent % cfg.midEvery === 0) return "mid";
+  if (left.normal > 0) return "normal";
+  if (left.mid > 0) return "mid";
+  if (left.boss > 0) return "boss";
+  return null;
+}
+
+function partyWaveSpawnOne(me: { x: number; z: number; yaw: number }): boolean {
+  const tier = partyWavePick();
+  if (!tier) {
+    partyWave.on = false;
+    return false;
+  }
+  const m = partyCombat.mobs.find((x) => x.tier === tier && !x.alive && x.dieT <= 0);
+  if (!m || partyWave.left[tier] <= 0) return false;
+  partyWavePlace(m, me);
+  partyWave.left[tier]--;
+  partyWave.sent[tier]++;
+  return true;
+}
+
+/** 이미 나오고 있으면 그대로 둔다. 남은 무리가 있으면 조금만 더 붙인다 */
+function partyWaveBegin() {
+  if (partyWave.on || !partyWave.cfg || !partyCombat.root) return;
+  const st = party?.stage;
+  if (!st?.getPlayerWorld) return;
+  if (!partyCombat.root.parent) journey3d?.addOverlay(partyCombat.root);
+  const alive = partyCombat.mobs.some((m) => m.alive);
+  const cfg = partyWave.cfg;
+  partyWave.on = true;
+  partyWave.t = 0;
+  if (alive) {
+    partyWave.left = { normal: 8, mid: 2, boss: partyWave.sent.boss > 0 ? 0 : 1 };
+  } else {
+    partyWave.left = { normal: cfg.quota.normal, mid: cfg.quota.mid, boss: cfg.quota.boss };
+    partyWave.sent = { normal: 0, mid: 0, boss: 0 };
+  }
+  partyCombat.regenT = 0;
+  partyCombat.waves++;
+}
+
+function partyWaveTick(dt: number) {
+  const cfg = partyWave.cfg;
+  const st = party?.stage;
+  if (!cfg || !partyWave.on || partyDef.lastWave || partyPurifyPick || !st?.getPlayerWorld) return;
+  partyWave.t -= dt;
+  if (partyWave.t > 0) return;
+  const me = st.getPlayerWorld();
+  let n = 0;
+  while (n < cfg.spawnGroup) {
+    const want = partyWavePick();
+    if (!want) {
+      partyWave.on = false;
+      break;
+    }
+    const alive = partyCombat.mobs.filter((m) => m.alive).length;
+    // 최종은 마릿수가 차 있어도 한 마리 더 들여보낸다
+    if (alive >= cfg.aliveCap && want !== "boss") break;
+    if (!partyWaveSpawnOne(me)) break;
+    n++;
+  }
+  partyWave.t = cfg.spawnGap;
+}
+
+function partyCombatClear() {
+  partyWave.on = false;
+  for (const m of partyCombat.mobs) {
+    m.alive = false;
+    m.dieT = 0;
+    m.mesh.visible = false;
+  }
+  for (const ms of partyCombat.missiles) partyDropMissile(ms);
+  partyCombat.missiles.length = 0;
+  partyCombat.aim.RUON = null;
+  partyCombat.aim.RIA = null;
+}
+
+function partyDropMissile(ms: PartyMissile) {
+  if (ms.trail) {
+    ms.trail.geometry.dispose();
+    (ms.trail.material as import("three").Material).dispose();
+  }
+  ms.mesh.removeFromParent();
+  ms.mesh.geometry.dispose();
+  (ms.mesh.material as import("three").Material).dispose();
+}
+
+function partyMobClip(m: PartyMob, moving: boolean) {
+  const T = partyCombat.T;
+  const cs = m.clips;
+  if (!T || !cs.length || !m.mixer) return;
+  const pick = moving
+    ? cs.find((c) => /^walk$/i.test(c.name)) || cs.find((c) => /walk|run/i.test(c.name))
+    : cs.find((c) => /^(idle|stand)$/i.test(c.name)) || cs.find((c) => /idle|stand/i.test(c.name));
+  const clip = pick || cs[0]!;
+  if (m.cur === clip.name) return;
+  const prev = cs.find((c) => c.name === m.cur);
+  const pa = prev ? m.mixer.existingAction(prev) : null;
+  const a = m.mixer.clipAction(clip);
+  a.reset().setLoop(T.LoopRepeat, Infinity);
+  if (pa && pa !== a && pa.isRunning()) pa.crossFadeTo(a, 0.12, false);
+  a.play();
+  m.cur = clip.name;
+}
+
+function partyMobFade(m: PartyMob, k: number) {
+  if (!m.fade) {
+    const mats: import("three").Material[] = [];
+    m.mesh.traverse((o) => {
+      const ms = o as import("three").Mesh;
+      if (!ms.isMesh) return;
+      const src = Array.isArray(ms.material) ? ms.material : [ms.material];
+      const cl = src.map((x) => {
+        const c = x.clone();
+        c.transparent = true;
+        mats.push(c);
+        return c;
+      });
+      ms.material = cl.length === 1 ? cl[0]! : cl;
+    });
+    m.fade = mats;
+  }
+  for (const mat of m.fade) {
+    mat.opacity = k;
+    mat.depthWrite = k > 0.45;
+  }
+}
+
+function partyRayHit(ox: number, oz: number, fx: number, fz: number, reach: number, skip?: Set<PartyMob>): PartyMob | null {
+  let hit: PartyMob | null = null;
+  let best = Infinity;
+  for (const m of partyCombat.mobs) {
+    if (!m.alive || skip?.has(m)) continue;
+    const along = (m.x - ox) * fx + (m.z - oz) * fz;
+    if (along < 0.4 || along > reach + 0.35) continue;
+    const rad = PARTY_HIT_RAD * Math.max(1, (m.baseScale || PARTY_MOB.scale) / PARTY_MOB.scale);
+    if (Math.hypot(m.x - (ox + fx * along), m.z - (oz + fz * along)) > rad) continue;
+    if (along < best) {
+      best = along;
+      hit = m;
+    }
+  }
+  return hit;
+}
+
+function partyLandHit(m: PartyMob) {
+  m.flinch = 0.22;
+  if (m.hp > 1) {
+    m.hp -= 1;
+    return;
+  }
+  m.hp = 0;
+  m.alive = false;
+  m.dieT = 0.55;
+  partyCombat.kills++;
+}
+
+/** forest-play-tool PlayCombat.muzzlePoints와 같다: 바주카는 총구 하나, 쌍권총은 두 총구 */
+function partyMuzzles(c: PartyChar, w: PartyWeapon, fx: number, fz: number): import("three").Vector3[] {
+  const T = partyCombat.T!;
+  const root = c.root;
+  root.updateMatrixWorld(true);
+  const base = root.getWorldPosition(new T.Vector3());
+  const fb = (side: number) => base.clone().add(new T.Vector3(fx * 0.85 - fz * side * 0.22, 1.0, fz * 0.85 + fx * side * 0.22));
+  const hole = (names: string[]): import("three").Vector3 | null => {
+    const res: { v: import("three").Vector3 | null } = { v: null };
+    root.traverse((o) => {
+      if (res.v) return;
+      const sk = o as import("three").SkinnedMesh;
+      if (!sk.isSkinnedMesh || !o.visible || !names.includes(o.name)) return;
+      const local = sk.userData.muzzleLocal;
+      if (!Array.isArray(local) || local.length < 3) return;
+      const bone = sk.skeleton?.bones.find((b) => b.name === String(sk.userData.prop || ""));
+      if (!bone) return;
+      const v = new T.Vector3(-Number(local[0]), Number(local[1]), -Number(local[2]));
+      bone.localToWorld(v);
+      res.v = v;
+    });
+    return res.v;
+  };
+  if (w === "throw") return [base.clone().add(new T.Vector3(fx * 0.45, c.height * 0.62, fz * 0.45))];
+  if (w === "bazooka") return [hole(["D_prop_rifle", "A_prop_rifle"]) ?? fb(0)];
+  return [hole(["D_prop_gun", "A_prop_gun"]) ?? fb(1), hole(["D_prop_gunL", "A_prop_gunL"]) ?? fb(-1)];
+}
+
+/** 무기 모델: 꺼냈을 때만, 든 무기만 보인다 */
+function partyApplyProps(c: PartyChar, key: "RUON" | "RIA", s: PartyMemberState) {
+  let list = partyCombat.props.get(c);
+  if (!list) {
+    const found: import("three").Object3D[] = [];
+    c.root.traverse((o) => {
+      if (/^[AD]_prop_(gunL?|rifle)$/.test(o.name)) found.push(o);
+    });
+    list = found;
+    partyCombat.props.set(c, list);
+  }
+  const w = partyWeapon[key] ?? "pistol";
+  for (const o of list) o.visible = s.drawn && (/rifle$/.test(o.name) ? w === "bazooka" : w === "pistol");
+}
+
+function partyCombatTick(dt: number, me: { x: number; z: number }, shooters: PartyShooter[], now: number) {
+  const pc = partyCombat;
+  const T = pc.T;
+  if (!T || !pc.root) return;
+  partySkillFxTick(dt);
+  for (let i = pc.missiles.length - 1; i >= 0; i--) {
+    const ms = pc.missiles[i]!;
+    let hit: PartyMob | null = null;
+    if (ms.home) {
+      // 유도: 대상 쪽으로 방향을 틀며 날아간다
+      const p = ms.mesh.position;
+      const tg = ms.home.m;
+      if (tg.alive) {
+        const cur = Math.atan2(ms.d.x, ms.d.z);
+        const want = Math.atan2(tg.x - p.x, tg.z - p.z);
+        const err = Math.atan2(Math.sin(want - cur), Math.cos(want - cur));
+        const yaw = cur + Math.max(-ms.home.rate * dt, Math.min(ms.home.rate * dt, err));
+        ms.d.set(Math.sin(yaw), 0, Math.cos(yaw));
+      }
+      ms.traveled += ms.speed * dt;
+      p.addScaledVector(ms.d, ms.speed * dt);
+      if (ms.damage) hit = partyNearHit(p.x, p.z, ms.skip);
+    } else {
+      ms.traveled += ms.speed * dt;
+      const reach = Math.min(ms.traveled, ms.maxDist);
+      const u = reach / Math.max(0.01, ms.maxDist);
+      const pos = ms.o.clone().addScaledVector(ms.d, reach);
+      if (ms.arc > 0) pos.y += Math.sin(Math.PI * u) * ms.arc;
+      ms.mesh.position.copy(pos);
+      if (ms.trail && ms.trailLen) ms.trail.scale.y = Math.max(0.01, Math.min(1, reach / ms.trailLen));
+      if (ms.damage) hit = partyRayHit(ms.ox, ms.oz, ms.fx, ms.fz, reach, ms.skip);
+    }
+    let done = ms.traveled >= ms.maxDist;
+    if (hit) {
+      partyLandHit(hit);
+      ms.skip?.add(hit);
+      // 관통: 남은 명중 수만큼 계속 날아간다
+      ms.pierce = (ms.pierce ?? 1) - 1;
+      if (ms.pierce <= 0) {
+        done = true;
+        partyMissileImpact(ms, hit.x, hit.z, hit);
+      }
+    } else if (done && ms.damage && (ms.split || ms.splash)) partyMissileImpact(ms, ms.mesh.position.x, ms.mesh.position.z, null);
+    if (done) {
+      partyDropMissile(ms);
+      pc.missiles.splice(i, 1);
+    }
+  }
+  let minRank = 99;
+  for (const m of pc.mobs) if (m.alive && m.rank < minRank) minRank = m.rank;
+  for (const m of pc.mobs) {
+    if (m.dieT > 0) {
+      m.dieT -= dt;
+      const k = Math.max(0, m.dieT / 0.55);
+      m.mesh.scale.setScalar((m.baseScale || PARTY_MOB.scale) * (0.4 + 0.6 * k));
+      partyMobFade(m, k);
+      m.mixer?.update(dt);
+      if (m.dieT <= 0) m.mesh.visible = false;
+      continue;
+    }
+    if (!m.alive) continue;
+    let moving = false;
+    // 이 페이지에 시설이 서 있으면 가까운 시설로 가서 문다
+    const tgt = partyDefTarget(m);
+    if (m.flinch > 0) m.flinch -= dt;
+    else if (tgt?.near) partyDefBite(m, tgt.s, dt);
+    else {
+      const march = partyWave.on && !partyFormation;
+      const g = tgt ? tgt.goal : march ? { x: me.x + partyCombat.f0.x * 3.2, z: me.z + partyCombat.f0.z * 3.2 } : partyMobSlot(m, me, minRank);
+      const d = Math.hypot(g.x - m.x, g.z - m.z);
+      if (d > (tgt ? 0.05 : 0.35)) {
+        const step = Math.min((partyFormation ? PARTY_PURIFY.speed : m.speed || PARTY_MOB.speed) * dt, d);
+        m.x += ((g.x - m.x) / d) * step;
+        m.z += ((g.z - m.z) / d) * step;
+        moving = true;
+      }
+    }
+    m.mesh.position.set(m.x, partyGround(m.x, m.z), m.z);
+    const look = tgt ? tgt.c : me;
+    m.mesh.rotation.y = Math.atan2(look.x - m.x, look.z - m.z);
+    partyMobClip(m, moving);
+    m.mixer?.update(dt);
+  }
+  partyWaveTick(dt);
+
+  for (const { key, c, s } of shooters) {
+    pc.cd[key] = Math.max(0, pc.cd[key] - dt);
+    const w = partyWeapon[key] ?? "pistol";
+    let best: PartyMob | null = null;
+    let bd = PARTY_RANGE_M;
+    for (const m of pc.mobs) {
+      if (!m.alive) continue;
+      const d = Math.hypot(m.x - s.x, m.z - s.z);
+      if (d < bd) {
+        bd = d;
+        best = m;
+      }
+    }
+    pc.aim[key] = partyAttack && best ? Math.atan2(best.x - s.x, best.z - s.z) : null;
+    if (!partyAttack || partyDef.ceaseFire || !best || pc.cd[key] > 0 || now < s.lockUntil || (w !== "throw" && !s.drawn)) continue;
+    const tgt = best;
+    const fx0 = (best.x - s.x) / Math.max(0.01, bd);
+    const fz0 = (best.z - s.z) / Math.max(0.01, bd);
+    const spec = PARTY_SHOT[w];
+    // 전투 버튼: 권총은 연사·사선·관통, 바주카는 분열·유도·범위
+    const pistol = w === "pistol";
+    const lvRapid = pistol ? partySkillLv("연사") : -1;
+    const lvFan = pistol ? partySkillLv("사선") : -1;
+    const lvPierce = pistol ? partySkillLv("관통") : -1;
+    const lvSplit = pistol ? -1 : partySkillLv("분열");
+    const lvHome = pistol ? -1 : partySkillLv("유도");
+    const lvArea = pistol ? -1 : partySkillLv("범위");
+    const angs = [0];
+    if (lvFan >= 0) for (let k = 1; k <= partySkillAt(PARTY_SKILL.사선.perSide, lvFan); k++) angs.push(k * PARTY_SKILL.사선.deg, -k * PARTY_SKILL.사선.deg);
+    for (const deg of angs) {
+    const ca = Math.cos((deg * Math.PI) / 180);
+    const sa = Math.sin((deg * Math.PI) / 180);
+    const fx = fx0 * ca + fz0 * sa;
+    const fz = -fx0 * sa + fz0 * ca;
+    const far = deg !== 0 || lvPierce >= 0;
+    const dir = new T.Vector3(fx, 0, fz);
+    partyMuzzles(c, w, fx, fz).forEach((from, i) => {
+      const mesh = new T.Mesh(new T.SphereGeometry(spec.radius, 8, 6), new T.MeshBasicMaterial({ color: spec.color }));
+      mesh.position.copy(from);
+      pc.root!.add(mesh);
+      let trail: import("three").Mesh | undefined;
+      if (spec.trail) {
+        const g = new T.CylinderGeometry(spec.radius * 0.85, spec.radius * 0.1, spec.trail, 8, 1, true);
+        g.translate(0, -spec.trail / 2, 0);
+        trail = new T.Mesh(g, new T.MeshBasicMaterial({ color: spec.color, transparent: true, opacity: 0.7, blending: T.AdditiveBlending, depthWrite: false }));
+        trail.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), dir);
+        trail.scale.y = 0.01;
+        mesh.add(trail);
+      }
+      pc.missiles.push({
+        mesh,
+        trail,
+        trailLen: spec.trail,
+        o: from.clone(),
+        d: dir.clone(),
+        speed: spec.speed,
+        arc: spec.arc,
+        traveled: 0,
+        maxDist: lvHome >= 0 ? PARTY_RANGE_M * 1.6 : far ? PARTY_RANGE_M : Math.min(PARTY_RANGE_M, Math.max(0.6, bd + 0.3)),
+        damage: i === 0,
+        ox: s.x,
+        oz: s.z,
+        fx,
+        fz,
+        pierce: lvPierce >= 0 ? partySkillAt(PARTY_SKILL.관통.pierce, lvPierce) : 1,
+        skip: new Set<PartyMob>(),
+        split: lvSplit >= 0 ? { n: partySkillAt(PARTY_SKILL.분열.n, lvSplit), dist: PARTY_SKILL.분열.dist } : undefined,
+        splash: lvArea >= 0 ? partySkillAt(PARTY_SKILL.범위.radius, lvArea) : 0,
+        home: lvHome >= 0 ? { m: tgt, rate: partySkillAt(PARTY_SKILL.유도.rate, lvHome) } : undefined,
+        color: spec.color,
+      });
+    });
+    }
+    pc.cd[key] = spec.cd * (lvRapid >= 0 ? partySkillAt(PARTY_SKILL.연사.cdMul, lvRapid) : 1);
+    pc.shots[key]++;
+  }
+}
+
+/* ── 파티 수비: 정화 진지 + 포탑. 모델은 forest-play-tool(DefenseTurretRig, 진지 unit_purified)을 그대로 쓴다 ── */
+type PartyDefKind = "base" | "tower_catapult" | "tower_cannon" | "tower_throw" | "tower_gun" | "tower_ballista" | "k_fence_fortified";
+/** 수비 수치는 여기 한 곳. 체력 비율은 forest-play-tool(진지 10000 : 포탑 2500 : 장애물 3000), 물기·발사 간격은 defense_balance.json 1단계 값이다. 거리만 이 숲 크기로 줄였다 */
+const PARTY_DEF = {
+  kinds: { "정화 진지": "base", 투석: "tower_catapult", 대포: "tower_cannon", "투척 포탑": "tower_throw", 총: "tower_gun", 발리스타: "tower_ballista", 울타리: "k_fence_fortified" } as Record<string, PartyDefKind>,
+  hp: { base: 80, tower: 20, obstacle: 24 },
+  height: { base: 2.4, tower: 2.7, obstacle: 1.3 },
+  radius: { base: 1.6, tower: 0.9, obstacle: 1.3 },
+  bite: { damage: 2, interval: 1.8 },
+  /** 정화 진지는 페이지 맨 아래, 포탑은 파티 양옆 앞 */
+  baseBack: 13,
+  towerSide: 3.2,
+  towerFront: 2.5,
+  spawnFront: 13,
+  weapon: {
+    tower_catapult: { interval: 4.2, windup: 0.55, range: 20, splash: 2.2, speed: 12, lob: 3.2, size: 0.16, color: 0xbac3be },
+    tower_cannon: { interval: 3.0, windup: 0.18, range: 18, splash: 1.8, speed: 16, lob: 0.9, size: 0.14, color: 0x2e2e33 },
+    tower_throw: { interval: 2.6, windup: 0.22, range: 15, splash: 1.5, speed: 10, lob: 2.4, size: 0.13, color: 0xe89838 },
+    tower_gun: { interval: 0.45, windup: 0, range: 10, splash: 0, speed: 30, lob: 0, size: 0.06, color: 0xfff0a0 },
+    tower_ballista: { interval: 0.5, windup: 0, range: 8, splash: 0, speed: 35, lob: 0, size: 0.07, color: 0xdccda6 },
+  } as Record<string, { interval: number; windup: number; range: number; splash: number; speed: number; lob: number; size: number; color: number }>,
+};
+const PARTY_FELL = "__fell__";
+type PartyRig = import("./tools/forestPlay/DefenseFacilityRig").DefenseTurretRig;
+type PartyStruct = {
+  id: string;
+  kind: PartyDefKind;
+  page: number;
+  holder: import("three").Group;
+  model: import("three").Object3D;
+  rig: PartyRig | null;
+  baseY: number;
+  hp: number;
+  maxHp: number;
+  radius: number;
+  cd: number;
+  windup: number;
+  target: PartyMob | null;
+  collapse: number;
+  bar: import("three").Group;
+  fill: import("three").Mesh;
+  fx: number;
+  fy: number;
+  wx: number;
+  wz: number;
+};
+type PartyShell = { mesh: import("three").Mesh; from: import("three").Vector3; to: import("three").Vector3; t: number; dur: number; lob: number; splash: number; target: PartyMob | null };
+const partyDef = {
+  structs: [] as PartyStruct[],
+  shells: [] as PartyShell[],
+  protos: new Map<string, Promise<import("three").Object3D>>(),
+  biteCd: new WeakMap<PartyMob, number>(),
+  watchers: [] as Array<{ test: () => boolean; done: () => void }>,
+  /** 테스트용: 파티와 포탑이 쏘지 않는다 */
+  ceaseFire: false,
+  /** 테스트 전용: 포탑만 쏘지 않는다 */
+  towerHold: false,
+  /** 스킬을 고른 뒤에는 이 무리만 치우고 재스폰하지 않는다 */
+  lastWave: false,
+  bites: 0,
+  seq: 0,
+};
+
+function partyDefKindHp(kind: PartyDefKind) {
+  return kind === "base" ? "base" : kind.startsWith("tower_") ? "tower" : "obstacle";
+}
+
+async function partyDefModel(kind: PartyDefKind): Promise<{ model: import("three").Object3D; rig: PartyRig | null }> {
+  const T = await import("three");
+  if (kind.startsWith("tower_")) {
+    const { DefenseTurretRig } = await import("./tools/forestPlay/DefenseFacilityRig");
+    const rig = await DefenseTurretRig.build(kind as import("./tools/forestPlay/DefenseSession").FacilityKind);
+    rig.root.scale.multiplyScalar(PARTY_DEF.height.tower / 4.2);
+    return { model: rig.root, rig };
+  }
+  const url = kind === "base" ? "/maps/forest150/releases/v7/catalog/unit_purified.glb" : `/tools/unit_lab/units_free/${kind}.glb`;
+  let p = partyDef.protos.get(url);
+  if (!p) {
+    const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
+    p = new GLTFLoader().loadAsync(url).then((g) => g.scene);
+    partyDef.protos.set(url, p);
+  }
+  const src = (await p).clone(true);
+  src.updateMatrixWorld(true);
+  const box = new T.Box3().setFromObject(src);
+  const s = PARTY_DEF.height[partyDefKindHp(kind)] / Math.max(0.01, box.max.y - box.min.y);
+  src.scale.multiplyScalar(s);
+  src.position.set((-(box.min.x + box.max.x) / 2) * s, -box.min.y * s, (-(box.min.z + box.max.z) / 2) * s);
+  const model = new T.Group();
+  model.add(src);
+  model.traverse((o) => {
+    if ((o as import("three").Mesh).isMesh) {
+      o.castShadow = true;
+      o.receiveShadow = true;
+    }
+  });
+  return { model, rig: null };
+}
+
+/** slot -1 = 그 구역 유닛 자리, 0 = 포탑 자리. 좌표는 construction.json */
+function partyDefSpot(page: number, slot: number): { x: number; y: number } | null {
+  const course = forestCourse;
+  const site = page + 1;
+  if (course) {
+    const kind = slot < 0 ? "unit" : "tower";
+    const pad = course.pad(site, kind);
+    if (!pad) return null;
+    if (slot <= 0) return { x: pad.x, y: pad.y };
+    for (const side of [pad.x - 4, pad.x + 4]) {
+      if (course.walkableAt(side, pad.y)) return { x: side, y: pad.y };
+    }
+    return { x: pad.x, y: pad.y };
+  }
+  const zone = forestBg?.zones[page];
+  if (!zone) return null;
+  if (slot < 0) return { x: zone.x, y: zone.y - Math.min(PARTY_DEF.baseBack, zone.ry * 0.8) };
+  const side = slot === 0 ? -1 : slot === 1 ? 1 : 0;
+  return { x: zone.x + side * PARTY_DEF.towerSide, y: zone.y + PARTY_DEF.towerFront };
+}
+
+/** 포탑이 들어서기 전 임시 자리. 표시는 원흉 밝은 핵이다. */
+async function partyDefMark(page: number) {
+  const { createMarkCore } = await import("./stage/world3d/purify/CulpritPresence");
+  const bg = forestBg;
+  if (!bg) return;
+  for (const slot of [0, 1]) {
+    if (partyMarks.some((m) => m.page === page && m.slot === slot)) continue;
+    const spot = partyDefSpot(page, slot);
+    if (!spot) continue;
+    const presence = createMarkCore();
+    const h = partyHeightLocal(bg, spot.x, spot.y) ?? -bg.inner.position.y;
+    presence.group.position.set(spot.x, h, -spot.y);
+    bg.inner.add(presence.group);
+    partyMarks.push({ page, slot, presence });
+  }
+}
+
+async function partyDefBuild(label: string, page: number, slot: number): Promise<void> {
+  const kind = PARTY_DEF.kinds[label];
+  const bg = forestBg;
+  const spot = partyDefSpot(page, slot);
+  if (!kind || !bg || !spot) return;
+  partyDefUnmark(page, slot);
+  const T = await import("three");
+  const { model, rig } = await partyDefModel(kind);
+  const hpKey = partyDefKindHp(kind);
+  // 오염체가 모델 속에 묻히지 않게 실제 바닥 폭으로 멈출 자리를 잡는다
+  model.updateMatrixWorld(true);
+  const size = new T.Box3().setFromObject(model).getSize(new T.Vector3());
+  const radius = Math.max(PARTY_DEF.radius[hpKey], Math.max(size.x, size.z) * 0.5);
+  const h = partyHeightLocal(bg, spot.x, spot.y) ?? -bg.inner.position.y;
+  const holder = new T.Group();
+  holder.name = `partyDef:${label}`;
+  holder.add(model);
+  holder.position.set(spot.x, h, -spot.y);
+  const w = hpKey === "base" ? 2 : 1.4;
+  const bar = new T.Group();
+  const back = new T.Mesh(new T.PlaneGeometry(w, 0.14), new T.MeshBasicMaterial({ color: 0x1d2a22, fog: false, depthTest: false }));
+  const fill = new T.Mesh(new T.PlaneGeometry(w, 0.14), new T.MeshBasicMaterial({ color: hpKey === "base" ? 0x65d2c0 : 0xccd682, fog: false, depthTest: false }));
+  fill.geometry.translate(w / 2, 0, 0);
+  fill.position.set(-w / 2, 0, 0.001);
+  back.renderOrder = 998;
+  fill.renderOrder = 999;
+  bar.add(back, fill);
+  bar.position.y = PARTY_DEF.height[hpKey] + 0.45;
+  holder.add(bar);
+  bg.inner.add(holder);
+  const spec = PARTY_DEF.weapon[kind];
+  partyDef.structs.push({
+    id: `${label}#${++partyDef.seq}`,
+    kind,
+    page,
+    holder,
+    model,
+    rig,
+    baseY: h,
+    hp: PARTY_DEF.hp[hpKey],
+    maxHp: PARTY_DEF.hp[hpKey],
+    radius,
+    cd: spec ? spec.interval * 0.5 : 0,
+    windup: 0,
+    target: null,
+    collapse: -1,
+    bar,
+    fill,
+    fx: spot.x,
+    fy: spot.y,
+    wx: 0,
+    wz: 0,
+  });
+}
+
+const partyMarks: Array<{ page: number; slot: number; presence: { tick: (dt: number) => void; dispose: () => void } }> = [];
+
+function partyDefUnmark(page: number, slot: number) {
+  for (let i = partyMarks.length - 1; i >= 0; i--) {
+    const mk = partyMarks[i]!;
+    if (page >= 0 && (mk.page !== page || mk.slot !== slot)) continue;
+    mk.presence.dispose();
+    partyMarks.splice(i, 1);
+  }
+}
+
+function partyDefClear() {
+  partyDefUnmark(-1, -1);
+  for (const s of partyDef.structs) {
+    s.rig?.dispose();
+    s.holder.removeFromParent();
+  }
+  partyDef.structs.length = 0;
+  for (const sh of partyDef.shells) partyDefDropShell(sh);
+  partyDef.shells.length = 0;
+  partyDef.lastWave = false;
+}
+
+function partyDefDropShell(sh: PartyShell) {
+  sh.mesh.removeFromParent();
+  sh.mesh.geometry.dispose();
+  (sh.mesh.material as import("three").Material).dispose();
+}
+
+function partyDefLive(page = partyPage) {
+  return partyDef.structs.filter((s) => s.page === page && s.hp > 0);
+}
+
+/** 이 페이지에 서 있는 시설이 있으면 오염체는 가까운 시설로 간다 */
+function partyDefOn() {
+  return forestBackdropOn && partyDefLive().length > 0;
+}
+
+function partyDefTarget(m: PartyMob): { s: PartyStruct; goal: { x: number; z: number }; c: { x: number; z: number }; near: boolean } | null {
+  if (!partyAttack || !forestBackdropOn) return null;
+  let best: PartyStruct | null = null;
+  let bd = Infinity;
+  for (const s of partyDef.structs) {
+    if (s.page !== partyPage || s.hp <= 0) continue;
+    const d = Math.hypot(s.wx - m.x, s.wz - m.z);
+    if (d < bd) {
+      bd = d;
+      best = s;
+    }
+  }
+  if (!best) return null;
+  const stop = best.radius + 0.3;
+  // 한쪽에 몰리지 않게 줄 위치(lat)만큼 둘레로 벌려 선다
+  const a = Math.atan2(m.x - best.wx, m.z - best.wz) + m.lat * 0.45;
+  const ux = Math.sin(a);
+  const uz = Math.cos(a);
+  return { s: best, goal: { x: best.wx + ux * stop, z: best.wz + uz * stop }, c: { x: best.wx, z: best.wz }, near: bd <= stop + 0.12 };
+}
+
+function partyDefBite(m: PartyMob, s: PartyStruct, dt: number) {
+  const cd = (partyDef.biteCd.get(m) ?? 0.6) - dt;
+  if (cd > 0) {
+    partyDef.biteCd.set(m, cd);
+    return;
+  }
+  partyDef.biteCd.set(m, PARTY_DEF.bite.interval);
+  partyDef.bites++;
+  s.hp = Math.max(0, s.hp - (m.bite || PARTY_DEF.bite.damage));
+  if (s.hp <= 0 && s.collapse < 0) {
+    s.collapse = 0;
+    s.bar.visible = false;
+  }
+}
+
+function partyDefWatch(what: "base" | "upper", page: number): Promise<string> {
+  return new Promise((done) => {
+    const test =
+      what === "base"
+        ? () => partyDef.structs.some((s) => s.kind === "base" && s.page === 0 && s.hp <= 0)
+        : () => {
+            const mine = partyDef.structs.filter((s) => s.page === page && s.kind !== "base");
+            return mine.length > 0 && mine.every((s) => s.hp <= 0);
+          };
+    partyDef.watchers.push({ test, done: () => done(PARTY_FELL) });
+  });
+}
+
+function partyDefWaveCleared(): Promise<string> {
+  return new Promise((done) => {
+    partyDef.watchers.push({ test: () => !partyCombat.mobs.some((m) => m.alive || m.dieT > 0), done: () => done("cleared") });
+  });
+}
+
+/** 무너지면 고르던 선택지를 걷는다 */
+function partyDefDropChoices() {
+  choiceButtons.style.display = "none";
+  choiceButtons.innerHTML = "";
+  setGaugesVisible(true);
+  syncFillerChrome();
+}
+
+/** 몬스터가 몰려온다: 시야 밖 끝에서 웨이브를 걷기 시작한다 */
+function partyDefPack() {
+  void partyCombatLoad().then(() => partyWaveBegin());
+}
+
+function partyDefTick(dt: number, cam: import("three").Camera | undefined) {
+  const T = partyCombat.T;
+  if (!T) return;
+  const bg = forestBg;
+  if (!bg) return;
+  const q = new T.Quaternion();
+  for (const s of partyDef.structs) {
+    // 오염체와 같은 좌표(숲 바깥 부모 기준)로 맞춘다
+    const w = partyForestToWorld(bg, s.fx, s.fy);
+    s.wx = w.x;
+    s.wz = w.z;
+    if (s.collapse >= 0) {
+      s.collapse += dt;
+      s.model.rotation.z = Math.min(0.8, s.collapse);
+      s.holder.position.y = s.baseY - Math.min(2.2, s.collapse * 1.4);
+      if (s.collapse > 1.8) s.holder.visible = false;
+      continue;
+    }
+    s.fill.scale.x = Math.max(0.001, s.hp / s.maxHp);
+    if (cam) {
+      s.holder.getWorldQuaternion(q);
+      s.bar.quaternion.copy(q.invert().multiply(cam.quaternion));
+    }
+    const spec = PARTY_DEF.weapon[s.kind];
+    if (!s.rig || !spec || s.page !== partyPage) continue;
+    s.rig.tick(dt);
+    let best: PartyMob | null = null;
+    let bd = spec.range;
+    for (const m of partyCombat.mobs) {
+      if (!m.alive) continue;
+      const d = Math.hypot(m.x - s.wx, m.z - s.wz);
+      if (d < bd) {
+        bd = d;
+        best = m;
+      }
+    }
+    if (best) {
+      // 포탑 회전은 숲 안쪽 좌표 기준이라 방향을 숲 좌표로 바꿔 넘긴다
+      const mf = partyWorldToForest(bg, best.x, best.z);
+      const o = s.rig.root.getWorldPosition(new T.Vector3());
+      s.rig.aim(new T.Vector3(o.x + (mf.x - s.fx), 0, o.z - (mf.y - s.fy)), dt);
+    }
+    s.cd = Math.max(0, s.cd - dt);
+    if (s.windup > 0) {
+      s.windup -= dt;
+      if (s.windup <= 0) partyDefFire(s, spec);
+      continue;
+    }
+    if (!partyAttack || partyDef.ceaseFire || partyDef.towerHold || !best || s.cd > 0) continue;
+    s.target = best;
+    s.cd = spec.interval;
+    if (spec.windup > 0) {
+      s.rig.prepare(spec.windup);
+      s.windup = spec.windup;
+    } else partyDefFire(s, spec);
+  }
+  for (let i = partyDef.shells.length - 1; i >= 0; i--) {
+    const sh = partyDef.shells[i]!;
+    sh.t += dt;
+    const u = Math.min(1, sh.t / sh.dur);
+    sh.mesh.position.lerpVectors(sh.from, sh.to, u);
+    sh.mesh.position.y += Math.sin(Math.PI * u) * sh.lob;
+    if (u < 1) continue;
+    if (sh.splash > 0) {
+      for (const m of partyCombat.mobs) {
+        if (!m.alive) continue;
+        const d = Math.hypot(m.x - sh.to.x, m.z - sh.to.z);
+        if (d > sh.splash) continue;
+        partyLandHit(m);
+        if (m.alive && d <= sh.splash * 0.5) partyLandHit(m);
+      }
+    } else if (sh.target?.alive) {
+      partyLandHit(sh.target);
+      if (sh.target.alive) partyLandHit(sh.target);
+    }
+    partyDefDropShell(sh);
+    partyDef.shells.splice(i, 1);
+  }
+  for (let i = partyDef.watchers.length - 1; i >= 0; i--) {
+    const w = partyDef.watchers[i]!;
+    if (!w.test()) continue;
+    partyDef.watchers.splice(i, 1);
+    w.done();
+  }
+  for (const mk of partyMarks) mk.presence.tick(dt);
+}
+
+function partyDefFire(s: PartyStruct, spec: { speed: number; lob: number; splash: number; size: number; color: number }) {
+  const T = partyCombat.T;
+  const tg = s.target;
+  if (!T || !s.rig || !partyCombat.root || !tg?.alive) return;
+  s.rig.fire();
+  const from = partyCombat.root.worldToLocal(s.rig.muzzleWorld(new T.Vector3()));
+  const to = new T.Vector3(tg.x, partyGround(tg.x, tg.z) + 0.25, tg.z);
+  const mesh = new T.Mesh(new T.SphereGeometry(spec.size, 8, 6), new T.MeshBasicMaterial({ color: spec.color }));
+  mesh.position.copy(from);
+  partyCombat.root.add(mesh);
+  partyDef.shells.push({ mesh, from, to, t: 0, dur: Math.max(0.12, from.distanceTo(to) / spec.speed), lob: spec.lob, splash: spec.splash, target: tg });
+}
+
+/* ── 전투 버튼(스킬). 고르면 턴(turn초) 동안 나가고 대기(wait초)에 들어가기를 되풀이한다. 같은 버튼을 다시 고르면 +다 ── */
+/** 대기 초(wait)와 + 상한은 미정이라 임시값이다. 대기는 성장마다 다르다. 단계 배열은 [처음, +1, +2, +3] */
+const PARTY_SKILL = {
+  turn: 5,
+  plusMax: 3,
+  /** 권총: 발사 간격 배수 */
+  연사: { wait: 3, cdMul: [0.5, 0.42, 0.36, 0.3] },
+  /** 권총: 가운데 탄 양옆으로 deg도씩 벌린 탄을 한쪽에 perSide발 더 쏜다 */
+  사선: { wait: 6, deg: 16, perSide: [1, 1, 2, 2] },
+  /** 권총: 한 발이 맞히는 오염체 수 */
+  관통: { wait: 10, pierce: [2, 3, 4, 5] },
+  /** 바주카: 맞은 자리에서 n갈래로 갈라져 dist m 더 날아간다 */
+  분열: { wait: 6, n: [3, 4, 5, 6], dist: 2.6 },
+  /** 바주카: 초당 회전(라디안) */
+  유도: { wait: 4, rate: [3.5, 4.5, 5.5, 6.5] },
+  /** 바주카: 폭발 반경(m) */
+  범위: { wait: 9, radius: [1.4, 1.8, 2.2, 2.6] },
+};
+/** 성장 아이콘. 파티 카드 스킬 칸과 성장 카드에 쓴다 */
+const PARTY_SKILL_ICON: Record<string, string> = { 연사: "⚡", 사선: "🔱", 관통: "➶", 분열: "✷", 유도: "🎯", 범위: "💥" };
+const partySkill = { picks: new Map<string, { n: number; t0: number }>() };
+
+/**
+ * 5페이지 정화 세 장면. 수치는 임시값.
+ * 고른 정화 버튼은 그 장면 동안 쉬지 않고 켜진다(+ 단계는 성장에서 쌓인 만큼).
+ * 맞는 버튼이면 빨리 끝나고, 틀려도 끝나기는 한다.
+ */
+const PARTY_PURIFY = {
+  hp: 2,
+  speed: 2,
+  /** 오래 걸리면 남은 오염체를 걷는다(초) */
+  cap: 45,
+  line: { n: 8, front: 4.5, dep: 0.9 },
+  pack: { n: 9, front: 5, dep: 0.7, lat: 0.7 },
+  scatter: { n: 7, front: 4.5, dep: 1.4, lat: 3.2 },
+};
+type PartyPurifyKind = "line" | "pack" | "scatter";
+let partyPurifyPick: string | null = null;
+const partyPurifyLog: Array<{ scene: PartyPurifyKind; pick: string; sec: number; capped: boolean }> = [];
+let partyPetSeek: { x: number; z: number } | null = null;
+
+function partyPurifySpawn(kind: PartyPurifyKind) {
+  const st = party?.stage;
+  if (!st?.getPlayerWorld || !partyCombat.root) return;
+  if (!partyCombat.root.parent) journey3d?.addOverlay(partyCombat.root);
+  const me = st.getPlayerWorld();
+  partyCombat.f0 = { x: -Math.sin(me.yaw), z: -Math.cos(me.yaw) };
+  const cfg = PARTY_PURIFY[kind];
+  partyFormation = { front: cfg.front, dep: cfg.dep };
+  for (const m of partyCombat.mobs) {
+    m.alive = false;
+    m.dieT = 0;
+    m.mesh.visible = false;
+  }
+  // 흩어진 잔당 자리는 매번 같게 둔다(비교용)
+  const scat = [-1, 0.6, -0.2, 1, -0.7, 0.2, -1, 0.8];
+  for (let i = 0; i < cfg.n; i++) {
+    const m = partyCombat.mobs[i]!;
+    if (kind === "line") {
+      m.rank = i;
+      m.lat = 0;
+    } else if (kind === "pack") {
+      m.rank = Math.floor(i / 3);
+      m.lat = ((i % 3) - 1) * PARTY_PURIFY.pack.lat;
+    } else {
+      m.rank = i % 3;
+      m.lat = scat[i % scat.length]! * PARTY_PURIFY.scatter.lat;
+    }
+    const g = partyMobSlot(m, me, 0);
+    // 조금 멀리서 걸어 들어온다
+    m.x = g.x + partyCombat.f0.x * 4;
+    m.z = g.z + partyCombat.f0.z * 4;
+    m.hp = PARTY_PURIFY.hp;
+    m.baseScale = PARTY_MOB.scale;
+    m.speed = PARTY_MOB.speed;
+    m.bite = PARTY_DEF.bite.damage;
+    m.alive = true;
+    m.flinch = 0;
+    m.mesh.visible = true;
+    m.mesh.scale.setScalar(PARTY_MOB.scale);
+    if (m.fade) for (const mat of m.fade) {
+      mat.opacity = 1;
+      mat.depthWrite = true;
+    }
+  }
+  partyCombat.regenT = 0;
+}
+
+/** 한 장면: 무리를 세우고, 고른 버튼으로 다 치울 때까지 쏜다. 걸린 초를 돌려준다 */
+async function partyPurifyScene(kind: PartyPurifyKind, pick: string): Promise<number> {
+  await partyCombatLoad();
+  partyDef.lastWave = true;
+  partyPurifyPick = pick;
+  partyPurifySpawn(kind);
+  partySetAttack(true);
+  const t0 = performance.now();
+  const r = await Promise.race([partyDefWaveCleared(), sleep(PARTY_PURIFY.cap * 1000).then(() => "cap")]);
+  const sec = (performance.now() - t0) / 1000;
+  if (r === "cap") for (const m of partyCombat.mobs) if (m.alive) partyLandHit(m), (m.hp = 0);
+  partySetAttack(false);
+  partyPurifyPick = null;
+  partyFormation = null;
+  partyDef.lastWave = false;
+  partyPurifyLog.push({ scene: kind, pick, sec: +sec.toFixed(1), capped: r === "cap" });
+  return sec;
+}
+
+/** 펫 찾기: 펫이 앞쪽 수풀까지 뛰어갔다 돌아온다 */
+async function partyPetFind(): Promise<void> {
+  const st = party?.stage;
+  if (!st?.getPlayerWorld) return;
+  const me = st.getPlayerWorld();
+  const fx = -Math.sin(me.yaw);
+  const fz = -Math.cos(me.yaw);
+  partyPetSeek = { x: me.x + fx * 5 - fz * 2.5, z: me.z + fz * 5 + fx * 2.5 };
+  await sleep(2600);
+  partyPetSeek = null;
+  await sleep(2000);
+}
+const partySkillFx: Array<{ mesh: import("three").Mesh; t: number; r: number }> = [];
+
+function partySkillReset() {
+  partySkill.picks.clear();
+  syncPartyHud();
+}
+/** 숲 외출 중이면 정화 단계 n/5. HUD가 먼저 그려질 수 있어 선언 전 접근을 막는다 */
+function forestPurifyGauge(): string | null {
+  try {
+    if (!forestBackdropOn) return null;
+    return `<span class="party-purify-gauge" title="숲 정화">정화 <b>${forestPurifyStage()}</b><i>/${FOREST_PURIFY.steps}</i></span>`;
+  } catch {
+    return null;
+  }
+}
+/** HUD가 먼저 그려질 수 있어 선언 전 접근을 막는다 */
+function partyGrowList(): Array<[string, number]> {
+  try {
+    return [...partySkill.picks].map(([k, v]) => [k, v.n]);
+  } catch {
+    return [];
+  }
+}
+/** 예전 스킬 학습 보상 카드 틀. 머리말과 종류 칸만 성장으로 바꾼다 */
+async function partyGrowCard(name: string, plus: number) {
+  const card = document.createElement("div");
+  card.className = "card skill-reward-card";
+  const title = document.createElement("div");
+  title.className = "skill-reward-title";
+  title.textContent = plus ? "성장이 세졌다." : "성장했다.";
+  const row = buildSkillRewardRow(name, PARTY_SKILL_ICON[name] ?? "✦", plus > 0);
+  row.querySelector(".skill-reward-kind")!.textContent = "성장";
+  row.querySelector(".skill-reward-chip")!.textContent = plus ? `${name} +${plus}` : name;
+  card.appendChild(title);
+  card.appendChild(row);
+  feedEl.appendChild(card);
+  watchFeedCardGrowth(card, 700);
+  scrollFeedToBottom({ el: card, anticipatePx: 36 });
+  await sleep(80);
+  void row.offsetWidth;
+  row.classList.add("skill-reward-in");
+  scrollFeedToBottom({ el: card, anticipatePx: 16 });
+  await sleep(420);
+}
+function partySkillPick(name: string) {
+  const p = partySkill.picks.get(name);
+  partySkill.picks.set(name, { n: p ? Math.min(PARTY_SKILL.plusMax, p.n + 1) : 0, t0: performance.now() / 1000 });
+  syncPartyHud();
+}
+/** 턴에 나가 있으면 + 단계(0부터), 대기 중이거나 고른 적 없으면 -1 */
+function partySkillLv(name: string): number {
+  const p = partySkill.picks.get(name);
+  if (partyPurifyPick) return name === partyPurifyPick ? (p?.n ?? 0) : -1;
+  if (!p) return -1;
+  const cfg = PARTY_SKILL[name as "연사"] as { wait?: number } | undefined;
+  const cyc = PARTY_SKILL.turn + (cfg?.wait ?? 6);
+  return (performance.now() / 1000 - p.t0) % cyc < PARTY_SKILL.turn ? p.n : -1;
+}
+function partySkillAt(a: number[], lv: number): number {
+  return a[Math.max(0, Math.min(lv, a.length - 1))]!;
+}
+
+function partyNearHit(x: number, z: number, skip?: Set<PartyMob>): PartyMob | null {
+  let hit: PartyMob | null = null;
+  let best = PARTY_HIT_RAD * 0.7;
+  for (const m of partyCombat.mobs) {
+    if (!m.alive || skip?.has(m)) continue;
+    const d = Math.hypot(m.x - x, m.z - z);
+    if (d < best) {
+      best = d;
+      hit = m;
+    }
+  }
+  return hit;
+}
+
+function partySkillFlash(x: number, z: number, r: number, color: number) {
+  const T = partyCombat.T;
+  if (!T || !partyCombat.root) return;
+  const mesh = new T.Mesh(new T.SphereGeometry(1, 16, 10), new T.MeshBasicMaterial({ color, transparent: true, opacity: 0.9, blending: T.AdditiveBlending, depthWrite: false }));
+  mesh.position.set(x, partyGround(x, z) + 0.15, z);
+  mesh.scale.setScalar(r * 0.3);
+  partyCombat.root.add(mesh);
+  partySkillFx.push({ mesh, t: 0, r });
+}
+
+function partySkillFxTick(dt: number) {
+  for (let i = partySkillFx.length - 1; i >= 0; i--) {
+    const f = partySkillFx[i]!;
+    f.t += dt;
+    const u = Math.min(1, f.t / 0.6);
+    f.mesh.scale.set(f.r * (0.3 + 0.7 * u), f.r * 0.35 * (0.3 + 0.7 * u), f.r * (0.3 + 0.7 * u));
+    (f.mesh.material as import("three").MeshBasicMaterial).opacity = 0.9 * (1 - u);
+    if (u < 1) continue;
+    f.mesh.removeFromParent();
+    f.mesh.geometry.dispose();
+    (f.mesh.material as import("three").Material).dispose();
+    partySkillFx.splice(i, 1);
+  }
+}
+
+/** 바주카가 터진 자리: 범위는 둘레를 치고, 분열은 갈래 탄을 낸다 */
+function partyMissileImpact(ms: PartyMissile, x: number, z: number, hit: PartyMob | null) {
+  const T = partyCombat.T;
+  if (!T || !partyCombat.root) return;
+  const color = ms.color ?? 0xffc14a;
+  if (ms.splash) {
+    for (const m of partyCombat.mobs) if (m.alive && m !== hit && Math.hypot(m.x - x, m.z - z) <= ms.splash) partyLandHit(m);
+    partySkillFlash(x, z, ms.splash, color);
+  }
+  if (ms.split) {
+    const base = Math.atan2(ms.d.x, ms.d.z);
+    const y = ms.mesh.position.y;
+    for (let k = 0; k < ms.split.n; k++) {
+      const a = base + ((k + 0.5) / ms.split.n) * Math.PI * 2;
+      const fx = Math.sin(a);
+      const fz = Math.cos(a);
+      const o = new T.Vector3(x, y, z);
+      const mesh = new T.Mesh(new T.SphereGeometry(0.08, 8, 6), new T.MeshBasicMaterial({ color }));
+      mesh.position.copy(o);
+      partyCombat.root.add(mesh);
+      partyCombat.missiles.push({ mesh, o, d: new T.Vector3(fx, 0, fz), speed: 12, arc: 0, traveled: 0, maxDist: ms.split.dist, damage: true, ox: x - fx * 0.4, oz: z - fz * 0.4, fx, fz, pierce: 1, skip: new Set(hit ? [hit] : []), color });
+    }
+    partySkillFlash(x, z, 0.6, color);
+  }
+}
+
+function partyAttackClip(w: PartyWeapon | null, moving: boolean): string {
+  if (w === "throw") return moving ? "walk_throw" : "throw";
+  if (w === "bazooka") return moving ? "walk_gun" : "shoot2";
+  return moving ? "walk_shoot" : "shoot";
+}
+
+/** 전투 중에는 루온과 리아가 알아서 쏜다. 켤 때 무기를 꺼내고 끌 때 넣는다 */
+function partySetAttack(on: boolean) {
+  partyAttack = on;
+  if (on) {
+    void partyCombatLoad().then(() => {
+      if (!partyAttack || partyPurifyPick) return;
+      partyWaveBegin();
+    });
+  } else partyCombatClear();
+}
+
+function partyDriveChar(c: PartyChar, key: "RUON" | "RIA", s: PartyMemberState, moving: boolean, now: number) {
+  const force = partyForce.get(key);
+  if (force) {
+    if (c.current !== force.clip) c.play(force.clip);
+    return;
+  }
+  if (now < s.lockUntil) return;
+  const w = partyWeapon[key];
+  const launcher = w === "bazooka";
+  if (partyAttack && !s.drawn && w !== "throw") {
+    const clip = launcher ? "draw_launcher" : "draw";
+    s.drawn = true;
+    c.play(clip, true);
+    s.lockUntil = now + c.duration(clip) * 1000;
+    return;
+  }
+  if (!partyAttack && s.drawn) {
+    const clip = launcher ? "holster_launcher" : "holster";
+    s.drawn = false;
+    c.play(clip, true);
+    s.lockUntil = now + c.duration(clip) * 1000;
+    return;
+  }
+  const want =
+    partyAttack && partyCombat.aim[key] != null
+      ? partyAttackClip(w, true)
+      : partyTravel
+        ? "run"
+        : moving
+          ? "walk"
+          : "idle";
+  if (c.current !== want) c.play(want);
+}
+
+function partyForestToWorld(bg: ForestBg, fx: number, fy: number) {
+  const th = bg.root.rotation.y;
+  const qx = fx - partyAnchor.x;
+  const qz = partyAnchor.y - fy;
+  const c = Math.cos(th);
+  const s = Math.sin(th);
+  return { x: bg.root.position.x + qx * c + qz * s, z: bg.root.position.z - qx * s + qz * c };
+}
+function partyWorldToForest(bg: ForestBg, wx: number, wz: number) {
+  const th = bg.root.rotation.y;
+  const dx = wx - bg.root.position.x;
+  const dz = wz - bg.root.position.z;
+  const c = Math.cos(th);
+  const s = Math.sin(th);
+  const qx = dx * c - dz * s;
+  const qz = dx * s + dz * c;
+  return { x: qx + partyAnchor.x, y: partyAnchor.y - qz };
+}
+const partyRay: { r: import("three").Raycaster | null; o: import("three").Vector3 | null; d: import("three").Vector3 | null } = { r: null, o: null, d: null };
+/** 숲 좌표의 땅 높이(숲 자체 기준). 0.5m 칸마다 한 번만 잰다 */
+function partyHeightLocal(bg: ForestBg, fx: number, fy: number): number | null {
+  if (!bg.terrain.length || !partyRay.r) return null;
+  const key = `${Math.round(fx * 2)},${Math.round(fy * 2)}`;
+  const hit0 = partyHeightCache.get(key);
+  if (hit0 !== undefined) return hit0;
+  const w = partyForestToWorld(bg, fx, fy);
+  bg.root.updateMatrixWorld(true);
+  partyRay.o!.set(w.x, 400, w.z);
+  partyRay.r.set(partyRay.o!, partyRay.d!);
+  const hit = partyRay.r.intersectObjects(bg.terrain, false)[0];
+  if (!hit) return null;
+  const h = hit.point.y - bg.inner.position.y;
+  partyHeightCache.set(key, h);
+  return h;
+}
+
+function partyApplyAnchor(bg: ForestBg) {
+  bg.inner.position.x = -partyAnchor.x;
+  bg.inner.position.z = partyAnchor.y;
+}
+
+function partyResetForest(bg: ForestBg) {
+  partyPage = 0;
+  partyTravel = null;
+  partyAnchor = { x: bg.spawn.x, y: bg.spawn.y };
+  partyHeightCache.clear();
+  partyApplyAnchor(bg);
+  void import("three").then((THREE) => {
+    if (!partyRay.r) {
+      partyRay.r = new THREE.Raycaster();
+      partyRay.o = new THREE.Vector3();
+      partyRay.d = new THREE.Vector3(0, -1, 0);
+    }
+  });
+}
+
+/** 전진·후퇴 한 번에 움직이는 거리(m), 페이지 타원 안쪽 여유(1 = 경계선). 임시값 */
+const PARTY_STEP = { dist: 4, edge: 0.9 };
+/**
+ * 전진 = 파티가 보는 쪽, 후퇴 = 반대(정화 진지 쪽). 지금 페이지 타원 밖으로는 못 나간다.
+ * 움직인 거리(m)를 돌려준다. 0이면 이미 끝이다.
+ */
+function partyStep(dir: 1 | -1, dist = PARTY_STEP.dist): Promise<number> {
+  const bg = forestBg;
+  const st = forestStage();
+  if (!forestBackdropOn || !bg || !st?.getPlayerWorld || partyTravel) return Promise.resolve(0);
+  const z = bg.zones[partyPage];
+  if (!z) return Promise.resolve(0);
+  const me = st.getPlayerWorld();
+  const f = partyWorldToForest(bg, me.x, me.z);
+  const yaw = (st as unknown as { yaw: number }).yaw ?? 0;
+  const g = partyWorldToForest(bg, me.x - Math.sin(yaw) * dist * dir, me.z - Math.cos(yaw) * dist * dir);
+  let tx = g.x;
+  let ty = g.y;
+  const e = Math.hypot((tx - z.x) / z.rx, (ty - z.y) / z.ry);
+  if (e > PARTY_STEP.edge) {
+    tx = z.x + ((tx - z.x) * PARTY_STEP.edge) / e;
+    ty = z.y + ((ty - z.y) * PARTY_STEP.edge) / e;
+  }
+  const dx = tx - f.x;
+  const dy = ty - f.y;
+  const moved = Math.hypot(dx, dy);
+  // 경계 쪽으로 더 밀리지 않으면 끝으로 본다
+  const e0 = Math.hypot((f.x - z.x) / z.rx, (f.y - z.y) / z.ry);
+  if (moved < 0.3 || (e0 >= PARTY_STEP.edge - 0.02 && Math.hypot((tx - z.x) / z.rx, (ty - z.y) / z.ry) >= e0 - 0.02 && moved < 1)) return Promise.resolve(0);
+  return new Promise((done) => {
+    partyTravel = {
+      from: { ...partyAnchor },
+      to: { x: partyAnchor.x + dx, y: partyAnchor.y + dy },
+      t: 0,
+      dur: Math.max(dist > PARTY_STEP.dist ? 3.6 : 0.8, moved / 5),
+      done: () => done(moved),
+    };
+  });
+}
+
+/** 싸움이 시작되면 화면 가운데를 가로지르는 한 줄. 고를 때까지 남겨 둔다 */
+function partyRushBanner(line: string): () => void {
+  bannerOverlay.style.display = "flex";
+  bannerOverlay.className = "banner-overlay banner-rush";
+  bannerText.className = "banner-text";
+  bannerText.textContent = line;
+  return () => {
+    if (bannerText.textContent !== line) return;
+    bannerOverlay.style.display = "none";
+    bannerOverlay.className = "banner-overlay";
+    bannerText.textContent = "";
+  };
+}
+
+/** 적이 오는 쪽에 시안 갈매기 셋. 걷기가 끝나면 치운다 */
+async function partyRushMarks(): Promise<() => void> {
+  const bg = forestBg;
+  const st = forestStage();
+  if (!bg || !st?.getPlayerWorld) return () => {};
+  const THREE = await import("three");
+  const me = st.getPlayerWorld();
+  const f = partyWorldToForest(bg, me.x, me.z);
+  const yaw = (st as unknown as { yaw: number }).yaw ?? 0;
+  const ahead = partyWorldToForest(bg, me.x - Math.sin(yaw), me.z - Math.cos(yaw));
+  const dx = ahead.x - f.x;
+  const dy = ahead.y - f.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  const group = new THREE.Group();
+  bg.inner.add(group);
+  const mat = new THREE.MeshBasicMaterial({
+    color: 0x0fbec7,
+    transparent: true,
+    opacity: 0.95,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  });
+  for (const dist of [8, 13, 18]) {
+    const shape = new THREE.Shape();
+    shape.moveTo(0, 1.1);
+    shape.lineTo(0.85, -0.7);
+    shape.lineTo(0, -0.22);
+    shape.lineTo(-0.85, -0.7);
+    shape.closePath();
+    const mesh = new THREE.Mesh(new THREE.ShapeGeometry(shape), mat);
+    mesh.scale.set(2.6, 2.6, 2.6);
+    const px = f.x + ux * dist;
+    const py = f.y + uy * dist;
+    const h = (partyHeightLocal(bg, px, py) ?? -bg.inner.position.y) + 1.4;
+    mesh.position.set(px, h, -py);
+    mesh.rotation.y = Math.atan2(ux, uy);
+    group.add(mesh);
+  }
+  return () => {
+    group.removeFromParent();
+    group.traverse((o) => {
+      const mesh = o as import("three").Mesh;
+      mesh.geometry?.dispose();
+    });
+    mat.dispose();
+  };
+}
+
+/** 땅이 움직인 만큼 오염체·탄도 같이 옮긴다(둘은 숲 바깥 좌표) */
+function partyCarry(dx: number, dz: number) {
+  if (!dx && !dz) return;
+  for (const m of partyCombat.mobs) {
+    m.x += dx;
+    m.z += dz;
+  }
+  for (const ms of partyCombat.missiles) {
+    ms.mesh.position.x += dx;
+    ms.mesh.position.z += dz;
+    ms.o.x += dx;
+    ms.o.z += dz;
+    ms.ox += dx;
+    ms.oz += dz;
+  }
+}
+
+/** "위로 이동"을 누르면 파티가 다음 페이지 가운데로 올라간다. 땅이 뒤로 흐르고 셋은 뛴다 */
+function partyTravelToPage(page: number): Promise<void> {
+  const bg = forestBg;
+  const st = forestStage();
+  if (!forestBackdropOn || !bg || !st?.getPlayerWorld) return Promise.resolve();
+  const zone = bg.zones[page];
+  if (!zone) return Promise.resolve();
+  const me = st.getPlayerWorld();
+  const f = partyWorldToForest(bg, me.x, me.z);
+  const dx = zone.x - f.x;
+  const dy = zone.y - f.y;
+  const dist = Math.hypot(dx, dy);
+  // 가는 쪽을 보게 한다. 스테이지 yaw 0 = -Z
+  const th = bg.root.rotation.y;
+  const wx = dx * Math.cos(th) + -dy * Math.sin(th);
+  const wz = -dx * Math.sin(th) + -dy * Math.cos(th);
+  if (dist > 0.01) (st as unknown as { yaw: number }).yaw = Math.atan2(-wx, -wz);
+  return new Promise((done) => {
+    partyTravel = {
+      from: { ...partyAnchor },
+      to: { x: partyAnchor.x + dx, y: partyAnchor.y + dy },
+      t: 0,
+      dur: Math.min(12, Math.max(3, dist / 8)),
+      done: () => {
+        partyPage = page;
+        done();
+      },
+    };
+  });
+}
+
+function partyForestStep(st: ForestStageLike, dt: number): ((x: number, z: number) => number) | null {
+  const bg = forestBg;
+  if (!forestBackdropOn || !bg || !st.getPlayerWorld) return null;
+  if (partyTravel) {
+    const tr = partyTravel;
+    tr.t = Math.min(1, tr.t + dt / tr.dur);
+    const k = tr.t < 0.5 ? 2 * tr.t * tr.t : 1 - Math.pow(-2 * tr.t + 2, 2) / 2;
+    const w0 = partyForestToWorld(bg, 0, 0);
+    partyAnchor = { x: tr.from.x + (tr.to.x - tr.from.x) * k, y: tr.from.y + (tr.to.y - tr.from.y) * k };
+    partyApplyAnchor(bg);
+    const w1 = partyForestToWorld(bg, 0, 0);
+    partyCarry(w1.x - w0.x, w1.z - w0.z);
+    if (tr.t >= 1) {
+      partyTravel = null;
+      tr.done();
+    }
+  } else if (forestCourse) {
+    // 캐릭터는 카메라 앞에 두고, 숲만 밀어서 걸어갈 수 있는 칸으로 옮긴다
+    const me = st.getPlayerWorld();
+    const homeX = bg.root.position.x;
+    const homeZ = bg.root.position.z;
+    const body = st as unknown as { px: number; pz: number };
+    if (Math.hypot(me.x - homeX, me.z - homeZ) > 0.03) {
+      const f = partyWorldToForest(bg, me.x, me.z);
+      if (forestCourse.walkableAt(f.x, f.y)) {
+        const w0 = partyForestToWorld(bg, partyAnchor.x, partyAnchor.y);
+        partyAnchor = { x: f.x, y: f.y };
+        partyApplyAnchor(bg);
+        const w1 = partyForestToWorld(bg, partyAnchor.x, partyAnchor.y);
+        partyCarry(w1.x - w0.x, w1.z - w0.z);
+      }
+      body.px = homeX;
+      body.pz = homeZ;
+    }
+  } else {
+    // 코스가 아직 없으면 구역 타원 안에만 둔다
+    const me = st.getPlayerWorld();
+    const f = partyWorldToForest(bg, me.x, me.z);
+    const z = bg.zones[partyPage];
+    if (z) {
+      const e = Math.hypot((f.x - z.x) / z.rx, (f.y - z.y) / z.ry);
+      if (e > 1) {
+        const w = partyForestToWorld(bg, z.x + (f.x - z.x) / e, z.y + (f.y - z.y) / e);
+        const sp = st as unknown as { px: number; pz: number };
+        sp.px = w.x;
+        sp.pz = w.z;
+        partyOutCount++;
+      }
+    }
+  }
+  const me = st.getPlayerWorld();
+  const fp = partyWorldToForest(bg, me.x, me.z);
+  const h = partyHeightLocal(bg, fp.x, fp.y);
+  if (h != null) bg.inner.position.y = -h;
+  return (x: number, z: number) => {
+    const f = partyWorldToForest(bg, x, z);
+    const hl = partyHeightLocal(bg, f.x, f.y);
+    return hl == null ? 0 : hl + bg.inner.position.y;
+  };
+}
+
+function partyFollow(s: PartyMemberState, tx: number, tz: number, speed: number, dt: number): { moving: boolean; dirYaw: number | null } {
+  const dx = tx - s.x;
+  const dz = tz - s.z;
+  const dist = Math.hypot(dx, dz);
+  if (dist > 14) {
+    s.x = tx;
+    s.z = tz;
+    return { moving: false, dirYaw: null };
+  }
+  if (dist < 0.2) return { moving: false, dirYaw: null };
+  const step = Math.min(dist, (dist > 3 ? speed * 1.6 : speed) * dt);
+  s.x += (dx / dist) * step;
+  s.z += (dz / dist) * step;
+  return { moving: true, dirYaw: Math.atan2(dx, dz) };
+}
+
+/**
+ * 숲 카메라 = forest-play-tool 후면 고정(follow)과 같은 거리·높이·FOV·시선(가슴 = 키 × 0.7).
+ * 거리·높이는 스테이지가 이미 같은 journey3d 설정 배수로 잡으므로 시선만 바꾼다.
+ * offY = 아래 패널에 가리지 않도록 화면 창을 아래로 미는 비율(카메라 자리·방향은 그대로).
+ */
+const partyCam = { on: true, lookMul: 0.7, offY: 0.2 };
+let partyCamScene: unknown = null;
+function partyHookCamera(st: ForestStageLike) {
+  const s = st as unknown as {
+    scene: import("three").Scene;
+    camera: import("three").PerspectiveCamera;
+    charH: number;
+    tpsLookMul: number;
+    px: number;
+    pz: number;
+    yaw: number;
+    viewMode: string;
+    viewW: number;
+    viewH: number;
+  };
+  if (!s.scene || !s.camera || partyCamScene === s.scene) return;
+  partyCamScene = s.scene;
+  const prev = s.scene.onBeforeRender;
+  s.scene.onBeforeRender = function (this: import("three").Scene, ...args: Parameters<typeof prev>) {
+    prev.apply(this, args);
+    const cam = s.camera;
+    if (partyCam.on && forestBackdropOn && s.viewMode !== "fps") {
+      const ahead = s.charH * s.tpsLookMul;
+      cam.lookAt(s.px - Math.sin(s.yaw) * ahead, s.charH * partyCam.lookMul, s.pz - Math.cos(s.yaw) * ahead);
+      cam.updateMatrixWorld();
+      const w = s.viewW || 1;
+      const h = s.viewH || 1;
+      if (partyCam.offY) cam.setViewOffset(w, h, 0, h * partyCam.offY, w, h);
+      else if (cam.view?.enabled) cam.clearViewOffset();
+    } else if (cam.view?.enabled) {
+      cam.clearViewOffset();
+    }
+  };
+}
+
+/** 들판에 흩어진 표식을 걷을 수 있는 길 한가운데로 다시 깐다 */
+function forestPinNodes(groundY: (x: number, z: number) => number) {
+  const course = forestCourse;
+  const bg = forestBg;
+  if (!forestBackdropOn || !course || !bg || !journey3d) return;
+  const n = journey3d.nodeMarkerCount();
+  const pads = course.pads;
+  if (!n || !pads.length) return;
+  journey3d.pinNodes(
+    Array.from({ length: n }, (_, i) => {
+      const pad = pads[i % pads.length]!;
+      const lap = Math.floor(i / pads.length);
+      const y = pad.y + lap * 3;
+      const fy = course.walkableAt(pad.x, y) ? y : pad.y;
+      const w = partyForestToWorld(bg, pad.x, fy);
+      return { x: w.x, z: w.z, y: groundY(w.x, w.z) + 0.08 };
+    }),
+  );
+}
+
+function partyFrame(t: number) {
+  requestAnimationFrame(partyFrame);
+  const dt = partyLast ? Math.min(0.1, (t - partyLast) / 1000) : 0;
+  partyLast = t;
+  const st = forestStage();
+  if (!st?.scene || !st.getPlayerWorld) return;
+  if (!party || party.stage !== st) {
+    void ensureParty(st);
+    return;
+  }
+  const p = party;
+  partyHookCamera(st);
+  const sprite = st.player as { visible: boolean } | undefined;
+  const tps = st.viewMode !== "fps";
+  if (sprite) sprite.visible = false;
+  const showCast = tps;
+  const ground = partyForestStep(st, dt) ?? (() => 0.08);
+  partyGround = ground;
+  forestPinNodes(ground);
+  const me = st.getPlayerWorld();
+  const sy = Math.sin(me.yaw);
+  const cy = Math.cos(me.yaw);
+  const meMoving = typeof st.isMoving === "function" ? !!(st.isMoving as () => boolean).call(st) : false;
+  const meShoot = typeof st.isShooting === "function" ? !!(st.isShooting as () => boolean).call(st) : false;
+  const faceCamYaw = me.yaw;
+  const backYaw = me.yaw + Math.PI;
+
+  // 루온 = 조작 캐릭터
+  p.st.RUON.x = me.x;
+  p.st.RUON.z = me.z;
+  p.ruon.root.visible = showCast;
+  p.ruon.root.position.set(me.x, ground(me.x, me.z), me.z);
+  p.ruon.root.rotation.y = partyForce.get("RUON")?.faceCam ? faceCamYaw : partyCombat.aim.RUON ?? backYaw;
+  const savedAttack = partyAttack;
+  if (meShoot) partyAttack = true;
+  partyDriveChar(p.ruon, "RUON", p.st.RUON, meMoving, t);
+  partyAttack = savedAttack;
+
+  // 리아 = 왼쪽 뒤. 왼쪽 = (-cos, sin), 뒤 = (sin, cos)
+  const ra = partyFollow(p.st.RIA, me.x - cy * 1.1 + sy * 1.0, me.z + sy * 1.1 + cy * 1.0, 3.2, dt);
+  p.ria.root.visible = false;
+  p.ria.root.position.set(p.st.RIA.x, ground(p.st.RIA.x, p.st.RIA.z), p.st.RIA.z);
+  p.ria.root.rotation.y = partyForce.get("RIA")?.faceCam ? faceCamYaw : partyCombat.aim.RIA ?? ra.dirYaw ?? backYaw;
+  partyDriveChar(p.ria, "RIA", p.st.RIA, ra.moving || meMoving, t);
+
+  // BCAT02 = 오른쪽 뒤
+  const pa = partyPetSeek ? partyFollow(p.st.PET, partyPetSeek.x, partyPetSeek.z, 4.8, dt) : partyFollow(p.st.PET, me.x + cy * 0.9 + sy * 1.3, me.z - sy * 0.9 + cy * 1.3, 4.8, dt);
+  p.pet.root.visible = false;
+  p.pet.root.position.set(p.st.PET.x, ground(p.st.PET.x, p.st.PET.z), p.st.PET.z);
+  p.pet.root.rotation.y = partyForce.get("PET")?.faceCam ? faceCamYaw : pa.dirYaw ?? backYaw;
+  const petForce = partyForce.get("PET");
+  p.pet.play(petForce ? petForce.clip : pa.moving || partyTravel ? "walk" : "idle_sit");
+
+  partyCombatTick(dt, me, [{ key: "RUON", c: p.ruon, s: p.st.RUON }, { key: "RIA", c: p.ria, s: p.st.RIA }], t);
+  partyDefTick(dt, (st as unknown as { camera?: import("three").Camera }).camera);
+  partyApplyProps(p.ruon, "RUON", p.st.RUON);
+  partyApplyProps(p.ria, "RIA", p.st.RIA);
+  p.ruon.tick(dt);
+  p.ria.tick(dt);
+  p.pet.tick(dt);
+}
+requestAnimationFrame(partyFrame);
+(window as unknown as { __party?: unknown }).__party = {
+  cam: partyCam,
+  light: FOREST_BG_MAIN_LIGHT,
+  combat: () => ({ alive: partyCombat.mobs.filter((m) => m.alive).length, missiles: partyCombat.missiles.length, shots: { ...partyCombat.shots }, kills: partyCombat.kills, waves: partyCombat.waves, aim: { ...partyCombat.aim }, mobH: partyCombat.mobH, weapon: { ...partyWeapon }, fx: partySkillFx.length, wave: partyWave.on, left: { ...partyWave.left }, tiers: partyCombat.mobs.filter((m) => m.alive).map((m) => m.tier), marks: partyMarks.length }),
+  stage: () => forestStage(),
+  members: () => (party ? { RUON: [party.ruon.root.position.x, party.ruon.root.position.z], RIA: [party.ria.root.position.x, party.ria.root.position.z], PET: [party.pet.root.position.x, party.pet.root.position.z] } : null),
+  get ready() {
+    return !!party;
+  },
+  clips: () => (party ? { RUON: party.ruon.clips.map((c) => c.name), RIA: party.ria.clips.map((c) => c.name), PET: party.pet.clips } : null),
+  current: () => (party ? { RUON: party.ruon.current, RIA: party.ria.current, PET: party.pet.current } : null),
+  force: (who: string, clip: string | null, faceCam = true) => {
+    if (clip) partyForce.set(who, { clip, faceCam });
+    else partyForce.delete(who);
+  },
+  attack: (on: boolean) => partySetAttack(on),
+  travel: (page: number) => partyTravelToPage(page),
+  step: (dir: 1 | -1) => partyStep(dir),
+  /** 지금 페이지 타원 안 위치. e = 1이 경계선 */
+  where: () => {
+    const st = forestStage();
+    const z = forestBg?.zones[partyPage];
+    if (!forestBg || !st?.getPlayerWorld || !z) return null;
+    const me = st.getPlayerWorld();
+    const f = partyWorldToForest(forestBg, me.x, me.z);
+    return { page: partyPage, x: +f.x.toFixed(2), y: +f.y.toFixed(2), e: +Math.hypot((f.x - z.x) / z.rx, (f.y - z.y) / z.ry).toFixed(3) };
+  },
+  get page() {
+    return partyPage;
+  },
+  get outCount() {
+    return partyOutCount;
+  },
+  forest: () => {
+    const st = forestStage();
+    if (!forestBg || !st?.getPlayerWorld) return null;
+    const me = st.getPlayerWorld();
+    return { ...partyWorldToForest(forestBg, me.x, me.z), terrain: forestBg.terrain.length, zones: forestBg.zones };
+  },
+  weapon: partyWeapon,
+  /** 수비 상태. def.ceaseFire = true 는 테스트 전용(파티·포탑 사격 정지) */
+  def: partyDef,
+  /** 전투 버튼 확인용: skill("연사")는 버튼을 누른 것과 같다 */
+  skill: (name: string) => partySkillPick(name),
+  skillReset: () => partySkillReset(),
+  /** 테스트 전용: 성장 임시값을 바꿔 본다 */
+  skillCfg: PARTY_SKILL,
+  /** 정화 장면 임시값과 장면별 걸린 초 */
+  purifyCfg: PARTY_PURIFY,
+  purifyLog: partyPurifyLog,
+  /** 숲 정화 단계. zone(i)·all()은 테스트 전용 */
+  forestPurify: () => ({ stage: forestPurifyStage(), done: [...forestPurify.done], all: forestPurify.all, ready: !!forestPurify.ready, sky: forestPurify.skyKey }),
+  forestPurifyZone: (i: number) => forestPurifyPage(i, async () => {}),
+  forestPurifyAll: (page = 4) => forestPurifyTower(page),
+  skills: () => [...partySkill.picks].map(([k, v]) => ({ k, plus: v.n, lv: partySkillLv(k) })),
+  defState: () => ({ bites: partyDef.bites, lastWave: partyDef.lastWave, alive: partyCombat.mobs.filter((m) => m.alive).length, structs: partyDef.structs.map((s) => ({ id: s.id, kind: s.kind, page: s.page, hp: s.hp, max: s.maxHp, fallen: s.hp <= 0, w: [+s.wx.toFixed(1), +s.wz.toFixed(1)] })) }),
+};
+/** 외출 필러 23번. 문장과 선택만. 룰렛은 열지 않는다. 웨이브 중에는 위로 걷지 않는다. */
+async function playTenMinutePillars(): Promise<void> {
+  const pickedSkills: string[] = [];
+  partySkillReset();
+  const say = async (body: string) => {
+    await appendCard({ body });
+  };
+  const pick = async (labels: string[]) => labels[await askPillarChoices(labels)]!;
+
+  await setForestBackdrop(true);
+  await say("무엇을 들고 갈까.");
+  const weapon = await pick(["권총", "바주카"]);
+  const skills = weapon === "바주카" ? ["분열", "유도", "범위"] : ["연사", "사선", "관통"];
+  // 고른 무기를 루온·리아 사격에 연결한다
+  partyWeapon.RUON = partyWeapon.RIA = weapon === "바주카" ? "bazooka" : "pistol";
+  await say(`${weapon}을(를) 든다. 이 외출에서는 바꾸지 않는다.`);
+
+  /** 무너지면 true. base = 1페이지 정화 진지, upper = 이 페이지 포탑이 모두 무너짐 */
+  const fight = async (watch: "base" | "upper"): Promise<boolean> => {
+    partyDef.lastWave = false;
+    partySetAttack(true);
+    const fell = partyDefWatch(watch, partyPage);
+    const clearMarks = partyRushMarks();
+    const hideBanner = partyRushBanner("오염이 밀려온다");
+    const walked = partyStep(1, 16);
+    const opened = await Promise.race([fell, walked.then(() => "봄" as const)]);
+    (await clearMarks)();
+    if (opened === PARTY_FELL) {
+      hideBanner();
+      partyDefDropChoices();
+      return true;
+    }
+    let r = await Promise.race([pick(skills), fell]);
+    hideBanner();
+    if (r === PARTY_FELL) {
+      partyDefDropChoices();
+      return true;
+    }
+    {
+      pickedSkills.push(r);
+      partySkillPick(r);
+      await partyGrowCard(r, partySkill.picks.get(r)?.n ?? 0);
+    }
+    // 이 무리만 마저 치운다. 그동안에도 무너질 수 있다
+    partyDef.lastWave = true;
+    return (await Promise.race([partyDefWaveCleared(), fell])) === PARTY_FELL;
+  };
+
+  const placeTwo = async (line: string, a: string, b: string) => {
+    await partyDefMark(partyPage);
+    await say(line);
+    const first = await pick([a, b]);
+    const second = first === a ? b : a;
+    await partyDefBuild(first, partyPage, 0);
+    await partyDefBuild(second, partyPage, 1);
+    await say(`${first}을(를) 놓았다. ${second}도 놓았다.`);
+  };
+
+  // 위 포탑이 무너지면 여기로 돌아온다. 정화 진지 붕괴는 외출 종료라 이 루프 밖으로 나간다.
+  for (;;) {
+    // 돌아오면 1페이지부터 다시 세운다
+    partySetAttack(false);
+    partyDefClear();
+    await setForestBackdrop(true);
+    await say("최하단에 정화 진지를 세울까.");
+    await pick(["정화 진지"]);
+    await partyDefBuild("정화 진지", 0, -1);
+    await say("정화 진지를 세웠다.");
+
+    partyDefPack();
+    await say("몬스터가 몰려온다.");
+    const side = await pick(["왼쪽", "가운데", "오른쪽"]);
+    await say(side === "가운데" ? "가운데로 맞이한다." : `${side}으로 맞이한다.`);
+
+    await placeTwo("포탑을 놓을까.", "투석", "대포");
+    // 정화 진지가 무너지면 아래 종료로 가고 23번 정화는 하지 않는다.
+    const purifyFell = await fight("base");
+    if (purifyFell) {
+      partySetAttack(false);
+      await say("정화 진지가 무너졌다. 오늘은 여기까지다.");
+      await pick(["돌아간다"]);
+      void setForestBackdrop(false);
+      return;
+    }
+    partySetAttack(false);
+    await say("웨이브가 끝났다.");
+    await forestPurifyPage(partyPage, say);
+
+    await say("위로 이동할까.");
+    await pick(["이동"]);
+    await partyTravelToPage(1);
+    await say("다음 페이지로 올라간다.");
+    await placeTwo("포탑을 놓을까.", "투척 포탑", "총");
+    let upperFell = await fight("upper");
+    if (upperFell) {
+      partySetAttack(false);
+      await say("위 포탑이 무너졌다. 오염체가 돌아간다.");
+      await pick(["다시 세운다"]);
+      continue;
+    }
+    partySetAttack(false);
+    await say("웨이브가 끝났다.");
+    await forestPurifyPage(partyPage, say);
+
+    await say("더 위로 이동할까.");
+    await pick(["이동"]);
+    await partyTravelToPage(2);
+    await say("다음 페이지로 올라간다.");
+    await placeTwo("포탑을 놓을까.", "발리스타", "울타리");
+    upperFell = await fight("upper");
+    if (upperFell) {
+      partySetAttack(false);
+      await say("위 포탑이 무너졌다. 오염체가 돌아간다.");
+      await pick(["다시 세운다"]);
+      continue;
+    }
+    partySetAttack(false);
+    await say("웨이브가 끝났다.");
+    await forestPurifyPage(partyPage, say);
+
+    await say("더 위로 이동할까.");
+    await pick(["이동"]);
+    await partyTravelToPage(3);
+    await say("다음 페이지로 올라간다.");
+    await say("남은 울타리를 놓을까.");
+    const fence = await pick(["울타리", "그만"]);
+    if (fence === "울타리") await partyDefBuild("울타리", partyPage, 2);
+    await say(fence === "울타리" ? "울타리를 놓았다." : "울타리는 놓지 않는다.");
+    upperFell = await fight("upper");
+    if (upperFell) {
+      partySetAttack(false);
+      await say("위 포탑이 무너졌다. 오염체가 돌아간다.");
+      await pick(["다시 세운다"]);
+      continue;
+    }
+    partySetAttack(false);
+    await say("웨이브가 끝났다.");
+    await forestPurifyPage(partyPage, say);
+    break;
+  }
+
+  // 18 → 19: 버튼 없이 5페이지로 넘어간다
+  partyDefClear();
+  partyCombatClear();
+  await partyTravelToPage(4);
+
+  const purify = async (line: string, kind: PartyPurifyKind, name: string) => {
+    await say(line);
+    const label = await pick(skills);
+    await partyPurifyScene(kind, label);
+    await say(`${name}을(를) 정화했다.`);
+  };
+  await purify("한 줄을 정화할까.", "line", "한 줄");
+  await purify("뭉친 무리를 정화할까.", "pack", "뭉친 무리");
+  await purify("흩어진 잔당을 정화할까.", "scatter", "흩어진 잔당");
+
+  await say("맵 끝에 정화탑을 세울까.");
+  await pick(["정화탑"]);
+  await forestPurifyTower(partyPage);
+  await say(`숲이 정화됐다. 정화 ${forestPurifyStage()}/${FOREST_PURIFY.steps}.`);
+
+  await say("펫을 찾을까.");
+  const pet = await pick(["찾는다", "넘어간다"]);
+  if (pet === "찾는다") {
+    await say("펫을 찾는다.");
+    await partyPetFind();
+    await say("펫이 돌아왔다. 정화는 유지된다.");
+  } else await say("펫은 넘어간다. 정화는 유지된다.");
+  await say("로비로 돌아간다.");
+  partySetAttack(false);
+  await sleep(1500);
+  void setForestBackdrop(false);
+}
+
 async function enterJourney() {
   if (journeyBootstrapping) return;
   if (appMode === "journey" && journeyBootstrapped && lobby && !lobby.isOn()) {
@@ -2523,12 +5277,11 @@ async function enterJourney() {
         const me = journey3d?.getPlayer();
         if (me) explore?.syncFrom3D(me.xPct, me.yPct, me.yawDeg);
       }
+      await setForestBackdrop(true);
       await shutterOpen(phoneEl);
       if (journey3d) await journey3d.playEnterReveal();
       // 43 — 장 헤더 → 도착 카드 → 리더 대화 + 방랑자 독백
       ensureChapterHeader(spawnAreaId());
-      await appendCard({ body: textFor(data, "t_hometown") });
-      await fireDialogue("JOURNEY_START");
       ensureDayHeader(1);
       state.day = 1;
       lastStageMapId = getStageMapForDay(data, 1)?.stage_map_id ?? null;
@@ -2539,6 +5292,7 @@ async function enterJourney() {
        * 남긴 것: startSkillTier()는 훈장 시스템 구현 시 다시 쓸 수 있어 함수는 보존.
        */
       journeyBootstrapped = true;
+      void fireDialogue("AREA_ENTER", startId);
       setIdle();
     } finally {
       journeyBootstrapping = false;
@@ -2546,6 +5300,7 @@ async function enterJourney() {
     }
     return;
   }
+  await setForestBackdrop(true);
   setIdle();
 }
 
@@ -4442,114 +7197,14 @@ async function maybeOfferLoopLuckSkill(): Promise<void> {
   await offerLoopSkill();
 }
 
-async function playBugPetEncounter(at: {
+async function playBugPetEncounter(_at: {
   xPct: number;
   yPct: number;
   x?: number;
   z?: number;
   petId: import("./stage/world3d/CulpritCloud").FieldPetId;
 }): Promise<void> {
-  const cloudMod = await import("./stage/world3d/CulpritCloud");
-  const { loadFieldPet, CulpritCloud } = cloudMod;
-  const petId = at.petId;
-  const petLabel = petId === "Tobby" ? "토비" : petId === "Bolinha" ? "볼리냐" : petId === "Vrum" ? "브룸" : petId;
-  const animal = makeFieldPetRescueAnimal(petId, petLabel);
-
-  // ── 죽은 자리에 펫 점구름 파편 (원본색에 가깝게) ──
-  let cloud: InstanceType<typeof CulpritCloud> | null = null;
-  let raf = 0;
-  let lastT = performance.now();
-  const cleanupFragment = async (spread: boolean) => {
-    if (spread && cloud) {
-      cloud.playSpread();
-      await sleep(480);
-    }
-    if (raf) cancelAnimationFrame(raf);
-    raf = 0;
-    if (cloud) {
-      journey3d?.removeOverlay(cloud.group);
-      cloud.dispose();
-      cloud = null;
-    }
-  };
-
-  if (journey3d?.isOn() && at && Number.isFinite(at.x) && Number.isFinite(at.z)) {
-    const loaded = await loadFieldPet(petId);
-    cloud = new CulpritCloud({
-      form: "pet",
-      count: loaded.count,
-      size: loaded.size,
-    });
-    cloud.setSize(loaded.size);
-    cloud.group.scale.setScalar(0.92 * 0.7); // 툴 대비 ~30% 축소
-    cloud.purify = 1;
-    cloud.purifyTo = 1;
-    cloud.playRise();
-    cloud.playGather();
-    cloud.setWorld(at.x!, at.z!);
-    // 키비주얼 면이 플레이어를 향하게 — 옆에서 보면 납작한 앞면만 보임
-    {
-      const me = journey3d.getPlayerWorld();
-      cloud.group.rotation.y = Math.atan2(me.x - at.x!, me.z - at.z!);
-    }
-    journey3d.addOverlay(cloud.group);
-    const tickFrag = (t: number) => {
-      const dt = Math.min(0.05, (t - lastT) / 1000);
-      lastT = t;
-      if (cloud && journey3d) {
-        const me = journey3d.getPlayerWorld();
-        const p = cloud.group.position;
-        cloud.group.rotation.y = Math.atan2(me.x - p.x, me.z - p.z);
-      }
-      cloud?.tick(dt);
-      raf = requestAnimationFrame(tickFrag);
-    };
-    raf = requestAnimationFrame(tickFrag);
-  }
-
-  await appendCard({
-    body: `🐾 ${petLabel}`,
-    bodyLine2: "벌레가 쓰러진 자리에 점구름 파편이 모인다.",
-    mood: "joy",
-  });
-
-  const go = await askRescueApproachOnNode(animal, at);
-  if (!go) {
-    await cleanupFragment(true);
-    await appendCard({ body: `🐾 ${petLabel}를 지나쳤다.`, mood: "sad" });
-    await appendCommentary("RESCUE_PASS");
-    return;
-  }
-
-  // 조우 획득 — 머리 위로 크게 띄워 원본 점구름 강조 후 흩어짐
-  if (cloud && journey3d?.isOn()) {
-    const w = journey3d.getPlayerWorld();
-    cloud.purify = 1;
-    cloud.purifyTo = 1;
-    cloud.gather = 1;
-    cloud.gatherTo = 1;
-    cloud.group.scale.setScalar(1.85 * 0.7);
-    cloud.group.position.set(w.x, 2.35, w.z);
-    await sleep(900);
-    cloud.playSpread();
-    await sleep(520);
-  }
-  await cleanupFragment(false);
-
-  journey3d?.setFrozen(true);
-  try {
-    await playRescueEncounter(animal, { fieldPetId: petId });
-  } finally {
-    journey3d?.setFrozen(false);
-  }
-
-  const rescued = state.rescuedAnimals.includes(animal.animal_id);
-  if (rescued) {
-    if (!state.fieldPets) state.fieldPets = [];
-    if (!state.fieldPets.includes(petId)) state.fieldPets.push(petId);
-    fillLoopCond("rescue");
-  }
-  refreshLobbyHud();
+  // 점구름으로 그린 펫(토비·볼리냐·브룸)은 본편에서 뺐다.
 }
 
 /** 필드 펫 3종 → 기존 구조 동물 스펙을 빌려 5턴 퍼즐에 태움 */
@@ -7916,9 +10571,67 @@ function nearestPurify(list: AreaNpcDef[], xPct: number, yPct: number): AreaNpcD
   })[0]!;
 }
 
+/** 건설 자리까지, 걸어갈 수 있는 칸만 따라 숲을 민다 */
+async function forestGlideTo(fx: number, fy: number): Promise<boolean> {
+  const course = forestCourse;
+  const bg = forestBg;
+  const st = forestStage();
+  if (!course || !bg || !st?.getPlayerWorld || !forestBackdropOn) return false;
+  const path = course.path(partyAnchor.x, partyAnchor.y, fx, fy);
+  if (!path.length) return false;
+  journey3d?.setFrozen(true);
+  try {
+    for (const p of path) {
+      const dx = p.x - partyAnchor.x;
+      const dy = p.y - partyAnchor.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 0.4) continue;
+      const th = bg.root.rotation.y;
+      const wx = dx * Math.cos(th) + -dy * Math.sin(th);
+      const wz = -dx * Math.sin(th) + -dy * Math.cos(th);
+      (st as unknown as { yaw: number }).yaw = Math.atan2(-wx, -wz);
+      await new Promise<void>((done) => {
+        partyTravel = {
+          from: { ...partyAnchor },
+          to: { x: partyAnchor.x + dx, y: partyAnchor.y + dy },
+          t: 0,
+          dur: Math.min(14, Math.max(1.2, dist / 7)),
+          done,
+        };
+      });
+    }
+  } finally {
+    journey3d?.setFrozen(false);
+  }
+  return true;
+}
+
 /** 같은 칸의 남은 정화 자리 → 없으면 이웃 칸의 정화 자리 */
 async function goToNextPurifySpot(): Promise<void> {
   if (!explore) return;
+  if (forestBackdropOn && forestCourse) {
+    const pad = forestCourse.nextUnit(partyAnchor.y);
+    mainBtn.style.display = "none";
+    mainBtn.disabled = true;
+    if (!pad) {
+      await appendCard({
+        body: "[정화] 더 갈 정화 지역이 없다.",
+        bodyLine2: "이 숲에서 표시된 건설 자리는 여기까지다.",
+      });
+      return;
+    }
+    const here = explore.areaId;
+    const local = here ? livePurifyNodes(here) : [];
+    const node = local.length ? nearestPurify(local, 50, 50) : null;
+    playLog("PURIFY", "숲자리", pad.id, pad.name);
+    await appendCard({
+      body: `[정화] 다음 정화 지역 — ${pad.name}`,
+      bodyLine2: "숲 툴에 잡아 둔 자리로 간다.",
+    });
+    await forestGlideTo(pad.x, pad.y);
+    if (node && journey3d?.isOn()) await journey3d.playNode(node);
+    return;
+  }
   mainBtn.style.display = "none";
   mainBtn.disabled = true;
   const me = journey3d?.isOn()

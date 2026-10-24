@@ -2192,6 +2192,24 @@ body {
   background: radial-gradient(ellipse at 50% 70%, rgba(0, 0, 0, 0.42), transparent 70%);
 }
 
+/* 외출: 싸움이 시작될 때 화면을 가로지르는 한 줄 */
+.banner-overlay.banner-rush {
+  top: 34%;
+  bottom: auto;
+  left: 0;
+  right: 0;
+  height: 72px;
+  z-index: 30;
+  background: linear-gradient(90deg, transparent, rgba(6, 12, 22, 0.88) 12%, rgba(6, 12, 22, 0.88) 88%, transparent);
+}
+.banner-overlay.banner-rush .banner-text {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #f7fbff;
+  text-shadow: 0 0 16px #0fbec7;
+}
+
 .banner-overlay.banner-dock.grade-jp {
   background: radial-gradient(ellipse at 50% 70%, rgba(245, 166, 35, 0.45), transparent 72%);
 }
@@ -7352,6 +7370,18 @@ body {
   pointer-events: none !important;
 }
 
+/* 예전 섬 지도. 탭 선반·인트로보다 나중에, 더 구체적으로 끈다. */
+.phone.hud-laid-out.view-3d .explore-layer.minimap.minimap-tab-mode.minimap-suppressed,
+.phone.shell-portrait.hud-laid-out.view-3d .explore-layer.minimap.minimap-tab-mode.minimap-docked.minimap-suppressed,
+.phone.shell-portrait.hud-laid-out.view-3d .explore-layer.minimap.minimap-tab-mode.minimap-travel-active.minimap-suppressed,
+.phone.shell-portrait.view-3d .explore-layer.minimap.minimap-intro.minimap-suppressed,
+.phone.view-3d .explore-layer.minimap.minimap-intro.minimap-suppressed {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 /* 카메라 — 배우를 따라 월드를 세로로 밀어올린다.
    height:100% 필수 — 이게 없으면 자식 .explore-world의 height:240%가 0이 되어 월드가 안 보인다. */
 .explore-camera {
@@ -11300,6 +11330,49 @@ body {
   /* 그림자는 클립된 시트에만. 8컷 스트립에 걸리면 통째로 깜빡임 */
   filter: none;
   overflow: hidden;
+}
+.lobby-hub-mode .lobby-laid-actor.lobby-actor-3d-host {
+  overflow: visible;
+}
+.lobby-actor-3d {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 482 / 1020;
+  pointer-events: none;
+}
+.lobby-actor-3d canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.lobby-char-switch {
+  position: absolute;
+  left: 50%;
+  bottom: 112px;
+  z-index: 80;
+  width: max-content;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+}
+.lobby-char-switch button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  border: 1px solid rgba(120, 220, 235, 0.45);
+  background: rgba(4, 16, 24, 0.82);
+  color: #d7f7ff;
+  border-radius: 999px;
+  min-height: 36px;
+  padding: 8px 16px;
+  font: 600 15px/1 sans-serif;
+  cursor: pointer;
+}
+.lobby-char-switch button.on {
+  border-color: #7ef0ff;
+  color: #041018;
+  background: #9ff0ff;
+  box-shadow: 0 0 10px rgba(120, 230, 250, 0.45);
 }
 .lobby-hub-mode .lobby-stage {
   position: relative;

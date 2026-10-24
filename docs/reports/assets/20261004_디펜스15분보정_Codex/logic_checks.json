@@ -1,0 +1,2100 @@
+{
+  "revision": "DEF15-02",
+  "route_length_m": 258.25012100674803,
+  "catalog_45_complete": true,
+  "distinct_monster_settings": 45,
+  "modes": {
+    "tower": {
+      "seconds": 900,
+      "spawned": 838,
+      "killed": 766,
+      "seen": 45,
+      "stageSpawned": [
+        125,
+        161,
+        218,
+        204,
+        130
+      ],
+      "stageKilled": [
+        125,
+        161,
+        218,
+        202,
+        60
+      ],
+      "early": {
+        "spawned": 125,
+        "killed": 124,
+        "rate": 0.992,
+        "facilities": [
+          {
+            "id": "5-tower",
+            "hp": 2500
+          },
+          {
+            "id": "4-tower",
+            "hp": 2500
+          },
+          {
+            "id": "4-unit",
+            "hp": 3000
+          },
+          {
+            "id": "3-tower",
+            "hp": 2500
+          },
+          {
+            "id": "3-unit",
+            "hp": 3000
+          },
+          {
+            "id": "2-tower",
+            "hp": 2500
+          },
+          {
+            "id": "2-unit",
+            "hp": 3000
+          },
+          {
+            "id": "1-tower",
+            "hp": 2500
+          },
+          {
+            "id": "1-unit",
+            "hp": 3000
+          },
+          {
+            "id": "south-base",
+            "hp": 10000
+          }
+        ]
+      },
+      "peakAlive": 72,
+      "min_spacing_m": 2.6012059470292304,
+      "invalidPositions": 0,
+      "shots": 1811,
+      "hits": 3372,
+      "burstPairs": 737,
+      "repeatedHits": 1253,
+      "splashHits": 610,
+      "pierceHits": 967,
+      "destroyed": 2,
+      "firstDeath": 528.2000000000673,
+      "destruction_order": [
+        {
+          "id": "5-tower",
+          "time": 528.2000000000673
+        },
+        {
+          "id": "4-tower",
+          "time": 888.7999999997394
+        }
+      ],
+      "baseHp": 10000,
+      "maxRetained": 77,
+      "mixedGroups": 310,
+      "splines": 45,
+      "settings": {
+        "q_pink_slime": {
+          "hp": 26,
+          "speed": 2.624,
+          "damage": 1,
+          "interval": 2.0160000000000005,
+          "armor": 0,
+          "sector": 1
+        },
+        "q_green_blob": {
+          "hp": 33,
+          "speed": 2.8800000000000003,
+          "damage": 2,
+          "interval": 1.9440000000000002,
+          "armor": 0.04,
+          "sector": 0
+        },
+        "q_mushnub": {
+          "hp": 29,
+          "speed": 2.656,
+          "damage": 2,
+          "interval": 2.088,
+          "armor": 0.03,
+          "sector": 2
+        },
+        "q_pigeon": {
+          "hp": 24,
+          "speed": 4.096,
+          "damage": 1,
+          "interval": 1.62,
+          "armor": 0,
+          "sector": 0
+        },
+        "q_chicken": {
+          "hp": 26,
+          "speed": 3.7119999999999997,
+          "damage": 2,
+          "interval": 1.728,
+          "armor": 0.02,
+          "sector": 2
+        },
+        "q_cat": {
+          "hp": 31,
+          "speed": 3.84,
+          "damage": 2,
+          "interval": 1.6560000000000001,
+          "armor": 0.03,
+          "sector": 1
+        },
+        "q_fish": {
+          "hp": 28,
+          "speed": 3.4560000000000004,
+          "damage": 2,
+          "interval": 1.836,
+          "armor": 0.01,
+          "sector": 0
+        },
+        "q_bunny": {
+          "hp": 30,
+          "speed": 4.288,
+          "damage": 2,
+          "interval": 1.692,
+          "armor": 0,
+          "sector": 2
+        },
+        "q_birb": {
+          "hp": 25,
+          "speed": 3.968,
+          "damage": 2,
+          "interval": 1.584,
+          "armor": 0.02,
+          "sector": 1
+        },
+        "q_cactoro": {
+          "hp": 75,
+          "speed": 3.01,
+          "damage": 3,
+          "interval": 1.815,
+          "armor": 0.12,
+          "sector": 0
+        },
+        "q_green_spiky_blob": {
+          "hp": 81,
+          "speed": 2.8000000000000003,
+          "damage": 3,
+          "interval": 1.848,
+          "armor": 0.16,
+          "sector": 2
+        },
+        "q_ghost": {
+          "hp": 56,
+          "speed": 3.9549999999999996,
+          "damage": 3,
+          "interval": 1.5675,
+          "armor": 0.04,
+          "sector": 1
+        },
+        "q_alien": {
+          "hp": 68,
+          "speed": 3.8150000000000004,
+          "damage": 3,
+          "interval": 1.5839999999999999,
+          "armor": 0.07,
+          "sector": 2
+        },
+        "q_fish_2": {
+          "hp": 72,
+          "speed": 4.13,
+          "damage": 3,
+          "interval": 1.5345,
+          "armor": 0.05,
+          "sector": 0
+        },
+        "q_cactoro_2": {
+          "hp": 85,
+          "speed": 2.73,
+          "damage": 4,
+          "interval": 1.8809999999999998,
+          "armor": 0.18,
+          "sector": 1
+        },
+        "q_glub": {
+          "hp": 59,
+          "speed": 4.445,
+          "damage": 3,
+          "interval": 1.4849999999999999,
+          "armor": 0.03,
+          "sector": 0
+        },
+        "q_frog": {
+          "hp": 70,
+          "speed": 4.27,
+          "damage": 3,
+          "interval": 1.617,
+          "armor": 0.06,
+          "sector": 2
+        },
+        "q_armabee": {
+          "hp": 65,
+          "speed": 4.585,
+          "damage": 3,
+          "interval": 1.4189999999999998,
+          "armor": 0.08,
+          "sector": 1
+        },
+        "q_orc_enemy": {
+          "hp": 132,
+          "speed": 3.6479999999999997,
+          "damage": 6,
+          "interval": 1.6275000000000002,
+          "armor": 0.14,
+          "sector": 0
+        },
+        "q_ninja": {
+          "hp": 97,
+          "speed": 5.244,
+          "damage": 5,
+          "interval": 1.271,
+          "armor": 0.04,
+          "sector": 2
+        },
+        "q_wizard": {
+          "hp": 108,
+          "speed": 3.9139999999999997,
+          "damage": 6,
+          "interval": 1.7514999999999998,
+          "armor": 0.06,
+          "sector": 1
+        },
+        "q_tribal": {
+          "hp": 125,
+          "speed": 4.066,
+          "damage": 6,
+          "interval": 1.4569999999999999,
+          "armor": 0.11,
+          "sector": 0
+        },
+        "q_squidle": {
+          "hp": 113,
+          "speed": 4.4079999999999995,
+          "damage": 5,
+          "interval": 1.5035,
+          "armor": 0.09,
+          "sector": 2
+        },
+        "q_hywirl": {
+          "hp": 103,
+          "speed": 4.902,
+          "damage": 6,
+          "interval": 1.364,
+          "armor": 0.05,
+          "sector": 1
+        },
+        "q_monkroose": {
+          "hp": 123,
+          "speed": 4.18,
+          "damage": 6,
+          "interval": 1.4260000000000002,
+          "armor": 0.1,
+          "sector": 0
+        },
+        "q_ninja_2": {
+          "hp": 112,
+          "speed": 5.396,
+          "damage": 5,
+          "interval": 1.2400000000000002,
+          "armor": 0.08,
+          "sector": 2
+        },
+        "q_orc": {
+          "hp": 145,
+          "speed": 3.4579999999999997,
+          "damage": 6,
+          "interval": 1.6740000000000002,
+          "armor": 0.2,
+          "sector": 1
+        },
+        "q_dino": {
+          "hp": 211,
+          "speed": 3.76,
+          "damage": 8,
+          "interval": 1.6500000000000001,
+          "armor": 0.17,
+          "sector": 0
+        },
+        "q_goleling": {
+          "hp": 231,
+          "speed": 2.92,
+          "damage": 9,
+          "interval": 1.77,
+          "armor": 0.26,
+          "sector": 2
+        },
+        "q_ghost_skull": {
+          "hp": 178,
+          "speed": 4.48,
+          "damage": 8,
+          "interval": 1.47,
+          "armor": 0.13,
+          "sector": 1
+        },
+        "q_blue_demon": {
+          "hp": 205,
+          "speed": 4.2,
+          "damage": 9,
+          "interval": 1.395,
+          "armor": 0.16,
+          "sector": 0
+        },
+        "q_alien_2": {
+          "hp": 195,
+          "speed": 4.6,
+          "damage": 9,
+          "interval": 1.35,
+          "armor": 0.12,
+          "sector": 2
+        },
+        "q_yeti": {
+          "hp": 238,
+          "speed": 3.28,
+          "damage": 9,
+          "interval": 1.7399999999999998,
+          "armor": 0.22,
+          "sector": 1
+        },
+        "q_alpaking": {
+          "hp": 175,
+          "speed": 5.04,
+          "damage": 8,
+          "interval": 1.365,
+          "armor": 0.1,
+          "sector": 0
+        },
+        "q_armabee_evolved": {
+          "hp": 201,
+          "speed": 5.44,
+          "damage": 9,
+          "interval": 1.26,
+          "armor": 0.16,
+          "sector": 2
+        },
+        "q_glub_evolved": {
+          "hp": 191,
+          "speed": 5.32,
+          "damage": 8,
+          "interval": 1.305,
+          "armor": 0.12,
+          "sector": 1
+        },
+        "q_mushnub_evolved": {
+          "hp": 345,
+          "speed": 3.2760000000000002,
+          "damage": 12,
+          "interval": 1.6529999999999998,
+          "armor": 0.24,
+          "sector": 0
+        },
+        "q_goleling_evolved": {
+          "hp": 380,
+          "speed": 2.8979999999999997,
+          "damage": 13,
+          "interval": 1.769,
+          "armor": 0.32,
+          "sector": 2
+        },
+        "q_dragon": {
+          "hp": 313,
+          "speed": 4.368,
+          "damage": 12,
+          "interval": 1.45,
+          "armor": 0.2,
+          "sector": 1
+        },
+        "q_alpaking_evolved": {
+          "hp": 294,
+          "speed": 5.460000000000001,
+          "damage": 11,
+          "interval": 1.2905,
+          "armor": 0.18,
+          "sector": 0
+        },
+        "q_dragon_evolved": {
+          "hp": 359,
+          "speed": 4.116,
+          "damage": 13,
+          "interval": 1.537,
+          "armor": 0.28,
+          "sector": 2
+        },
+        "q_mushroom_king": {
+          "hp": 391,
+          "speed": 2.9819999999999998,
+          "damage": 13,
+          "interval": 1.74,
+          "armor": 0.3,
+          "sector": 1
+        },
+        "q_yeti_2": {
+          "hp": 363,
+          "speed": 3.3600000000000003,
+          "damage": 12,
+          "interval": 1.6965,
+          "armor": 0.27,
+          "sector": 0
+        },
+        "q_demon_2": {
+          "hp": 336,
+          "speed": 4.662000000000001,
+          "damage": 13,
+          "interval": 1.276,
+          "armor": 0.23,
+          "sector": 2
+        },
+        "q_demon": {
+          "hp": 299,
+          "speed": 4.5360000000000005,
+          "damage": 11,
+          "interval": 1.3775,
+          "armor": 0.19,
+          "sector": 1
+        }
+      },
+      "snapshots": [
+        {
+          "time": 180.00000000000668,
+          "alive": 4,
+          "killed": 124,
+          "seen": 12,
+          "facilities": [
+            {
+              "id": "5-tower",
+              "hp": 2500
+            },
+            {
+              "id": "4-tower",
+              "hp": 2500
+            },
+            {
+              "id": "4-unit",
+              "hp": 3000
+            },
+            {
+              "id": "3-tower",
+              "hp": 2500
+            },
+            {
+              "id": "3-unit",
+              "hp": 3000
+            },
+            {
+              "id": "2-tower",
+              "hp": 2500
+            },
+            {
+              "id": "2-unit",
+              "hp": 3000
+            },
+            {
+              "id": "1-tower",
+              "hp": 2500
+            },
+            {
+              "id": "1-unit",
+              "hp": 3000
+            },
+            {
+              "id": "south-base",
+              "hp": 10000
+            }
+          ]
+        },
+        {
+          "time": 360.0000000000476,
+          "alive": 9,
+          "killed": 280,
+          "seen": 21,
+          "facilities": [
+            {
+              "id": "5-tower",
+              "hp": 2145
+            },
+            {
+              "id": "4-tower",
+              "hp": 2500
+            },
+            {
+              "id": "4-unit",
+              "hp": 3000
+            },
+            {
+              "id": "3-tower",
+              "hp": 2500
+            },
+            {
+              "id": "3-unit",
+              "hp": 3000
+            },
+            {
+              "id": "2-tower",
+              "hp": 2500
+            },
+            {
+              "id": "2-unit",
+              "hp": 3000
+            },
+            {
+              "id": "1-tower",
+              "hp": 2500
+            },
+            {
+              "id": "1-unit",
+              "hp": 3000
+            },
+            {
+              "id": "south-base",
+              "hp": 10000
+            }
+          ]
+        },
+        {
+          "time": 540.0000000000566,
+          "alive": 41,
+          "killed": 466,
+          "seen": 30,
+          "facilities": [
+            {
+              "id": "5-tower",
+              "hp": 0
+            },
+            {
+              "id": "4-tower",
+              "hp": 2500
+            },
+            {
+              "id": "4-unit",
+              "hp": 3000
+            },
+            {
+              "id": "3-tower",
+              "hp": 2500
+            },
+            {
+              "id": "3-unit",
+              "hp": 3000
+            },
+            {
+              "id": "2-tower",
+              "hp": 2500
+            },
+            {
+              "id": "2-unit",
+              "hp": 3000
+            },
+            {
+              "id": "1-tower",
+              "hp": 2500
+            },
+            {
+              "id": "1-unit",
+              "hp": 3000
+            },
+            {
+              "id": "south-base",
+              "hp": 10000
+            }
+          ]
+        },
+        {
+          "time": 720.0499999998929,
+          "alive": 72,
+          "killed": 638,
+          "seen": 38,
+          "facilities": [
+            {
+              "id": "5-tower",
+              "hp": 0
+            },
+            {
+              "id": "4-tower",
+              "hp": 865
+            },
+            {
+              "id": "4-unit",
+              "hp": 3000
+            },
+            {
+              "id": "3-tower",
+              "hp": 2500
+            },
+            {
+              "id": "3-unit",
+              "hp": 3000
+            },
+            {
+              "id": "2-tower",
+              "hp": 2500
+            },
+            {
+              "id": "2-unit",
+              "hp": 3000
+            },
+            {
+              "id": "1-tower",
+              "hp": 2500
+            },
+            {
+              "id": "1-unit",
+              "hp": 3000
+            },
+            {
+              "id": "south-base",
+              "hp": 10000
+            }
+          ]
+        },
+        {
+          "time": 900,
+          "alive": 72,
+          "killed": 766,
+          "seen": 45,
+          "facilities": [
+            {
+              "id": "5-tower",
+              "hp": 0
+            },
+            {
+              "id": "4-tower",
+              "hp": 0
+            },
+            {
+              "id": "4-unit",
+              "hp": 2675
+            },
+            {
+              "id": "3-tower",
+              "hp": 2500
+            },
+            {
+              "id": "3-unit",
+              "hp": 3000
+            },
+            {
+              "id": "2-tower",
+              "hp": 2500
+            },
+            {
+              "id": "2-unit",
+              "hp": 3000
+            },
+            {
+              "id": "1-tower",
+              "hp": 2500
+            },
+            {
+              "id": "1-unit",
+              "hp": 3000
+            },
+            {
+              "id": "south-base",
+              "hp": 10000
+            }
+          ]
+        }
+      ],
+      "simulation_ms": 16865
+    },
+    "wave": {
+      "seconds": 940,
+      "spawned": 840,
+      "killed": 768,
+      "seen": 45,
+      "stageSpawned": [
+        125,
+        164,
+        220,
+        198,
+        133
+      ],
+      "stageKilled": [
+        125,
+        164,
+        220,
+        197,
+        62
+      ],
+      "early": {
+        "spawned": 125,
+        "killed": 124,
+        "rate": 0.992,
+        "facilities": [
+          {
+            "id": "5-tower",
+            "hp": 2500
+          },
+          {
+            "id": "4-tower",
+            "hp": 2500
+          },
+          {
+            "id": "4-unit",
+            "hp": 3000
+          },
+          {
+            "id": "3-tower",
+            "hp": 2500
+          },
+          {
+            "id": "3-unit",
+            "hp": 3000
+          },
+          {
+            "id": "2-tower",
+            "hp": 2500
+          },
+          {
+            "id": "2-unit",
+            "hp": 3000
+          },
+          {
+            "id": "1-tower",
+            "hp": 2500
+          },
+          {
+            "id": "1-unit",
+            "hp": 3000
+          },
+          {
+            "id": "south-base",
+            "hp": 10000
+          }
+        ]
+      },
+      "peakAlive": 72,
+      "min_spacing_m": 2.6157076881317134,
+      "invalidPositions": 0,
+      "shots": 1671,
+      "hits": 3289,
+      "burstPairs": 682,
+      "repeatedHits": 1184,
+      "splashHits": 970,
+      "pierceHits": 661,
+      "destroyed": 2,
+      "firstDeath": 544.3000000000527,
+      "destruction_order": [
+        {
+          "id": "5-tower",
+          "time": 544.3000000000527
+        },
+        {
+          "id": "4-tower",
+          "time": 818.0499999998037
+        }
+      ],
+      "baseHp": 10000,
+      "maxRetained": 77,
+      "mixedGroups": 312,
+      "splines": 45,
+      "settings": {
+        "q_pink_slime": {
+          "hp": 26,
+          "speed": 2.624,
+          "damage": 1,
+          "interval": 2.0160000000000005,
+          "armor": 0,
+          "sector": 1
+        },
+        "q_green_blob": {
+          "hp": 33,
+          "speed": 2.8800000000000003,
+          "damage": 2,
+          "interval": 1.9440000000000002,
+          "armor": 0.04,
+          "sector": 0
+        },
+        "q_mushnub": {
+          "hp": 29,
+          "speed": 2.656,
+          "damage": 2,
+          "interval": 2.088,
+          "armor": 0.03,
+          "sector": 2
+        },
+        "q_pigeon": {
+          "hp": 24,
+          "speed": 4.096,
+          "damage": 1,
+          "interval": 1.62,
+          "armor": 0,
+          "sector": 0
+        },
+        "q_chicken": {
+          "hp": 26,
+          "speed": 3.7119999999999997,
+          "damage": 2,
+          "interval": 1.728,
+          "armor": 0.02,
+          "sector": 2
+        },
+        "q_cat": {
+          "hp": 31,
+          "speed": 3.84,
+          "damage": 2,
+          "interval": 1.6560000000000001,
+          "armor": 0.03,
+          "sector": 1
+        },
+        "q_fish": {
+          "hp": 28,
+          "speed": 3.4560000000000004,
+          "damage": 2,
+          "interval": 1.836,
+          "armor": 0.01,
+          "sector": 0
+        },
+        "q_bunny": {
+          "hp": 30,
+          "speed": 4.288,
+          "damage": 2,
+          "interval": 1.692,
+          "armor": 0,
+          "sector": 2
+        },
+        "q_birb": {
+          "hp": 25,
+          "speed": 3.968,
+          "damage": 2,
+          "interval": 1.584,
+          "armor": 0.02,
+          "sector": 1
+        },
+        "q_cactoro": {
+          "hp": 75,
+          "speed": 3.01,
+          "damage": 3,
+          "interval": 1.815,
+          "armor": 0.12,
+          "sector": 0
+        },
+        "q_green_spiky_blob": {
+          "hp": 81,
+          "speed": 2.8000000000000003,
+          "damage": 3,
+          "interval": 1.848,
+          "armor": 0.16,
+          "sector": 2
+        },
+        "q_ghost": {
+          "hp": 56,
+          "speed": 3.9549999999999996,
+          "damage": 3,
+          "interval": 1.5675,
+          "armor": 0.04,
+          "sector": 1
+        },
+        "q_alien": {
+          "hp": 68,
+          "speed": 3.8150000000000004,
+          "damage": 3,
+          "interval": 1.5839999999999999,
+          "armor": 0.07,
+          "sector": 2
+        },
+        "q_fish_2": {
+          "hp": 72,
+          "speed": 4.13,
+          "damage": 3,
+          "interval": 1.5345,
+          "armor": 0.05,
+          "sector": 0
+        },
+        "q_cactoro_2": {
+          "hp": 85,
+          "speed": 2.73,
+          "damage": 4,
+          "interval": 1.8809999999999998,
+          "armor": 0.18,
+          "sector": 1
+        },
+        "q_glub": {
+          "hp": 59,
+          "speed": 4.445,
+          "damage": 3,
+          "interval": 1.4849999999999999,
+          "armor": 0.03,
+          "sector": 0
+        },
+        "q_frog": {
+          "hp": 70,
+          "speed": 4.27,
+          "damage": 3,
+          "interval": 1.617,
+          "armor": 0.06,
+          "sector": 2
+        },
+        "q_armabee": {
+          "hp": 65,
+          "speed": 4.585,
+          "damage": 3,
+          "interval": 1.4189999999999998,
+          "armor": 0.08,
+          "sector": 1
+        },
+        "q_orc_enemy": {
+          "hp": 132,
+          "speed": 3.6479999999999997,
+          "damage": 6,
+          "interval": 1.6275000000000002,
+          "armor": 0.14,
+          "sector": 0
+        },
+        "q_ninja": {
+          "hp": 97,
+          "speed": 5.244,
+          "damage": 5,
+          "interval": 1.271,
+          "armor": 0.04,
+          "sector": 2
+        },
+        "q_wizard": {
+          "hp": 108,
+          "speed": 3.9139999999999997,
+          "damage": 6,
+          "interval": 1.7514999999999998,
+          "armor": 0.06,
+          "sector": 1
+        },
+        "q_tribal": {
+          "hp": 125,
+          "speed": 4.066,
+          "damage": 6,
+          "interval": 1.4569999999999999,
+          "armor": 0.11,
+          "sector": 0
+        },
+        "q_squidle": {
+          "hp": 113,
+          "speed": 4.4079999999999995,
+          "damage": 5,
+          "interval": 1.5035,
+          "armor": 0.09,
+          "sector": 2
+        },
+        "q_hywirl": {
+          "hp": 103,
+          "speed": 4.902,
+          "damage": 6,
+          "interval": 1.364,
+          "armor": 0.05,
+          "sector": 1
+        },
+        "q_monkroose": {
+          "hp": 123,
+          "speed": 4.18,
+          "damage": 6,
+          "interval": 1.4260000000000002,
+          "armor": 0.1,
+          "sector": 0
+        },
+        "q_ninja_2": {
+          "hp": 112,
+          "speed": 5.396,
+          "damage": 5,
+          "interval": 1.2400000000000002,
+          "armor": 0.08,
+          "sector": 2
+        },
+        "q_orc": {
+          "hp": 145,
+          "speed": 3.4579999999999997,
+          "damage": 6,
+          "interval": 1.6740000000000002,
+          "armor": 0.2,
+          "sector": 1
+        },
+        "q_dino": {
+          "hp": 211,
+          "speed": 3.76,
+          "damage": 8,
+          "interval": 1.6500000000000001,
+          "armor": 0.17,
+          "sector": 0
+        },
+        "q_goleling": {
+          "hp": 231,
+          "speed": 2.92,
+          "damage": 9,
+          "interval": 1.77,
+          "armor": 0.26,
+          "sector": 2
+        },
+        "q_ghost_skull": {
+          "hp": 178,
+          "speed": 4.48,
+          "damage": 8,
+          "interval": 1.47,
+          "armor": 0.13,
+          "sector": 1
+        },
+        "q_blue_demon": {
+          "hp": 205,
+          "speed": 4.2,
+          "damage": 9,
+          "interval": 1.395,
+          "armor": 0.16,
+          "sector": 0
+        },
+        "q_alien_2": {
+          "hp": 195,
+          "speed": 4.6,
+          "damage": 9,
+          "interval": 1.35,
+          "armor": 0.12,
+          "sector": 2
+        },
+        "q_yeti": {
+          "hp": 238,
+          "speed": 3.28,
+          "damage": 9,
+          "interval": 1.7399999999999998,
+          "armor": 0.22,
+          "sector": 1
+        },
+        "q_alpaking": {
+          "hp": 175,
+          "speed": 5.04,
+          "damage": 8,
+          "interval": 1.365,
+          "armor": 0.1,
+          "sector": 0
+        },
+        "q_armabee_evolved": {
+          "hp": 201,
+          "speed": 5.44,
+          "damage": 9,
+          "interval": 1.26,
+          "armor": 0.16,
+          "sector": 2
+        },
+        "q_glub_evolved": {
+          "hp": 191,
+          "speed": 5.32,
+          "damage": 8,
+          "interval": 1.305,
+          "armor": 0.12,
+          "sector": 1
+        },
+        "q_mushnub_evolved": {
+          "hp": 345,
+          "speed": 3.2760000000000002,
+          "damage": 12,
+          "interval": 1.6529999999999998,
+          "armor": 0.24,
+          "sector": 0
+        },
+        "q_goleling_evolved": {
+          "hp": 380,
+          "speed": 2.8979999999999997,
+          "damage": 13,
+          "interval": 1.769,
+          "armor": 0.32,
+          "sector": 2
+        },
+        "q_dragon": {
+          "hp": 313,
+          "speed": 4.368,
+          "damage": 12,
+          "interval": 1.45,
+          "armor": 0.2,
+          "sector": 1
+        },
+        "q_alpaking_evolved": {
+          "hp": 294,
+          "speed": 5.460000000000001,
+          "damage": 11,
+          "interval": 1.2905,
+          "armor": 0.18,
+          "sector": 0
+        },
+        "q_dragon_evolved": {
+          "hp": 359,
+          "speed": 4.116,
+          "damage": 13,
+          "interval": 1.537,
+          "armor": 0.28,
+          "sector": 2
+        },
+        "q_mushroom_king": {
+          "hp": 391,
+          "speed": 2.9819999999999998,
+          "damage": 13,
+          "interval": 1.74,
+          "armor": 0.3,
+          "sector": 1
+        },
+        "q_yeti_2": {
+          "hp": 363,
+          "speed": 3.3600000000000003,
+          "damage": 12,
+          "interval": 1.6965,
+          "armor": 0.27,
+          "sector": 0
+        },
+        "q_demon_2": {
+          "hp": 336,
+          "speed": 4.662000000000001,
+          "damage": 13,
+          "interval": 1.276,
+          "armor": 0.23,
+          "sector": 2
+        },
+        "q_demon": {
+          "hp": 299,
+          "speed": 4.5360000000000005,
+          "damage": 11,
+          "interval": 1.3775,
+          "armor": 0.19,
+          "sector": 1
+        }
+      },
+      "snapshots": [
+        {
+          "time": 180.00000000000668,
+          "alive": 1,
+          "killed": 124,
+          "seen": 9,
+          "facilities": [
+            {
+              "id": "5-tower",
+              "hp": 2500
+            },
+            {
+              "id": "4-tower",
+              "hp": 2500
+            },
+            {
+              "id": "4-unit",
+              "hp": 3000
+            },
+            {
+              "id": "3-tower",
+              "hp": 2500
+            },
+            {
+              "id": "3-unit",
+              "hp": 3000
+            },
+            {
+              "id": "2-tower",
+              "hp": 2500
+            },
+            {
+              "id": "2-unit",
+              "hp": 3000
+            },
+            {
+              "id": "1-tower",
+              "hp": 2500
+            },
+            {
+              "id": "1-unit",
+              "hp": 3000
+            },
+            {
+              "id": "south-base",
+              "hp": 10000
+            }
+          ]
+        },
+        {
+          "time": 360.0000000000476,
+          "alive": 10,
+          "killed": 272,
+          "seen": 18,
+          "facilities": [
+            {
+              "id": "5-tower",
+              "hp": 2164
+            },
+            {
+              "id": "4-tower",
+              "hp": 2500
+            },
+            {
+              "id": "4-unit",
+              "hp": 3000
+            },
+            {
+              "id": "3-tower",
+              "hp": 2500
+            },
+            {
+              "id": "3-unit",
+              "hp": 3000
+            },
+            {
+              "id": "2-tower",
+              "hp": 2500
+            },
+            {
+              "id": "2-unit",
+              "hp": 3000
+            },
+            {
+              "id": "1-tower",
+              "hp": 2500
+            },
+            {
+              "id": "1-unit",
+              "hp": 3000
+            },
+            {
+              "id": "south-base",
+              "hp": 10000
+            }
+          ]
+        },
+        {
+          "time": 540.0000000000566,
+          "alive": 41,
+          "killed": 446,
+          "seen": 27,
+          "facilities": [
+            {
+              "id": "5-tower",
+              "hp": 37
+            },
+            {
+              "id": "4-tower",
+              "hp": 2500
+            },
+            {
+              "id": "4-unit",
+              "hp": 3000
+            },
+            {
+              "id": "3-tower",
+              "hp": 2500
+            },
+            {
+              "id": "3-unit",
+              "hp": 3000
+            },
+            {
+              "id": "2-tower",
+              "hp": 2500
+            },
+            {
+              "id": "2-unit",
+              "hp": 3000
+            },
+            {
+              "id": "1-tower",
+              "hp": 2500
+            },
+            {
+              "id": "1-unit",
+              "hp": 3000
+            },
+            {
+              "id": "south-base",
+              "hp": 10000
+            }
+          ]
+        },
+        {
+          "time": 720.0499999998929,
+          "alive": 68,
+          "killed": 611,
+          "seen": 36,
+          "facilities": [
+            {
+              "id": "5-tower",
+              "hp": 0
+            },
+            {
+              "id": "4-tower",
+              "hp": 608
+            },
+            {
+              "id": "4-unit",
+              "hp": 3000
+            },
+            {
+              "id": "3-tower",
+              "hp": 2500
+            },
+            {
+              "id": "3-unit",
+              "hp": 3000
+            },
+            {
+              "id": "2-tower",
+              "hp": 2500
+            },
+            {
+              "id": "2-unit",
+              "hp": 3000
+            },
+            {
+              "id": "1-tower",
+              "hp": 2500
+            },
+            {
+              "id": "1-unit",
+              "hp": 3000
+            },
+            {
+              "id": "south-base",
+              "hp": 10000
+            }
+          ]
+        },
+        {
+          "time": 900.0499999997292,
+          "alive": 70,
+          "killed": 743,
+          "seen": 45,
+          "facilities": [
+            {
+              "id": "5-tower",
+              "hp": 0
+            },
+            {
+              "id": "4-tower",
+              "hp": 0
+            },
+            {
+              "id": "4-unit",
+              "hp": 1991
+            },
+            {
+              "id": "3-tower",
+              "hp": 2500
+            },
+            {
+              "id": "3-unit",
+              "hp": 3000
+            },
+            {
+              "id": "2-tower",
+              "hp": 2500
+            },
+            {
+              "id": "2-unit",
+              "hp": 3000
+            },
+            {
+              "id": "1-tower",
+              "hp": 2500
+            },
+            {
+              "id": "1-unit",
+              "hp": 3000
+            },
+            {
+              "id": "south-base",
+              "hp": 10000
+            }
+          ]
+        }
+      ],
+      "simulation_ms": 15397
+    },
+    "base": {
+      "seconds": 900,
+      "spawned": 856,
+      "killed": 784,
+      "seen": 45,
+      "stageSpawned": [
+        133,
+        175,
+        225,
+        207,
+        116
+      ],
+      "stageKilled": [
+        133,
+        175,
+        225,
+        207,
+        44
+      ],
+      "early": {
+        "spawned": 133,
+        "killed": 130,
+        "rate": 0.9774436090225563,
+        "facilities": [
+          {
+            "id": "5-tower",
+            "hp": 2500
+          },
+          {
+            "id": "4-tower",
+            "hp": 2500
+          },
+          {
+            "id": "4-unit",
+            "hp": 3000
+          },
+          {
+            "id": "3-tower",
+            "hp": 2500
+          },
+          {
+            "id": "3-unit",
+            "hp": 3000
+          },
+          {
+            "id": "2-tower",
+            "hp": 2500
+          },
+          {
+            "id": "2-unit",
+            "hp": 3000
+          },
+          {
+            "id": "1-tower",
+            "hp": 2500
+          },
+          {
+            "id": "1-unit",
+            "hp": 3000
+          },
+          {
+            "id": "south-base",
+            "hp": 10000
+          }
+        ]
+      },
+      "peakAlive": 72,
+      "min_spacing_m": 2.6019105802623317,
+      "invalidPositions": 0,
+      "shots": 1638,
+      "hits": 3244,
+      "burstPairs": 660,
+      "repeatedHits": 1190,
+      "splashHits": 1020,
+      "pierceHits": 603,
+      "destroyed": 2,
+      "firstDeath": 520.3500000000745,
+      "destruction_order": [
+        {
+          "id": "5-tower",
+          "time": 520.3500000000745
+        },
+        {
+          "id": "4-tower",
+          "time": 772.0999999998455
+        }
+      ],
+      "baseHp": 10000,
+      "maxRetained": 77,
+      "mixedGroups": 313,
+      "splines": 45,
+      "settings": {
+        "q_pink_slime": {
+          "hp": 26,
+          "speed": 2.624,
+          "damage": 1,
+          "interval": 2.0160000000000005,
+          "armor": 0,
+          "sector": 1
+        },
+        "q_green_blob": {
+          "hp": 33,
+          "speed": 2.8800000000000003,
+          "damage": 2,
+          "interval": 1.9440000000000002,
+          "armor": 0.04,
+          "sector": 0
+        },
+        "q_mushnub": {
+          "hp": 29,
+          "speed": 2.656,
+          "damage": 2,
+          "interval": 2.088,
+          "armor": 0.03,
+          "sector": 2
+        },
+        "q_pigeon": {
+          "hp": 24,
+          "speed": 4.096,
+          "damage": 1,
+          "interval": 1.62,
+          "armor": 0,
+          "sector": 0
+        },
+        "q_chicken": {
+          "hp": 26,
+          "speed": 3.7119999999999997,
+          "damage": 2,
+          "interval": 1.728,
+          "armor": 0.02,
+          "sector": 2
+        },
+        "q_cat": {
+          "hp": 31,
+          "speed": 3.84,
+          "damage": 2,
+          "interval": 1.6560000000000001,
+          "armor": 0.03,
+          "sector": 1
+        },
+        "q_fish": {
+          "hp": 28,
+          "speed": 3.4560000000000004,
+          "damage": 2,
+          "interval": 1.836,
+          "armor": 0.01,
+          "sector": 0
+        },
+        "q_bunny": {
+          "hp": 30,
+          "speed": 4.288,
+          "damage": 2,
+          "interval": 1.692,
+          "armor": 0,
+          "sector": 2
+        },
+        "q_birb": {
+          "hp": 25,
+          "speed": 3.968,
+          "damage": 2,
+          "interval": 1.584,
+          "armor": 0.02,
+          "sector": 1
+        },
+        "q_cactoro": {
+          "hp": 75,
+          "speed": 3.01,
+          "damage": 3,
+          "interval": 1.815,
+          "armor": 0.12,
+          "sector": 0
+        },
+        "q_green_spiky_blob": {
+          "hp": 81,
+          "speed": 2.8000000000000003,
+          "damage": 3,
+          "interval": 1.848,
+          "armor": 0.16,
+          "sector": 2
+        },
+        "q_ghost": {
+          "hp": 56,
+          "speed": 3.9549999999999996,
+          "damage": 3,
+          "interval": 1.5675,
+          "armor": 0.04,
+          "sector": 1
+        },
+        "q_alien": {
+          "hp": 68,
+          "speed": 3.8150000000000004,
+          "damage": 3,
+          "interval": 1.5839999999999999,
+          "armor": 0.07,
+          "sector": 2
+        },
+        "q_fish_2": {
+          "hp": 72,
+          "speed": 4.13,
+          "damage": 3,
+          "interval": 1.5345,
+          "armor": 0.05,
+          "sector": 0
+        },
+        "q_cactoro_2": {
+          "hp": 85,
+          "speed": 2.73,
+          "damage": 4,
+          "interval": 1.8809999999999998,
+          "armor": 0.18,
+          "sector": 1
+        },
+        "q_glub": {
+          "hp": 59,
+          "speed": 4.445,
+          "damage": 3,
+          "interval": 1.4849999999999999,
+          "armor": 0.03,
+          "sector": 0
+        },
+        "q_frog": {
+          "hp": 70,
+          "speed": 4.27,
+          "damage": 3,
+          "interval": 1.617,
+          "armor": 0.06,
+          "sector": 2
+        },
+        "q_armabee": {
+          "hp": 65,
+          "speed": 4.585,
+          "damage": 3,
+          "interval": 1.4189999999999998,
+          "armor": 0.08,
+          "sector": 1
+        },
+        "q_orc_enemy": {
+          "hp": 132,
+          "speed": 3.6479999999999997,
+          "damage": 6,
+          "interval": 1.6275000000000002,
+          "armor": 0.14,
+          "sector": 0
+        },
+        "q_ninja": {
+          "hp": 97,
+          "speed": 5.244,
+          "damage": 5,
+          "interval": 1.271,
+          "armor": 0.04,
+          "sector": 2
+        },
+        "q_wizard": {
+          "hp": 108,
+          "speed": 3.9139999999999997,
+          "damage": 6,
+          "interval": 1.7514999999999998,
+          "armor": 0.06,
+          "sector": 1
+        },
+        "q_tribal": {
+          "hp": 125,
+          "speed": 4.066,
+          "damage": 6,
+          "interval": 1.4569999999999999,
+          "armor": 0.11,
+          "sector": 0
+        },
+        "q_squidle": {
+          "hp": 113,
+          "speed": 4.4079999999999995,
+          "damage": 5,
+          "interval": 1.5035,
+          "armor": 0.09,
+          "sector": 2
+        },
+        "q_hywirl": {
+          "hp": 103,
+          "speed": 4.902,
+          "damage": 6,
+          "interval": 1.364,
+          "armor": 0.05,
+          "sector": 1
+        },
+        "q_monkroose": {
+          "hp": 123,
+          "speed": 4.18,
+          "damage": 6,
+          "interval": 1.4260000000000002,
+          "armor": 0.1,
+          "sector": 0
+        },
+        "q_ninja_2": {
+          "hp": 112,
+          "speed": 5.396,
+          "damage": 5,
+          "interval": 1.2400000000000002,
+          "armor": 0.08,
+          "sector": 2
+        },
+        "q_orc": {
+          "hp": 145,
+          "speed": 3.4579999999999997,
+          "damage": 6,
+          "interval": 1.6740000000000002,
+          "armor": 0.2,
+          "sector": 1
+        },
+        "q_dino": {
+          "hp": 211,
+          "speed": 3.76,
+          "damage": 8,
+          "interval": 1.6500000000000001,
+          "armor": 0.17,
+          "sector": 0
+        },
+        "q_goleling": {
+          "hp": 231,
+          "speed": 2.92,
+          "damage": 9,
+          "interval": 1.77,
+          "armor": 0.26,
+          "sector": 2
+        },
+        "q_ghost_skull": {
+          "hp": 178,
+          "speed": 4.48,
+          "damage": 8,
+          "interval": 1.47,
+          "armor": 0.13,
+          "sector": 1
+        },
+        "q_blue_demon": {
+          "hp": 205,
+          "speed": 4.2,
+          "damage": 9,
+          "interval": 1.395,
+          "armor": 0.16,
+          "sector": 0
+        },
+        "q_alien_2": {
+          "hp": 195,
+          "speed": 4.6,
+          "damage": 9,
+          "interval": 1.35,
+          "armor": 0.12,
+          "sector": 2
+        },
+        "q_yeti": {
+          "hp": 238,
+          "speed": 3.28,
+          "damage": 9,
+          "interval": 1.7399999999999998,
+          "armor": 0.22,
+          "sector": 1
+        },
+        "q_alpaking": {
+          "hp": 175,
+          "speed": 5.04,
+          "damage": 8,
+          "interval": 1.365,
+          "armor": 0.1,
+          "sector": 0
+        },
+        "q_armabee_evolved": {
+          "hp": 201,
+          "speed": 5.44,
+          "damage": 9,
+          "interval": 1.26,
+          "armor": 0.16,
+          "sector": 2
+        },
+        "q_glub_evolved": {
+          "hp": 191,
+          "speed": 5.32,
+          "damage": 8,
+          "interval": 1.305,
+          "armor": 0.12,
+          "sector": 1
+        },
+        "q_mushnub_evolved": {
+          "hp": 345,
+          "speed": 3.2760000000000002,
+          "damage": 12,
+          "interval": 1.6529999999999998,
+          "armor": 0.24,
+          "sector": 0
+        },
+        "q_goleling_evolved": {
+          "hp": 380,
+          "speed": 2.8979999999999997,
+          "damage": 13,
+          "interval": 1.769,
+          "armor": 0.32,
+          "sector": 2
+        },
+        "q_dragon": {
+          "hp": 313,
+          "speed": 4.368,
+          "damage": 12,
+          "interval": 1.45,
+          "armor": 0.2,
+          "sector": 1
+        },
+        "q_alpaking_evolved": {
+          "hp": 294,
+          "speed": 5.460000000000001,
+          "damage": 11,
+          "interval": 1.2905,
+          "armor": 0.18,
+          "sector": 0
+        },
+        "q_dragon_evolved": {
+          "hp": 359,
+          "speed": 4.116,
+          "damage": 13,
+          "interval": 1.537,
+          "armor": 0.28,
+          "sector": 2
+        },
+        "q_mushroom_king": {
+          "hp": 391,
+          "speed": 2.9819999999999998,
+          "damage": 13,
+          "interval": 1.74,
+          "armor": 0.3,
+          "sector": 1
+        },
+        "q_yeti_2": {
+          "hp": 363,
+          "speed": 3.3600000000000003,
+          "damage": 12,
+          "interval": 1.6965,
+          "armor": 0.27,
+          "sector": 0
+        },
+        "q_demon_2": {
+          "hp": 336,
+          "speed": 4.662000000000001,
+          "damage": 13,
+          "interval": 1.276,
+          "armor": 0.23,
+          "sector": 2
+        },
+        "q_demon": {
+          "hp": 299,
+          "speed": 4.5360000000000005,
+          "damage": 11,
+          "interval": 1.3775,
+          "armor": 0.19,
+          "sector": 1
+        }
+      },
+      "snapshots": [
+        {
+          "time": 180.00000000000668,
+          "alive": 5,
+          "killed": 130,
+          "seen": 11,
+          "facilities": [
+            {
+              "id": "5-tower",
+              "hp": 2500
+            },
+            {
+              "id": "4-tower",
+              "hp": 2500
+            },
+            {
+              "id": "4-unit",
+              "hp": 3000
+            },
+            {
+              "id": "3-tower",
+              "hp": 2500
+            },
+            {
+              "id": "3-unit",
+              "hp": 3000
+            },
+            {
+              "id": "2-tower",
+              "hp": 2500
+            },
+            {
+              "id": "2-unit",
+              "hp": 3000
+            },
+            {
+              "id": "1-tower",
+              "hp": 2500
+            },
+            {
+              "id": "1-unit",
+              "hp": 3000
+            },
+            {
+              "id": "south-base",
+              "hp": 10000
+            }
+          ]
+        },
+        {
+          "time": 360.0000000000476,
+          "alive": 18,
+          "killed": 293,
+          "seen": 21,
+          "facilities": [
+            {
+              "id": "5-tower",
+              "hp": 1959
+            },
+            {
+              "id": "4-tower",
+              "hp": 2500
+            },
+            {
+              "id": "4-unit",
+              "hp": 3000
+            },
+            {
+              "id": "3-tower",
+              "hp": 2500
+            },
+            {
+              "id": "3-unit",
+              "hp": 3000
+            },
+            {
+              "id": "2-tower",
+              "hp": 2500
+            },
+            {
+              "id": "2-unit",
+              "hp": 3000
+            },
+            {
+              "id": "1-tower",
+              "hp": 2500
+            },
+            {
+              "id": "1-unit",
+              "hp": 3000
+            },
+            {
+              "id": "south-base",
+              "hp": 10000
+            }
+          ]
+        },
+        {
+          "time": 540.0000000000566,
+          "alive": 50,
+          "killed": 485,
+          "seen": 29,
+          "facilities": [
+            {
+              "id": "5-tower",
+              "hp": 0
+            },
+            {
+              "id": "4-tower",
+              "hp": 2426
+            },
+            {
+              "id": "4-unit",
+              "hp": 3000
+            },
+            {
+              "id": "3-tower",
+              "hp": 2500
+            },
+            {
+              "id": "3-unit",
+              "hp": 3000
+            },
+            {
+              "id": "2-tower",
+              "hp": 2500
+            },
+            {
+              "id": "2-unit",
+              "hp": 3000
+            },
+            {
+              "id": "1-tower",
+              "hp": 2500
+            },
+            {
+              "id": "1-unit",
+              "hp": 3000
+            },
+            {
+              "id": "south-base",
+              "hp": 10000
+            }
+          ]
+        },
+        {
+          "time": 720.0499999998929,
+          "alive": 72,
+          "killed": 670,
+          "seen": 38,
+          "facilities": [
+            {
+              "id": "5-tower",
+              "hp": 0
+            },
+            {
+              "id": "4-tower",
+              "hp": 499
+            },
+            {
+              "id": "4-unit",
+              "hp": 3000
+            },
+            {
+              "id": "3-tower",
+              "hp": 2500
+            },
+            {
+              "id": "3-unit",
+              "hp": 3000
+            },
+            {
+              "id": "2-tower",
+              "hp": 2500
+            },
+            {
+              "id": "2-unit",
+              "hp": 3000
+            },
+            {
+              "id": "1-tower",
+              "hp": 2500
+            },
+            {
+              "id": "1-unit",
+              "hp": 3000
+            },
+            {
+              "id": "south-base",
+              "hp": 10000
+            }
+          ]
+        },
+        {
+          "time": 900,
+          "alive": 72,
+          "killed": 784,
+          "seen": 45,
+          "facilities": [
+            {
+              "id": "5-tower",
+              "hp": 0
+            },
+            {
+              "id": "4-tower",
+              "hp": 0
+            },
+            {
+              "id": "4-unit",
+              "hp": 1457
+            },
+            {
+              "id": "3-tower",
+              "hp": 2500
+            },
+            {
+              "id": "3-unit",
+              "hp": 3000
+            },
+            {
+              "id": "2-tower",
+              "hp": 2500
+            },
+            {
+              "id": "2-unit",
+              "hp": 3000
+            },
+            {
+              "id": "1-tower",
+              "hp": 2500
+            },
+            {
+              "id": "1-unit",
+              "hp": 3000
+            },
+            {
+              "id": "south-base",
+              "hp": 10000
+            }
+          ]
+        }
+      ],
+      "simulation_ms": 16263
+    }
+  },
+  "wave_gap_no_spawn": true
+}

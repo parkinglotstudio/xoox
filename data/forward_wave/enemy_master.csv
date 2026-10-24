@@ -1,0 +1,5 @@
+id,name,hp,speed,radius,dps,color,resource_id
+enemy_swarm,무리,3,26,8,4,#c4b15a,res_enemy_swarm
+enemy_fast,빠름,2,38,8,5,#d158bc,res_enemy_fast
+enemy_tough,단단,5,26,8,7,#8aa0b8,res_enemy_tough
+enemy_boss,우두머리,12,20,8,9,#f2f6fb,res_enemy_boss

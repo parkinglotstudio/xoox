@@ -1,0 +1,12 @@
+[
+  {
+    "path": "vite.config.ts",
+    "before_sha256": "4b4d522bb6d50856efd6f6f47e92d749794ec9b7d8c3a0edfb33b8d3bb44bdc5",
+    "after_sha256": "686f40ca3d25c4364d82df0f9ccaa2960abc484c656e52d0e41a3609e285ecfa"
+  },
+  {
+    "path": "unit-lab-tool.html",
+    "before_sha256": "5b4a5bd1ae29cecebf992c4a6c4662766f41472b83aeded0c300fd23fdf04e05",
+    "after_sha256": "7551c9479cfa6447b4d2107680c0cd5a14bc783919137dd06901720f6028224f"
+  }
+]

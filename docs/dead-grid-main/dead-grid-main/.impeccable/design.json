@@ -1,0 +1,442 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-05T02:21:46.655265+00:00",
+  "title": "Design System: DEAD GRID",
+  "extensions": {
+    "colorMeta": {
+      "petrol": {
+        "role": "neutral",
+        "displayName": "Petrol",
+        "canonical": "#142525",
+        "tonalRamp": [
+          "oklch(15.00% 0.0227 195.79)",
+          "oklch(26.43% 0.0227 195.79)",
+          "oklch(37.86% 0.0227 195.79)",
+          "oklch(49.29% 0.0227 195.79)",
+          "oklch(60.71% 0.0227 195.79)",
+          "oklch(72.14% 0.0227 195.79)",
+          "oklch(83.57% 0.0227 195.79)",
+          "oklch(95.00% 0.0227 195.79)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#eee8d3",
+        "tonalRamp": [
+          "oklch(15.00% 0.0286 93.76)",
+          "oklch(26.43% 0.0286 93.76)",
+          "oklch(37.86% 0.0286 93.76)",
+          "oklch(49.29% 0.0286 93.76)",
+          "oklch(60.71% 0.0286 93.76)",
+          "oklch(72.14% 0.0286 93.76)",
+          "oklch(83.57% 0.0286 93.76)",
+          "oklch(95.00% 0.0286 93.76)"
+        ]
+      },
+      "display-ivory": {
+        "role": "neutral",
+        "displayName": "Display Ivory",
+        "canonical": "#eee7ca",
+        "tonalRamp": [
+          "oklch(15.00% 0.0390 95.87)",
+          "oklch(26.43% 0.0390 95.87)",
+          "oklch(37.86% 0.0390 95.87)",
+          "oklch(49.29% 0.0390 95.87)",
+          "oklch(60.71% 0.0390 95.87)",
+          "oklch(72.14% 0.0390 95.87)",
+          "oklch(83.57% 0.0390 95.87)",
+          "oklch(95.00% 0.0390 95.87)"
+        ]
+      },
+      "safety-orange": {
+        "role": "primary",
+        "displayName": "Safety Orange",
+        "canonical": "#f2a15b",
+        "tonalRamp": [
+          "oklch(15.00% 0.1292 59.93)",
+          "oklch(26.43% 0.1292 59.93)",
+          "oklch(37.86% 0.1292 59.93)",
+          "oklch(49.29% 0.1292 59.93)",
+          "oklch(60.71% 0.1292 59.93)",
+          "oklch(72.14% 0.1292 59.93)",
+          "oklch(83.57% 0.1292 59.93)",
+          "oklch(95.00% 0.1292 59.93)"
+        ]
+      },
+      "safety-orange-hover": {
+        "role": "primary",
+        "displayName": "Safety Orange Hover",
+        "canonical": "#ffb974",
+        "tonalRamp": [
+          "oklch(15.00% 0.1181 64.60)",
+          "oklch(26.43% 0.1181 64.60)",
+          "oklch(37.86% 0.1181 64.60)",
+          "oklch(49.29% 0.1181 64.60)",
+          "oklch(60.71% 0.1181 64.60)",
+          "oklch(72.14% 0.1181 64.60)",
+          "oklch(83.57% 0.1181 64.60)",
+          "oklch(95.00% 0.1181 64.60)"
+        ]
+      },
+      "experience-sage": {
+        "role": "secondary",
+        "displayName": "Experience Sage",
+        "canonical": "#87d7c0",
+        "tonalRamp": [
+          "oklch(15.00% 0.0857 173.88)",
+          "oklch(26.43% 0.0857 173.88)",
+          "oklch(37.86% 0.0857 173.88)",
+          "oklch(49.29% 0.0857 173.88)",
+          "oklch(60.71% 0.0857 173.88)",
+          "oklch(72.14% 0.0857 173.88)",
+          "oklch(83.57% 0.0857 173.88)",
+          "oklch(95.00% 0.0857 173.88)"
+        ]
+      },
+      "experience-track": {
+        "role": "secondary",
+        "displayName": "Experience Track",
+        "canonical": "#82cdb6",
+        "tonalRamp": [
+          "oklch(15.00% 0.0821 172.69)",
+          "oklch(26.43% 0.0821 172.69)",
+          "oklch(37.86% 0.0821 172.69)",
+          "oklch(49.29% 0.0821 172.69)",
+          "oklch(60.71% 0.0821 172.69)",
+          "oklch(72.14% 0.0821 172.69)",
+          "oklch(83.57% 0.0821 172.69)",
+          "oklch(95.00% 0.0821 172.69)"
+        ]
+      },
+      "panel-sage": {
+        "role": "neutral",
+        "displayName": "Panel Sage",
+        "canonical": "#192f25",
+        "tonalRamp": [
+          "oklch(15.00% 0.0339 163.65)",
+          "oklch(26.43% 0.0339 163.65)",
+          "oklch(37.86% 0.0339 163.65)",
+          "oklch(49.29% 0.0339 163.65)",
+          "oklch(60.71% 0.0339 163.65)",
+          "oklch(72.14% 0.0339 163.65)",
+          "oklch(83.57% 0.0339 163.65)",
+          "oklch(95.00% 0.0339 163.65)"
+        ]
+      },
+      "upgrade-sage": {
+        "role": "neutral",
+        "displayName": "Upgrade Sage",
+        "canonical": "#20372b",
+        "tonalRamp": [
+          "oklch(15.00% 0.0364 160.57)",
+          "oklch(26.43% 0.0364 160.57)",
+          "oklch(37.86% 0.0364 160.57)",
+          "oklch(49.29% 0.0364 160.57)",
+          "oklch(60.71% 0.0364 160.57)",
+          "oklch(72.14% 0.0364 160.57)",
+          "oklch(83.57% 0.0364 160.57)",
+          "oklch(95.00% 0.0364 160.57)"
+        ]
+      },
+      "upgrade-hover": {
+        "role": "neutral",
+        "displayName": "Upgrade Hover",
+        "canonical": "#304b35",
+        "tonalRamp": [
+          "oklch(15.00% 0.0497 149.40)",
+          "oklch(26.43% 0.0497 149.40)",
+          "oklch(37.86% 0.0497 149.40)",
+          "oklch(49.29% 0.0497 149.40)",
+          "oklch(60.71% 0.0497 149.40)",
+          "oklch(72.14% 0.0497 149.40)",
+          "oklch(83.57% 0.0497 149.40)",
+          "oklch(95.00% 0.0497 149.40)"
+        ]
+      },
+      "muted-sage": {
+        "role": "neutral",
+        "displayName": "Muted Sage",
+        "canonical": "#adbca3",
+        "tonalRamp": [
+          "oklch(15.00% 0.0385 132.74)",
+          "oklch(26.43% 0.0385 132.74)",
+          "oklch(37.86% 0.0385 132.74)",
+          "oklch(49.29% 0.0385 132.74)",
+          "oklch(60.71% 0.0385 132.74)",
+          "oklch(72.14% 0.0385 132.74)",
+          "oklch(83.57% 0.0385 132.74)",
+          "oklch(95.00% 0.0385 132.74)"
+        ]
+      },
+      "world-petrol": {
+        "role": "neutral",
+        "displayName": "World Petrol",
+        "canonical": "#1d3637",
+        "tonalRamp": [
+          "oklch(15.00% 0.0310 198.98)",
+          "oklch(26.43% 0.0310 198.98)",
+          "oklch(37.86% 0.0310 198.98)",
+          "oklch(49.29% 0.0310 198.98)",
+          "oklch(60.71% 0.0310 198.98)",
+          "oklch(72.14% 0.0310 198.98)",
+          "oklch(83.57% 0.0310 198.98)",
+          "oklch(95.00% 0.0310 198.98)"
+        ]
+      },
+      "world-fog": {
+        "role": "neutral",
+        "displayName": "World Fog",
+        "canonical": "#243e3b",
+        "tonalRamp": [
+          "oklch(15.00% 0.0325 186.53)",
+          "oklch(26.43% 0.0325 186.53)",
+          "oklch(37.86% 0.0325 186.53)",
+          "oklch(49.29% 0.0325 186.53)",
+          "oklch(60.71% 0.0325 186.53)",
+          "oklch(72.14% 0.0325 186.53)",
+          "oklch(83.57% 0.0325 186.53)",
+          "oklch(95.00% 0.0325 186.53)"
+        ]
+      },
+      "picker-sage": {
+        "role": "neutral",
+        "displayName": "Picker Sage",
+        "canonical": "#142b25",
+        "tonalRamp": [
+          "oklch(15.00% 0.0315 175.04)",
+          "oklch(26.43% 0.0315 175.04)",
+          "oklch(37.86% 0.0315 175.04)",
+          "oklch(49.29% 0.0315 175.04)",
+          "oklch(60.71% 0.0315 175.04)",
+          "oklch(72.14% 0.0315 175.04)",
+          "oklch(83.57% 0.0315 175.04)",
+          "oklch(95.00% 0.0315 175.04)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Condensed title",
+        "purpose": "Two-line menu wordmark."
+      },
+      "headline": {
+        "displayName": "Korean heading",
+        "purpose": "Overlay headings."
+      },
+      "title": {
+        "displayName": "Upgrade title",
+        "purpose": "Build choice names."
+      },
+      "body": {
+        "displayName": "Korean body",
+        "purpose": "Overlay instructions and descriptions. Rescue HUD captions use 14px data and 13px secondary instructions on desktop; mobile uses a 14px title, 13px data, and 12px instruction. These are compact HUD roles, not the general body-copy scale."
+      },
+      "label": {
+        "displayName": "Operational label",
+        "purpose": "Field kickers and compact identifiers. Rescue distance uses mono numerals at 14px desktop and 13px mobile."
+      }
+    },
+    "shadows": [
+      {
+        "name": "title-shadow",
+        "value": "drop-shadow(0 3px 3px #12252066)",
+        "purpose": "Subtle menu wordmark depth."
+      },
+      {
+        "name": "status-glow",
+        "value": "0 0 9px #e29d6555",
+        "purpose": "Small warm operational status dot."
+      },
+      {
+        "name": "picker-panel-shadow",
+        "value": "0 20px 60px #0008",
+        "purpose": "Structural shadow beneath the centered survivor dialog; choice cards stay flat."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-transition",
+        "value": "background 0.18s, color 0.18s, transform 0.18s",
+        "purpose": "Button response; removed by reduced motion."
+      },
+      {
+        "name": "overlay-entry",
+        "value": "opacity 0.2s ease-out",
+        "purpose": "Overlay reveal; removed by reduced motion."
+      },
+      {
+        "name": "notice-entry",
+        "value": "0.3s ease-out",
+        "purpose": "Notice fade and position entry; removed by reduced motion."
+      },
+      {
+        "name": "mission-colon",
+        "value": "2s step-end infinite",
+        "purpose": "Timer colon blink; removed by reduced motion."
+      },
+      {
+        "name": "rescue-health",
+        "value": "transform 0.15s linear",
+        "purpose": "Brief patient health-track response; reduced-motion settings remove CSS transitions. Patient treatment crosses rise only above the patient, or remain fixed when motion is reduced."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide-desktop",
+        "value": "min-width: 1600px"
+      },
+      {
+        "name": "compact-desktop",
+        "value": "max-width: 1100px"
+      },
+      {
+        "name": "mobile-tablet",
+        "value": "max-width: 800px"
+      },
+      {
+        "name": "narrow-portrait",
+        "value": "max-width: 520px"
+      },
+      {
+        "name": "short-desktop",
+        "value": "max-height: 760px and min-width: 801px"
+      },
+      {
+        "name": "short-mobile",
+        "value": "max-height: 610px and max-width: 800px"
+      },
+      {
+        "name": "coarse-input",
+        "value": "pointer: coarse"
+      },
+      {
+        "name": "picker-compact",
+        "value": "max-width: 1050px"
+      },
+      {
+        "name": "picker-mobile",
+        "value": "max-width: 760px"
+      },
+      {
+        "name": "picker-narrow",
+        "value": "max-width: 390px"
+      },
+      {
+        "name": "picker-short",
+        "value": "max-height: 760px and min-width: 761px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Orange consequential action, including starting and continuing a run.",
+      "html": "<button class=\"ds-primary\">생존 시작 <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M7 17 17 7M7 7h10v10\"/></svg></button>",
+      "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;gap:20px;background:var(--orange,#f2a15b);color:#142520;border:1px solid transparent;border-radius:0;padding:16px 23px;min-height:54px;font:800 14px \"Noto Sans KR\",sans-serif;transition:background .18s,color .18s,transform .18s;cursor:pointer;}.ds-primary:hover{background:#ffb974;color:#10231e}.ds-primary:active{transform:translateY(1px)}.ds-primary:disabled{opacity:.4;cursor:not-allowed}.ds-primary:focus-visible,.ds-secondary:focus-visible,.ds-nav button:focus-visible,.ds-character:focus-visible,.ds-upgrade:focus-visible,.ds-toggle:focus-visible{outline:2px solid var(--orange,#f2a15b);outline-offset:5px}"
+    },
+    {
+      "name": "Secondary action",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Quiet outlined pause and result actions.",
+      "html": "<button class=\"ds-secondary\">기지로 돌아가기</button>",
+      "css": ".ds-secondary{display:inline-flex;align-items:center;justify-content:center;gap:15px;background:none;color:#c8d2b6;border:1px solid #718262;border-radius:0;padding:14px 22px;min-height:50px;font:500 12px \"Noto Sans KR\",sans-serif;transition:background .18s,color .18s,transform .18s;cursor:pointer;}.ds-secondary:hover{background:#809d5326;color:#fff4de}.ds-secondary:active{transform:translateY(1px)}.ds-primary:focus-visible,.ds-secondary:focus-visible,.ds-nav button:focus-visible,.ds-character:focus-visible,.ds-upgrade:focus-visible,.ds-toggle:focus-visible{outline:2px solid var(--orange,#f2a15b);outline-offset:5px}"
+    },
+    {
+      "name": "Guide tabs",
+      "kind": "nav",
+      "description": "Sparse text navigation with an orange selection rule.",
+      "html": "<nav class=\"ds-nav\"><button class=\"ds-selected\">생존 기초</button><button>무기 도감</button><button>작전 시간표</button></nav>",
+      "css": ".ds-nav{display:flex;gap:24px;border-bottom:1px solid #5c754d70}.ds-nav button{background:none;border:0;border-bottom:2px solid transparent;color:#93ab83;padding:12px 0;font:12px \"Noto Sans KR\",sans-serif;transition:background .18s,color .18s,transform .18s;cursor:pointer;}.ds-nav button.ds-selected{color:var(--ink,#eee8d3);border-bottom-color:var(--orange,#f2a15b)}.ds-nav button:hover{color:#fff4de}.ds-nav button:active{transform:translateY(1px)}.ds-primary:focus-visible,.ds-secondary:focus-visible,.ds-nav button:focus-visible,.ds-character:focus-visible,.ds-upgrade:focus-visible,.ds-toggle:focus-visible{outline:2px solid var(--orange,#f2a15b);outline-offset:5px}"
+    },
+    {
+      "name": "Selected survivor",
+      "kind": "card",
+      "description": "Copy and selected state of the portrait-backed survivor card in the centered picker; the shipped portrait comes from the local atlas.",
+      "html": "<button class=\"ds-character\" aria-pressed=\"true\"><svg class=\"ds-check\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m5 12 4 4L19 6\"/></svg><small>정찰병</small><strong>강하나</strong><span>서비스 피스톨</span></button>",
+      "css": ".ds-character{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:144px;text-align:left;padding:12px;background:#1c372c;color:#eae5cd;border:1px solid #526b57;border-radius:0;font-family:\"Noto Sans KR\",sans-serif;transition:border-color .15s,background .15s;cursor:pointer}.ds-character[aria-pressed=\"true\"]{border-color:#eda15f;background:#304332}.ds-character small{font-size:13px;color:#ccd3b8}.ds-character strong{font-size:22px;line-height:1.3}.ds-character>span{font-size:13px;color:#d2c9a2}.ds-character .ds-check{align-self:flex-end;background:#172c22;color:#f4c787;padding:4px}.ds-character:hover{border-color:#c8cbae}.ds-character:focus-visible{outline:2px solid #f3bb7e;outline-offset:3px}"
+    },
+    {
+      "name": "Upgrade choice",
+      "kind": "card",
+      "refersTo": "upgrade-card",
+      "description": "A paused build decision with a prominent number, description, and hover lift.",
+      "html": "<button class=\"ds-upgrade\"><span>WEAPON UPGRADE <kbd>1</kbd></span><h3>무기 강화</h3><p>장비 하나를 선택하세요. 선택하는 동안 시간은 멈춥니다.</p></button>",
+      "css": ".ds-upgrade{display:flex;flex-direction:column;text-align:left;background:#20372b;color:#dfe1c4;border:0;border-top:3px solid #6e8865;border-radius:0;padding:20px 23px 0;min-height:335px;width:270px;transition:background .18s,color .18s,transform .18s;cursor:pointer;}.ds-upgrade>span{display:flex;justify-content:space-between;font:8px \"IBM Plex Mono\",monospace;letter-spacing:.09em;color:#9bae89}.ds-upgrade kbd{font:11px \"IBM Plex Mono\",monospace;border:1px solid #91a080;border-radius:3px;padding:4px 6px;color:#e7dbb0}.ds-upgrade h3{font:700 21px \"Noto Sans KR\",sans-serif;letter-spacing:-.02em;margin:20px 0 0}.ds-upgrade p{font:11px/1.9 \"Noto Sans KR\",sans-serif;color:#adbca3;margin:16px 0 21px}.ds-upgrade:hover{background:#304b35;transform:translateY(-5px);border-color:var(--orange,#f2a15b)}.ds-primary:focus-visible,.ds-secondary:focus-visible,.ds-nav button:focus-visible,.ds-character:focus-visible,.ds-upgrade:focus-visible,.ds-toggle:focus-visible{outline:2px solid var(--orange,#f2a15b);outline-offset:5px}"
+    },
+    {
+      "name": "Active setting toggle",
+      "kind": "button",
+      "description": "Rectangular on/off setting with light sage active fill.",
+      "html": "<button class=\"ds-toggle\" aria-pressed=\"true\">켜짐</button>",
+      "css": ".ds-toggle{min-width:66px;border:1px solid #647c55;border-radius:0;font:11px \"Noto Sans KR\",sans-serif;padding:8px 13px;color:#c5d0ae;background:#243b2b;transition:background .18s,color .18s,transform .18s;cursor:pointer;}.ds-toggle[aria-pressed=\"true\"]{background:#849d66;color:#162a1a;border-color:#849d66}.ds-toggle:hover{color:#fff4de}.ds-toggle:active{transform:translateY(1px)}.ds-primary:focus-visible,.ds-secondary:focus-visible,.ds-nav button:focus-visible,.ds-character:focus-visible,.ds-upgrade:focus-visible,.ds-toggle:focus-visible{outline:2px solid var(--orange,#f2a15b);outline-offset:5px}"
+    },
+    {
+      "name": "Research row",
+      "kind": "custom",
+      "description": "One of seven permanent research rows, showing rank, per-rank effect, pips and the next purchase price.",
+      "html": "<div class=\"ds-research\"><svg width=\"28\" height=\"28\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z\"/></svg><div><h3>충격파 제어 <small>0 / 5</small></h3><p>단계당 Q 쿨다운 6% 감소</p><div class=\"ds-pips\" aria-hidden=\"true\"><i></i><i></i><i></i><i></i><i></i></div></div><button>10 자원 <svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></button></div>",
+      "css": ".ds-research{display:flex;align-items:center;gap:20px;padding:17px 0;border-top:1px solid #47604d;background:#192f25;color:#eee8d3;font-family:\"Noto Sans KR\",sans-serif}.ds-research>svg{flex-shrink:0;color:#d4c599}.ds-research>div{flex:1;min-width:0}.ds-research h3{display:flex;align-items:center;gap:14px;font-size:20px;margin:0 0 5px}.ds-research h3 small{font:400 14px \"IBM Plex Mono\",monospace;color:#c1cdb1}.ds-research p{font-size:15px;margin:0;color:#ccd6bc}.ds-pips{display:flex;gap:5px;margin-top:9px}.ds-pips i{height:5px;flex:1;background:#4a6240}.ds-research button{display:inline-flex;align-items:center;justify-content:center;gap:15px;min-width:122px;min-height:44px;padding:14px 22px;border:1px solid #718262;border-radius:0;background:none;color:#c8d2b6;font:500 15px \"Noto Sans KR\",sans-serif;transition:background .18s,color .18s,transform .18s;cursor:pointer}.ds-research button:hover{background:#809d5326;color:#fff4de}.ds-research button:active{transform:translateY(1px)}.ds-research button:focus-visible{outline:2px solid var(--orange,#f2a15b);outline-offset:5px}.ds-research button:disabled{opacity:.6;cursor:default}"
+    },
+    {
+      "name": "Rescue objective",
+      "kind": "custom",
+      "refersTo": "rescue-objective",
+      "description": "Right-side patient status below the minimap: ivory signal, sage treatment, orange inactive critical health, or a quiet current-run count. Desktop and mobile retain distinct compact HUD type steps.",
+      "html": "<section class=\"ds-rescue ds-rescue-healing\" aria-label=\"생존자 구조 목표\"><div class=\"ds-rescue-head\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z\"/><path d=\"M3 12h4l3-4 4 8 3-4h4\"/></svg><b>치료 중</b><span>2m</span></div><div class=\"ds-rescue-track\" role=\"progressbar\" aria-label=\"부상 생존자 체력\" aria-valuenow=\"72\" aria-valuemin=\"0\" aria-valuemax=\"100\"><i style=\"transform:scaleX(.72)\"></i></div><p>72% · 구출까지 17초</p><small>범위 안에 머무르세요</small></section>",
+      "css": ".ds-rescue{width:180px;margin:12px 0 16px;padding:10px 0;border-top:1px solid #adbca355;border-bottom:1px solid #adbca333;border-radius:0;color:var(--ink,#eee8d3);text-align:left;font-family:\"Noto Sans KR\",sans-serif}.ds-rescue-head{display:flex;align-items:center;gap:8px}.ds-rescue-head svg{flex-shrink:0}.ds-rescue-head b{font-size:16px}.ds-rescue-head span{margin-left:auto;font:14px var(--mono,\"IBM Plex Mono\",monospace)}.ds-rescue p{margin:8px 0 3px;font-size:14px;font-variant-numeric:tabular-nums}.ds-rescue small{font-size:13px;color:#adbca3}.ds-rescue-track{height:5px;background:#142525;margin-top:9px}.ds-rescue-track i{display:block;height:100%;width:100%;background:var(--ink,#eee8d3);transform-origin:left;transition:transform .15s linear}.ds-rescue-healing{color:var(--cyan,#87d7c0)}.ds-rescue-healing .ds-rescue-track i{background:var(--cyan,#87d7c0)}.ds-rescue-urgent{color:var(--orange,#f2a15b)}.ds-rescue-urgent .ds-rescue-track i{background:var(--orange,#f2a15b)}@media(max-width:800px){.ds-rescue{width:130px;margin:8px 0;padding:8px 0}.ds-rescue-head{gap:5px}.ds-rescue-head b{font-size:14px}.ds-rescue-head span,.ds-rescue p{font-size:13px}.ds-rescue small{font-size:12px}.ds-rescue-head svg{width:15px}}@media(max-width:520px){.ds-rescue{width:128px;padding:7px 0}}@media(max-height:610px){.ds-rescue{margin:4px 0;padding:5px 0}.ds-rescue small{display:none}}@media(prefers-reduced-motion:reduce){.ds-rescue-track i{transition:none}}"
+    },
+    {
+      "name": "Rescue minimap signal",
+      "kind": "custom",
+      "description": "Medical cross stays visible beyond explored terrain and current sight. The edge variant adds a rotated arrow and names health, distance, and off-map status; enemy and supply visibility rules remain unchanged.",
+      "html": "<svg class=\"ds-rescue-map\" viewBox=\"0 0 140 140\" role=\"img\" aria-label=\"미니맵: 십자가는 부상 생존자, 가장자리 화살표는 구조 방향\"><circle cx=\"70\" cy=\"70\" r=\"65\" fill=\"#070b09\" stroke=\"#98a48b\" stroke-opacity=\".4\"/><g class=\"ds-rescue-marker\" transform=\"translate(114 38)\"><title>부상 생존자 50% · 42m · 미니맵 밖</title><circle r=\"8\" fill=\"#142525\" stroke=\"currentColor\" stroke-width=\"1.3\"/><path d=\"M-4 0H4M0-4V4\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M8-4L13 0L8 4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" transform=\"rotate(-36)\"/></g><path d=\"M70 63 L75 76 L70 73 L65 76 Z\" fill=\"#f3ad66\"/></svg>",
+      "css": ".ds-rescue-map{display:block;width:180px;height:180px}.ds-rescue-marker{color:var(--ink,#eee8d3)}.ds-rescue-marker.ds-healing{color:var(--cyan,#87d7c0)}.ds-rescue-marker.ds-urgent{color:var(--orange,#f2a15b)}@media(max-width:800px){.ds-rescue-map{width:130px;height:130px}}@media(max-width:520px){.ds-rescue-map{width:100px;height:100px}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Evacuation Street Planning",
+    "overview": "The city is the primary visual surface: a live, orthographic cubic world of ruined buildings, crosswalks, abandoned cars, barricades, and zombie silhouettes. Petrol darkness and dusty sage concrete make warm typography and safety signals legible. The interface feels like mission wayfinding laid over an active street, with a large condensed title and quiet field instrumentation.\n\nThe implemented world uses TypeScript, Vite, React Three Fiber, and instanced box geometry. `concept.png` is the aesthetic and composition reference; its density and illustrated detail differ from the live geometry. `screenshots/desktop.jpg` and `screenshots/mobile.jpg` record the earlier menu compositions; `.impeccable/review/desktop.jpg` and `.impeccable/review/mobile.jpg` record the current survivor picker. Preserve their hierarchy and atmosphere without treating either screenshot or concept as a pixel-equality target. The code is the source of truth for current values and behavior.",
+    "keyCharacteristics": [
+      "Live voxel geometry remains visually dominant.",
+      "Large ivory title, orange start action, and restrained sage instrumentation.",
+      "Straight panel edges, thin rules, and small monospaced operational labels.",
+      "Desktop keyboard movement and mouse-directed automatic attacks, with a secondary mobile virtual stick and movement-direction aiming."
+    ],
+    "rules": [
+      {
+        "name": "The Signal Rule",
+        "body": "Use orange to direct action or mark consequential state; let petrol and sage carry the surrounding surface.",
+        "section": "colors"
+      },
+      {
+        "name": "The Hierarchy Rule",
+        "body": "Keep the title and final-contact time prominent; supporting labels remain compact and quiet rather than competing with the playfield.",
+        "section": "typography"
+      },
+      {
+        "name": "The Rescue State Rule",
+        "body": "Keep the rescue HUD and minimap signal ivory at rest, sage while treating, and orange below 20% patient health when treatment is inactive. Pair color with the medical cross, written status, and health information.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "**Do** preserve the live voxel city as the main content and keep the active movement center legible.",
+      "**Do** use orange for actions and consequential states, with ivory reading text over petrol and sage surfaces.",
+      "**Do** preserve straight panel edges, sparse separators, and condensed/mono/Korean type roles.",
+      "**Do** keep overlays keyboard-contained and retain visible focus, accessible names, and touch input cancellation.",
+      "**Do** honor graphics and reduced-motion settings and serve the bundled fonts locally.",
+      "**Do** keep rescue guidance in the perimeter HUD, use text and health information alongside state colors, and attach treatment effects to the patient."
+    ],
+    "donts": [
+      "**Don't** replace the R3F scene with the concept image or claim pixel equality with its illustrated density.",
+      "**Don't** add competing title eyebrows or decorative labels that weaken the current menu hierarchy.",
+      "**Don't** spread rounded cards, heavy UI shadows, or orange fills across the whole playfield.",
+      "**Don't** bury consequential upgrade choices in motion or allow background controls to take overlay focus.",
+      "**Don't** turn compact mobile controls into a width-only feature; coarse-pointer support is part of the implemented behavior."
+    ]
+  }
+}

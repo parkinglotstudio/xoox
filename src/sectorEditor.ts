@@ -3,6 +3,7 @@
  * npm run dev:map → /sector-editor.html
  * 배치는 NPC(area_npc_config)만. 데코 아트는 별도.
  */
+import { blockAssetUrl, readBlockMapManifest } from "./maps/blockMap/BlockMap";
 import { paintSectorFloorUrl, SPLAT_LAND_IDS } from "./stage/world3d/islandFloorSplat";
 import { conceptUrlFor, ISLAND_OVERVIEW_URL, loadSectorScale } from "./island/islandMapShared";
 import { spawnPctInArea } from "./stage/spawnStart";
@@ -58,6 +59,13 @@ const ISLAND_MAP = ISLAND_OVERVIEW_URL;
 /** 원본 컨셉 · 정화전(타일+하얗게) · 정화후(타일) */
 type ArtMode = "concept" | "polluted" | "purified";
 let artMode: ArtMode = "polluted";
+let horizonPurified = "";
+let horizonPolluted = "";
+void readBlockMapManifest().then((manifest) => {
+  horizonPurified = blockAssetUrl(manifest.states.purified.backdrop, manifest.revision);
+  horizonPolluted = blockAssetUrl(manifest.states.polluted.backdrop, manifest.revision);
+  renderHorizonPreview();
+}).catch(() => {});
 let artBust = Date.now();
 const floorUrls = new Map<string, string>();
 let floorBusy = false;
@@ -82,6 +90,10 @@ const phoneNodes = document.querySelector<HTMLElement>("#phoneNodes")!;
 const phoneChar = document.querySelector<HTMLElement>("#phoneChar")!;
 const phoneSub = document.querySelector<HTMLElement>("#phoneSub")!;
 const artModeSel = document.querySelector<HTMLSelectElement>("#artMode")!;
+const horizonTitle = document.querySelector<HTMLElement>("#horizonTitle")!;
+const horizonLink = document.querySelector<HTMLAnchorElement>("#horizonLink")!;
+const horizonPreview = document.querySelector<HTMLImageElement>("#horizonPreview")!;
+const horizonNote = document.querySelector<HTMLElement>("#horizonNote")!;
 const nodeList = document.querySelector<HTMLElement>("#nodeList")!;
 const nodeCount = document.querySelector<HTMLElement>("#nodeCount")!;
 const scaleBox = document.querySelector<HTMLElement>("#scaleBox")!;
@@ -515,10 +527,30 @@ function renderScale() {
 }
 
 function renderAll() {
+  renderHorizonPreview();
   renderIsland();
   renderPhone();
   renderList();
   syncInfo();
+}
+
+function renderHorizonPreview() {
+  const isConcept = artMode === "concept";
+  horizonLink.hidden = isConcept;
+  if (isConcept) {
+    horizonTitle.textContent = "원경 · 원본 컨셉";
+    horizonNote.textContent = "원본 컨셉 보기에는 별도 원경 그림을 적용하지 않습니다.";
+    return;
+  }
+  const purified = artMode === "purified";
+  const label = purified ? "정화후" : "정화전";
+  const src = purified ? horizonPurified : horizonPolluted;
+  if (!src) return;
+  if (horizonPreview.getAttribute("src") !== src) horizonPreview.src = src;
+  horizonLink.href = src;
+  horizonPreview.alt = `${label} 블록 산과 하늘 원경`;
+  horizonTitle.textContent = `원경 · ${label}`;
+  horizonNote.textContent = "보기 상태에 따라 전환 · 그림을 누르면 원본 크기 · 3D 적용 전 미리보기";
 }
 
 function renderIsland() {

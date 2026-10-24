@@ -1,0 +1,102 @@
+[
+  {
+    "path": "data/tools/unit_lab/pets/nofilter/manifest.json",
+    "bytes": 1654,
+    "sha256": "8c30de2d99ad51eec232da19bf94f860cbee94adb463f80a46dd0ac947a8e808"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/nofilter/nofilter.glb",
+    "bytes": 2143400,
+    "sha256": "49aac9ccceeb4edd8b3681d41bc359a7960fd5b8bbce488ae71dbaa862c02798"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/nofilter/reference.png",
+    "bytes": 1619156,
+    "sha256": "85dd61b60ed2a0f433bffcfcf68a379eedc9a109c283925a37f1d5d5207bd05a"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/nofilter/source/nofilter.blend",
+    "bytes": 1461011,
+    "sha256": "491b1cc17b55ed81c26a712299a6569c39a9720f9410b7a9a40887306bb5eb9b"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/nofilter/source/nofilter.blend1",
+    "bytes": 1429795,
+    "sha256": "60e66fc3d1fa38c9792a06eac97d73f136828b03cce20cf83667976bf5d4f704"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/flux/flux.glb",
+    "bytes": 2279308,
+    "sha256": "5dfc361155e7cb230e38cca1694803b86a86f5df71ce425ebffeb9707c8b5b56"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/flux/manifest.json",
+    "bytes": 1665,
+    "sha256": "15f12136b27e6a52c50a736c5ca73e488e27dafb2ef48907a755e68b7c49e83d"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/flux/reference.png",
+    "bytes": 3847700,
+    "sha256": "691eb70c4f0702e8790c0a7449b96a088933cf6590ea37044c5146fd87e6e88d"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/flux/source/flux.blend",
+    "bytes": 1511854,
+    "sha256": "9954cb3beff674752b6eb6220124bbda513b171701eb4b21d00acb4a8872f8d2"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/flux/source/flux.blend1",
+    "bytes": 2378416,
+    "sha256": "66fb0aa42eb1ec61a5a5e43795bdb4e7477ff2f7576abbd74ade5760af8826b5"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/lumos/lumos.glb",
+    "bytes": 2233164,
+    "sha256": "e155b5052dd774258288698d788386acc6bba2dace056a01a0199f9ffaae80be"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/lumos/manifest.json",
+    "bytes": 1668,
+    "sha256": "35edbf369f4a945f8aa751cc51f18bb091dc5616799aa838c3e0950da5090b1b"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/lumos/reference.png",
+    "bytes": 3737068,
+    "sha256": "b73f957809ffd886f273db491005b3497320028053d451b233a8068ae93adac0"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/lumos/source/lumos.blend",
+    "bytes": 3176846,
+    "sha256": "052792b7282d7f582e2045a1617fb2b5939096010db8dc82a082976f8ac2c2eb"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/lumos/source/lumos.blend1",
+    "bytes": 2335188,
+    "sha256": "8fee003391a627496bf1d2b3773b825693ddf614d5e66568ca5de234c100e742"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/gizmo/gizmo.glb",
+    "bytes": 2267512,
+    "sha256": "03eda2cb9ad2eee82bd1ef31fd716de9e6eb22967d388c1b1e190372dadd803d"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/gizmo/manifest.json",
+    "bytes": 1667,
+    "sha256": "a8f5487eac68b4aef6a08735777e6a76075947379744de49cbe85f47d51b2837"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/gizmo/reference.png",
+    "bytes": 4803747,
+    "sha256": "101286ab6aa74c6ed93baedf86a5dd89c735487c27fb751c0be248cfebadc88d"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/gizmo/source/gizmo.blend",
+    "bytes": 4088530,
+    "sha256": "16a3a9b314a2912bc941c12d35b1c0e9e860dab6c6d9c0117d5b2dd21f125710"
+  },
+  {
+    "path": "data/tools/unit_lab/pets/gizmo/source/gizmo.blend1",
+    "bytes": 3178971,
+    "sha256": "806e4d6b11fcb10d7e59617bd07c1674b085341e45f925e24f9e6930002e856c"
+  }
+]

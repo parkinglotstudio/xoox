@@ -1,0 +1,37 @@
+[
+  {
+    "Algorithm": "SHA256",
+    "Hash": "88E30CDDE064C8D49C6D58787FAEFE8C483778FE6FB2BE765AD38AC6294C6EB6",
+    "Path": "C:\\xoox\\docs\\asset_backups\\20260927_RuonCrown_Codex\\build_a_before.py"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "4A3E2A3E201A0EFB5B2FF41453A36FA47634D73C12376DEA92A21970F122FD27",
+    "Path": "C:\\xoox\\docs\\asset_backups\\20260927_RuonCrown_Codex\\RUON_35.blend"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "14ED11A244F703AE5B9788839ED2A9E25C0D0070BC77B3B73D04512AC21938BA",
+    "Path": "C:\\xoox\\docs\\asset_backups\\20260927_RuonCrown_Codex\\RUON_35.glb"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "ABBC05B242ADE8AFB96C3648B2EC0EAEA407D526B499EF56472C3AA986C47BF8",
+    "Path": "C:\\xoox\\docs\\asset_backups\\20260927_RuonCrown_Codex\\RUON_metrics.json"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "B700C2D324AC5EB47D19F2FF2830BE7C5BA15A6029CEEC056637970FB6670FF3",
+    "Path": "C:\\xoox\\docs\\asset_backups\\20260927_RuonCrown_Codex\\RUON.blend"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "926E63AC54CB7FA68E052BE2BA11560B5060DA08097C706252E241ACFAF73B1B",
+    "Path": "C:\\xoox\\docs\\asset_backups\\20260927_RuonCrown_Codex\\RUON.glb"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "EF484C88E3EC7B5CA669E169E4136DE79EF5D8300626845570F41F2BB9CE23BB",
+    "Path": "C:\\xoox\\docs\\asset_backups\\20260927_RuonCrown_Codex\\RUON35_metrics.json"
+  }
+]

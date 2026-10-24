@@ -1,0 +1,17 @@
+{
+  "errors": [],
+  "bad": [],
+  "clips": [
+    {
+      "key": "RUON",
+      "clips": 18,
+      "maxAnimationValueDifference": 0
+    },
+    {
+      "key": "RUON_35",
+      "clips": 18,
+      "maxAnimationValueDifference": 0
+    }
+  ],
+  "ok": true
+}

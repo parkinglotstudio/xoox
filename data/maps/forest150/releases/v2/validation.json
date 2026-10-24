@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "dimensions": [
+    150,
+    300
+  ],
+  "cells": [
+    300,
+    600
+  ],
+  "connectedCells": 39657,
+  "walkableAreaM2": 9914.25,
+  "corridorWidthRangeM": [
+    24,
+    50.5
+  ],
+  "verifiedRouteSegments": 10,
+  "monsterRoutes": 12,
+  "sweptMoves": 60
+}

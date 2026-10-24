@@ -1,0 +1,236 @@
+[
+  {
+    "id": "pet_flux",
+    "name": "Flux",
+    "revision": "PET04-01",
+    "reference": "Australian Cattle Dog1- Flux.png",
+    "cell_meters": 0.02,
+    "triangles": 16528,
+    "vertices": 33056,
+    "bones": 29,
+    "materials": 2,
+    "voxels": 32554,
+    "bytes": 2112328,
+    "animations": {
+      "idle_stand": 4.0,
+      "idle_sit": 4.0,
+      "idle_look": 5.0,
+      "walk": 1.0,
+      "run": 0.6,
+      "attack_laser": 0.7,
+      "stand_up": 1.1,
+      "sit_down": 1.1
+    },
+    "eye_sockets_head_local": {
+      "L": [
+        0.12800000607967377,
+        0.02599996328353882,
+        0.26399996876716614
+      ],
+      "R": [
+        -0.12800000607967377,
+        0.02599996328353882,
+        0.26399996876716614
+      ]
+    },
+    "laser": {
+      "start": 0.18,
+      "end": 0.3,
+      "range": 2.2,
+      "cooldown": 3,
+      "color": "#ffe62c"
+    },
+    "locomotion": {
+      "walk_mps": 1.3,
+      "run_mps": 3.8
+    },
+    "validation": {
+      "idle_stand": {
+        "loop_matrix_error": 0.0
+      },
+      "idle_sit": {
+        "loop_matrix_error": 0.0
+      },
+      "idle_look": {
+        "loop_matrix_error": 0.0
+      },
+      "walk": {
+        "loop_matrix_error": 0.0
+      },
+      "run": {
+        "loop_matrix_error": 0.0
+      },
+      "sit_down_start_error": 0.0,
+      "sit_down_end_error": 0.0,
+      "stand_up_start_error": 0.0,
+      "stand_up_end_error": 0.0,
+      "minimum_vertex_z": -0.18325607478618622,
+      "max_loop_matrix_error": 0.0
+    },
+    "palette": {
+      "body": "d865b6",
+      "light": "eb91cf",
+      "dark": "63536b",
+      "armor": "ac899f",
+      "metal": "756876",
+      "accent": "ffe62c",
+      "ruff": "f0d4a0"
+    }
+  },
+  {
+    "id": "pet_lumos",
+    "name": "Lumos",
+    "revision": "PET04-01",
+    "reference": "Australian Cattle Dog2- Lumos.png",
+    "cell_meters": 0.02,
+    "triangles": 15904,
+    "vertices": 31808,
+    "bones": 29,
+    "materials": 2,
+    "voxels": 29821,
+    "bytes": 2043940,
+    "animations": {
+      "idle_stand": 4.0,
+      "idle_sit": 4.0,
+      "idle_look": 5.0,
+      "walk": 1.0,
+      "run": 0.6,
+      "attack_laser": 0.7,
+      "stand_up": 1.1,
+      "sit_down": 1.1
+    },
+    "eye_sockets_head_local": {
+      "L": [
+        0.12800000607967377,
+        0.02599996328353882,
+        0.26399996876716614
+      ],
+      "R": [
+        -0.12800000607967377,
+        0.02599996328353882,
+        0.26399996876716614
+      ]
+    },
+    "laser": {
+      "start": 0.18,
+      "end": 0.3,
+      "range": 2.2,
+      "cooldown": 3,
+      "color": "#f33935"
+    },
+    "locomotion": {
+      "walk_mps": 1.3,
+      "run_mps": 3.8
+    },
+    "validation": {
+      "idle_stand": {
+        "loop_matrix_error": 0.0
+      },
+      "idle_sit": {
+        "loop_matrix_error": 0.0
+      },
+      "idle_look": {
+        "loop_matrix_error": 0.0
+      },
+      "walk": {
+        "loop_matrix_error": 0.0
+      },
+      "run": {
+        "loop_matrix_error": 0.0
+      },
+      "sit_down_start_error": 0.0,
+      "sit_down_end_error": 0.0,
+      "stand_up_start_error": 0.0,
+      "stand_up_end_error": 0.0,
+      "minimum_vertex_z": -9.089708186138523e-08,
+      "max_loop_matrix_error": 0.0
+    },
+    "palette": {
+      "body": "c2b5b2",
+      "light": "e9dcce",
+      "dark": "544b48",
+      "armor": "85807c",
+      "metal": "6d6963",
+      "accent": "f33935",
+      "ruff": "d9cac0"
+    }
+  },
+  {
+    "id": "pet_gizmo",
+    "name": "Gizmo",
+    "revision": "PET04-01",
+    "reference": "Norwegian Forest Cat - Gizmo.png",
+    "cell_meters": 0.02,
+    "triangles": 16528,
+    "vertices": 33056,
+    "bones": 29,
+    "materials": 2,
+    "voxels": 32369,
+    "bytes": 2112172,
+    "animations": {
+      "idle_stand": 4.0,
+      "idle_sit": 4.0,
+      "idle_look": 5.0,
+      "walk": 1.0,
+      "run": 0.6,
+      "attack_laser": 0.7,
+      "stand_up": 1.1,
+      "sit_down": 1.1
+    },
+    "eye_sockets_head_local": {
+      "L": [
+        0.12800000607967377,
+        0.02599996328353882,
+        0.26399996876716614
+      ],
+      "R": [
+        -0.12800000607967377,
+        0.02599996328353882,
+        0.26399996876716614
+      ]
+    },
+    "laser": {
+      "start": 0.18,
+      "end": 0.3,
+      "range": 2.2,
+      "cooldown": 3,
+      "color": "#24eee0"
+    },
+    "locomotion": {
+      "walk_mps": 1.3,
+      "run_mps": 3.8
+    },
+    "validation": {
+      "idle_stand": {
+        "loop_matrix_error": 0.0
+      },
+      "idle_sit": {
+        "loop_matrix_error": 0.0
+      },
+      "idle_look": {
+        "loop_matrix_error": 0.0
+      },
+      "walk": {
+        "loop_matrix_error": 0.0
+      },
+      "run": {
+        "loop_matrix_error": 0.0
+      },
+      "sit_down_start_error": 0.0,
+      "sit_down_end_error": 0.0,
+      "stand_up_start_error": 0.0,
+      "stand_up_end_error": 0.0,
+      "minimum_vertex_z": -9.089708186138523e-08,
+      "max_loop_matrix_error": 0.0
+    },
+    "palette": {
+      "body": "6788b5",
+      "light": "9ac9da",
+      "dark": "335e75",
+      "armor": "a49746",
+      "metal": "b27c52",
+      "accent": "24eee0",
+      "ruff": "65bed6"
+    }
+  }
+]

@@ -1,0 +1,553 @@
+/* New features inherit DEAD GRID's petrol, sage and orange interface. */
+.menu-controls {
+  position: absolute;
+  z-index: 3;
+  bottom: 28px;
+  left: 5.4%;
+  display: flex;
+  gap: 26px;
+  color: #cfceb3;
+  font-size: 14px;
+  align-items: center;
+}
+.menu-controls span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.menu-controls kbd {
+  font-family: var(--mono);
+  color: #eee7ca;
+  font-size: 13px;
+}
+.in-game canvas {
+  cursor: crosshair;
+}
+.survivor-picker {
+  position: relative;
+  width: min(1060px, calc(100vw - 40px));
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  background: #142b25;
+  padding: 30px;
+  border: 1px solid #718473;
+  box-shadow: 0 20px 60px #0008;
+}
+.picker-heading {
+  padding-right: 40px;
+  margin-bottom: 24px;
+}
+.picker-heading h2 {
+  font-size: 32px;
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+  margin: 0 0 8px;
+}
+.picker-heading p {
+  font-size: 16px;
+  color: #bdc9b4;
+  margin: 0;
+}
+.picker-body {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 28px;
+}
+.survivor-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-content: start;
+}
+.survivor-card {
+  position: relative;
+  padding: 0;
+  text-align: left;
+  background: #1c372c;
+  border: 1px solid #526b57;
+  color: #eae5cd;
+  overflow: hidden;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.survivor-card.selected {
+  border-color: #eda15f;
+  background: #304332;
+}
+.survivor-card:hover {
+  border-color: #c8cbae;
+}
+.survivor-card:focus-visible {
+  outline: 2px solid #f3bb7e;
+  outline-offset: 3px;
+}
+.portrait-atlas {
+  background-image: url("/portraits/survivors-v14.png");
+  background-size: 300% auto;
+  background-repeat: no-repeat;
+  background-color: #223b32;
+}
+.survivor-thumb {
+  display: block;
+  height: 144px;
+}
+.survivor-card-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 12px;
+}
+.survivor-card-copy small {
+  font-size: 13px;
+  color: #ccd3b8;
+}
+.survivor-card-copy strong {
+  font-size: 22px;
+  line-height: 1.3;
+}
+.survivor-card-copy > span {
+  font-size: 13px;
+  color: #d2c9a2;
+}
+.survivor-check {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  background: #172c22;
+  color: #f4c787;
+  padding: 4px;
+  box-sizing: content-box;
+}
+.survivor-detail {
+  display: grid;
+  grid-template-columns: minmax(160px, 0.8fr) minmax(220px, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.survivor-portrait {
+  height: 392px;
+  min-width: 0;
+}
+.survivor-dossier h3 {
+  font-size: 34px;
+  margin: 0 0 16px;
+  line-height: 1.2;
+}
+.survivor-dossier h3 span {
+  display: block;
+  font-size: 15px;
+  color: #e6b67c;
+  margin-top: 10px;
+  font-weight: 400;
+}
+.survivor-dossier p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #d0d8bf;
+  margin: 0 0 16px;
+  word-break: keep-all;
+}
+.survivor-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 16px 0;
+}
+.survivor-stats dt {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-size: 13px;
+  color: #bac7af;
+}
+.survivor-stats dd {
+  font-family: var(--mono);
+  font-size: 24px;
+  margin: 6px 0 0;
+  color: #ece8cf;
+}
+.survivor-stats dd small {
+  font-size: 12px;
+}
+.survivor-trait {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 12px 0;
+  border-top: 1px solid #4c6552;
+  border-bottom: 1px solid #4c6552;
+  margin-bottom: 16px;
+}
+.survivor-trait b,
+.survivor-loadout b {
+  font-size: 14px;
+  font-weight: 500;
+  color: #e6bd86;
+}
+.survivor-trait span {
+  font-size: 16px;
+}
+.survivor-loadout b {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.survivor-dossier .survivor-tactic {
+  font-size: 13px;
+  color: #b8c6aa;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+.picker-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding-top: 24px;
+  margin-top: 24px;
+  border-top: 1px solid #48634f;
+}
+.picker-footer > span {
+  font-size: 14px;
+  color: #c2c9ae;
+}
+.picker-footer .primary {
+  font-size: 18px;
+  min-height: 50px;
+  min-width: 220px;
+}
+.modal-panel.research-panel {
+  width: min(820px, calc(100vw - 32px));
+}
+.research-catalog {
+  margin-top: 20px;
+}
+.research-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 17px 0;
+  border-top: 1px solid #47604d;
+}
+.research-row > svg {
+  flex-shrink: 0;
+  color: #d4c599;
+}
+.research-row > div {
+  flex: 1;
+  min-width: 0;
+}
+.research-row h3 {
+  font-size: 20px;
+  margin: 0 0 5px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.research-row h3 small {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 400;
+  color: #c1cdb1;
+}
+.research-row p {
+  font-size: 15px;
+  margin: 0;
+  color: #ccd6bc;
+}
+.research-row .research-pips {
+  margin-top: 9px;
+}
+.research-row .secondary {
+  min-width: 122px;
+  font-size: 15px;
+  min-height: 44px;
+}
+.research-row .secondary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.passives-row {
+  flex-wrap: wrap;
+  height: auto;
+  min-height: 24px;
+  max-width: 420px;
+}
+@media (max-width: 1050px) {
+  .picker-body {
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 20px;
+  }
+  .survivor-detail {
+    gap: 16px;
+    grid-template-columns: minmax(130px, 0.75fr) minmax(210px, 1fr);
+  }
+  .survivor-thumb {
+    height: 126px;
+  }
+  .survivor-picker {
+    padding: 24px;
+  }
+}
+@media (max-width: 760px) {
+  .survivor-picker {
+    width: calc(100vw - 24px);
+    padding: 20px;
+    max-height: calc(100dvh - 24px);
+  }
+  .picker-heading h2 {
+    font-size: 27px;
+  }
+  .picker-heading p {
+    font-size: 14px;
+  }
+  .picker-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .survivor-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .survivor-thumb {
+    height: 112px;
+  }
+  .survivor-card-copy {
+    padding: 9px;
+    gap: 3px;
+  }
+  .survivor-card-copy strong {
+    font-size: 19px;
+  }
+  .survivor-card-copy small,
+  .survivor-card-copy > span {
+    font-size: 11px;
+  }
+  .survivor-detail {
+    grid-template-columns: minmax(116px, 0.65fr) minmax(175px, 1fr);
+    gap: 14px;
+  }
+  .survivor-portrait {
+    height: 326px;
+  }
+  .survivor-dossier h3 {
+    font-size: 28px;
+  }
+  .survivor-dossier p {
+    font-size: 16px;
+  }
+  .survivor-dossier .survivor-tactic {
+    display: none;
+  }
+  .survivor-stats {
+    gap: 5px;
+  }
+  .survivor-stats dt {
+    font-size: 11px;
+    gap: 3px;
+  }
+  .survivor-stats dt svg {
+    width: 12px;
+  }
+  .survivor-stats dd {
+    font-size: 20px;
+  }
+  .picker-footer {
+    padding-top: 16px;
+    margin-top: 18px;
+    gap: 12px;
+  }
+  .picker-footer > span {
+    font-size: 12px;
+    max-width: 110px;
+    line-height: 1.7;
+  }
+  .picker-footer .primary {
+    font-size: 16px;
+    min-width: 178px;
+    padding: 12px 14px;
+  }
+  .research-row {
+    gap: 12px;
+  }
+  .research-row > svg {
+    width: 22px;
+  }
+  .research-row h3 {
+    font-size: 17px;
+    gap: 8px;
+  }
+  .research-row p {
+    font-size: 14px;
+  }
+  .research-row .secondary {
+    min-width: 92px;
+    font-size: 13px;
+    padding: 10px;
+  }
+  .menu-controls {
+    bottom: 22px;
+    gap: 14px;
+    left: 6%;
+    font-size: 12px;
+  }
+  .menu-controls kbd {
+    font-size: 11px;
+  }
+  .menu-controls > span:nth-child(2) {
+    display: none;
+  }
+  .in-menu .mission {
+    bottom: 74px;
+  }
+}
+@media (max-width: 390px) {
+  .survivor-detail {
+    grid-template-columns: 1fr;
+  }
+  .survivor-portrait {
+    height: 210px;
+    background-size: 300% auto;
+  }
+  .survivor-dossier p {
+    font-size: 16px;
+  }
+  .survivor-dossier h3 {
+    margin-top: 4px;
+  }
+  .survivor-thumb {
+    height: 100px;
+  }
+  .picker-footer {
+    position: sticky;
+    bottom: -20px;
+    background: #142b25;
+    padding: 14px 0 4px;
+  }
+}
+@media (max-height: 610px) and (min-width: 761px) {
+  .survivor-picker {
+    max-height: calc(100dvh - 20px);
+  }
+  .survivor-portrait {
+    height: 300px;
+  }
+  .survivor-thumb {
+    height: 110px;
+  }
+  .in-menu .mission {
+    bottom: auto;
+  }
+}
+
+.survivor-overlay {
+  padding: 12px;
+  overflow: hidden;
+}
+.survivor-picker {
+  scrollbar-width: thin;
+  scrollbar-color: #698069 #142b25;
+}
+.picker-footer {
+  position: sticky;
+  bottom: -30px;
+  background: #142b25;
+  padding-bottom: 8px;
+  z-index: 2;
+}
+@media (max-height: 760px) and (min-width: 761px) {
+  .survivor-picker {
+    padding: 24px;
+  }
+  .picker-heading {
+    margin-bottom: 16px;
+  }
+  .survivor-thumb {
+    height: 110px;
+  }
+  .survivor-portrait {
+    height: 340px;
+  }
+  .survivor-dossier .survivor-tactic {
+    display: none;
+  }
+  .picker-footer {
+    margin-top: 16px;
+    padding-top: 16px;
+    bottom: -24px;
+  }
+}
+
+/* A 240px square face crop in the original 1536×1024 portrait atlas.
+   Background sizing keeps the same crop as the HUD shrinks on mobile. */
+.hud-portrait {
+  display: block;
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  background-image: url("/portraits/survivors-v14.png");
+  background-size: 640% auto;
+  background-repeat: no-repeat;
+  background-color: #223b32;
+}
+.hud-portrait--scout {
+  background-position: 11.57% 8.93%;
+}
+.hud-portrait--engineer {
+  background-position: 50.54% 5.74%;
+}
+.hud-portrait--medic {
+  background-position: 91.82% 10.2%;
+}
+.survivor-hud {
+  gap: 14px;
+}
+@media (max-width: 800px) {
+  .hud-portrait {
+    flex-basis: 40px;
+    width: 40px;
+    height: 40px;
+  }
+  .survivor-hud {
+    gap: 8px;
+  }
+}
+@media (max-width: 520px) {
+  .hud-portrait {
+    flex-basis: 36px;
+    width: 36px;
+    height: 36px;
+  }
+  .survivor-hud > div {
+    width: 90px;
+  }
+  .time-hud {
+    left: 60%;
+  }
+}
+
+@media (max-width: 360px) {
+  .hud-portrait {
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+  }
+  .survivor-hud {
+    gap: 6px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .survivor-hud > div {
+    width: 76px;
+  }
+  .hud-name small {
+    font-size: 11px;
+  }
+  .time-hud {
+    left: 65%;
+  }
+}

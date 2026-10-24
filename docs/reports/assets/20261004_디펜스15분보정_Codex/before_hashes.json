@@ -1,0 +1,5 @@
+{
+  "src/tools/forestPlay/DefenseSession.ts": "13390a38f847f711087887847b73caf3c7f60163c8519d1ba4ed9eb5e7deacb0",
+  "src/tools/forestPlay/DefensePreview.ts": "faba330027c7d097986c89c1fd5fe359b698e507a57b2ecda94f95789ce3f3f0",
+  "scripts/verify_defense_modes.mjs": "8053657e53359a7a5c66cf2e34b5e0501e7f164e8bd85868c043f81e5fe6c597"
+}

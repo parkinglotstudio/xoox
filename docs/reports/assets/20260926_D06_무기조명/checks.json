@@ -1,0 +1,230 @@
+{
+  "base": {
+    "height": 1.8944001178867955,
+    "width": 1.1264001310009397,
+    "native": true,
+    "clips": [
+      "idle",
+      "walk",
+      "run",
+      "shoot",
+      "shoot2",
+      "throw",
+      "walk_shoot",
+      "walk_throw",
+      "walk_gun",
+      "draw",
+      "holster",
+      "draw_launcher",
+      "holster_launcher"
+    ]
+  },
+  "checks": [
+    {
+      "name": "idle",
+      "current": "idle",
+      "duration": 1.5,
+      "maxTip": 0.00355859574491771,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "gun": 1,
+        "gunL": 1,
+        "bomb": 0.0010000001639127731,
+        "rifle": 0.9999999403953552
+      }
+    },
+    {
+      "name": "walk",
+      "current": "walk",
+      "duration": 1,
+      "maxTip": 0.006690467010778482,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "gun": 1,
+        "gunL": 1,
+        "bomb": 0.001000000280328095,
+        "rifle": 1
+      }
+    },
+    {
+      "name": "run",
+      "current": "run",
+      "duration": 0.7333333492279053,
+      "maxTip": 0.012033582572033406,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "gun": 1,
+        "gunL": 1,
+        "bomb": 0.0010000000474974513,
+        "rifle": 0.9999998807907104
+      }
+    },
+    {
+      "name": "shoot",
+      "current": "shoot",
+      "duration": 0.2666666805744171,
+      "maxTip": 0.0032963704898278223,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "gun": 0.9999999403953552,
+        "gunL": 0.9999999403953552,
+        "bomb": 0.0010000001639127731,
+        "rifle": 1
+      }
+    },
+    {
+      "name": "shoot2",
+      "current": "shoot2",
+      "duration": 0.5,
+      "maxTip": 0.004235851285418911,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "gun": 1,
+        "gunL": 1,
+        "bomb": 0.0010000000474974513,
+        "rifle": 1
+      }
+    },
+    {
+      "name": "throw",
+      "current": "throw",
+      "duration": 1.100000023841858,
+      "maxTip": 0.005974563814178883,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "gun": 1,
+        "gunL": 1,
+        "bomb": 0.9999999403953552,
+        "rifle": 0.9999999403953552
+      }
+    },
+    {
+      "name": "walk_shoot",
+      "current": "walk_shoot",
+      "duration": 1,
+      "maxTip": 0.00669046839072322,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "gun": 0.9999999403953552,
+        "gunL": 0.9999999403953552,
+        "bomb": 0.0010000001639127731,
+        "rifle": 1
+      }
+    },
+    {
+      "name": "walk_throw",
+      "current": "walk_throw",
+      "duration": 1.100000023841858,
+      "maxTip": 0.009664937244756705,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "gun": 1,
+        "gunL": 1,
+        "bomb": 0.9999999934434886,
+        "rifle": 1
+      }
+    },
+    {
+      "name": "walk_gun",
+      "current": "walk_gun",
+      "duration": 1,
+      "maxTip": 0.006399337258907951,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "gun": 0.9999999403953552,
+        "gunL": 0.9999999403953552,
+        "bomb": 0.0010000001639127731,
+        "rifle": 1
+      }
+    },
+    {
+      "name": "draw",
+      "current": "draw",
+      "duration": 1.2000000476837158,
+      "maxTip": 0.005839449394184557,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "gun": 0.9999999403953552,
+        "gunL": 0.9999999403953552,
+        "bomb": 0.0010000000474974513,
+        "rifle": 0.9999999403953552
+      }
+    },
+    {
+      "name": "holster",
+      "current": "holster",
+      "duration": 1.2000000476837158,
+      "maxTip": 0.005839449394184557,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "gun": 1.0000001192092896,
+        "gunL": 1.0000001192092896,
+        "bomb": 0.0010000001639127731,
+        "rifle": 0.9999999403953552
+      }
+    },
+    {
+      "name": "draw_launcher",
+      "current": "draw_launcher",
+      "duration": 1.2000000476837158,
+      "maxTip": 0.0071366371178700925,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "gun": 1,
+        "gunL": 1,
+        "bomb": 0.0010000000474974513,
+        "rifle": 0.9999999403953552
+      }
+    },
+    {
+      "name": "holster_launcher",
+      "current": "holster_launcher",
+      "duration": 1.2000000476837158,
+      "maxTip": 0.0071366371178700925,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "gun": 1,
+        "gunL": 1,
+        "bomb": 0.0010000000474974513,
+        "rifle": 1
+      }
+    }
+  ],
+  "toggles": {
+    "hairRest": true,
+    "nativePreserved": true
+  },
+  "variantChoices": [
+    "A",
+    "D"
+  ],
+  "aCheck": {
+    "clips": [
+      "idle",
+      "walk",
+      "run",
+      "shoot",
+      "shoot2",
+      "throw",
+      "walk_shoot",
+      "walk_throw",
+      "walk_gun"
+    ],
+    "native": false
+  },
+  "errors": [],
+  "failed": []
+}

@@ -1,0 +1,17 @@
+{
+  "purified": {
+    "triangles": 696944,
+    "drawNodes": 142,
+    "bytes": 2844560
+  },
+  "polluted": {
+    "triangles": 381692,
+    "drawNodes": 142,
+    "bytes": 2753776
+  },
+  "trees": 1251,
+  "shrubs": 1593,
+  "rocks": 446,
+  "flowers": 1885,
+  "walkableAreaM2": 7864.0
+}

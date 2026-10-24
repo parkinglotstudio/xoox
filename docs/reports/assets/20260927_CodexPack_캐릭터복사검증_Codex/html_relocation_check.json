@@ -1,0 +1,26 @@
+[
+  {
+    "file": "block-cat-tool.html",
+    "only_navigation_relocation": true
+  },
+  {
+    "file": "character-compare-tool.html",
+    "only_navigation_relocation": true
+  },
+  {
+    "file": "unit-lab-tool.html",
+    "only_navigation_relocation": true
+  },
+  {
+    "file": "wanderer-a-tool.html",
+    "only_navigation_relocation": true
+  },
+  {
+    "file": "wanderer-d-sprite-tool.html",
+    "only_navigation_relocation": true
+  },
+  {
+    "file": "wanderer-d-tool.html",
+    "only_navigation_relocation": true
+  }
+]

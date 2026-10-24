@@ -1,0 +1,252 @@
+{
+  "checked_at_kst": "2026-10-04T08:26:16.840757+09:00",
+  "root": "C:\\xoox",
+  "scope": "Manual project audit; no source modification",
+  "models": {
+    "RUON": {
+      "file": "data/tools/unit_lab/character/A/wanderer_A.glb",
+      "bytes": 9913824,
+      "triangles": 88618,
+      "meshes": 11,
+      "joints": 46,
+      "animations": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ]
+    },
+    "RUON_35": {
+      "file": "data/tools/unit_lab/character/Ruon_35/ruon_35.glb",
+      "bytes": 9917772,
+      "triangles": 88618,
+      "meshes": 11,
+      "joints": 46,
+      "animations": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ]
+    },
+    "RIA": {
+      "file": "data/tools/unit_lab/character/D/wanderer_D.glb",
+      "bytes": 10240516,
+      "triangles": 91770,
+      "meshes": 11,
+      "joints": 48,
+      "animations": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ]
+    },
+    "RIA_35": {
+      "file": "data/tools/unit_lab/character/D_35/wanderer_D_35.glb",
+      "bytes": 10230564,
+      "triangles": 91770,
+      "meshes": 11,
+      "joints": 48,
+      "animations": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ]
+    },
+    "BCAT02": {
+      "file": "data/tools/unit_lab/pets/block_cat/block_cat.glb",
+      "bytes": 1100944,
+      "triangles": 6452,
+      "meshes": 1,
+      "joints": 29,
+      "animations": [
+        "walk",
+        "idle_sit",
+        "idle_look",
+        "attack_laser",
+        "stand_up",
+        "sit_down"
+      ]
+    }
+  },
+  "references": {
+    "checked": 112,
+    "missing": []
+  },
+  "units": {
+    "count": 99,
+    "groups": {
+      "building": 6,
+      "enemy_ufo": 4,
+      "tile": 6,
+      "marker": 2,
+      "detail": 3,
+      "missile": 3,
+      "enemy_monster": 45,
+      "building_tower": 6,
+      "building_camp": 13,
+      "building_machine": 11
+    },
+    "missing_glb": []
+  },
+  "typecheck": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+    "exit_code": 2,
+    "errors": 26,
+    "log": "typecheck.txt"
+  },
+  "build": {
+    "input_count": 18,
+    "module_pages_missing_from_input": [
+      "block-cat-tool.html",
+      "character-compare-tool.html",
+      "forest-play-tool.html",
+      "forest-prop-tool.html",
+      "forward-wave-load.html",
+      "prop-place-tool.html",
+      "unit-lab-tool.html",
+      "wanderer-a-tool.html",
+      "wanderer-d-tool.html"
+    ],
+    "production_build_run": false,
+    "reason": "TypeScript prerequisite fails",
+    "temporary_module_pages_missing_from_input": [
+      "_tmp_forest-play-tool.html"
+    ]
+  },
+  "source_snapshot": {
+    "src/tools/forestPlay/main.ts": {
+      "bytes": 75478,
+      "mtime_kst": "2026-10-04T08:16:52.618829+09:00",
+      "sha256": "d536f522953084f8f1e01fb3d269f443aaa5a905f8cf75bb3ceb7e5286f8d375"
+    },
+    "src/tools/forestPlay/PlayCombat.ts": {
+      "bytes": 43046,
+      "mtime_kst": "2026-10-04T08:16:52.693866+09:00",
+      "sha256": "0d224f8fe2ef545634377ee722ac981bcca565efb18af4472f91beacacbd05b9"
+    },
+    "src/tools/forestPlay/PlayCamera.ts": {
+      "bytes": 7601,
+      "mtime_kst": "2026-10-04T08:06:07.318985+09:00",
+      "sha256": "8c8aadcc148879b0cb39a8a51d4a236fe0ad8e085a34dcec5acd33545a6dd609"
+    },
+    "src/tools/forestPlay/PlayBuild.ts": {
+      "bytes": 32337,
+      "mtime_kst": "2026-09-27T21:39:56.975767+09:00",
+      "sha256": "61db0f3e3b96276b79672425126a861628aa371c3bdc7fb3f8151e9f1b96ff86"
+    },
+    "src/tools/forestPlay/PlayPet.ts": {
+      "bytes": 5087,
+      "mtime_kst": "2026-09-27T19:17:00.491482+09:00",
+      "sha256": "69090b9e4fbdabcd8eeaed85e6e620b29ab2e4a8f469753b0464f592b5080070"
+    },
+    "src/maps/forest150/ForestDefense.ts": {
+      "bytes": 6503,
+      "mtime_kst": "2026-09-27T09:01:41.051522+09:00",
+      "sha256": "da1c1d1c82a4aa2fc09ddffc6660a10db617ccb62fd3d20090b23ef6bd144bfc"
+    },
+    "src/stage/world3d/Journey3DView.ts": {
+      "bytes": 47468,
+      "mtime_kst": "2026-09-20T09:29:04.432793+09:00",
+      "sha256": "02c2e79c84b28f91daf2ff0fc14a6a382d4ced4fd556754b99b19f3364b560b6"
+    },
+    "src/main.ts": {
+      "bytes": 335909,
+      "mtime_kst": "2026-09-01T00:01:13.409284+09:00",
+      "sha256": "dfda17b1c3745e94d571d7647b788004aec51251dec6d801374fd08049e01078"
+    },
+    "vite.config.ts": {
+      "bytes": 1461,
+      "mtime_kst": "2026-09-27T08:08:19.055585+09:00",
+      "sha256": "4b4d522bb6d50856efd6f6f47e92d749794ec9b7d8c3a0edfb33b8d3bb44bdc5"
+    },
+    "package.json": {
+      "bytes": 1201,
+      "mtime_kst": "2026-09-24T09:17:35.788456+09:00",
+      "sha256": "15245dcd66ab4baf65b34b819eb3e9e324acbbd2c06ff548e7498dcba6d70912"
+    }
+  },
+  "screenshots": [
+    "forest_stop.jpg",
+    "main_journey.jpg",
+    "unit_ruon35.jpg",
+    "forest_build_10.jpg",
+    "forest_mid.jpg",
+    "unit_ria35_bazooka.jpg"
+  ],
+  "runtime_checked": [
+    "RUON_35 / RIA_35 unit lab load; RIA_35 shoot2 selection",
+    "Forest purified / polluted / mid states",
+    "Forest auto hunt alive 11 to 6; stop retains 6",
+    "BCAT02 spawn and follow on",
+    "Tower 5 + facility 5 installed",
+    "Main lobby > excursion i21 > gather fork > catalyst/purification early step"
+  ],
+  "not_fully_verified": [
+    "Complete i21 boss and return flow",
+    "i11 and long campaign completion",
+    "Entire 10-wave progression",
+    "All 18 animations played on every variant",
+    "Auto hunt pack clear and respawn cycle in this audit",
+    "Mobile performance and large crowd budget"
+  ],
+  "concurrent_edit_note": "Forest play source was updated by another process during audit; latest source metadata captured here; HMR reset some runs."
+}

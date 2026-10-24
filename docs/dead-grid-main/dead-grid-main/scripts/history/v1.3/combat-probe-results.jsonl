@@ -1,0 +1,10 @@
+
+> dead-grid@1.2.0 probe
+> node --import tsx scripts/combat-probe.ts
+
+{"boss":0,"mode":"normal","scenario":"all evolved + all passives; stationary; open arena; boss and its summons only; invulnerable; no abilities","hp":10000,"hpAfterFive":2868,"killSeconds":7.4,"killed":true}
+{"boss":1,"mode":"normal","scenario":"all evolved + all passives; stationary; open arena; boss and its summons only; invulnerable; no abilities","hp":28000,"hpAfterFive":20868,"killSeconds":21,"killed":true}
+{"boss":2,"mode":"normal","scenario":"all evolved + all passives; stationary; open arena; boss and its summons only; invulnerable; no abilities","hp":52000,"hpAfterFive":45828,"killSeconds":41.1,"killed":true}
+{"boss":3,"mode":"normal","scenario":"all evolved + all passives; stationary; open arena; boss and its summons only; invulnerable; no abilities","hp":85000,"hpAfterFive":77889,"killSeconds":67.5,"killed":true}
+{"boss":4,"mode":"normal","scenario":"all evolved + all passives; stationary; open arena; boss and its summons only; invulnerable; no abilities","hp":115000,"hpAfterFive":107889,"killSeconds":95.9,"killed":true}
+{"boss":5,"mode":"normal","scenario":"all evolved + all passives; stationary; open arena; boss and its summons only; invulnerable; no abilities","hp":160000,"hpAfterFive":155116,"killSeconds":154,"killed":true}

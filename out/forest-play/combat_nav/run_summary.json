@@ -1,0 +1,272 @@
+{
+  "url": "http://127.0.0.1:5179/forest-play-tool.html",
+  "setup": {
+    "ok": true,
+    "installed": 1,
+    "padBlocked": true,
+    "nearPadBlocked": true,
+    "edgeWalk": true,
+    "pathAcross": [
+      {
+        "x": 50,
+        "y": 53
+      },
+      {
+        "x": 52.75,
+        "y": 56.75
+      },
+      {
+        "x": 62.75,
+        "y": 56.75
+      },
+      {
+        "x": 63,
+        "y": 53
+      }
+    ],
+    "pathAround": [
+      {
+        "x": 50,
+        "y": 46
+      },
+      {
+        "x": 63,
+        "y": 46
+      }
+    ],
+    "player": {
+      "x": 56.5,
+      "y": 46
+    }
+  },
+  "pack": {
+    "n": 11,
+    "alive": 11,
+    "ranks": [
+      0,
+      1
+    ],
+    "sample": [
+      {
+        "id": 1,
+        "x": 70.75,
+        "y": 31.8,
+        "rank": 0,
+        "lat": -4.25,
+        "hp": 2
+      },
+      {
+        "id": 2,
+        "x": 72.45,
+        "y": 31.8,
+        "rank": 0,
+        "lat": -2.55,
+        "hp": 2
+      },
+      {
+        "id": 3,
+        "x": 74.15,
+        "y": 31.8,
+        "rank": 0,
+        "lat": -0.85,
+        "hp": 2
+      },
+      {
+        "id": 4,
+        "x": 75.85,
+        "y": 31.8,
+        "rank": 0,
+        "lat": 0.85,
+        "hp": 2
+      },
+      {
+        "id": 5,
+        "x": 77.55,
+        "y": 31.8,
+        "rank": 0,
+        "lat": 2.55,
+        "hp": 2
+      },
+      {
+        "id": 6,
+        "x": 79.25,
+        "y": 31.8,
+        "rank": 0,
+        "lat": 4.25,
+        "hp": 2
+      }
+    ],
+    "avgFrontDist": 8.689072586662785,
+    "allStand": true
+  },
+  "afterMove": {
+    "mobs": [
+      {
+        "id": 1,
+        "x": 71.44023870623596,
+        "y": 33.13175468026721,
+        "rank": 0,
+        "lat": -4.25,
+        "hp": 2
+      },
+      {
+        "id": 2,
+        "x": 72.89542286914701,
+        "y": 33.23234020666909,
+        "rank": 0,
+        "lat": -2.55,
+        "hp": 2
+      },
+      {
+        "id": 3,
+        "x": 74.22732955590868,
+        "y": 32.546002774648315,
+        "rank": 0,
+        "lat": -0.85,
+        "hp": 1
+      },
+      {
+        "id": 4,
+        "x": 75.69534088818264,
+        "y": 33.29200554929663,
+        "rank": 0,
+        "lat": 0.85,
+        "hp": 2
+      }
+    ],
+    "playing": true
+  },
+  "stop": {
+    "playing": false,
+    "alive": 11,
+    "movedWhileStopped": false
+  },
+  "shot": {
+    "ok": true,
+    "target": {
+      "id": 1,
+      "x": 71.92340580060113,
+      "y": 34.0639829564542,
+      "rank": 0,
+      "lat": -4.25,
+      "hp": 2
+    },
+    "los": true,
+    "yaw": -0.4781744320925518,
+    "aliveAfter": 9,
+    "hpSample": [
+      {
+        "id": 1,
+        "x": 71.92340580060113,
+        "y": 34.0639829564542,
+        "rank": 0,
+        "lat": -4.25,
+        "hp": 2
+      },
+      {
+        "id": 2,
+        "x": 73.20721887755002,
+        "y": 34.23497835133746,
+        "rank": 0,
+        "lat": -2.55,
+        "hp": 2
+      },
+      {
+        "id": 5,
+        "x": 76.79278112244998,
+        "y": 34.23497835133746,
+        "rank": 0,
+        "lat": 2.55,
+        "hp": 2
+      }
+    ]
+  },
+  "losPad": {
+    "throughPad": false,
+    "openLane": true
+  },
+  "fooderduckRef": "C:\\Users\\dmaxd\\Downloads\\6170245215383724202.mp4",
+  "ts": "2026-09-27T12:44:53.275Z",
+  "emptyPadsBlocked": [
+    {
+      "id": "1-tower",
+      "x": 56.5,
+      "y": 53,
+      "blocked": true
+    },
+    {
+      "id": "1-unit",
+      "x": 56.5,
+      "y": 39,
+      "blocked": true
+    },
+    {
+      "id": "2-tower",
+      "x": 76.5,
+      "y": 105,
+      "blocked": true
+    },
+    {
+      "id": "2-unit",
+      "x": 76.5,
+      "y": 91,
+      "blocked": true
+    }
+  ],
+  "northPackFire": {
+    "before": 15,
+    "after": 13,
+    "mobs": [
+      {
+        "id": 1,
+        "x": 69.75474921550521,
+        "y": 32.77125101968789,
+        "rank": 0,
+        "lat": -5.95,
+        "hp": 2
+      },
+      {
+        "id": 2,
+        "x": 71.30219096498877,
+        "y": 32.865403744213765,
+        "rank": 0,
+        "lat": -4.25,
+        "hp": 2
+      },
+      {
+        "id": 3,
+        "x": 72.80633829531757,
+        "y": 32.945872165335274,
+        "rank": 0,
+        "lat": -2.55,
+        "hp": 2
+      },
+      {
+        "id": 6,
+        "x": 77.19366170468243,
+        "y": 32.945872165335274,
+        "rank": 0,
+        "lat": 2.55,
+        "hp": 2
+      }
+    ]
+  },
+  "northPackFixed": {
+    "yaw": 3.141592653589793,
+    "frontY": 48.2,
+    "frontDist": 8.2,
+    "ranks": [
+      0,
+      1
+    ],
+    "n": 10,
+    "allStand": true
+  },
+  "filesChanged": [
+    "src/tools/forestPlay/PlayNavOverlay.ts (new)",
+    "src/tools/forestPlay/PlayCombat.ts",
+    "src/tools/forestPlay/PlayBuild.ts",
+    "src/tools/forestPlay/main.ts",
+    "docs/handoff/.../COMBAT_PLAN.md"
+  ]
+}

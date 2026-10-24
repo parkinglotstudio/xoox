@@ -1,0 +1,79 @@
+{
+  "date": "2026-10-04",
+  "baselineCommit": "4987254",
+  "koota": "0.6.6",
+  "node": "v25.6.0",
+  "cpu": "Apple M4 Pro",
+  "platform": "darwin",
+  "method": "3 alternating runs, 90 warmup + 240 sampled frames each, 1/60s simulation; includes spawn churn and renderer visibility predicates; no GPU",
+  "results": [
+    {
+      "scenario": {
+        "name": "game-cap",
+        "enemies": 520,
+        "bullets": 700,
+        "drops": 900,
+        "effects": 250
+      },
+      "baseline": {
+        "meanMs": 10.305774240277785,
+        "p50Ms": 10.506374999999025,
+        "p95Ms": 11.48645899999974,
+        "frames": 720
+      },
+      "koota": {
+        "meanMs": 2.178587788888873,
+        "p50Ms": 2.154125000000022,
+        "p95Ms": 2.427584000000934,
+        "frames": 720
+      },
+      "reductionPercent": 79.49697207647527,
+      "checksums": {
+        "baseline": [
+          625,
+          625,
+          625
+        ],
+        "koota": [
+          625,
+          625,
+          625
+        ]
+      }
+    },
+    {
+      "scenario": {
+        "name": "stress-4x",
+        "enemies": 2080,
+        "bullets": 2800,
+        "drops": 3600,
+        "effects": 1000
+      },
+      "baseline": {
+        "meanMs": 47.75274401944443,
+        "p50Ms": 47.626291999993555,
+        "p95Ms": 51.08770799999911,
+        "frames": 720
+      },
+      "koota": {
+        "meanMs": 11.503939591666965,
+        "p50Ms": 11.409958000000188,
+        "p95Ms": 12.466832999998587,
+        "frames": 720
+      },
+      "reductionPercent": 76.04273286695985,
+      "checksums": {
+        "baseline": [
+          2908,
+          2908,
+          2908
+        ],
+        "koota": [
+          2908,
+          2908,
+          2908
+        ]
+      }
+    }
+  ]
+}

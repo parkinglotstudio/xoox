@@ -1,0 +1,138 @@
+{
+  "route_length_m": 258.25012100674803,
+  "route_points": 2,
+  "facilities": [
+    {
+      "id": "1-tower",
+      "kind": "tower_gun",
+      "routeS": 231.2322246634674,
+      "approach_points": 2
+    },
+    {
+      "id": "2-tower",
+      "kind": "tower_throw",
+      "routeS": 179.25161010395192,
+      "approach_points": 2
+    },
+    {
+      "id": "3-tower",
+      "kind": "tower_cannon",
+      "routeS": 127.24824628113659,
+      "approach_points": 2
+    },
+    {
+      "id": "4-tower",
+      "kind": "tower_ballista",
+      "routeS": 74.2589197063683,
+      "approach_points": 2
+    },
+    {
+      "id": "5-tower",
+      "kind": "tower_catapult",
+      "routeS": 22.242003130948813,
+      "approach_points": 2
+    },
+    {
+      "id": "1-unit",
+      "kind": "k_tent",
+      "routeS": 245.23221810356932,
+      "approach_points": 2
+    },
+    {
+      "id": "2-unit",
+      "kind": "k_structure",
+      "routeS": 193.25160354405384,
+      "approach_points": 2
+    },
+    {
+      "id": "3-unit",
+      "kind": "k_machine",
+      "routeS": 141.24823972123852,
+      "approach_points": 2
+    },
+    {
+      "id": "4-unit",
+      "kind": "k_crane",
+      "routeS": 88.25891314647023,
+      "approach_points": 2
+    },
+    {
+      "id": "south-base",
+      "kind": "base",
+      "routeS": 258.25012100674803,
+      "approach_points": 2
+    }
+  ],
+  "modes": {
+    "tower": {
+      "elapsed": 45,
+      "spawned": 65,
+      "alive": 32,
+      "killed": 1,
+      "enemy_attack_count": 63,
+      "destroyed": 10,
+      "destruction_order": [
+        "5-tower",
+        "4-tower",
+        "4-unit",
+        "3-tower",
+        "3-unit",
+        "2-tower",
+        "2-unit",
+        "1-tower",
+        "1-unit",
+        "south-base"
+      ],
+      "clock_does_not_damage": true,
+      "pause_freezes": true,
+      "duplicate_destruction": false
+    },
+    "wave": {
+      "elapsed": 70,
+      "spawned": 100,
+      "alive": 32,
+      "killed": 2,
+      "enemy_attack_count": 63,
+      "destroyed": 10,
+      "destruction_order": [
+        "5-tower",
+        "4-tower",
+        "4-unit",
+        "3-tower",
+        "3-unit",
+        "2-tower",
+        "2-unit",
+        "1-tower",
+        "1-unit",
+        "south-base"
+      ],
+      "clock_does_not_damage": true,
+      "pause_freezes": true,
+      "duplicate_destruction": false
+    },
+    "base": {
+      "elapsed": 60,
+      "spawned": 97,
+      "alive": 32,
+      "killed": 1,
+      "enemy_attack_count": 63,
+      "destroyed": 10,
+      "destruction_order": [
+        "5-tower",
+        "4-tower",
+        "4-unit",
+        "3-tower",
+        "3-unit",
+        "2-tower",
+        "2-unit",
+        "1-tower",
+        "1-unit",
+        "south-base"
+      ],
+      "clock_does_not_damage": true,
+      "pause_freezes": true,
+      "duplicate_destruction": false
+    }
+  },
+  "wave_gap_no_spawn": true
+}

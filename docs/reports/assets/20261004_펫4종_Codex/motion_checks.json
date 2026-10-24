@@ -1,0 +1,38 @@
+{
+  "nofilter": {
+    "frames": 8,
+    "difference_bbox": [
+      0,
+      0,
+      480,
+      480
+    ]
+  },
+  "flux": {
+    "frames": 8,
+    "difference_bbox": [
+      0,
+      0,
+      480,
+      480
+    ]
+  },
+  "lumos": {
+    "frames": 8,
+    "difference_bbox": [
+      0,
+      0,
+      480,
+      480
+    ]
+  },
+  "gizmo": {
+    "frames": 8,
+    "difference_bbox": [
+      0,
+      0,
+      480,
+      480
+    ]
+  }
+}

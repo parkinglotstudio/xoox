@@ -1,0 +1,30 @@
+[
+  {
+    "name": "draw",
+    "clamped": true,
+    "paused": true,
+    "time": 1.2000000476837158,
+    "duration": 1.2000000476837158
+  },
+  {
+    "name": "holster",
+    "clamped": true,
+    "paused": true,
+    "time": 1.2000000476837158,
+    "duration": 1.2000000476837158
+  },
+  {
+    "name": "draw_launcher",
+    "clamped": true,
+    "paused": true,
+    "time": 1.2000000476837158,
+    "duration": 1.2000000476837158
+  },
+  {
+    "name": "holster_launcher",
+    "clamped": true,
+    "paused": true,
+    "time": 1.2000000476837158,
+    "duration": 1.2000000476837158
+  }
+]

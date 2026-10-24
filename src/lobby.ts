@@ -92,6 +92,9 @@ export class LobbyView {
   private panLastX = 0;
   private panBound = false;
   private actorIdleTimer = 0;
+  private lobbyChar: "RUON" | "RIA" = "RUON";
+  private actor3dToken = 0;
+  private actor3dCleanup: (() => void) | null = null;
 
   constructor(phoneRoot: HTMLElement, hooks: LobbyHooks) {
     this.root = phoneRoot;
@@ -273,6 +276,7 @@ export class LobbyView {
 
   private renderLayout() {
     this.stopActorIdle();
+    this.clearActor3d();
     this.clearBoatPets();
     const bg = this.purified ? HUB_BG_AFTER : HUB_BG_BEFORE;
     const worldW = Math.max(layoutWorldWPct(this.layout), 130);
@@ -285,10 +289,11 @@ export class LobbyView {
     const actor = this.layout.items.find((it) => it.kind === "actor");
     if (world && actor) {
       const el = this.createItemEl(actor);
+      el.classList.add("lobby-actor-3d-host");
       world.appendChild(el);
-      void this.attachActorIdle(el, actor.art);
+      void this.mountActor3d(el);
     }
-    if (world) this.mountBoatPets(world);
+    // 점구름 펫은 배 위에 올리지 않는다.
     this.stageEl.classList.add("lobby-pan-on");
     this.syncPanHints(pan);
     this.panX = 0;
@@ -398,7 +403,7 @@ export class LobbyView {
     this.panBound = true;
     const onDown = (e: PointerEvent) => {
       if (!this.on) return;
-      if ((e.target as HTMLElement).closest(".lobby-dock-tab, .lobby-settings, .lobby-board, .lobby-terminal")) return;
+      if ((e.target as HTMLElement).closest(".lobby-char-switch, .lobby-dock-tab, .lobby-settings, .lobby-board, .lobby-terminal")) return;
       if ((e.target as HTMLElement).closest(".lobby-laid[data-action]:not([data-action=NONE])")) return;
       this.panDragging = true;
       this.panLastX = e.clientX;
@@ -514,6 +519,109 @@ export class LobbyView {
     this.actorIdleTimer = 0;
   }
 
+  private clearActor3d(): void {
+    this.actor3dToken += 1;
+    this.actor3dCleanup?.();
+    this.actor3dCleanup = null;
+  }
+
+  /** 스프라이트 칸(482×1020, 발 기준)과 같은 자리에 루온·리아를 세운다. */
+  private async mountActor3d(host: HTMLElement): Promise<void> {
+    const token = this.actor3dToken;
+    host.querySelector(".lobby-laid-img")?.remove();
+    const frame = document.createElement("div");
+    frame.className = "lobby-laid-img lobby-actor-3d";
+    frame.style.aspectRatio = "482 / 1020";
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("aria-hidden", "true");
+    frame.appendChild(canvas);
+    const bar = document.createElement("div");
+    bar.className = "lobby-char-switch";
+    bar.innerHTML =
+      `<button type="button" data-char="RUON">루온</button>` +
+      `<button type="button" data-char="RIA">리아</button>`;
+    host.appendChild(frame);
+    this.layer.appendChild(bar);
+
+    const THREE = await import("three");
+    const { PlayCharacter } = await import("./tools/forestPlay/PlayCharacter");
+    if (token !== this.actor3dToken || !host.isConnected) {
+      bar.remove();
+      return;
+    }
+
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.setClearColor(0x000000, 0);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    const scene = new THREE.Scene();
+    const cellW = 482;
+    const cellH = 1020;
+    const viewH = 1.62;
+    const viewW = viewH * (cellW / cellH);
+    const camY = viewH / 2;
+    const camera = new THREE.OrthographicCamera(-viewW / 2, viewW / 2, viewH / 2, -viewH / 2, 0.1, 20);
+    camera.position.set(0, camY, 6);
+    camera.lookAt(0, camY, 0);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+    const key = new THREE.DirectionalLight(0xffffff, 1.2);
+    key.position.set(1.1, 2.6, 3.2);
+    scene.add(key);
+    const fill = new THREE.DirectionalLight(0xb7ecff, 0.4);
+    fill.position.set(-1.8, 1.4, 1.2);
+    scene.add(fill);
+
+    const actor = new PlayCharacter();
+    actor.root.rotation.y = 0;
+    scene.add(actor.root);
+
+    const resize = () => {
+      const w = Math.max(1, Math.round(frame.clientWidth));
+      const h = Math.max(1, Math.round(frame.clientHeight));
+      renderer.setSize(w, h, false);
+    };
+    resize();
+
+    const paintButtons = () => {
+      bar.querySelectorAll<HTMLButtonElement>("button").forEach((btn) => {
+        btn.classList.toggle("on", btn.dataset.char === this.lobbyChar);
+      });
+    };
+    bar.addEventListener("pointerdown", (ev) => {
+      ev.stopPropagation();
+      ev.preventDefault();
+      const btn = (ev.target as HTMLElement).closest("button");
+      const key = btn?.dataset.char;
+      if (key !== "RUON" && key !== "RIA") return;
+      if (key === this.lobbyChar) return;
+      this.lobbyChar = key;
+      paintButtons();
+      void actor.load(key);
+    });
+    paintButtons();
+    void actor.load(this.lobbyChar);
+
+    let alive = true;
+    let last = performance.now();
+    const timer = window.setInterval(() => {
+      if (!alive || !canvas.isConnected) return;
+      const now = performance.now();
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      resize();
+      actor.tick(dt);
+      renderer.render(scene, camera);
+    }, 33);
+
+    this.actor3dCleanup = () => {
+      alive = false;
+      window.clearInterval(timer);
+      bar.remove();
+      actor.dispose();
+      renderer.dispose();
+    };
+  }
+
   private runSignAction(action: string) {
     const act = action.toUpperCase();
     if (act === "TERMINAL") this.openTerminal("scrapbook");
@@ -542,6 +650,7 @@ export class LobbyView {
   hide() {
     this.on = false;
     this.stopActorIdle();
+    this.clearActor3d();
     this.clearBoatPets();
     this.hideOverlays();
     this.layer.querySelector(".lobby-pan-hint")?.remove();

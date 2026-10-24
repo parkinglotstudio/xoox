@@ -1,0 +1,145 @@
+{
+  "base": {
+    "height": 2.1224003195465526,
+    "width": 1.1264001310009397,
+    "native": true,
+    "clips": [
+      "idle",
+      "walk",
+      "run",
+      "shoot",
+      "shoot2",
+      "throw",
+      "walk_shoot",
+      "walk_throw",
+      "walk_gun"
+    ]
+  },
+  "checks": [
+    {
+      "name": "idle",
+      "current": "idle",
+      "duration": 1.5333333015441895,
+      "maxTip": 0.0033138568315838877,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "bomb": 0.0010000001639127731,
+        "gun": 0.0010000001639127731,
+        "rifle": 0.0010000001639127731
+      }
+    },
+    {
+      "name": "walk",
+      "current": "walk",
+      "duration": 1.0333333015441895,
+      "maxTip": 0.007023028505012013,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "bomb": 0.001000000280328095,
+        "gun": 0.001000000280328095,
+        "rifle": 0.001000000280328095
+      }
+    },
+    {
+      "name": "run",
+      "current": "run",
+      "duration": 0.7666666507720947,
+      "maxTip": 0.012661683364916762,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "bomb": 0.0010000000474974513,
+        "gun": 0.0010000000474974513,
+        "rifle": 0.0010000000474974513
+      }
+    },
+    {
+      "name": "shoot",
+      "current": "shoot",
+      "duration": 0.30000001192092896,
+      "maxTip": 0.0036791327498827187,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "bomb": 0.0010000000474974513,
+        "gun": 0.9999999403953552,
+        "rifle": 0.0010000000474974513
+      }
+    },
+    {
+      "name": "shoot2",
+      "current": "shoot2",
+      "duration": 0.5333333611488342,
+      "maxTip": 0.006830779576524855,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "bomb": 0.0010000000474974513,
+        "gun": 0.0010000000474974513,
+        "rifle": 1
+      }
+    },
+    {
+      "name": "throw",
+      "current": "throw",
+      "duration": 1.1333333253860474,
+      "maxTip": 0.009465272412511442,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "bomb": 0.9999999403953551,
+        "gun": 0.001000000280328095,
+        "rifle": 0.001000000280328095
+      }
+    },
+    {
+      "name": "walk_shoot",
+      "current": "walk_shoot",
+      "duration": 1.0333333015441895,
+      "maxTip": 0.007023029030382339,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "bomb": 0.0010000000474974513,
+        "gun": 0.9999999403953552,
+        "rifle": 0.0010000000474974513
+      }
+    },
+    {
+      "name": "walk_throw",
+      "current": "walk_throw",
+      "duration": 1.1333333253860474,
+      "maxTip": 0.009980754423361484,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "bomb": 0.9999999535083588,
+        "gun": 0.0010000000474974513,
+        "rifle": 0.0010000000474974513
+      }
+    },
+    {
+      "name": "walk_gun",
+      "current": "walk_gun",
+      "duration": 1.0333333015441895,
+      "maxTip": 0.006717621725892632,
+      "maxRoot": 0,
+      "animatedBones": 200,
+      "boneScales": {
+        "bomb": 0.0010000001639127731,
+        "gun": 1.0000001192092896,
+        "rifle": 0.0010000001639127731
+      }
+    }
+  ],
+  "toggles": {
+    "hairRest": false,
+    "nativePreserved": true
+  },
+  "errors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "failed": []
+}

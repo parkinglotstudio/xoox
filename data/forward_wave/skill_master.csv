@@ -1,0 +1,11 @@
+id,name,kind,max_level,cooldown,duration,effect,value,icon_color,resource_id
+skill_ice,얼음,active,1,6,1.2,freeze,0.8,#7fd4ff,res_skill_ice
+skill_flame,화염,active,1,6,1.4,burn,1.2,#e07040,res_skill_flame
+skill_burst,연사,active,1,7,1.5,burst,3,#f0d060,res_skill_burst
+skill_meteor,운석,active,1,8,0.4,meteor,3,#c4b15a,res_skill_meteor
+skill_bomb,폭탄,active,1,7,0.6,bomb,2,#c47a3a,res_skill_bomb
+skill_laser,레이저,active,1,6,1,laser,0.35,#d158bc,res_skill_laser
+passive_rate,연사 속도,passive,3,0,0,gun_rate,0.06,#9aa8bc,res_passive_rate
+passive_range,사거리,passive,3,0,0,throw_range,36,#9aa8bc,res_passive_range
+passive_spread,산탄,passive,1,0,0,shotgun,1,#9aa8bc,res_passive_spread
+passive_chain,연쇄,passive,1,0,0,chain,1,#9aa8bc,res_passive_chain

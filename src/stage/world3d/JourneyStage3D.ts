@@ -47,6 +47,11 @@ export interface JourneyStage3DOptions {
   /** fogVisionM 대비 완전히 닫히는 거리의 배수 */
   fogFarMul?: number;
   fogColor?: number;
+  /** 이 스테이지 인스턴스에서만 사용할 정화 전·후 원경. 생략하면 본편 기본 아트를 쓴다. */
+  skyArt?: {
+    polluted: { sky: string; horizon: string };
+    purified: { sky: string; horizon: string };
+  };
   moveSpeedMps?: number;
   turnSpeedDeg?: number;
   turnMode?: TurnMode;
@@ -273,6 +278,7 @@ export class JourneyStage3D {
   private fogFarMul: number;
   private skyIsPurified = false;
   private skyPurifyAmount = 0;
+  private skyMoodOverride: boolean | null = null;
   private skyMoodJobs: { polluted?: Promise<void>; purified?: Promise<void> } = {};
   /** 정화전 — 차가운 재빛(시안 림과 같은 가족). 예전 회황 #c5c19e 폐기 */
   private skyPolluted = { fog: 0x6a7f88, zenith: 0x2e3d48 };
@@ -393,6 +399,7 @@ export class JourneyStage3D {
     this.horizonMesh = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 48, 1, true), this.horizonMat);
     this.horizonMesh.renderOrder = -1;
     this.horizonMesh.frustumCulled = false;
+    this.horizonMesh.visible = false;
     wireHorizonWaveShader(this.horizonMat);
     this.scene.add(this.horizonMesh);
     this.layoutHorizon();
@@ -427,6 +434,7 @@ export class JourneyStage3D {
       centerOnFocus: true,
       initialFocus: opts.initialFocus ?? "i21",
     });
+    this.island.group.visible = false;
     this.scene.add(this.island.group);
     this.scene.add(this.ambientCloud.group);
     void this.island.ready.then(() => {
@@ -531,6 +539,7 @@ export class JourneyStage3D {
     this.syncSkyFromFoci(true);
     this.floor.visible = false;
     this.detail.visible = false;
+    this.island.group.visible = false;
     this.island.cullLandByView(this.px, this.pz, this.fog.far + 12);
   }
 
@@ -2106,8 +2115,8 @@ export class JourneyStage3D {
   }
 
   private applyViewMode(): void {
-    const tps = this.viewMode === "tps";
-    this.player.visible = tps;
+    // 예전 2D 스프라이트 캐릭터는 본편에 보이지 않는다. 숲에서는 3D 루온·리아만 쓴다.
+    this.player.visible = false;
     // 발밑 그림자는 TPS/FPS 모두 유지 (FPS에서만 끄면 자주 사라진 것처럼 보임)
     this.playerShadow.visible = true;
     this.camInit = false;
@@ -2151,6 +2160,12 @@ export class JourneyStage3D {
     void this.ensureSkyMood(!purified);
   }
 
+  /** Preview tools can lock the sky to the selected before/after art. */
+  setSkyMoodOverride(purified: boolean | null): void {
+    this.skyMoodOverride = purified;
+    this.syncSkyFromFoci(true);
+  }
+
   /** 하늘·원경 PNG 로드 대기 (미리보기·정화 연출 전) */
   async waitSkyReady(): Promise<void> {
     // 하단 알파 페이드 옛 텍스처 캐시 버림
@@ -2187,7 +2202,9 @@ export class JourneyStage3D {
     const geo = purifyAmountAt(this.px, this.pz, this.island.getPurifyFoci());
     const amt = this.island.getPurifyColorAmt();
     // 원 안에서만 반영. (예전 amt≥0.2 폴백은 원 밖·입장 직후에도 하늘을 열어버림)
-    const next = geo > 0.01 ? Math.max(0, Math.min(1, amt)) : 0;
+    const next = this.skyMoodOverride === null
+      ? (geo > 0.01 ? Math.max(0, Math.min(1, amt)) : 0)
+      : (this.skyMoodOverride ? 1 : 0);
     if (!force && Math.abs(next - this.skyPurifyAmount) < 0.015) {
       const skyReveal = skyRevealFromAmount(next);
       if (this.horizonMat.userData.uSettledPurified) {
@@ -2238,10 +2255,11 @@ export class JourneyStage3D {
   }
 
   private async loadSkyMood(purified: boolean): Promise<void> {
-    const skyUrl = purified ? "/art/sky/sky_purified.png?v=10" : "/art/sky/sky_polluted.png?v=10";
-    const hillUrl = purified
+    const customArt = this.opts.skyArt?.[purified ? "purified" : "polluted"];
+    const skyUrl = customArt?.sky ?? (purified ? "/art/sky/sky_purified.png?v=10" : "/art/sky/sky_polluted.png?v=10");
+    const hillUrl = customArt?.horizon ?? (purified
       ? "/art/sky/horizon_mountains_purified.png?v=10"
-      : "/art/sky/horizon_mountains_polluted.png?v=10";
+      : "/art/sky/horizon_mountains_polluted.png?v=10");
     try {
       const sky = await loadTexture(skyUrl);
       if (this.disposed) {
@@ -2919,12 +2937,44 @@ export class JourneyStage3D {
     this.lastEdgeSide = side;
   }
 
+  private forestPinned = false;
+
+  nodeMarkerCount(): number {
+    return this.nodes.filter((e) => !e.node.noMarker && !e.node.hidden).length;
+  }
+
+  /** 들판 % 대신, 숲 길 위의 월드 좌표로 표식을 다시 깐다 */
+  pinNodes(spots: Array<{ x: number; z: number; y: number }>): void {
+    this.forestPinned = true;
+    const shown = this.nodes.filter((e) => !e.node.noMarker && !e.node.hidden);
+    for (let i = 0; i < shown.length; i++) {
+      const e = shown[i]!;
+      const s = spots[i];
+      if (!s) {
+        e.sprite.visible = false;
+        e.decal.visible = false;
+        continue;
+      }
+      e.sprite.visible = true;
+      e.decal.visible = true;
+      e.sprite.position.set(s.x, s.y, s.z);
+      e.decal.position.set(s.x, Math.max(0.02, s.y - 0.04), s.z);
+    }
+    this.syncNearNode();
+  }
+
+  clearForestPins(): void {
+    this.forestPinned = false;
+  }
+
   private syncNearNode(): void {
     let best: NodeEntry | null = null;
     let bestD = Infinity;
     for (const e of this.nodes) {
-      if (e.node.hidden) continue;
-      const p = this.pctToWorld(e.node.xPct, e.node.yPct);
+      if (e.node.hidden || (this.forestPinned && !e.sprite.visible)) continue;
+      const p = this.forestPinned
+        ? { x: e.sprite.position.x, z: e.sprite.position.z }
+        : this.pctToWorld(e.node.xPct, e.node.yPct);
       const d = Math.hypot(p.x - this.px, p.z - this.pz);
       if (d < bestD) {
         bestD = d;

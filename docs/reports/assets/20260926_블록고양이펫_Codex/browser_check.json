@@ -1,0 +1,92 @@
+{
+  "samples": [
+    {
+      "clip": "walk",
+      "duration": 1,
+      "minY": -0.0011381718293483351,
+      "maxY": 1.0169731205006398,
+      "nonfinite": 0,
+      "loopDelta": 0
+    },
+    {
+      "clip": "idle_sit",
+      "duration": 4,
+      "minY": -0.0010000753880520757,
+      "maxY": 0.9198155166706823,
+      "nonfinite": 0,
+      "loopDelta": 0
+    },
+    {
+      "clip": "idle_look",
+      "duration": 5,
+      "minY": -0.0010000753881275876,
+      "maxY": 0.91981551635786,
+      "nonfinite": 0,
+      "loopDelta": 0
+    },
+    {
+      "clip": "attack_laser",
+      "duration": 0.699999988079071,
+      "minY": -0.0010023164066051988,
+      "maxY": 1.0146555757351132,
+      "nonfinite": 0,
+      "loopDelta": 0
+    }
+  ],
+  "laser": [
+    {
+      "time": 0.1,
+      "visible": false
+    },
+    {
+      "time": 0.23,
+      "visible": true
+    },
+    {
+      "time": 0.6,
+      "visible": false
+    }
+  ],
+  "clearAfterSwitch": true,
+  "metrics": {
+    "id": "pet_block_cat",
+    "revision": "BCAT01",
+    "reference": "03_block_poses.png",
+    "triangles": 5564,
+    "bones": 29,
+    "materials": 2,
+    "bytes": 948952,
+    "animations": {
+      "walk": 1,
+      "idle_sit": 4,
+      "idle_look": 5,
+      "attack_laser": 0.7
+    },
+    "eye_sockets_head_local": {
+      "L": [
+        0.10300000011920929,
+        0.013000011444091797,
+        0.16200000047683716
+      ],
+      "R": [
+        -0.10300000011920929,
+        0.013000011444091797,
+        0.16200000047683716
+      ]
+    },
+    "laser": {
+      "start": 0.18,
+      "end": 0.3,
+      "range": 2.2,
+      "cooldown": 3
+    }
+  },
+  "pauseDelta": 0,
+  "finalStats": {
+    "calls": 6,
+    "triangles": 11330,
+    "status": "BCAT-01 · 블록 고양이 · 5,564 삼각형 · 29 본 · 0.90 MiB · 38 fps"
+  },
+  "errors": [],
+  "badResources": []
+}

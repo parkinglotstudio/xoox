@@ -1,0 +1,288 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { Game, CHARACTERS, MEDKIT_HEAL_FRACTION, type Weapon } from "./engine";
+import { Game as Baseline } from "../scripts/history/pre-koota/engine";
+import {
+  PickupState,
+  EnemyState,
+  EnemyBurn,
+  SimulationTime,
+  enemyBurnQuery,
+} from "./ecs";
+import { contains, segmentHit, createVehicles } from "./terrain";
+import {
+  contains as oldContains,
+  segmentHit as oldSegmentHit,
+} from "../scripts/history/pre-koota/terrain";
+import { EnemyGrid } from "./spatial";
+const idle = { x: 0, y: 0, dash: false, pulse: false };
+
+test("ECS owns records and cached views preserve identity and spawn order", () => {
+  const g = new Game(7);
+  try {
+    g.start(CHARACTERS[0], "normal");
+    const a = { id: 9001, x: 0, z: 0, type: "xp" as const, value: 1, age: 0 };
+    const b = { ...a, id: 9002 },
+      c = { ...a, id: 9003 };
+    g.addDrops(a, b, c);
+    const view = g.drops;
+    const entity = g.ecs.pickups.entity(b)!;
+    assert.equal(entity.get(PickupState), b);
+    b.value = 12;
+    assert.equal(g.ecs.world.query(PickupState)[1].get(PickupState)!.value, 12);
+    entity.destroy();
+    assert.equal(g.drops, view);
+    assert.deepEqual(g.drops, [a, c]);
+    const replacement = { ...a, id: 9004 };
+    g.ecs.pickups.entity(a)!.set(PickupState, replacement);
+    assert.deepEqual(g.drops, [replacement, c]);
+    assert.equal(g.ecs.pickups.entity(a), undefined);
+    assert.equal(
+      g.ecs.pickups.entity(replacement)!.get(PickupState),
+      replacement,
+    );
+    g.ecs.pickups.prune((d) => d.id === 9003);
+    assert.deepEqual(g.drops, [c]);
+    g.addDrops({ ...a, id: 9005 });
+    assert.deepEqual(
+      g.drops.map((d) => d.id),
+      [9003, 9005],
+    );
+    assert.equal(g.ecs.world.query(PickupState).length, 2);
+  } finally {
+    g.dispose();
+  }
+});
+
+test("burn trait disappears on expiry, death, reset and entity destruction", () => {
+  const g = new Game(7);
+  try {
+    g.start(CHARACTERS[0], "normal");
+    g.spawnEnemy("walker", 3, 0);
+    const e = g.enemies[0],
+      entity = g.ecs.enemies.entity(e)!;
+    (g as any).addBurn(e, 1, g.enemyBurns);
+    assert.equal(entity.get(EnemyState), e);
+    assert.equal(entity.get(EnemyBurn), g.enemyBurns.get(e.id));
+    g.time = 4;
+    (g as any).updateBurns();
+    assert.equal(g.ecs.world.query(enemyBurnQuery).length, 0);
+    (g as any).addBurn(e, 1, g.enemyBurns);
+    entity.destroy();
+    assert.equal(g.enemyBurns.size, 0);
+    assert.equal(g.enemies.length, 0);
+    g.spawnEnemy("walker", 3, 0);
+    (g as any).addBurn(g.enemies[0], 1, g.enemyBurns);
+    g.enemies[0].hp = 0;
+    g.ecs.cleanup();
+    assert.equal(g.enemyBurns.size, 0);
+    g.spawnEnemy("walker", 3, 0);
+    (g as any).addBurn(g.enemies[0], 1, g.enemyBurns);
+    g.start(CHARACTERS[1], "normal");
+    assert.equal(g.ecs.world.query(enemyBurnQuery).length, 0);
+    assert.equal(g.enemyBurns.size, 0);
+    assert.equal(g.ecs.world.query(EnemyState).length, g.enemies.length);
+  } finally {
+    g.dispose();
+  }
+});
+
+test("world clock freezes while paused and owner leases survive StrictMode effect replay", async () => {
+  const g = new Game();
+  g.retain();
+  g.release();
+  g.retain();
+  await Promise.resolve();
+  g.start(CHARACTERS[0], "normal");
+  g.update(0.05, idle);
+  assert.deepEqual(g.ecs.world.get(SimulationTime), {
+    delta: 0.05,
+    elapsed: 0.05,
+  });
+  g.phase = "paused";
+  g.update(0.05, idle);
+  assert.equal(g.ecs.world.get(SimulationTime)!.elapsed, 0.05);
+  g.start(CHARACTERS[1], "normal");
+  assert.deepEqual(g.ecs.world.get(SimulationTime), { delta: 0, elapsed: 0 });
+  g.release();
+  await Promise.resolve();
+  g.dispose();
+  // Sequential creation must release Koota's finite world IDs.
+  for (let i = 0; i < 40; i++) {
+    const next = new Game(i);
+    next.dispose();
+    next.dispose();
+  }
+});
+
+test("spatial scratch query reuses memory and retains baseline cell traversal order", () => {
+  const g = new Game(7);
+  try {
+    g.start(CHARACTERS[0], "normal");
+    for (const [x, z] of [
+      [6, 1],
+      [-6, 1],
+      [1, 6],
+      [1, -6],
+      [2, 1],
+    ])
+      g.spawnEnemy("walker", x, z);
+    const grid = new EnemyGrid();
+    grid.rebuild(g.enemies);
+    const view = grid.nearby({ x: 0, z: 0 }, 12);
+    const sorted = [...g.enemies].sort(
+      (a, b) =>
+        Math.floor(a.x / 5) - Math.floor(b.x / 5) ||
+        Math.floor(a.z / 5) - Math.floor(b.z / 5),
+    );
+    assert.deepEqual(view, sorted);
+    assert.equal(grid.nearby({ x: 40, z: 40 }, 1), view);
+    assert.equal(view.length, 0);
+    grid.rebuild([]);
+    assert.equal(grid.nearby({ x: 0, z: 0 }, 100).length, 0);
+  } finally {
+    g.dispose();
+  }
+});
+
+test("cached rotated hull broad phase matches prior geometry and invalidates mutations", () => {
+  let seed = 42;
+  const random = () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+  const b = createVehicles()[0];
+  for (let i = 0; i < 20000; i++) {
+    b.x = random() * 130 - 65;
+    b.z = random() * 130 - 65;
+    b.rotation = random() * Math.PI * 2;
+    b.w = 0.1 + random() * 20;
+    b.d = 0.1 + random() * 20;
+    b.hp = i % 4 === 0 ? 0 : 380;
+    b.burningAt = i % 4 === 1 ? 2 : -1;
+    b.burnedAt = i % 4 === 0 ? 15 : -1;
+    const a = { x: random() * 140 - 70, z: random() * 140 - 70 };
+    const end =
+      i % 5 === 0 ? a : { x: random() * 140 - 70, z: random() * 140 - 70 };
+    const padding = random() * 2;
+    assert.equal(contains(b, a, padding), oldContains(b, a, padding));
+    assert.equal(
+      segmentHit(a, end, b, padding),
+      oldSegmentHit(a, end, b, padding),
+    );
+  }
+});
+
+function snapshot(g: Game | Baseline) {
+  const fields = [
+    "phase",
+    "time",
+    "seed",
+    "player",
+    "facing",
+    "hp",
+    "kills",
+    "level",
+    "xp",
+    "nextXp",
+    "weapons",
+    "passives",
+    "passiveStrength",
+    "evolved",
+    "choices",
+    "bossKills",
+    "bossesSpawned",
+    "defeatedBosses",
+    "enemies",
+    "bullets",
+    "drops",
+    "effects",
+    "structures",
+    "enemyBurns",
+    "structureBurns",
+    "damageDone",
+    "damageTaken",
+    "dashCooldown",
+    "pulseCooldown",
+    "soundEvents",
+    "visible",
+    "explored",
+  ];
+  return JSON.parse(
+    JSON.stringify(
+      Object.fromEntries(fields.map((k) => [k, (g as any)[k]])),
+      (_, v) => (v instanceof Map ? [...v] : v instanceof Set ? [...v] : v),
+    ),
+  );
+}
+for (const weapons of [
+  ["pistol", "shotgun", "frost", "katana", "sniper", "flamethrower"],
+  ["orbit", "molotov", "lightning", "pistol", "shotgun", "frost"],
+] as Weapon[][]) {
+  test(`deterministic combat remains equivalent to 4987254 with current medkit rule: ${weapons.join(",")}`, () => {
+    const current = new Game(818),
+      prior = new Baseline(818);
+    try {
+      // Only the intentional medkit balance change is adapted in the historic
+      // reference. All other combat/terrain behavior remains the original code.
+      const reference = prior as any;
+      const originalDrop = reference.drop.bind(prior);
+      const originalCollect = reference.collect.bind(prior);
+      reference.drop = (p: any, type: string, value: number) =>
+        originalDrop(p, type, type === "heal" ? MEDKIT_HEAL_FRACTION : value);
+      reference.collect = (d: any) => {
+        if (d.type !== "heal") return originalCollect(d);
+        prior.hp = Math.min(
+          prior.maxHp,
+          prior.hp + prior.maxHp * MEDKIT_HEAL_FRACTION,
+        );
+        reference.sound("heal");
+      };
+      for (const g of [current, prior]) {
+        g.start(CHARACTERS[0], "normal");
+        g.time = 299.8;
+        g.invincible = 1e6;
+        g.weapons = Object.fromEntries(weapons.map((w) => [w, 6]));
+        g.passives = {
+          pierce: 5,
+          power: 3,
+          haste: 5,
+          range: 3,
+          multishot: 2,
+          magnet: 5,
+        };
+        for (const w of weapons) g.evolved.add(w);
+        for (let i = 0; i < 90; i++) {
+          const a = i * 2.399963,
+            r = 3 + (i % 18);
+          g.spawnEnemy(
+            i % 5 === 0 ? "runner" : "walker",
+            Math.sin(a) * r,
+            Math.cos(a) * r,
+          );
+        }
+      }
+      assert.deepEqual(snapshot(current), snapshot(prior));
+      for (let i = 0; i < 1200; i++) {
+        const input = {
+          x: Math.sin(i * 0.017),
+          y: Math.cos(i * 0.013),
+          dash: i % 79 === 0,
+          pulse: i % 373 === 0,
+          aim: { x: Math.sin(i * 0.07) * 18, z: Math.cos(i * 0.07) * 18 },
+        };
+        current.update(0.05, input);
+        prior.update(0.05, input);
+        if (i % 20 === 0)
+          assert.deepEqual(snapshot(current), snapshot(prior), `frame ${i}`);
+        while (current.phase === "upgrade" && prior.phase === "upgrade") {
+          current.choose(0);
+          prior.choose(0);
+        }
+      }
+      assert.deepEqual(snapshot(current), snapshot(prior));
+    } finally {
+      current.dispose();
+    }
+  });
+}

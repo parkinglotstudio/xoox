@@ -1,0 +1,25 @@
+{
+  "errors": [],
+  "bad": [],
+  "models": [
+    {
+      "key": "RUON",
+      "native": true,
+      "clips": 18,
+      "bones": 46,
+      "hairBones": 23,
+      "crown": true,
+      "finite": true
+    },
+    {
+      "key": "RUON_35",
+      "native": true,
+      "clips": 18,
+      "bones": 46,
+      "hairBones": 23,
+      "crown": true,
+      "finite": true
+    }
+  ],
+  "ok": true
+}

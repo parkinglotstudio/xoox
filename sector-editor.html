@@ -534,6 +534,14 @@
       }
 
       .side h2 { margin: 0; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+      .horizon-card {
+        border: 1px solid var(--line); border-radius: 8px;
+        background: #11161f; overflow: hidden; flex: 0 0 auto;
+      }
+      .horizon-card summary { padding: 8px 10px; cursor: pointer; font-size: 12px; font-weight: 800; }
+      .horizon-card img { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; }
+      .horizon-card p { margin: 0; padding: 6px 10px 8px; color: var(--muted); font-size: 11px; line-height: 1.4; }
+      .horizon-card img[hidden] { display: none; }
       .list { display: flex; flex-direction: column; gap: 4px; max-height: 36vh; overflow: auto; }
       .list button {
         text-align: left; border: 1px solid var(--line); background: #11161f; color: var(--text);
@@ -560,7 +568,7 @@
   </head>
   <body>
     <div class="bar">
-      <h1>맵 배치</h1>
+      <h1>맵 배치</h1><a href="/forest-map-tool.html" style="color:#a8dfb8;font-weight:700">150×300m 정화 숲 · 이동 마스크</a>
       <span class="hint">NPC만 · 데코 아트는 별도</span>
       <label class="hint"><input type="checkbox" id="showPath" checked /> 동선</label>
       <label class="hint" for="artMode">보기</label>
@@ -614,6 +622,13 @@
 
       <aside class="side" id="sidePanel">
         <div class="split-x" id="splitX" title="사이드 폭 조절" role="separator" aria-orientation="vertical"></div>
+        <details class="horizon-card" open>
+          <summary id="horizonTitle">원경 · 정화전</summary>
+          <a id="horizonLink" href="/art/sky/horizon_polluted_map_v1.png" target="_blank" rel="noopener" title="원경 그림을 원본 크기로 열기">
+            <img id="horizonPreview" src="/art/sky/horizon_polluted_map_v1.png" alt="정화전 블록 산과 하늘 원경" />
+          </a>
+          <p id="horizonNote">보기 상태에 따라 전환 · 그림을 누르면 원본 크기 · 3D 적용 전 미리보기</p>
+        </details>
         <h2>선택 정보</h2>
         <div class="info-card" id="infoCard">섬 위 아이콘을 클릭하세요.</div>
         <h2>스케일</h2>

@@ -1,0 +1,373 @@
+{
+  "finite": true,
+  "clips": [
+    {
+      "variant": "DS",
+      "name": "idle",
+      "duration": 6,
+      "minY": 0.0009998510505095355,
+      "maxY": 1.8133939833302462,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "walk",
+      "duration": 1,
+      "minY": 0.004735332439978812,
+      "maxY": 1.8179215592724975,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "run",
+      "duration": 0.7333333492279053,
+      "minY": 0.003735457245582519,
+      "maxY": 1.8116460582315244,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "shoot",
+      "duration": 0.2666666805744171,
+      "minY": 0.0017126406157892773,
+      "maxY": 1.8058676511807934,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "shoot2",
+      "duration": 0.5,
+      "minY": 0.0023706974990720508,
+      "maxY": 1.8109363556516849,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "throw",
+      "duration": 1.100000023841858,
+      "minY": 0.001712664200889313,
+      "maxY": 1.834224964440952,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "walk_shoot",
+      "duration": 1,
+      "minY": 0.004735332439978812,
+      "maxY": 1.8143674105388075,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "walk_throw",
+      "duration": 1.100000023841858,
+      "minY": 0.003986437964693503,
+      "maxY": 1.8190003315021965,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "walk_gun",
+      "duration": 1,
+      "minY": 0.004735332439978812,
+      "maxY": 1.8179215592724975,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "draw",
+      "duration": 1.2000000476837158,
+      "minY": 0.0012376669843587624,
+      "maxY": 1.8097740121462929,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "holster",
+      "duration": 1.2000000476837158,
+      "minY": 0.0012376669843587624,
+      "maxY": 1.8097740121462929,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "draw_launcher",
+      "duration": 1.2000000476837158,
+      "minY": 0.0012376669843587624,
+      "maxY": 1.8097740121462929,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "holster_launcher",
+      "duration": 1.2000000476837158,
+      "minY": 0.0012376669843587624,
+      "maxY": 1.8097740121462929,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "blink",
+      "duration": 1.7999999523162842,
+      "minY": 0.0009999158417724329,
+      "maxY": 1.8097385983209802,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "squint",
+      "duration": 2.4000000953674316,
+      "minY": 0.0009999158417724329,
+      "maxY": 1.8096800413914025,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "bow",
+      "duration": 2.799999952316284,
+      "minY": 0.0009999158417724329,
+      "maxY": 1.8130618707762431,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "wave",
+      "duration": 3.200000047683716,
+      "minY": 0.0009999158417724329,
+      "maxY": 1.8096800413914025,
+      "morphTracks": 3
+    },
+    {
+      "variant": "DS",
+      "name": "victory",
+      "duration": 3.200000047683716,
+      "minY": 0.0012376343934764871,
+      "maxY": 1.9666891747657862,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "idle",
+      "duration": 6,
+      "minY": 0.0009999490820406071,
+      "maxY": 1.795992086382439,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "walk",
+      "duration": 1,
+      "minY": 0.0047354096125800955,
+      "maxY": 1.8008909882637945,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "run",
+      "duration": 0.7333333492279053,
+      "minY": 0.003735399216215504,
+      "maxY": 1.7957798533297036,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "shoot",
+      "duration": 0.2666666805744171,
+      "minY": 0.0017125863013253495,
+      "maxY": 1.7872677980462477,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "shoot2",
+      "duration": 0.5,
+      "minY": 0.0024140308341857736,
+      "maxY": 1.7954741096488358,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "throw",
+      "duration": 1.100000023841858,
+      "minY": 0.001712608026164531,
+      "maxY": 1.8195502621477895,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "walk_shoot",
+      "duration": 1,
+      "minY": 0.0047354096125800955,
+      "maxY": 1.7964068712845336,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "walk_throw",
+      "duration": 1.100000023841858,
+      "minY": 0.00403899599688963,
+      "maxY": 1.8031549390604737,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "walk_gun",
+      "duration": 1,
+      "minY": 0.0047354096125800955,
+      "maxY": 1.8008909882637945,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "draw",
+      "duration": 1.2000000476837158,
+      "minY": 0.0012375846660285096,
+      "maxY": 1.7924047921567197,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "holster",
+      "duration": 1.2000000476837158,
+      "minY": 0.0012375846660285096,
+      "maxY": 1.7924047921567197,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "draw_launcher",
+      "duration": 1.2000000476837158,
+      "minY": 0.0012375846660285096,
+      "maxY": 1.7924047921567197,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "holster_launcher",
+      "duration": 1.2000000476837158,
+      "minY": 0.0012375846660285096,
+      "maxY": 1.7924047921567197,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "blink",
+      "duration": 1.7999999523162842,
+      "minY": 0.0010000123062526949,
+      "maxY": 1.7923685708526675,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "squint",
+      "duration": 2.4000000953674316,
+      "minY": 0.0010000123062526949,
+      "maxY": 1.7922957505690975,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "bow",
+      "duration": 2.799999952316284,
+      "minY": 0.0010000123062526949,
+      "maxY": 1.7969239251780351,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "wave",
+      "duration": 3.200000047683716,
+      "minY": 0.0010000123062526949,
+      "maxY": 1.7922957505690975,
+      "morphTracks": 3
+    },
+    {
+      "variant": "D35",
+      "name": "victory",
+      "duration": 3.200000047683716,
+      "minY": 0.0012375211588993244,
+      "maxY": 1.9480139209995284,
+      "morphTracks": 3
+    }
+  ],
+  "bounds": [
+    {
+      "min": [
+        -0.5629925228663464,
+        0.0010000167301836347,
+        -0.5137357620239631
+      ],
+      "max": [
+        0.5639595890331954,
+        1.896625381702804,
+        0.2819426306954103
+      ],
+      "size": [
+        1.1269521118995418,
+        1.8956253649726205,
+        0.7956783927193734
+      ]
+    },
+    {
+      "min": [
+        -0.3759220667641579,
+        0.000999967447303448,
+        -0.29952001571655273
+      ],
+      "max": [
+        0.3756721032322584,
+        1.8975981386593663,
+        0.17782065999755942
+      ],
+      "size": [
+        0.7515941699964164,
+        1.896598171212063,
+        0.47734067571411215
+      ]
+    },
+    {
+      "min": [
+        -0.3713650817693388,
+        0.0010000009823581482,
+        -0.31241136327926317
+      ],
+      "max": [
+        0.37120894243644603,
+        1.901406958860082,
+        0.17681553676840983
+      ],
+      "size": [
+        0.7425740242057848,
+        1.9004069578777238,
+        0.489226900047673
+      ]
+    }
+  ],
+  "unit": {
+    "variant": true,
+    "clips": [
+      "idle",
+      "walk",
+      "run",
+      "shoot",
+      "shoot2",
+      "throw",
+      "walk_shoot",
+      "walk_throw",
+      "walk_gun",
+      "draw",
+      "holster",
+      "draw_launcher",
+      "holster_launcher",
+      "blink",
+      "squint",
+      "bow",
+      "wave",
+      "victory"
+    ],
+    "native": true
+  },
+  "originalDSelectable": true,
+  "errors": [],
+  "bad": []
+}

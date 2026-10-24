@@ -1,0 +1,703 @@
+{
+  "errors": [],
+  "bad": [],
+  "screenshots": [
+    "RIA_front.png",
+    "RIA_back.png",
+    "RUON_front.png",
+    "RUON_back.png",
+    "RUON_bazooka.png",
+    "unit_RIA.png",
+    "unit_RIA_35.png",
+    "unit_RUON.png",
+    "unit_RUON_35.png",
+    "unit_RUON35_shoot_back.png",
+    "unit_asset_browser.png",
+    "unit_compact.png"
+  ],
+  "legacyRedirect": true,
+  "models": [
+    {
+      "key": "RUON",
+      "clips": [
+        {
+          "name": "idle",
+          "duration": 6,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk",
+          "duration": 1,
+          "morphTracks": 3
+        },
+        {
+          "name": "run",
+          "duration": 0.7333333492279053,
+          "morphTracks": 3
+        },
+        {
+          "name": "shoot",
+          "duration": 0.2666666805744171,
+          "morphTracks": 3
+        },
+        {
+          "name": "shoot2",
+          "duration": 0.5,
+          "morphTracks": 3
+        },
+        {
+          "name": "throw",
+          "duration": 1.100000023841858,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk_shoot",
+          "duration": 1,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk_throw",
+          "duration": 1.100000023841858,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk_gun",
+          "duration": 1,
+          "morphTracks": 3
+        },
+        {
+          "name": "draw",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "holster",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "draw_launcher",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "holster_launcher",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "blink",
+          "duration": 1.7999999523162842,
+          "morphTracks": 3
+        },
+        {
+          "name": "squint",
+          "duration": 2.4000000953674316,
+          "morphTracks": 3
+        },
+        {
+          "name": "bow",
+          "duration": 2.799999952316284,
+          "morphTracks": 3
+        },
+        {
+          "name": "wave",
+          "duration": 3.200000047683716,
+          "morphTracks": 3
+        },
+        {
+          "name": "victory",
+          "duration": 3.200000047683716,
+          "morphTracks": 3
+        }
+      ],
+      "finite": true,
+      "samples": [],
+      "bones": 46,
+      "hairBones": 23,
+      "bounds": {
+        "min": [
+          -0.5374359057493694,
+          -0.024599983348830585,
+          -0.460992495933823
+        ],
+        "max": [
+          0.5386396286844768,
+          1.9219514928885257,
+          0.2820192134575617
+        ],
+        "size": [
+          1.0760755344338462,
+          1.9465514762373564,
+          0.7430117093913847
+        ]
+      }
+    },
+    {
+      "key": "RUON_35",
+      "clips": [
+        {
+          "name": "idle",
+          "duration": 6,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk",
+          "duration": 1,
+          "morphTracks": 3
+        },
+        {
+          "name": "run",
+          "duration": 0.7333333492279053,
+          "morphTracks": 3
+        },
+        {
+          "name": "shoot",
+          "duration": 0.2666666805744171,
+          "morphTracks": 3
+        },
+        {
+          "name": "shoot2",
+          "duration": 0.5,
+          "morphTracks": 3
+        },
+        {
+          "name": "throw",
+          "duration": 1.100000023841858,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk_shoot",
+          "duration": 1,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk_throw",
+          "duration": 1.100000023841858,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk_gun",
+          "duration": 1,
+          "morphTracks": 3
+        },
+        {
+          "name": "draw",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "holster",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "draw_launcher",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "holster_launcher",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "blink",
+          "duration": 1.7999999523162842,
+          "morphTracks": 3
+        },
+        {
+          "name": "squint",
+          "duration": 2.4000000953674316,
+          "morphTracks": 3
+        },
+        {
+          "name": "bow",
+          "duration": 2.799999952316284,
+          "morphTracks": 3
+        },
+        {
+          "name": "wave",
+          "duration": 3.200000047683716,
+          "morphTracks": 3
+        },
+        {
+          "name": "victory",
+          "duration": 3.200000047683716,
+          "morphTracks": 3
+        }
+      ],
+      "finite": true,
+      "samples": [
+        {
+          "name": "idle",
+          "minY": 0.0010000318155281775,
+          "maxY": 1.825288438087531
+        },
+        {
+          "name": "walk",
+          "minY": 0.007344605621515572,
+          "maxY": 1.8330391019755368
+        },
+        {
+          "name": "run",
+          "minY": 0.006344650346206148,
+          "maxY": 1.8264461414724331
+        },
+        {
+          "name": "shoot",
+          "minY": 0.005930454282522802,
+          "maxY": 1.8191004992167619
+        },
+        {
+          "name": "shoot2",
+          "minY": 0.013636886216064105,
+          "maxY": 1.8264565976419833
+        },
+        {
+          "name": "throw",
+          "minY": 0.005930475607372683,
+          "maxY": 1.8520840372922853
+        },
+        {
+          "name": "walk_shoot",
+          "minY": 0.007344605621515572,
+          "maxY": 1.8294512059303019
+        },
+        {
+          "name": "walk_throw",
+          "minY": 0.007344604946546604,
+          "maxY": 1.8338913570244029
+        },
+        {
+          "name": "walk_gun",
+          "minY": 0.007344605621515572,
+          "maxY": 1.8330399732628626
+        },
+        {
+          "name": "draw",
+          "minY": 0.0026441155234529076,
+          "maxY": 1.8222628537147663
+        },
+        {
+          "name": "holster",
+          "minY": 0.0026441155234529076,
+          "maxY": 1.8222628537147663
+        },
+        {
+          "name": "draw_launcher",
+          "minY": 0.0026441155234529076,
+          "maxY": 1.8222629416094747
+        },
+        {
+          "name": "holster_launcher",
+          "minY": 0.0026441155234529076,
+          "maxY": 1.8222629416094747
+        },
+        {
+          "name": "blink",
+          "minY": 0.0009999963992514769,
+          "maxY": 1.821632077453829
+        },
+        {
+          "name": "squint",
+          "minY": 0.0009999963992514769,
+          "maxY": 1.8215748443021544
+        },
+        {
+          "name": "bow",
+          "minY": 0.0009999963992514769,
+          "maxY": 1.8237989697305166
+        },
+        {
+          "name": "wave",
+          "minY": 0.0009999963992514769,
+          "maxY": 1.8215713395250408
+        },
+        {
+          "name": "victory",
+          "minY": 0.0026440572578275505,
+          "maxY": 1.978679642162437
+        }
+      ],
+      "bones": 46,
+      "hairBones": 23,
+      "bounds": {
+        "min": [
+          -0.3732936300537834,
+          0.0010000852026670038,
+          -0.2896447616651517
+        ],
+        "max": [
+          0.37292636872305057,
+          1.9019696381546516,
+          0.1771946130138801
+        ],
+        "size": [
+          0.746219998776834,
+          1.9009695529519846,
+          0.4668393746790318
+        ]
+      }
+    },
+    {
+      "key": "RIA",
+      "clips": [
+        {
+          "name": "idle",
+          "duration": 6,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk",
+          "duration": 1,
+          "morphTracks": 3
+        },
+        {
+          "name": "run",
+          "duration": 0.7333333492279053,
+          "morphTracks": 3
+        },
+        {
+          "name": "shoot",
+          "duration": 0.2666666805744171,
+          "morphTracks": 3
+        },
+        {
+          "name": "shoot2",
+          "duration": 0.5,
+          "morphTracks": 3
+        },
+        {
+          "name": "throw",
+          "duration": 1.100000023841858,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk_shoot",
+          "duration": 1,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk_throw",
+          "duration": 1.100000023841858,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk_gun",
+          "duration": 1,
+          "morphTracks": 3
+        },
+        {
+          "name": "draw",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "holster",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "draw_launcher",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "holster_launcher",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "blink",
+          "duration": 1.7999999523162842,
+          "morphTracks": 3
+        },
+        {
+          "name": "squint",
+          "duration": 2.4000000953674316,
+          "morphTracks": 3
+        },
+        {
+          "name": "bow",
+          "duration": 2.799999952316284,
+          "morphTracks": 3
+        },
+        {
+          "name": "wave",
+          "duration": 3.200000047683716,
+          "morphTracks": 3
+        },
+        {
+          "name": "victory",
+          "duration": 3.200000047683716,
+          "morphTracks": 3
+        }
+      ],
+      "finite": true,
+      "samples": [],
+      "bones": 48,
+      "hairBones": 25,
+      "bounds": {
+        "min": [
+          -0.5629925228663464,
+          0.0010000167301836347,
+          -0.5137357620239631
+        ],
+        "max": [
+          0.5639595890331954,
+          1.896625381702804,
+          0.2819426306954103
+        ],
+        "size": [
+          1.1269521118995418,
+          1.8956253649726205,
+          0.7956783927193734
+        ]
+      }
+    },
+    {
+      "key": "RIA_35",
+      "clips": [
+        {
+          "name": "idle",
+          "duration": 6,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk",
+          "duration": 1,
+          "morphTracks": 3
+        },
+        {
+          "name": "run",
+          "duration": 0.7333333492279053,
+          "morphTracks": 3
+        },
+        {
+          "name": "shoot",
+          "duration": 0.2666666805744171,
+          "morphTracks": 3
+        },
+        {
+          "name": "shoot2",
+          "duration": 0.5,
+          "morphTracks": 3
+        },
+        {
+          "name": "throw",
+          "duration": 1.100000023841858,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk_shoot",
+          "duration": 1,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk_throw",
+          "duration": 1.100000023841858,
+          "morphTracks": 3
+        },
+        {
+          "name": "walk_gun",
+          "duration": 1,
+          "morphTracks": 3
+        },
+        {
+          "name": "draw",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "holster",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "draw_launcher",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "holster_launcher",
+          "duration": 1.2000000476837158,
+          "morphTracks": 3
+        },
+        {
+          "name": "blink",
+          "duration": 1.7999999523162842,
+          "morphTracks": 3
+        },
+        {
+          "name": "squint",
+          "duration": 2.4000000953674316,
+          "morphTracks": 3
+        },
+        {
+          "name": "bow",
+          "duration": 2.799999952316284,
+          "morphTracks": 3
+        },
+        {
+          "name": "wave",
+          "duration": 3.200000047683716,
+          "morphTracks": 3
+        },
+        {
+          "name": "victory",
+          "duration": 3.200000047683716,
+          "morphTracks": 3
+        }
+      ],
+      "finite": true,
+      "samples": [],
+      "bones": 48,
+      "hairBones": 25,
+      "bounds": {
+        "min": [
+          -0.3713650817693388,
+          0.0010000009823581482,
+          -0.31241136327926317
+        ],
+        "max": [
+          0.37120894243644603,
+          1.901406958860082,
+          0.17681553676840983
+        ],
+        "size": [
+          0.7425740242057848,
+          1.9004069578777238,
+          0.489226900047673
+        ]
+      }
+    }
+  ],
+  "activeChoices": [
+    "RUON",
+    "RUON_35",
+    "RIA",
+    "RIA_35"
+  ],
+  "unit": [
+    {
+      "key": "RIA",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ],
+      "native": true,
+      "paused": true,
+      "title": "리아 · 기존 비율",
+      "pauseStable": true
+    },
+    {
+      "key": "RIA_35",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ],
+      "native": true,
+      "paused": true,
+      "title": "리아 · 3.5등신",
+      "pauseStable": true
+    },
+    {
+      "key": "RUON",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ],
+      "native": true,
+      "paused": true,
+      "title": "루온 · 기존 비율",
+      "pauseStable": true
+    },
+    {
+      "key": "RUON_35",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ],
+      "native": true,
+      "paused": true,
+      "title": "루온 · 3.5등신",
+      "pauseStable": true
+    }
+  ],
+  "unitActions": {
+    "shoot": true,
+    "victory": true
+  },
+  "filteredEnemies": [
+    "q_cat"
+  ],
+  "mapControls": true,
+  "returnToCharacter": true,
+  "horizontalOverflow": false,
+  "ok": true
+}

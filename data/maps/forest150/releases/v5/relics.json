@@ -1,0 +1,37 @@
+{
+  "placements": [
+    [
+      38.0,
+      53
+    ],
+    [
+      109.5,
+      100
+    ],
+    [
+      57.0,
+      151
+    ],
+    [
+      99.5,
+      201
+    ],
+    [
+      49.5,
+      259
+    ]
+  ],
+  "allOutsideWalkable": true,
+  "stats": {
+    "purified": {
+      "triangles": 861052,
+      "drawNodes": 519,
+      "bytes": 5830856
+    },
+    "polluted": {
+      "triangles": 878152,
+      "drawNodes": 519,
+      "bytes": 5840920
+    }
+  }
+}

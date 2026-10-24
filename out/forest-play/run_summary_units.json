@@ -1,0 +1,84 @@
+{
+  "before": {
+    "rev": "forest150x300-v7",
+    "state": "purified",
+    "buildInstalled": 0
+  },
+  "madeUnits": [
+    "1-unit:unit_map",
+    "2-unit:k_tent",
+    "3-unit:k_structure",
+    "4-unit:k_machine",
+    "5-unit:k_crane"
+  ],
+  "madeTowers": [
+    "1-tower:tower_gun",
+    "2-tower:tower_throw",
+    "3-tower:tower_cannon",
+    "4-tower:tower_ballista",
+    "5-tower:tower_catapult"
+  ],
+  "placed": {
+    "units": [
+      {
+        "id": "1-unit",
+        "kind": "unit_map"
+      },
+      {
+        "id": "2-unit",
+        "kind": "k_tent"
+      },
+      {
+        "id": "3-unit",
+        "kind": "k_structure"
+      },
+      {
+        "id": "4-unit",
+        "kind": "k_machine"
+      },
+      {
+        "id": "5-unit",
+        "kind": "k_crane"
+      }
+    ],
+    "towers": [
+      {
+        "id": "1-tower",
+        "kind": "tower_gun"
+      },
+      {
+        "id": "2-tower",
+        "kind": "tower_throw"
+      },
+      {
+        "id": "3-tower",
+        "kind": "tower_cannon"
+      },
+      {
+        "id": "4-tower",
+        "kind": "tower_ballista"
+      },
+      {
+        "id": "5-tower",
+        "kind": "tower_catapult"
+      }
+    ],
+    "buildInfo": "데모 타워 5종 배치 5/5\n선택 슬롯: 5-tower · tower_catapult\n타워 5 · 메시 5 · 유닛 5 · 시설 5 · 설치 10\n레이아웃 rev forest150x300-v3\n터렛 5종: tower_gun, tower_throw, tower_cannon, tower_ballista, tower_catapult\n유닛 시설 5종: unit_map, k_tent, k_structure, k_machine, k_crane",
+    "installed": 10,
+    "unitKinds": [
+      "unit_map",
+      "k_tent",
+      "k_structure",
+      "k_machine",
+      "k_crane"
+    ],
+    "unitBtnCount": 5
+  },
+  "errors": [],
+  "shots": [
+    "40_unit_slot1_facility.png",
+    "41_unit_slot3_mid.png",
+    "42_unit_slot5_north.png",
+    "43_build_panel_unit_kinds.png"
+  ]
+}

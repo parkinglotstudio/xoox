@@ -1,0 +1,18 @@
+{
+  "status": "D04 · 64,506 삼각형 · 3.54 MB · 애니메이션 연결 전",
+  "views": [
+    "front",
+    "threequarter",
+    "back",
+    "side",
+    "face",
+    "costume"
+  ],
+  "rotationActive": true,
+  "resetStopped": true,
+  "glbStatus": 200,
+  "glbMagic": "glTF",
+  "bytes": 3708644,
+  "errors": [],
+  "failed": []
+}

@@ -1,0 +1,164 @@
+{
+  "scope": "pack only; temporary server; no original xoox asset fallback",
+  "steps": [
+    {
+      "variant": "a",
+      "actions": 18,
+      "images": [
+        {
+          "src": "http://127.0.0.1:5287/tools/unit_lab/character/A/reference_front.png",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "variant": "d",
+      "actions": 18,
+      "images": [
+        {
+          "src": "http://127.0.0.1:5287/tools/unit_lab/character/D/reference_front.png",
+          "ok": true
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "bad": [
+    {
+      "phase": "sprite_toggle",
+      "status": 404,
+      "url": "http://127.0.0.1:5287/ui/actor/wanderer/ingame_idle/ingame_idle.json"
+    },
+    {
+      "phase": "compare",
+      "status": 404,
+      "url": "http://127.0.0.1:5287/unit-lab-tool.html?character=RUON"
+    }
+  ],
+  "navigation": [
+    {
+      "name": "compare_to_unit",
+      "href": "/unit-lab-tool.html?character=RUON",
+      "actualUrl": "chrome-error://chromewebdata/",
+      "characterLoaded": false
+    }
+  ],
+  "normalModels": [
+    {
+      "key": "RUON",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ],
+      "native": true,
+      "finite": true
+    },
+    {
+      "key": "RUON_35",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ],
+      "native": true,
+      "finite": true
+    },
+    {
+      "key": "RIA",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ],
+      "native": true,
+      "finite": true
+    },
+    {
+      "key": "RIA_35",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ],
+      "native": true,
+      "finite": true
+    }
+  ],
+  "spriteVisible": true,
+  "compareModels": [
+    "RUON",
+    "RIA",
+    "RUON_35",
+    "RIA_35"
+  ],
+  "cat": [
+    "walk",
+    "idle_sit",
+    "idle_look",
+    "attack_laser",
+    "stand_up",
+    "sit_down"
+  ],
+  "completed": true
+}

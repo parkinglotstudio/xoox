@@ -1,0 +1,43 @@
+{
+  "html5": {
+    "towers": [
+      {
+        "id": "1-tower",
+        "kind": null
+      },
+      {
+        "id": "2-tower",
+        "kind": null
+      },
+      {
+        "id": "3-tower",
+        "kind": null
+      },
+      {
+        "id": "4-tower",
+        "kind": "tower_ballista"
+      },
+      {
+        "id": "5-tower",
+        "kind": null
+      }
+    ],
+    "props": 0,
+    "status": "DnD 설치: tower_ballista @ 4-tower",
+    "selected": "4-tower"
+  },
+  "final": {
+    "ok": true,
+    "mode": "tower_slot",
+    "slotId": "1-tower",
+    "kind": "tower_cannon"
+  },
+  "errors": [],
+  "shots": [
+    "50_dnd_place.png",
+    "51_dnd_unit_fx.png",
+    "52_dnd_ray_tower.png",
+    "53_dnd_prop_fx.png",
+    "54_dnd_html5.png"
+  ]
+}

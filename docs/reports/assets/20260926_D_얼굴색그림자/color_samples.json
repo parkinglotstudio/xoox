@@ -1,0 +1,39 @@
+{
+  "referenceSkin": [
+    250.0,
+    217.0,
+    187.0
+  ],
+  "referenceBlush": [
+    246.0,
+    166.0,
+    150.0
+  ],
+  "samples": {
+    "before_face": {
+      "skin": [
+        210.0,
+        182.0,
+        142.0
+      ],
+      "blush": [
+        209.0,
+        137.0,
+        109.0
+      ]
+    },
+    "after_face": {
+      "skin": [
+        250.0,
+        216.0,
+        190.0
+      ],
+      "blush": [
+        252.0,
+        174.0,
+        150.0
+      ]
+    }
+  },
+  "hairUpperMaxPixelDifference": 0
+}

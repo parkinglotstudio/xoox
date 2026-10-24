@@ -1,0 +1,15 @@
+{
+  "src/tools/forestPlay/DefenseBalance.ts": "1ef62c0e2cf0a47da2585116dba35bc7c76e816a3510ffbab8bb2d96ab386a32",
+  "src/tools/forestPlay/DefenseSession.ts": "865858730ff2ece2076e4f2e2a7806bbbc9aade0f667c1c3b8a83269528a5130",
+  "src/tools/forestPlay/DefensePreview.ts": "95cfc83392e10452515e4f5928b65051e733bfe8db3e6c57936bbf8f61e125c8",
+  "src/tools/forestPlay/DefenseOutpost.ts": "16b0efdbadbc562c9a20e82c4ee522ef45c3f4354c13e30b75f01add083c7c81",
+  "src/tools/forestPlay/DefenseFacilityRig.ts": "dc521cf8025bb36781348725ca2dd73be28cbe0a79c7dc539cfea9ca4588f90d",
+  "src/tools/forestPlay/DefenseBalancePanel.ts": "a1710103fd9b5a6879a704809048dfd65a054256ac91f45b38b6716e539a54d3",
+  "data/tools/unit_lab/defense_balance.json": "fc083d739a407aa7a85fa95638cdd5284025018d8015184fcfa3b72801a67e96",
+  "data/tools/unit_lab/defense_traps.json": "04e9187e26485b2863ecf71f4846be718408c4c8b193a0e7c8ef313b3ce85c05",
+  "data/tools/unit_lab/defense_outpost.json": "9ea4340cbf7db5f08282585b2d9d0c20a9c5eb87cdb7fc0d4c3c406b0c8b7667",
+  "scripts/verify_defense_15min.mjs": "a19d9a3e97a5d88c358f58a21a9e2716dba6e53a3e686a0730dca601626ad902",
+  "scripts/verify_defense_15min_build.mjs": "59f1b4f11f0a3d4d62024b1172349291f4f7a3ce875c6abca5ed026932cd45c7",
+  "scripts/verify_defense_roles.mjs": "67545213926c35e99c14efc338083c1d8f5570ac99ae5cbb3dce6e86c450ef2c",
+  "scripts/verify_defense_facilities.mjs": "02a8210743ead486504c22b5ff936aefab2e4ba861022df0434a3b6cb6c5a046"
+}

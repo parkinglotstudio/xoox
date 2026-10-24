@@ -864,6 +864,25 @@ export class Journey3DView {
     return (row?.tier || "").toUpperCase() !== "PURIFY_FINAL";
   }
 
+  nodeMarkerCount(): number {
+    return this.stage.nodeMarkerCount();
+  }
+
+  pinNodes(spots: Array<{ x: number; z: number; y: number }>): void {
+    this.stage.pinNodes(spots);
+  }
+
+  clearForestPins(): void {
+    this.stage.clearForestPins();
+  }
+
+  /** 숲 길 위에서 이미 도착한 뒤, 걷지 않고 그 노드를 연다 */
+  async playNode(npc: AreaNpcDef): Promise<void> {
+    if (!this.on || this.running) return;
+    this.nearNpcId = npc.npc_id;
+    await this.activateNear();
+  }
+
   /** 미니게임처럼 3D 안에서 진행되는 콘텐츠가 이동을 잠글 때 */
   setFrozen(on: boolean) {
     this.stage.setFrozen(on);

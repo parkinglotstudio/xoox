@@ -1,0 +1,35 @@
+{
+  "counts": {
+    "face": 3,
+    "front": 3,
+    "threequarter": 3
+  },
+  "unit": [
+    {
+      "mesh": "A_expression_marks",
+      "strength": 0.18
+    },
+    {
+      "mesh": "A_face_detail",
+      "strength": 0.18
+    },
+    {
+      "mesh": "A_head_clean",
+      "strength": 0.18
+    },
+    {
+      "mesh": "A_expression_marks",
+      "strength": 0.18
+    },
+    {
+      "mesh": "A_face_detail",
+      "strength": 0.18
+    },
+    {
+      "mesh": "A_head_clean",
+      "strength": 0.18
+    }
+  ],
+  "dPatched": 0,
+  "errors": []
+}

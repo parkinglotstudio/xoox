@@ -1,0 +1,4637 @@
+{
+  "at": "2026-09-27T18:09:37",
+  "source": "C:\\xoox",
+  "pack": "C:\\Users\\dmaxd\\CodexPack_20260927",
+  "baseline": "C:\\xoox\\docs\\characters\\inventory.json",
+  "expected_files": 626,
+  "summary": {
+    "backups": {
+      "total": 11,
+      "identical": 11
+    },
+    "character_assets": {
+      "total": 37,
+      "identical": 37
+    },
+    "character_docs": {
+      "total": 6,
+      "identical": 6
+    },
+    "current_build_scripts": {
+      "total": 51,
+      "identical": 51
+    },
+    "evidence": {
+      "total": 10,
+      "identical": 10
+    },
+    "legacy_source_copies": {
+      "total": 40,
+      "identical": 40
+    },
+    "pet_assets": {
+      "total": 5,
+      "identical": 5
+    },
+    "reports": {
+      "total": 57,
+      "identical": 57
+    },
+    "sprite_references": {
+      "total": 42,
+      "identical": 42
+    },
+    "tool_html": {
+      "total": 6,
+      "different": 6
+    },
+    "unit_assets": {
+      "total": 342,
+      "identical": 342
+    },
+    "viewer_source": {
+      "total": 19,
+      "identical": 19
+    }
+  },
+  "models": {
+    "RUON": {
+      "bytes": 9913824,
+      "sha256": "3cf30378e14869b6f924efbef788d36563126ccbc2ae7662a460eaaa679655f8",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ],
+      "bones": 46,
+      "hair_bones": 23,
+      "crown_revision": [
+        "RUON-CROWN-02"
+      ],
+      "source_equal": true
+    },
+    "RUON_35": {
+      "bytes": 9917772,
+      "sha256": "3269c2b5b83ef5739a6dfc797fc712757a3007315db30ad03f1fc0141e86178b",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ],
+      "bones": 46,
+      "hair_bones": 23,
+      "crown_revision": [
+        "RUON-CROWN-02"
+      ],
+      "source_equal": true
+    },
+    "RIA": {
+      "bytes": 10240516,
+      "sha256": "a1c4dbb4dc97f1a194297c3cdb24ce15c214653b9eeb0d0cd7682bd45415bfe0",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ],
+      "bones": 48,
+      "hair_bones": 25,
+      "crown_revision": [],
+      "source_equal": true
+    },
+    "RIA_35": {
+      "bytes": 10230564,
+      "sha256": "99fa30f7e995435dc01f56bbc100910a0a7aa939947547e12b3760acdb005c71",
+      "clips": [
+        "idle",
+        "walk",
+        "run",
+        "shoot",
+        "shoot2",
+        "throw",
+        "walk_shoot",
+        "walk_throw",
+        "walk_gun",
+        "draw",
+        "holster",
+        "draw_launcher",
+        "holster_launcher",
+        "blink",
+        "squint",
+        "bow",
+        "wave",
+        "victory"
+      ],
+      "bones": 48,
+      "hair_bones": 25,
+      "crown_revision": [],
+      "source_equal": true
+    },
+    "BCAT": {
+      "bytes": 1100944,
+      "sha256": "4ae38ab3106e85ae48cf146e439bde56ff61aef9aba3ee6c275fa552cf224b66",
+      "clips": [
+        "walk",
+        "idle_sit",
+        "idle_look",
+        "attack_laser",
+        "stand_up",
+        "sit_down"
+      ],
+      "bones": 29,
+      "hair_bones": 0,
+      "crown_revision": [],
+      "source_equal": true
+    }
+  },
+  "missing_document_links": [
+    {
+      "document": "docs/characters/04_파일목록.md",
+      "target": "../../block-cat-tool.html"
+    },
+    {
+      "document": "docs/characters/04_파일목록.md",
+      "target": "../../character-compare-tool.html"
+    },
+    {
+      "document": "docs/characters/04_파일목록.md",
+      "target": "../../unit-lab-tool.html"
+    },
+    {
+      "document": "docs/characters/04_파일목록.md",
+      "target": "../../wanderer-a-tool.html"
+    },
+    {
+      "document": "docs/characters/04_파일목록.md",
+      "target": "../../wanderer-d-sprite-tool.html"
+    },
+    {
+      "document": "docs/characters/04_파일목록.md",
+      "target": "../../wanderer-d-tool.html"
+    }
+  ],
+  "files": [
+    {
+      "source": "block-cat-tool.html",
+      "category": "tool_html",
+      "status": "different",
+      "pack": null,
+      "existing_candidates": [
+        {
+          "path": "tools/block-cat-tool.html",
+          "sha256": "7988e71fa9d46f0449c9aba8cb80e9d4c7c59b716ee0ba6cd997e5e86101baae",
+          "bytes": 6048
+        }
+      ]
+    },
+    {
+      "source": "character-compare-tool.html",
+      "category": "tool_html",
+      "status": "different",
+      "pack": null,
+      "existing_candidates": [
+        {
+          "path": "tools/character-compare-tool.html",
+          "sha256": "4a752d7b299a3ca012a27ede3fd10e19a6b7800874425752ad9fda9e93fd71c5",
+          "bytes": 2962
+        }
+      ]
+    },
+    {
+      "source": "data/tools/unit_lab/character/_backup_C_pre_grok/wanderer_C.glb",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/_backup_C_pre_grok/wanderer_C.glb",
+      "sha256": "e3dce44e3ae09efce79198c5d3be5869382af45383065ea7f4232d6ce8c514ac"
+    },
+    {
+      "source": "data/tools/unit_lab/character/A/metrics.json",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/A/metrics.json",
+      "sha256": "94fb236703ca1c54c4d7f2f6a275b60f897ec34a7a59d7a710c33de4db517981"
+    },
+    {
+      "source": "data/tools/unit_lab/character/A/reference_back.png",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/A/reference_back.png",
+      "sha256": "73efaee9003d02dab251ea15026eae4f3349ad63e6cdb4f71d1fa44480ada48d"
+    },
+    {
+      "source": "data/tools/unit_lab/character/A/reference_costume.png",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/A/reference_costume.png",
+      "sha256": "cf6424c7d2b7bb8c4049827fbb7dbd26408ef7f1f352fe847a27d6528539dedc"
+    },
+    {
+      "source": "data/tools/unit_lab/character/A/reference_face.png",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/A/reference_face.png",
+      "sha256": "dd49b7b9045444f1e8e5e148966df05f656c44e8bb6431f815db790b823d2c5c"
+    },
+    {
+      "source": "data/tools/unit_lab/character/A/reference_front.png",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/A/reference_front.png",
+      "sha256": "9c03a5aebef7c7bf09eddf54d24fe09062f1e391294c16a2aad60603066c59e3"
+    },
+    {
+      "source": "data/tools/unit_lab/character/A/reference_measurements.json",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/A/reference_measurements.json",
+      "sha256": "975dbc5e1a2d5379cfb21014454867e0bb021cb1a61b2b5d2fb141c227dcb90f"
+    },
+    {
+      "source": "data/tools/unit_lab/character/A/reference_threequarter.png",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/A/reference_threequarter.png",
+      "sha256": "e45ed7ed994e8afc48b1153726a70662d92c2d2ce3c79df90fc5a2451fcb001c"
+    },
+    {
+      "source": "data/tools/unit_lab/character/A/source/wanderer_A.blend",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/A/source/wanderer_A.blend",
+      "sha256": "37ffee4d351ae862e74dde6ee6cfe0381f40a5a2edaf88b0db1951a8563c3bad"
+    },
+    {
+      "source": "data/tools/unit_lab/character/A/wanderer_A.glb",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/A/wanderer_A.glb",
+      "sha256": "3cf30378e14869b6f924efbef788d36563126ccbc2ae7662a460eaaa679655f8"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D/metrics.json",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D/metrics.json",
+      "sha256": "de3b1692a73ab7597084dd265e3b00465529fbbe5da741840f490afc28fe59c1"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D/reference_back.png",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D/reference_back.png",
+      "sha256": "4e01a72ed31a895ab6102b5c287b6a6e68879cd638d6dbe2d1f84e79d16fa69e"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D/reference_costume.png",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D/reference_costume.png",
+      "sha256": "08507c311638a631666dd3f3b81feed19f751e47015179ea75f2a85964d9dc6e"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D/reference_face.png",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D/reference_face.png",
+      "sha256": "e4e04a7bf0c9f64c1e0a6696aa5514ce7a175057c7d868385696b1adc5aca29c"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D/reference_front.png",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D/reference_front.png",
+      "sha256": "39ed7f70e1203056ec2c643f2071cece982a4888e675bc9272d9c458eabff132"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D/reference_full.png",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D/reference_full.png",
+      "sha256": "8ce04c6ba4cb02bb35ef483a560f6b08aaa1e4c1bd6c00243c4470714aa29721"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D/reference_threequarter.png",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D/reference_threequarter.png",
+      "sha256": "ae432293693913feade6ac821ac3b878a04c81c1155381aeb5d3aebc737e0760"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D/source/wanderer_D.blend",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D/source/wanderer_D.blend",
+      "sha256": "b66652c7e6a05cc4e7b0232ff7600bae15f99b007df229b29f67f01a729faef1"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D/wanderer_D.glb",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D/wanderer_D.glb",
+      "sha256": "a1c4dbb4dc97f1a194297c3cdb24ce15c214653b9eeb0d0cd7682bd45415bfe0"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D_35/metrics.json",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D_35/metrics.json",
+      "sha256": "0d83b885affc6704372f28945046069be019635b7a3a60a6a003797092161f2e"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D_35/wanderer_D_35.blend",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D_35/wanderer_D_35.blend",
+      "sha256": "2a8ce05555dea6dabe40a61cd0726fe1e67d10b38181e8299fb3f2e7f2224f71"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D_35/wanderer_D_35.glb",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D_35/wanderer_D_35.glb",
+      "sha256": "99fa30f7e995435dc01f56bbc100910a0a7aa939947547e12b3760acdb005c71"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D_sprite/metrics.json",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D_sprite/metrics.json",
+      "sha256": "c5d947d1ddd43a4efac78391ca3b77602caf52674a70f0b99346037504906142"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D_sprite/reference_idle.png",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D_sprite/reference_idle.png",
+      "sha256": "a40193fde0cf188372caffed548d070f12534412fae7cba146a6824a58bc0d09"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D_sprite/wanderer_D_sprite.blend",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D_sprite/wanderer_D_sprite.blend",
+      "sha256": "de91785641a78da87a835ffa3777775c7c02af83e7bf9b39192f586850145c53"
+    },
+    {
+      "source": "data/tools/unit_lab/character/D_sprite/wanderer_D_sprite.glb",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/D_sprite/wanderer_D_sprite.glb",
+      "sha256": "a8d358ad7232806aa6c42fbad8475e748d650f2bdd654ef728ff6474e5c7a11c"
+    },
+    {
+      "source": "data/tools/unit_lab/character/Ruon_35/metrics.json",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/Ruon_35/metrics.json",
+      "sha256": "c462c1c37e78fd53c7cf86e31275a3a9412248ac28676634abee1a8c49b8ebaa"
+    },
+    {
+      "source": "data/tools/unit_lab/character/Ruon_35/ruon_35.blend",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/Ruon_35/ruon_35.blend",
+      "sha256": "d58e12f3ec9ea7aa3f4858c74daa95ead2e87f5b22caac81dee0cccbb2128441"
+    },
+    {
+      "source": "data/tools/unit_lab/character/Ruon_35/ruon_35.glb",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/Ruon_35/ruon_35.glb",
+      "sha256": "3269c2b5b83ef5739a6dfc797fc712757a3007315db30ad03f1fc0141e86178b"
+    },
+    {
+      "source": "data/tools/unit_lab/character/wanderer.glb",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/wanderer.glb",
+      "sha256": "bcb86cc326cfc15410e44fefaa74103bbb9bf28ed26552d09b79bdd6b4aae42d"
+    },
+    {
+      "source": "data/tools/unit_lab/character/wanderer_A.glb",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/wanderer_A.glb",
+      "sha256": "d68ab76dd1e4bf8bc6c1be78c47e65ee3fb9728a196f95a30e4b4be0c5df91c1"
+    },
+    {
+      "source": "data/tools/unit_lab/character/wanderer_A_eye.glb",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/wanderer_A_eye.glb",
+      "sha256": "025ad56787d8e1fe950f866c42db86cc8c953b96199b880b787fed7c11684d4e"
+    },
+    {
+      "source": "data/tools/unit_lab/character/wanderer_B.glb",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/wanderer_B.glb",
+      "sha256": "4818dfaeac935d64f742000797f2cc4c331019bad4ef0cd6ff4064ea9871a72c"
+    },
+    {
+      "source": "data/tools/unit_lab/character/wanderer_B2.glb",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/wanderer_B2.glb",
+      "sha256": "ff89551e0d2352db5cd92cda5962c0db100802a4146f964d0befe2cc4e3783b9"
+    },
+    {
+      "source": "data/tools/unit_lab/character/wanderer_B_eye.glb",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/wanderer_B_eye.glb",
+      "sha256": "4a3bffc2f3bee9b5c6c3649e40fddc4c67edf54ef99ef455aa441c0085aa8468"
+    },
+    {
+      "source": "data/tools/unit_lab/character/wanderer_C.glb",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/wanderer_C.glb",
+      "sha256": "ff89551e0d2352db5cd92cda5962c0db100802a4146f964d0befe2cc4e3783b9"
+    },
+    {
+      "source": "data/tools/unit_lab/character/wanderer_Kay_crossbow.glb",
+      "category": "character_assets",
+      "status": "identical",
+      "pack": "unit_lab/character/wanderer_Kay_crossbow.glb",
+      "sha256": "6bd9d0a102e8deb561e05b1653dec04109de5752c9196f8471717f6fa0e4f302"
+    },
+    {
+      "source": "data/tools/unit_lab/combat_kinds.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/combat_kinds.json",
+      "sha256": "c9f627db80cb28ffa7514ebea9cb6585e157dd31e2a8f49049ba1e2a86213de4"
+    },
+    {
+      "source": "data/tools/unit_lab/kenney_parts/Textures/colormap.png",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/kenney_parts/Textures/colormap.png",
+      "sha256": "cbd2f95976ed3f18070769ce32a819527d9bc00d74253844e3882f747b5d76b6"
+    },
+    {
+      "source": "data/tools/unit_lab/kenney_parts/tower-round-bottom-b.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/kenney_parts/tower-round-bottom-b.glb",
+      "sha256": "e9a52b567072e5fcbce0a1fcb2b0ed9ae104ac11679d72ad1c331e6dcd681224"
+    },
+    {
+      "source": "data/tools/unit_lab/kenney_parts/tower-round-middle-b.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/kenney_parts/tower-round-middle-b.glb",
+      "sha256": "a6f89329ef9652d215ac35ba308531bfdd8cdfa9cc5277c6a03a465e8b150c2a"
+    },
+    {
+      "source": "data/tools/unit_lab/kenney_parts/tower-round-top-a.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/kenney_parts/tower-round-top-a.glb",
+      "sha256": "111e8c7e67807649bcce313a8d45a0d2a137b92d97303bd9b9ea6761b1160b85"
+    },
+    {
+      "source": "data/tools/unit_lab/kenney_parts/tower-square-bottom-a.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/kenney_parts/tower-square-bottom-a.glb",
+      "sha256": "1912cb5537c81be0dac32bc7cea26fe0c507a65cf7178f82c78f8fd53fa74ca0"
+    },
+    {
+      "source": "data/tools/unit_lab/kenney_parts/tower-square-middle-a.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/kenney_parts/tower-square-middle-a.glb",
+      "sha256": "edcc9be92cb8382daa6a7a1ffce1f056b23735ec0d24535b9fc6b491f6202bab"
+    },
+    {
+      "source": "data/tools/unit_lab/kenney_parts/tower-square-top-a.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/kenney_parts/tower-square-top-a.glb",
+      "sha256": "754b60ae4beb4fbeeb599ed6be9686cbddf46b5c566b89752c96a2b4347c6ff2"
+    },
+    {
+      "source": "data/tools/unit_lab/kenney_parts/weapon-ammo-arrow.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/kenney_parts/weapon-ammo-arrow.glb",
+      "sha256": "a09f256df1c01a68eb7012619c754f0a841fb66d438fee4274c53a643496a6dd"
+    },
+    {
+      "source": "data/tools/unit_lab/kenney_parts/weapon-ammo-boulder.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/kenney_parts/weapon-ammo-boulder.glb",
+      "sha256": "6ce30160577b0f2af17d34ae39d39f2cc81a02cf6570427f3036f3de0d2aaed9"
+    },
+    {
+      "source": "data/tools/unit_lab/kenney_parts/weapon-ammo-bullet.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/kenney_parts/weapon-ammo-bullet.glb",
+      "sha256": "ef128e48f9f6f7b99863cf7a1e3244e3f155bfe0062be91e34b91cb1e1037ed6"
+    },
+    {
+      "source": "data/tools/unit_lab/kenney_parts/weapon-ammo-cannonball.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/kenney_parts/weapon-ammo-cannonball.glb",
+      "sha256": "4391846f4e906e985979ee12dd82085118690762c0119bedc48ff027ac2865c4"
+    },
+    {
+      "source": "data/tools/unit_lab/kenney_parts/weapon-ballista.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/kenney_parts/weapon-ballista.glb",
+      "sha256": "0eea8913a488fb4255dd496951cac1f9de3cd6c28dd817c7307d812de7dac630"
+    },
+    {
+      "source": "data/tools/unit_lab/kenney_parts/weapon-cannon.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/kenney_parts/weapon-cannon.glb",
+      "sha256": "bf28e5593118cc27ebc45788e586c3bfcfbfb1686a86eb1a3cefd5c9edd6ae5f"
+    },
+    {
+      "source": "data/tools/unit_lab/kenney_parts/weapon-catapult.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/kenney_parts/weapon-catapult.glb",
+      "sha256": "fdc0d340bf8920b13238b0172727a524b2d433ddd3536a9fbd9b67e370310404"
+    },
+    {
+      "source": "data/tools/unit_lab/kenney_parts/weapon-turret.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/kenney_parts/weapon-turret.glb",
+      "sha256": "a8687fd1386295bd2f13dd9c0a6f9efd600f296aea438aed30faa380e0a2d256"
+    },
+    {
+      "source": "data/tools/unit_lab/monsters_anim/cactoro.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/monsters_anim/cactoro.glb",
+      "sha256": "2291a31287306ab430ad4c001dff5fbedba5c79854ad19ddc1c64d5fffc506ab"
+    },
+    {
+      "source": "data/tools/unit_lab/monsters_anim/green_blob.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/monsters_anim/green_blob.glb",
+      "sha256": "31c46edd6306e4ab21bec4608b41003baa74f430f27d357b90c9b6401d88a584"
+    },
+    {
+      "source": "data/tools/unit_lab/monsters_anim/green_spiky_blob.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/monsters_anim/green_spiky_blob.glb",
+      "sha256": "ad5e8b1cdf8c0d328b4b44537d3da8fa98119a9a99fb6163e2f325dbb8bbecc1"
+    },
+    {
+      "source": "data/tools/unit_lab/monsters_anim/mushnub.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/monsters_anim/mushnub.glb",
+      "sha256": "04614a9d0db2a00d17cd85f4ef9c54e19cd3692530c0724b46809aa928e161e9"
+    },
+    {
+      "source": "data/tools/unit_lab/monsters_anim/pink_slime.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/monsters_anim/pink_slime.glb",
+      "sha256": "34bb111a7931bb957f992e127d71fac321aaeea1bdcc7da56fa5aba55c83d783"
+    },
+    {
+      "source": "data/tools/unit_lab/palette_cyber.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/palette_cyber.json",
+      "sha256": "353b301a27755c8743e9b6863b9d5c76e6ded192e3b3050aecbc28e784dd2b34"
+    },
+    {
+      "source": "data/tools/unit_lab/palette_lego.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/palette_lego.json",
+      "sha256": "d63b20e43ed7bb823c013e13b8b5fd8f8a4ff35fd02eb95931a29cb846e116ef"
+    },
+    {
+      "source": "data/tools/unit_lab/pets/block_cat/block_cat.glb",
+      "category": "pet_assets",
+      "status": "identical",
+      "pack": "unit_lab/pets/block_cat/block_cat.glb",
+      "sha256": "4ae38ab3106e85ae48cf146e439bde56ff61aef9aba3ee6c275fa552cf224b66"
+    },
+    {
+      "source": "data/tools/unit_lab/pets/block_cat/manifest.json",
+      "category": "pet_assets",
+      "status": "identical",
+      "pack": "unit_lab/pets/block_cat/manifest.json",
+      "sha256": "b37ce6817ec42a919f1ccd1a262bab84082abb4e61dc28efa9cd3f66034bdf23"
+    },
+    {
+      "source": "data/tools/unit_lab/pets/block_cat/reference.png",
+      "category": "pet_assets",
+      "status": "identical",
+      "pack": "unit_lab/pets/block_cat/reference.png",
+      "sha256": "1f19b121f962b2743a74527d24e1d4680e3d7e4de21105720ad943731db3558d"
+    },
+    {
+      "source": "data/tools/unit_lab/pets/block_cat/source/block_cat.blend",
+      "category": "pet_assets",
+      "status": "identical",
+      "pack": "unit_lab/pets/block_cat/source/block_cat.blend",
+      "sha256": "2db62e4c9e474e6d5073583d303828e4a4fd9babd12e3db00da914a2c2ed942d"
+    },
+    {
+      "source": "data/tools/unit_lab/pets/block_cat/textures/cat_surface.png",
+      "category": "pet_assets",
+      "status": "identical",
+      "pack": "unit_lab/pets/block_cat/textures/cat_surface.png",
+      "sha256": "7b390ab7fa7fdb80db2b5862632d900ae52e8d739f538a9764890cfc5255b1b1"
+    },
+    {
+      "source": "data/tools/unit_lab/units/block_gun.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/block_gun.glb",
+      "sha256": "54e20ed1a220b10645c305b4ee8ea17e420ba719d7ff5d1a4fd92d5e82749eaf"
+    },
+    {
+      "source": "data/tools/unit_lab/units/block_gun.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/block_gun.json",
+      "sha256": "5188c2c15f0836e08d65da1e774a16f3ad92ff424e3a59971c89f02692be599e"
+    },
+    {
+      "source": "data/tools/unit_lab/units/block_throw.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/block_throw.glb",
+      "sha256": "5b8bde31b4c7502934be5579ae5979802d024a53037b027c9a3b2f247ef1a709"
+    },
+    {
+      "source": "data/tools/unit_lab/units/block_throw.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/block_throw.json",
+      "sha256": "7d500d4d6d1ee56f0b20d2b5cc9f401ed2b58788305187316bfc07b0f6dd6607"
+    },
+    {
+      "source": "data/tools/unit_lab/units/bomb.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/bomb.glb",
+      "sha256": "508c3a3e1bd8e4ded972c6f6e8017047011cdd7f9f7acd82b4a3c0a9ef2edcbc"
+    },
+    {
+      "source": "data/tools/unit_lab/units/bomb.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/bomb.json",
+      "sha256": "f8b5f800b1f96c14e8825ea9547098aa2d8e0c927dd0fabb7761b8cc084d2bdb"
+    },
+    {
+      "source": "data/tools/unit_lab/units/enemy_orb.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/enemy_orb.glb",
+      "sha256": "2e4b241e60fd14e1e2af64f2ae20c8df3c4f1c7490ba8ef931d64a57ded7e662"
+    },
+    {
+      "source": "data/tools/unit_lab/units/enemy_orb.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/enemy_orb.json",
+      "sha256": "23984276f8b777af3327d0b72f3a035c8b31fe4625fbfaf536004400ed94e3d3"
+    },
+    {
+      "source": "data/tools/unit_lab/units/floor_tile.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/floor_tile.glb",
+      "sha256": "1a8ab9f5bc0574f8fbd24054f2b408afdebf350f6247e231eedc41c0caf78e17"
+    },
+    {
+      "source": "data/tools/unit_lab/units/floor_tile.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/floor_tile.json",
+      "sha256": "e9bbec4fd1d13481ce1550720a5bd8bf91fffd66dfa31e4ce4fcd857a4246585"
+    },
+    {
+      "source": "data/tools/unit_lab/units/rescue_mark.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/rescue_mark.glb",
+      "sha256": "0b4248d367b92e5bfd976091158e506d7de4ad336e749e4b47cf9afb271e87d7"
+    },
+    {
+      "source": "data/tools/unit_lab/units/rescue_mark.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/rescue_mark.json",
+      "sha256": "71c2673e90e69a062f996f7063d74e085648e26e0719f8f28b761e774480601f"
+    },
+    {
+      "source": "data/tools/unit_lab/units/shot_gun.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/shot_gun.glb",
+      "sha256": "7967dc17417d1ddbb90b8ce81e2a88447981791f85f90bc214ed9f0a3665f105"
+    },
+    {
+      "source": "data/tools/unit_lab/units/shot_gun.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/shot_gun.json",
+      "sha256": "f9a1125b37ae8cd742dc8e54ba07dd90872a8fb4ca32e9b5df364e4b60e67284"
+    },
+    {
+      "source": "data/tools/unit_lab/units/wanderer_ref.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/wanderer_ref.glb",
+      "sha256": "e9b93f13eafb834af0e07e597994b2991ec06e099168e1e5b5b10e88b6172041"
+    },
+    {
+      "source": "data/tools/unit_lab/units/wanderer_ref.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units/wanderer_ref.json",
+      "sha256": "73dc1ba12d279cd3750b45f5c04144660f2700a8f7cb5291f46af16762b10234"
+    },
+    {
+      "source": "data/tools/unit_lab/units.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units.json",
+      "sha256": "3936e22d051a2e5b58b652452fae0f245e93e5193a17a47fb10a9b97dceb2bd1"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/_LICENSE_kenney.txt",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/_LICENSE_kenney.txt",
+      "sha256": "9f08295a8b8245eb9b82ace4226176a9bddb677638cdd564d21c554c4651720a"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/_LICENSE_kenney_factory.txt",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/_LICENSE_kenney_factory.txt",
+      "sha256": "61e86565dd297e143ad631594980eda0a17fc81a4cd7c6d71acf2f5e0cad30b6"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/_LICENSE_kenney_survival.txt",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/_LICENSE_kenney_survival.txt",
+      "sha256": "62c8356876481204fa4d40dc59183dfed777adf987d7f2a1390fffe8a699f3ff"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/_sources_quaternius.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/_sources_quaternius.json",
+      "sha256": "6cba12ebb5ebf3557dbd453b261b736688ec8238b0712a6286953bf0c913aa55"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_barrel.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_barrel.dense.bin",
+      "sha256": "c9e99752dc0c67cc509b1b5956397d37701f096a3fd74299c38a19e8da2236a8"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_barrel.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_barrel.glb",
+      "sha256": "221f2d7b8586e30722144d250026d3e02a23b4000358babd172ce8992f33cf8b"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_barrel.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_barrel.json",
+      "sha256": "3a063d19abdf6e96b96db06e54b5290e90736d3e4359b56db43e3f4c62c1e270"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_campfire_pit.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_campfire_pit.dense.bin",
+      "sha256": "e56f78b781b4408b33856b449eb2a426bbdf77e36eb8b0ae623edfd8b1b34899"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_campfire_pit.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_campfire_pit.glb",
+      "sha256": "3e6857b5e61fdb01a2426f860e1ebebb7b0505408bcb1948bec7fa110d1447f3"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_campfire_pit.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_campfire_pit.json",
+      "sha256": "dbfa12f5f40fe3ebecb99cf2afb16323b5406601da55ba08520b8caabdcc0f57"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_campfire_stand.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_campfire_stand.dense.bin",
+      "sha256": "6e4f3ec864ceca6878f9b35ea43d2acc31d151a85585467b6a308fddd3f8ea52"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_campfire_stand.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_campfire_stand.glb",
+      "sha256": "0fd919e166b24f5f4a2560b11cb20f464554ebc901905a6f948c2e175c5caf69"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_campfire_stand.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_campfire_stand.json",
+      "sha256": "bc89fecd3dd3e2f93889a6b0e665b5b9ac046dfba503f45ff930bcad440886b7"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_chest.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_chest.dense.bin",
+      "sha256": "3ac8b98a1faa9611de74e351e0d08408f1e1fd1d01f9903f322d5e2f7257eaea"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_chest.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_chest.glb",
+      "sha256": "29003a0d797d9c94e491b2d70ffaf4bad5ac88915506a296a301dd1fbbdde666"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_chest.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_chest.json",
+      "sha256": "5ef054778caa19aee4f8c926fdc06c7bfb5e9e531c50d57281fdad8da08dc996"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_crane.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_crane.dense.bin",
+      "sha256": "632d8ae1b6809ef3743ddb46345115c5b1fee77520e9a3e0b4016e960674b05b"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_crane.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_crane.glb",
+      "sha256": "f37cb0e1eed9ef4c1a084c83fd6a3dd317915f2be756850b621d4d26df546308"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_crane.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_crane.json",
+      "sha256": "f0747dfeeec8ef8d2ea316249cd83a78b106cbe36b29efe31032d763e8ed6659"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_detail_crystal.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_detail_crystal.dense.bin",
+      "sha256": "1a2a0fb4c06b4c444498b651dd1b0f6c1d9f1d8ed367d09a873c5ebeb5c373bc"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_detail_crystal.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_detail_crystal.glb",
+      "sha256": "f50b7e9f577723abd3c80fd1b99fec6adead0200eb9781297cc953460ac05d44"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_detail_crystal.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_detail_crystal.json",
+      "sha256": "c1ccdb0476b158561774d3952261f18365572eb0466a5377cb994bee5a7ddde8"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_detail_rocks.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_detail_rocks.dense.bin",
+      "sha256": "d96293d5781e83c91f854f53bcb140cfaa2f6231a93fa08194a996a10ac905bc"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_detail_rocks.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_detail_rocks.glb",
+      "sha256": "a68d81adc1dff19823208ece7fec067cc5d793c653676fc16544c28f8adecadd"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_detail_rocks.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_detail_rocks.json",
+      "sha256": "01a4425ecf4da1eda0b4581443aa502f8203d5728ecdde76926eb605ec39280f"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_detail_tree.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_detail_tree.dense.bin",
+      "sha256": "3bbf3db28d7fed9c5021d48bd49e9d12de4e14892ecd6c0b70d7d922dfb2d923"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_detail_tree.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_detail_tree.glb",
+      "sha256": "f3ccd2fe8c5b64da3a02706309988bd2eac7460911a1342adfb06edb3782058e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_detail_tree.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_detail_tree.json",
+      "sha256": "bcea753b4da95ac8dd548f4582e90431b2c3280aadb841f1b3302f94b74f9396"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_enemy_ufo_a.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_enemy_ufo_a.dense.bin",
+      "sha256": "cbe4035c6bf1dda207dfbad65ed0ea501328ad11275aed4e2edb56842add469e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_enemy_ufo_a.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_enemy_ufo_a.glb",
+      "sha256": "a140729320628e94055311678752bab41e1215f8ff340f7ef98918de4e583209"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_enemy_ufo_a.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_enemy_ufo_a.json",
+      "sha256": "a96395e1f25cba2b6c3987e36c3d2e96e3de4ff9cf902cb79ae97ad35f439b6c"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_enemy_ufo_b.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_enemy_ufo_b.dense.bin",
+      "sha256": "ceaf830059d6cfb6bd820136e8354d16662cebf52bc9a3fa204ac87882dff4ab"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_enemy_ufo_b.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_enemy_ufo_b.glb",
+      "sha256": "f199a48300cc8b2913fa906606f43cfa7646aaa520f2ce373367666095a5415e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_enemy_ufo_b.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_enemy_ufo_b.json",
+      "sha256": "43085a65c9204a1c606ba94aabd6e9bdc471d526a5c9ee7075cc18cb289027fe"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_enemy_ufo_c.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_enemy_ufo_c.dense.bin",
+      "sha256": "5e7c081a7e690bff3ad7fc048f14db8616be11d8b938d059c3baec8de16a9983"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_enemy_ufo_c.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_enemy_ufo_c.glb",
+      "sha256": "e112d379e66b81b82c66d683185695c5854ff0fd4c9ae5d1d3d0fb1d994b04d4"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_enemy_ufo_c.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_enemy_ufo_c.json",
+      "sha256": "6741927519e7285f34c260e89665bc5a9deb9029211284f8efcacacca7d4efd0"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_enemy_ufo_d.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_enemy_ufo_d.dense.bin",
+      "sha256": "753a4c72c197b0af8bc01b3a78548559a3d4d97ac390f0266f4a0100ae742480"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_enemy_ufo_d.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_enemy_ufo_d.glb",
+      "sha256": "3f68822e734cb7b492968dc25ffa29cf58e5fd9423dd2bef7bf7e56403692b4a"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_enemy_ufo_d.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_enemy_ufo_d.json",
+      "sha256": "b005364a01e483e1c83fc0bfbfd58045338f4211b0b78abeadef596e55ccc31b"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_fence_fortified.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_fence_fortified.dense.bin",
+      "sha256": "47d1d15cd429581f1e4c35dea60c8f66f3500994ceec05ab42d5516885772568"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_fence_fortified.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_fence_fortified.glb",
+      "sha256": "d180ab1b4ed47b80f698c0aa33c8d32ab64251befd9c9daa0f90729a199a91c5"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_fence_fortified.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_fence_fortified.json",
+      "sha256": "c8fed856051fd11bf0378ccd49a24431b0847b2245e6b8636a71b599f20f51a4"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_hopper_high_round.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_hopper_high_round.dense.bin",
+      "sha256": "e3d58c734091aa4e451d142c97c1ec94f2a4e24b67c6bbd34cd272ea8b25bc0f"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_hopper_high_round.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_hopper_high_round.glb",
+      "sha256": "29faf2759e55b1931563f13624587ed0e47715686376642fb431ab964077409c"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_hopper_high_round.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_hopper_high_round.json",
+      "sha256": "35d483cae6a3875919ab1e92914de43f4c0943aea716a792c2e42c1609d615ec"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_machine.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_machine.dense.bin",
+      "sha256": "ed865927a0fdb2eeea297cf7885a14958b83fdb4e2c989a433797d301698c696"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_machine.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_machine.glb",
+      "sha256": "5337795bc5221451767e65070a9fd2c55d229720960f6bed5036c7fafaaea035"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_machine.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_machine.json",
+      "sha256": "3c9ec563006f40855d617ed34c9a70d1a5cab7a4d6323aca839c83e6e6b8aead"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_machine_fortified.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_machine_fortified.dense.bin",
+      "sha256": "0208f287b77f20199ce7ab9ceb620a849836d478f2b0e22216544ba5ba874bde"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_machine_fortified.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_machine_fortified.glb",
+      "sha256": "3a4f0a85da9c2824451126f6835f69fb400d74d5625fd30fa93f0f2b792764dc"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_machine_fortified.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_machine_fortified.json",
+      "sha256": "24c8fe32d76009c8cc72b292ded7cd70089a0397e8cf60767541ba1709e309f9"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_machine_window.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_machine_window.dense.bin",
+      "sha256": "a37c796505bfb80f3c2e498e2bb1cd3e48be966ab5784f06d64fdb6484667edb"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_machine_window.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_machine_window.glb",
+      "sha256": "ee28e6f62b1103fa64891d5946c7de941fabb513dbf67506fc2f4e383413ae95"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_machine_window.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_machine_window.json",
+      "sha256": "cc6105fa438b8289d8ca9fca54f13813e9bf23727c8fdc3e2ee650a8a569b831"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_pipe_glass_large_valve.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_pipe_glass_large_valve.dense.bin",
+      "sha256": "88db8ea1d7c938e9b7882cf5e4c307ec37b33538a824a552d4ecdc34b300aba5"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_pipe_glass_large_valve.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_pipe_glass_large_valve.glb",
+      "sha256": "53ddd77f59af99269ce93e0a54163a2c0d9f4d6a4248a6bdb0eddc68b78b9009"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_pipe_glass_large_valve.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_pipe_glass_large_valve.json",
+      "sha256": "4454a976aeb589d8afe235481db9301c7691bf3ff57aa8217114025febd5d90e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_piston_round.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_piston_round.dense.bin",
+      "sha256": "5550271025a64aa2f66eea923a69e8cf4d10af747fba13611be434bc0ee5dd5d"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_piston_round.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_piston_round.glb",
+      "sha256": "df5f3045b5b03cf76a7b7cbf2c1d7347bb24754acbb2276929b4b5d8190f0ac4"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_piston_round.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_piston_round.json",
+      "sha256": "9882df9d2c6d47efdcf045ac5cb8ef9d0527264bfdfba9848526ef3da026acb8"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_robot_arm_a.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_robot_arm_a.dense.bin",
+      "sha256": "ec89f1b8a34870bc54ac214471b52ac3bf6211327651889ed5ea57df20d488b7"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_robot_arm_a.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_robot_arm_a.glb",
+      "sha256": "37602908407509c28267c672869710ec284bd44028ba0cb6bbb0914be11d6949"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_robot_arm_a.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_robot_arm_a.json",
+      "sha256": "13fbaf2fc75a1541343a2faee5c64f59b2a7085d097d4f9016a016da0217d097"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_robot_arm_b.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_robot_arm_b.dense.bin",
+      "sha256": "f40cc1e68f4991f81a01eb5c86e613d70e8db60491030729d8fbc66f25b6d17a"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_robot_arm_b.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_robot_arm_b.glb",
+      "sha256": "2a28c4ba372e470ebf8f06219ef2fbfa6aca0f3fa7d7c7801025e14e3ea1a639"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_robot_arm_b.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_robot_arm_b.json",
+      "sha256": "7f1eea7e78537fb93b14da1b18b5b1d7231c1d08d760440e94ab91d8f6f0a162"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_scanner_high.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_scanner_high.dense.bin",
+      "sha256": "3e66cff4cf3c2786204c75133396fc079cdcfb85d1670fd1964599ec6785d43f"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_scanner_high.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_scanner_high.glb",
+      "sha256": "d881ce3928ced651a6801569e747312f034ef55219e3c30dbefdcc1f2910e11e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_scanner_high.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_scanner_high.json",
+      "sha256": "48843ffb5077098c7a20e0bf307794489dad255aaff2c31893f712c5bda2fe3f"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_screen_wide.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_screen_wide.dense.bin",
+      "sha256": "0ec678a6bdda9073a858eb0974696066f920a694aeb1075ea0d102ef145c73bc"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_screen_wide.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_screen_wide.glb",
+      "sha256": "accc107e85fb35fe6e21f4d32a32e70d24be148d267f529a8c7a2dcfc6ec6ff5"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_screen_wide.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_screen_wide.json",
+      "sha256": "d1e00b69b2fef45faea3cbab8787a95c591ac50a618463e1feb5bd39f5df975b"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_selection_a.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_selection_a.dense.bin",
+      "sha256": "76cefa88302fd533a6250279a6e656c8cfdd8d8a6684a82930a1059cac6ddb93"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_selection_a.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_selection_a.glb",
+      "sha256": "2afbf78c0e9c4cbc903084a54c5fc46d23695a327de953f1ac716f9a157bb228"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_selection_a.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_selection_a.json",
+      "sha256": "38457696f097e350177de4ead08d2b01a00a829c42dd813d782f00e96dd2b4ea"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_selection_b.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_selection_b.dense.bin",
+      "sha256": "aa27f11524e24c2b4536888026395930890da3b3f9ae4cc4f9cf5d998b1df856"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_selection_b.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_selection_b.glb",
+      "sha256": "bca20fdd9dda87aa5aed8233451ce07a95a85009f541e7a4df24b7ce738386b9"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_selection_b.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_selection_b.json",
+      "sha256": "b9b31349a6deb0668435fb6e6f211f77e5ed422ccc595376703e25efbcc0b629"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_signpost.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_signpost.dense.bin",
+      "sha256": "5561215841181e9ed93f922fecc915fdab742d75c00126cc11edff6899316374"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_signpost.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_signpost.glb",
+      "sha256": "60ea08abe5b659364250d2e30b17fc5dc6c4fee7f5bd9e77db95413835c498a6"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_signpost.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_signpost.json",
+      "sha256": "966f037549589ac0e3f97eedb3b30620ffc24d604f07fc5cd0bd19a4eba0f018"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_structure.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_structure.dense.bin",
+      "sha256": "3b47b1682bddc04ed598ade199261647cb9d27138b5fb9086f3ba08c0a2a5541"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_structure.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_structure.glb",
+      "sha256": "41daeddc306bd7144b9cbfd38ac5ea350418a43701117a372b09207830a88eb0"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_structure.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_structure.json",
+      "sha256": "0b06b459010cc9afed6c8dff6499b7ad7db95372452ca7cf5774bc723cf757dd"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_structure_metal.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_structure_metal.dense.bin",
+      "sha256": "c9d975731a1ca66fee973e386af2a55f24bfb9416eab172a5875e204c3be3a33"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_structure_metal.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_structure_metal.glb",
+      "sha256": "da43b982f4bbb8fde10f882f6aa4f33137b5713112348dc877be54fc57ffaa04"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_structure_metal.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_structure_metal.json",
+      "sha256": "708060650745e58b8db0206800d1c0611e0d9783c31a035912e52fe39bdc75c3"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tent.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tent.dense.bin",
+      "sha256": "af59ded8deefda784f3b33acb2bf444006f949fc7a29d0e4a5cdbd813feb0078"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tent.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tent.glb",
+      "sha256": "d0a27a427a8c950647d80e61a0f857245fc27149a6a26bf919d5b5aca919832c"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tent.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tent.json",
+      "sha256": "2c6971d709de19ac040410e46ef8f29e12a8f1b7edfcdd90c2e1b7377cf2eb13"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tent_canvas.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tent_canvas.dense.bin",
+      "sha256": "280e4b53078f015175ab85f89b9edf485252bf5995bccf6ce74d6a7b8f465196"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tent_canvas.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tent_canvas.glb",
+      "sha256": "eee415c7f5ca17e7ddd2f9411cd8ffae3945708ab1fc8d1c3861314a49ee6e66"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tent_canvas.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tent_canvas.json",
+      "sha256": "9161fbd4e749b129103151359707ae59c0854e270f046ea6cfb39ad361a17375"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile.dense.bin",
+      "sha256": "f8cf4d469e8879d16d586b482da49651581939e7e160090f11c9b789b2f11a31"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile.glb",
+      "sha256": "f4db15204b716cc920b1e0b357201830dea9a857da117534025ebfc6ac60d0bd"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile.json",
+      "sha256": "c91d4e83f9cbc17e43dc6a5271542e6c7596bfff65c831a70e6ccb65adc5ea4f"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile_crossing.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile_crossing.dense.bin",
+      "sha256": "37ca89c49f9ff1a4aa8e5b9c0cde78294964288657289a47371c3cb43cf4ed95"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile_crossing.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile_crossing.glb",
+      "sha256": "8c8ead584cc9fb204d048aea0943b4c2426415c4ace49e75d8d9671615f9a662"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile_crossing.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile_crossing.json",
+      "sha256": "dcbbafaae6d49b3e66fdb353e9f9133c144bb4ed403e6ecbdc059f88104af6a1"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile_crystal.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile_crystal.dense.bin",
+      "sha256": "b86b2691b51db0acb50f692f1327aa4afcb59cfd61f8bf613abfcaac5a5bfff8"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile_crystal.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile_crystal.glb",
+      "sha256": "8dd05a27f6545f55a00fbb65d19606f3e05297bcf2818e9f7766e1c01a1f11bf"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile_crystal.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile_crystal.json",
+      "sha256": "a345e5d4d8736d89686befe8a8b4144c0d641b8d72233a6db0cc8a21a021fe2e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile_spawn.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile_spawn.dense.bin",
+      "sha256": "413cf769fcae6996ea24f76f2420e3a92095f698dbaf0a1475f68af117dd7bb5"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile_spawn.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile_spawn.glb",
+      "sha256": "56211c8ae1f7b285d34f0d133ca85287348f12cf3ba5d93651d96f7d10cc6c6d"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile_spawn.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile_spawn.json",
+      "sha256": "a96bfe833d00a4795ac44f41eb353cd3d1803e724dd49d85bc3b33f5192018a0"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile_straight.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile_straight.dense.bin",
+      "sha256": "2010663f3aa20cf9e28e6143dcae5db8a77dc8484bf25f28dd8df75acd3ff0a5"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile_straight.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile_straight.glb",
+      "sha256": "3042fe3ac80d9dfcafad9ee29dcab69ca8a0f2e0edfc253b9fa39f7ba0ddc4f3"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile_straight.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile_straight.json",
+      "sha256": "d50ac8f775e40e57910da3ff3558a90abd82031dcdef8cb6168ac952c3168279"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile_tree.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile_tree.dense.bin",
+      "sha256": "ed45cb9ab13f4d685f9798f3f05d1ff5f6f3d36837e3b3eb2604f11d98811292"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile_tree.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile_tree.glb",
+      "sha256": "7028228647913a459f885f0780bdc0925098b92e2e84963ee6c7a983569d1818"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_tile_tree.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_tile_tree.json",
+      "sha256": "f1293e97cb67e6ebe29630a812681c962a3005924bba40465e656b5b3ff58ae4"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_ammo_boulder.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_ammo_boulder.dense.bin",
+      "sha256": "f447a66a1db03d8b0cdd915afb83395f99e32e3f4e49f2fffce9f13417debd77"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_ammo_boulder.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_ammo_boulder.glb",
+      "sha256": "e012b36a83b2d2d1c21033adfd1897c61c7d9370436b36b41093e95a8540ec51"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_ammo_boulder.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_ammo_boulder.json",
+      "sha256": "87972c646c4724fe845f0eb105753bc712fdd7bbd31c308714f3ef9653ea119d"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_ammo_bullet.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_ammo_bullet.dense.bin",
+      "sha256": "f3c88b8c1f055e039e8a71bd4d85a90dc23c605e0ecd627ee61fca925ec9916b"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_ammo_bullet.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_ammo_bullet.glb",
+      "sha256": "4381c9966a40079bc051686797c0c63f84053ec51bf59e140f030faf20f8a68d"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_ammo_bullet.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_ammo_bullet.json",
+      "sha256": "96a94ca94354dc008095636afc224f395e641c367306943a56a50dcc155c3d4d"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_ammo_cannonball.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_ammo_cannonball.dense.bin",
+      "sha256": "09012da02f5bbba9af5c024c3133bbce7be4a9fbfc48759370023dbc6d255bc8"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_ammo_cannonball.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_ammo_cannonball.glb",
+      "sha256": "e32122ac269e81b34f5d051cc2dfa88888fc5d5840fddc3a459f233655ba3301"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_ammo_cannonball.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_ammo_cannonball.json",
+      "sha256": "836b4facaeb5c9f3f61d2be810f75f05c1f8bbcbe38be06daa7428e027b4cba1"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_ballista.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_ballista.dense.bin",
+      "sha256": "4f0870f3ed5638994ab85a30a4baf3f1f63b35c9f68ce9d1e739ebc8a619637a"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_ballista.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_ballista.glb",
+      "sha256": "d8d544e76b754d417a1012a35008cf02c9894ce0c3815d1f23970d40f01ad6b9"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_ballista.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_ballista.json",
+      "sha256": "d6ecb58ecf4f08dea8af5487a1556bc6e590b60b3ead8ed62cff5639167eb3d3"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_cannon.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_cannon.dense.bin",
+      "sha256": "b3383fe3906190d24b4154df7570610623a1636f6ffe4a0c461d5d1d74ef8687"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_cannon.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_cannon.glb",
+      "sha256": "10def35432caa0d7465c7173c20bfb5a77bbbf68d82a42431437b763811274b7"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_cannon.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_cannon.json",
+      "sha256": "6115a6e7532b860638dd12c7eab04319f4119bd6467e00681da000c1170c2651"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_catapult.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_catapult.dense.bin",
+      "sha256": "35a26ae3f85fb7a1435f2c39cb702b2f46ffac2178394915dab890313af01640"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_catapult.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_catapult.glb",
+      "sha256": "50dd724c513639efb43ff91a9b81cde8821595885c520260b14dc0b76d3fa5b3"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_catapult.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_catapult.json",
+      "sha256": "c71e1cb97346adf61e03a5029a77397216f264ad017941521b18f42efb612fd1"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_turret.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_turret.dense.bin",
+      "sha256": "3d0baa9591902f5db7585c9eb69e8d6dd2d415bc6f134467dba1460cb526ec18"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_turret.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_turret.glb",
+      "sha256": "de226ccab82667d1287b4749110c5699e1f3280cdd2c73ac673738dfdcebfe0b"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_weapon_turret.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_weapon_turret.json",
+      "sha256": "c827ee715be167d42b64d2a8bf440849f500733a3ae641c599e75d68d0fa0490"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_workbench.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_workbench.dense.bin",
+      "sha256": "883280432a94784252d6dbc50a93abc863d90b66a21399dc00e23b0b4b75b08e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_workbench.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_workbench.glb",
+      "sha256": "b52363fdd2b6afb4c207f90ee7445a2523dd0b22f3a67b03d253c0f34980df48"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_workbench.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_workbench.json",
+      "sha256": "c8deae156a8d76b65d5a5215d35d104d1c92144e94c81cf7c9674d98e96f37d6"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_workbench_anvil.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_workbench_anvil.dense.bin",
+      "sha256": "e8b1fe25bf2ec3a601936d0c796b6a656099c8a3b4d9eaa944abd9f836372aef"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_workbench_anvil.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_workbench_anvil.glb",
+      "sha256": "dcd92021636be80b82d6127c688a509d0a75884fdc7ce09c9675393ff377a023"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_workbench_anvil.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_workbench_anvil.json",
+      "sha256": "7f024f1773e9b1786cf47ceaf1116719899cfe935fb612c8c67b748bc6becfb5"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_workbench_grind.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_workbench_grind.dense.bin",
+      "sha256": "37be7a744811eb5275e2800ea2498880d7f26cd56a18fd3621961e86dc0b7305"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_workbench_grind.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_workbench_grind.glb",
+      "sha256": "7d28fce25d44afe954aa0487e59c3cd9d35fff7a5ad43ac29e278cbb2b1dba1b"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/k_workbench_grind.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/k_workbench_grind.json",
+      "sha256": "e65014bd1f053694c2a84b2e6b0f97895f0dd1af4d6e1a99e68795004bcf7c01"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_alien.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_alien.dense.bin",
+      "sha256": "e03321a063a4e6c6ffc3a2f90f67221018d08bb80942819abc5d694525ba129e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_alien.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_alien.glb",
+      "sha256": "d19784c427239476f395fbfcef5560b325aeddb4b3208b428e5429d313522cd2"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_alien.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_alien.json",
+      "sha256": "720499ea4c64d01771b33ffdedd4a0e3c565dbf326b151b6d6431649d737afbd"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_alien_2.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_alien_2.dense.bin",
+      "sha256": "61c2da6c715824b7be3d12bc958bb5bd11bd40a98bc43bb15954ff07960c2bb8"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_alien_2.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_alien_2.glb",
+      "sha256": "38c7fb4372dd2fef6a5cf5a59970b1c2bbbbe97cd724cde6464bda418564fc1a"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_alien_2.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_alien_2.json",
+      "sha256": "a86d6469cf0efda139d8f27b5d2e52755d98f255607906e6a828aeb559a8dcfa"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_alpaking.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_alpaking.dense.bin",
+      "sha256": "a4155cae30fc3012394fe9608b26de1045396ab06b17cd05e994524ae19f6d2a"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_alpaking.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_alpaking.glb",
+      "sha256": "7a290588469fb5ba2fd3c10ef4226d099275a5a6ed7b8d020655ab9ca99c2bcd"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_alpaking.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_alpaking.json",
+      "sha256": "568b56dfd4d2469b6a3ed298593307db4371924184d56bb537903cadcdd9fa31"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_alpaking_evolved.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_alpaking_evolved.dense.bin",
+      "sha256": "6b5418b54f4242614043e0dd13c56ebf426d7d095e10a162302624ffa95d2858"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_alpaking_evolved.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_alpaking_evolved.glb",
+      "sha256": "75178f2f6f9fed9d5f143a353ed46268646177c4029f0d8720e6bf750179dbf0"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_alpaking_evolved.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_alpaking_evolved.json",
+      "sha256": "5a49575c593f7ecd8123bd1a31b8be3c24163d0ab266b1f335f3f5298cb8d247"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_armabee.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_armabee.dense.bin",
+      "sha256": "e8a1333eded1204b620b5e7621181725dd590349367922fff43c12ea5b6ca5ba"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_armabee.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_armabee.glb",
+      "sha256": "43b690f2670cbd969b40430f360c0b16faff4b3b9c68f53ca3693df6389793b4"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_armabee.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_armabee.json",
+      "sha256": "80539d6b7944b3f330ed6d33f33a6ea06f5c60f8e23886dc7a5b58f843f788f3"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_armabee_evolved.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_armabee_evolved.dense.bin",
+      "sha256": "8d34f32cb6f99e4493e76e68efe0a647e6afd5d369b031aaf91816ef881b0d3e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_armabee_evolved.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_armabee_evolved.glb",
+      "sha256": "6bf82f1de13fd3b4ac2506573184b5f5ed6e524be93fb1bf96a28d5a4d03bfd4"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_armabee_evolved.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_armabee_evolved.json",
+      "sha256": "007ef639ae79e469b51f87c68959088293ebbc8cabce53932fc61b0ca9cc9ea7"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_birb.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_birb.dense.bin",
+      "sha256": "46f18f477feb0438e00c924bd267b9b73f4c502eef94341968885d16d22ce15a"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_birb.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_birb.glb",
+      "sha256": "1b007e64f5f591b7d380fae89bbb81ae98fbdc874c237e4776785187fc7701fa"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_birb.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_birb.json",
+      "sha256": "a026bf0b91157293dc55f76f4db599d78137a0fa88f66f1f1537a619c1b4cf8e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_blue_demon.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_blue_demon.dense.bin",
+      "sha256": "66f8a81ea5f23f57c78011bc7b261d4f6e9e662c5acda52eeece5703f2dbbdf3"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_blue_demon.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_blue_demon.glb",
+      "sha256": "7be6c0bccdd46a03009e70a63a3ffe931f5b1c203d8bee89268ab74866e9800b"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_blue_demon.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_blue_demon.json",
+      "sha256": "91759d53883e803793b0ef3cc0c497c93be6a320b66eee6ef954e3cd4af6765a"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_bunny.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_bunny.dense.bin",
+      "sha256": "a7abaa99affc43fc1fcce305edeb6750282e848bd3e8ea67cefaf3d53dbaa19e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_bunny.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_bunny.glb",
+      "sha256": "9e9bb2f7cbbdaf227c3a81407d78a4ff8910cbfe004afa7b5afc982b85c5cfef"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_bunny.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_bunny.json",
+      "sha256": "9279d20915098e07e183db6d6af2dc3b12eeda32cf6adde37572e47ebf464432"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_cactoro.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_cactoro.dense.bin",
+      "sha256": "a7d80db099413cde858fcedb4bff4b859118fa72750f658f7a26e8e21ac0d0ba"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_cactoro.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_cactoro.glb",
+      "sha256": "3cbf2223792400ecf0d05fdfc973f59b185994f241a7c774936fb4f54b99f659"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_cactoro.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_cactoro.json",
+      "sha256": "23eec25927b941a347b98d3937d8b16caac5ff56ae836ab78b0d705766c8e7cd"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_cactoro_2.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_cactoro_2.dense.bin",
+      "sha256": "de98f9016e387ca2c358e6956f0c97e2534327a6c0c0f9dced481cc46a1da451"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_cactoro_2.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_cactoro_2.glb",
+      "sha256": "cf1cffaafe126c535ac522d854a605a46def6d61a858daa3d5cd8389252c70e8"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_cactoro_2.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_cactoro_2.json",
+      "sha256": "37cea92fb3a5a6786e9b8111d0c830d2df0fd88532344599d40b848777a1094f"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_cat.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_cat.dense.bin",
+      "sha256": "1d685dccc85259f99adebd4bedb3a1409e6306ea887ed6e3547eeb558b46fb50"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_cat.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_cat.glb",
+      "sha256": "a9b4d59d22595ba1a5efecfa14a790775fdd2ef32603a691f174c0af57e52111"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_cat.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_cat.json",
+      "sha256": "2d99603fa7486ef885fee72a5773930bfa96b3db857f3fb0947c1447e5622ddc"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_chicken.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_chicken.dense.bin",
+      "sha256": "03aafb778fa96c5d92f0cc02d596dc7ba230ae8fb6189764a12011db9f82a1f5"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_chicken.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_chicken.glb",
+      "sha256": "2c9ea6ebee47c9475f1d18cb84709963c879ceb814c3b41ac70ef5251689eab3"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_chicken.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_chicken.json",
+      "sha256": "10461e9172ea3ac1e30b0cf66f16a0d073e35f66716218796ea23d81d5fb337e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_demon.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_demon.dense.bin",
+      "sha256": "7d2be47820079b05c636724fbe4c1210766bfb42efd24227cb148e627ae47f0f"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_demon.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_demon.glb",
+      "sha256": "6818c28d4ddfd25e11c7f4d6bf691ae90501ae7809b703488c011a19c81bcd31"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_demon.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_demon.json",
+      "sha256": "c35fb84e1381c4a613d6a88c8216c4b23d98fe7c93a57b252540fa3bc0d4d960"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_demon_2.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_demon_2.dense.bin",
+      "sha256": "fad16e86f0689868b639e2e6bbc9b27e77cfdfc4d45a0db44f11a5482b5fdc27"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_demon_2.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_demon_2.glb",
+      "sha256": "822afa6643f3c8edadbd72b9f5decc3e1541d261b2298e6ebd664349db23f119"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_demon_2.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_demon_2.json",
+      "sha256": "a94fb929cde117ad579de1901e48983785f767e3291e41afc01f662716e9347e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_dino.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_dino.dense.bin",
+      "sha256": "c84972799f6798a448b1648f8683644dd9a696ab44b8bfe88a8c9261cae1afdb"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_dino.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_dino.glb",
+      "sha256": "d2d197a58cd60c11e41b683a0040161f2e89c4e0671ceb50cb4ddc42b6b2dbdb"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_dino.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_dino.json",
+      "sha256": "11ef118415644c375d307181c728df8befdbbafa92d343246a3512078aaeb3c5"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_dragon.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_dragon.dense.bin",
+      "sha256": "7888f8b509715d078085290430b17366545425766f071a2621b987e156750640"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_dragon.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_dragon.glb",
+      "sha256": "397bd40994008884d878b230b5a98eec2a0812c1303ae1b3f95b129bb088d4b9"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_dragon.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_dragon.json",
+      "sha256": "7da08031942b83562d072db62d4e23cfa1d3ac5d9de01e4fcb817ae1bad9a7ae"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_dragon_evolved.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_dragon_evolved.dense.bin",
+      "sha256": "3bf1abb1cbfc2c9ca6dd4f09c1a22fb94124c07fcb72c32d40fcea49ad2ecf62"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_dragon_evolved.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_dragon_evolved.glb",
+      "sha256": "e2e9421f6169104c68ed9ff7fd6be80a7e7b98792079e1cde08ef622ef16d16c"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_dragon_evolved.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_dragon_evolved.json",
+      "sha256": "70bbc37c1bcaed30e73aeecea7163460cc3a3a2290b141f3734f74f0d806fd42"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_fish.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_fish.dense.bin",
+      "sha256": "82744e5f2fd8afeca7950030c19c48a96555e3fbda38d265a014b288e0836fdc"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_fish.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_fish.glb",
+      "sha256": "0ac1624e9818c819f975fb5cfe9220c2d6ccc0b2fbbd1b72a92894667b654709"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_fish.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_fish.json",
+      "sha256": "fe0272fe5943db98c1616797059bbddc6cdd2f74b161078f57b2075b85775b9d"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_fish_2.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_fish_2.dense.bin",
+      "sha256": "0d87d6f8a20794e5a18ec07b2bc3c3ae6c38ff1e39fc1e544782c5b6c8b00d77"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_fish_2.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_fish_2.glb",
+      "sha256": "58da6f82c4831ceac2b299b1bfff51abb2c31df4a4ed6a57114c20c134d7f993"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_fish_2.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_fish_2.json",
+      "sha256": "0e1d5c37475bddc0edaef26d7fc38eb405cfa6b94ee25acae814cbe72c53c4f0"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_frog.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_frog.dense.bin",
+      "sha256": "b7723874cc2632300cbdc50e7262f8429fa50346e68b0831b97e33e67c12cd78"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_frog.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_frog.glb",
+      "sha256": "6836ee4f4bbfa5b6878df949c1168d0f4150a0b229affd2695c7e305bf342b84"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_frog.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_frog.json",
+      "sha256": "b288cdcab8fd0c193856cf74af6de6dbdc00131b84d173829063956b557749c3"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_ghost.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_ghost.dense.bin",
+      "sha256": "05a30548ae6299ba81ace46b20a1b1436dd80f1e6bef6596094dcd16da76b07c"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_ghost.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_ghost.glb",
+      "sha256": "6c95ab4b1002676f8880cf7c2030e70b43f89e47617b5f539e31e9fac558d2ad"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_ghost.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_ghost.json",
+      "sha256": "079d708e5247d368ea05d3361d10e9ea243e590c7ea633b100616d6e550fa6e3"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_ghost_skull.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_ghost_skull.dense.bin",
+      "sha256": "bd0af7315a8fd0ddc466c77a1114a98bb7ae626f6f941640f2543a152cd2b8f2"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_ghost_skull.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_ghost_skull.glb",
+      "sha256": "b70f3ef2f150d8ba2a1fddcb9125d5715eafb4ac022775235148df46420ff364"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_ghost_skull.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_ghost_skull.json",
+      "sha256": "86891b5bb388a909e06adb544c154e0d852af6772cc50ac9f1aa697963bdfec1"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_glub.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_glub.dense.bin",
+      "sha256": "aabde2ffdf8cedaa8614b43afefadfba60ece9c60b13da5ccea5fffdb33015d0"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_glub.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_glub.glb",
+      "sha256": "ff1f06309137801590447390dbff178a104c881fc489544cce32964d1d967188"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_glub.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_glub.json",
+      "sha256": "ecc48f9085d2319b49fdfd36a763dbc15cb4d16992927afa1a7d365bba19bb98"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_glub_evolved.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_glub_evolved.dense.bin",
+      "sha256": "c94de9d7eeb82b2ca28f75ab5bb4a1e007c9e585ded1ac959ede222d539339df"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_glub_evolved.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_glub_evolved.glb",
+      "sha256": "d62b4a700e292c8657e67a5083924ed13d45d2253a8d2cceb13cc61d3fb0d335"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_glub_evolved.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_glub_evolved.json",
+      "sha256": "624c24eb49f909ca65e993d9792008ee3c5b701c4473f1c9004e4d5217d50a29"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_goleling.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_goleling.dense.bin",
+      "sha256": "18e9a178d4018b11a4f32bf3f38c9082752eb34faea2000f966c199d7871d8bc"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_goleling.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_goleling.glb",
+      "sha256": "7354536ebc7cab946f89c3dcd726c71e86be878e6675cf981b32b35890cddf36"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_goleling.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_goleling.json",
+      "sha256": "4e29be52044a1e403f2f5d9d23a294cfb85ef6e9768637445ac5458f22193d83"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_goleling_evolved.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_goleling_evolved.dense.bin",
+      "sha256": "20cc87968c513ee66bcabf458e3a3dbdaa99d04208861be9e650ae025bc55448"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_goleling_evolved.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_goleling_evolved.glb",
+      "sha256": "f99f734333602c99c307915a871d9f44a2ec6a1f3cbf2eeff223d716858380d5"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_goleling_evolved.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_goleling_evolved.json",
+      "sha256": "b0b5fb45f62c2f930b648cbceecaef2ea705f79c14f1c403762b89365e1ce8be"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_green_blob.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_green_blob.dense.bin",
+      "sha256": "9d72f1a0c5394821f4d41240ecc9488f70d7cdc65e2596f2723b67dbba498d3c"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_green_blob.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_green_blob.glb",
+      "sha256": "cff4c3557f40a72784a58e51a1dc9555a77350302e114563d463c967cae3bf14"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_green_blob.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_green_blob.json",
+      "sha256": "a3d0e30fd236f610e1d1f9e14de76c8274b0ede219d04d4bc78f0fdbf62eb47a"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_green_spiky_blob.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_green_spiky_blob.dense.bin",
+      "sha256": "644cb29a43e452d85188bf5e8895da2483943dec0244b642d9a3ca9d0b15d9b3"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_green_spiky_blob.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_green_spiky_blob.glb",
+      "sha256": "9b94144958be7d387593b555a7ae7d0dcbbc238bdce5ca8db850cace91c0d004"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_green_spiky_blob.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_green_spiky_blob.json",
+      "sha256": "5c1693b1e7447f2d9d880012f1f99985db48020978c799f9ecdb9478d45c7c8e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_hywirl.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_hywirl.dense.bin",
+      "sha256": "ccf92c6b093edcbee8d6ad14445d146f2e0aeaca18af889adb8dc341cde433a6"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_hywirl.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_hywirl.glb",
+      "sha256": "88aceb0b284dbd355ed9b733d3b221590f48abeed3a11fdd80e1a61fd9d8585f"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_hywirl.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_hywirl.json",
+      "sha256": "d81ce13931788da0c4872eed6d1ee4993ff101b9b0a48ccf77348b6c5133413c"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_monkroose.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_monkroose.dense.bin",
+      "sha256": "8d82a345ab6e048e2cf859b3885fc00ff7eca8991a6f5490c5f4744090cc6691"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_monkroose.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_monkroose.glb",
+      "sha256": "575c58cc4cb97cc4e81220199516c21589debc13436754abce271a266de1dd7e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_monkroose.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_monkroose.json",
+      "sha256": "e0fdb669ae845f9059fc99b59a8aa9ef977772932150aa442c572d61b059615a"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_mushnub.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_mushnub.dense.bin",
+      "sha256": "ef6d2f3696d14c6c061aca0f4be99aede90a1f9260dcf09ca3849750b0c3af54"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_mushnub.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_mushnub.glb",
+      "sha256": "10ae657c8ae551fa6d665a512e43d818d533804bf1cd7fa02fd7e19768cc71bc"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_mushnub.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_mushnub.json",
+      "sha256": "af4fc06fac07bc18ec047711153937c42c4ff5af15cbe7e0e07220d4c0819160"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_mushnub_evolved.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_mushnub_evolved.dense.bin",
+      "sha256": "d06c922ec8f979f2bea3f204c66ebb5b648023ee26a3068a17a470cd7e44e80c"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_mushnub_evolved.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_mushnub_evolved.glb",
+      "sha256": "37d73be8d27270ac60790ac6f745ea76c3ae9494c444c9eea02a31ea9e965826"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_mushnub_evolved.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_mushnub_evolved.json",
+      "sha256": "2ec52e083af8095f0a66cc8685c3ebefd920c34127839cb496d9b2e57f1f7a3a"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_mushroom_king.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_mushroom_king.dense.bin",
+      "sha256": "3762e6711c09ae7787f803608c126779460c42930bab81f6d476acf159a2acf9"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_mushroom_king.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_mushroom_king.glb",
+      "sha256": "ce2cfcafc4bff0360ddfb16b4c901e3f71e0105c89b7f92d7aae9a5e1ce740e9"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_mushroom_king.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_mushroom_king.json",
+      "sha256": "cc7afece84ac1e129824c66c38b572f71adf058b39b96675b533bb40349d7a2d"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_ninja.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_ninja.dense.bin",
+      "sha256": "ca6c277599dd51b69b50d1402a194f37ddcc369ea56130e439d4d7994f918a26"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_ninja.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_ninja.glb",
+      "sha256": "0f720a2edf871409f7126e4257bf95fbf7a927cd123be6982e1bd8b17d68a2ed"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_ninja.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_ninja.json",
+      "sha256": "ae893e72d16faeb4ec2392cca1cd9cfc51dc3f8a73681376d58ee8eca1e631c2"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_ninja_2.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_ninja_2.dense.bin",
+      "sha256": "63ceccb78950b5fc944a601cd37ba0efee49909ef39fc7d0cf35fb908de4b219"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_ninja_2.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_ninja_2.glb",
+      "sha256": "6e9d38cb7e8fc0daaf2ab7223f5a8c4ace540d8e1fef82ecc6fcdce39227d333"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_ninja_2.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_ninja_2.json",
+      "sha256": "3c3b02e1785e5d9c4052f505430e211c23c1a83a2681c0faf49c129cc4a492c0"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_orc.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_orc.dense.bin",
+      "sha256": "aa1e85b3d81c99c9d2b87170e284df39d10b82c9d4b90ec879f2f8730ad0885b"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_orc.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_orc.glb",
+      "sha256": "66857dbe97556d03704d02d1383b01604e42d6909a487034cef6908d3d84f59a"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_orc.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_orc.json",
+      "sha256": "1cb0aa90243c915cf7c11b448cbe5fecad5ae6edcd64a0369beb672f6408d54b"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_orc_enemy.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_orc_enemy.dense.bin",
+      "sha256": "28d265acd4a8cb3cfcb699a6d601acfc17ee718b0e2ecadc971ad3769717cc17"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_orc_enemy.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_orc_enemy.glb",
+      "sha256": "b6458f0399b0f08ababb130379d425af0c93dd0976b010227cca0b3c755ce61b"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_orc_enemy.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_orc_enemy.json",
+      "sha256": "9ec4a876787287b4008796c0703bb4e0e291b658cdcb4b506ea002370408ecd2"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_pigeon.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_pigeon.dense.bin",
+      "sha256": "765fd6867359e01f466ea743ab7c4262c26385eed7ebef070488c19721f84c69"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_pigeon.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_pigeon.glb",
+      "sha256": "8111ee9981024af4b71d718a77c1b0898d8b0118d4a4684abc5dbbac860c150d"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_pigeon.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_pigeon.json",
+      "sha256": "f7df3361b6b2247d57acc618176be5961410a5dd49c45792680a0fd763af553d"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_pink_slime.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_pink_slime.dense.bin",
+      "sha256": "51a80ebe0e5f6105e929c2bdbefbf882cff1a51bc82770b8567d84c71d63a713"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_pink_slime.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_pink_slime.glb",
+      "sha256": "e98cb0b7806ab251d7e1bd136ff89e13823f8f17a3ced5448620198fe9e7d621"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_pink_slime.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_pink_slime.json",
+      "sha256": "7325d6d5dff3343cdf46178566b60ffd51736cd812c92e4ab82d0102ab3b1822"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_squidle.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_squidle.dense.bin",
+      "sha256": "8803234b7ffca9d68b90cb364e1a72ff534bb693d260190f1ccf1cab7bc6962f"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_squidle.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_squidle.glb",
+      "sha256": "77cb9941ecf2e3cbc7198054a17c632445238064e8d703acd95d49fd76b1ea0f"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_squidle.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_squidle.json",
+      "sha256": "2ce3fc003a165ebae356dab2cb816f7bec4fe0795c211599e96b329ce12347af"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_tribal.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_tribal.dense.bin",
+      "sha256": "4187b22fe429ea91feb6181c9e17193b37b13f0f219e2a85df8c43317fd9bf9a"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_tribal.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_tribal.glb",
+      "sha256": "dbf1215cada5e70c71071cfe798c52a96c0a99f4a2c5a3a6b75d64ee22a32e76"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_tribal.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_tribal.json",
+      "sha256": "5db24e3c3d9ce5af3b161f30fd0f359ee8700a36f167a445a42ac29bc4435c3c"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_wizard.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_wizard.dense.bin",
+      "sha256": "e664f857a40b5a5d17234f5e81056c447605a644a2513f3fdc417ba0f9fdfbe9"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_wizard.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_wizard.glb",
+      "sha256": "257d456b99f603f8d218521091de3b1d8b6eae305e98b3242a15464b03233f45"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_wizard.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_wizard.json",
+      "sha256": "a00108eb257c19f2e024300bdcc205bc8f53f5a95120bf66192de5c62a4f8b58"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_yeti.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_yeti.dense.bin",
+      "sha256": "e59b42ad625f6b1e19fa33dcfc141f3fde9d9b7603485a97449fa80595857b81"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_yeti.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_yeti.glb",
+      "sha256": "1f604befa8ed3fe92b0946c7bfa025958ecc06a5ae92c416f226382d497b6b35"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_yeti.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_yeti.json",
+      "sha256": "8ece094545d90d7eea223b002e96be0e24e81dd2d4b1b8090d24faba8a261f12"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_yeti_2.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_yeti_2.dense.bin",
+      "sha256": "1e1e3696603914452a8a7bd65951a9c522d1a61134b6cc902151fdaaf60866a2"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_yeti_2.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_yeti_2.glb",
+      "sha256": "a98d945d6956fbb38e1092d3a0cc006b97192b5a5462d64e21bf2d97a243609b"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/q_yeti_2.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/q_yeti_2.json",
+      "sha256": "ef3bf603cda968ed6dabc08b8a72d57edd52bf69ebedccf627faa3c65af29512"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_ballista.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_ballista.dense.bin",
+      "sha256": "f1f7307272dbcb28eb2633efeaf91d8b2fe802180c870589823ff97f12076513"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_ballista.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_ballista.glb",
+      "sha256": "596ba250f23518b971293a7a751e698a77770ed0b37464ccbfbddbd22ecebe14"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_ballista.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_ballista.json",
+      "sha256": "d217aabd44a09ec8d2a7dc1e363f964cf88a3b67b8ad37e31c41468100bb090e"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_cannon.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_cannon.dense.bin",
+      "sha256": "80a5f95ef1cacb3005af329caf4ad71a7472d00f4afeb85cb442bd3dff08523b"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_cannon.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_cannon.glb",
+      "sha256": "9b8ff6ae40132962e49e18fbfe4fe454e432490bcbacbccc5c3dce092c145caa"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_cannon.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_cannon.json",
+      "sha256": "016fdbd83219444ab743bf9badbc059c85ea18c972edf0a4bed1bec04dcd8a6f"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_catapult.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_catapult.dense.bin",
+      "sha256": "568d89df383ac4cade5e4fee349c00629fdee0f3d51d2cc72cb6fdc274c27a64"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_catapult.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_catapult.glb",
+      "sha256": "f41d517ebc808f7d713a0339b0c93153facc618e2832374c6a0066137b5a6afa"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_catapult.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_catapult.json",
+      "sha256": "8fc9aac3243d36169f170586fc814edae56672f0bc5991d881c2ada37c619e71"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_crystal.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_crystal.dense.bin",
+      "sha256": "1a404b5e8eae704b4d33a93e2750aeb2ac9aac48cf4127690de02aa185542e34"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_crystal.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_crystal.glb",
+      "sha256": "54a1ab4ec7a2845eef7214d260408a4e2d4f2d2564956fefb032be8f38533227"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_crystal.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_crystal.json",
+      "sha256": "22e0dd1879c85242f33e6a0d6428272bb4acb85d463b1e0dc048294d1f5ab97a"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_gun.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_gun.dense.bin",
+      "sha256": "aef115cd651ef698d432e28b175faa0b841723838a60f433621a4dd1721175e6"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_gun.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_gun.glb",
+      "sha256": "84565c260d7c1c7ef9202b8230815ff73c2fe94c2f8270bf99f1c5e679dd3454"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_gun.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_gun.json",
+      "sha256": "59361ac138a4c7012778c1ed567e0e169669e4a826f750db2f28c28fd3939ee0"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_roof.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_roof.dense.bin",
+      "sha256": "bea71e5d691324d9cb8e850edc6cec51acbb49405497afc4f7fed172088d8d57"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_roof.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_roof.glb",
+      "sha256": "ac5343c8ba7518de82445c44f1727be775755dc6659cf08b48a5bf3c8d7ce92c"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_roof.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_roof.json",
+      "sha256": "77920c367d5a9e7679bfbdca13ff4fce9f36183b87a4eab91d71061553cb58bc"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_throw.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_throw.dense.bin",
+      "sha256": "8132bca9a5f8fad63198ff21d0e1ced20117e99a9af5d0b0e9f9e50e85b528e0"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_throw.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_throw.glb",
+      "sha256": "b8cb95cee2f4b8878eee434217639181df66383f0e7d9417d27408d3485b3c7b"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_throw.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_throw.json",
+      "sha256": "79b74bcbb80bc554fede0b3c6f852472125742f001d8a5873239a523655f90b0"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_wood.dense.bin",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_wood.dense.bin",
+      "sha256": "221121f5d9f96c6e44462d07085b882141ad756a4f457988c7f40320b8e6f92f"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_wood.glb",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_wood.glb",
+      "sha256": "0fa2f91664efe31941087bb043218f365369a6cece7f5b19e1b5f8b0cb92d176"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free/tower_wood.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free/tower_wood.json",
+      "sha256": "24dd6a27da12d43fa323f4c23e6947be172534aa31c97d0036b0fd43c371f388"
+    },
+    {
+      "source": "data/tools/unit_lab/units_free.json",
+      "category": "unit_assets",
+      "status": "identical",
+      "pack": "unit_lab/units_free.json",
+      "sha256": "24bb880fab0e612abb8f2a7694a88eba2613ee44f9a2a28e21b692e243050362"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_fire/aim_fire.json",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/aim_fire/aim_fire.json",
+      "sha256": "ec2cd6396769eab9e85b1e07109d3723c04760a37686cbfff6b9dbca51eea86b"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_fire/aim_fire_sheet.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/aim_fire/aim_fire_sheet.png",
+      "sha256": "29ba910bfd45739bb56805b45dc43783448f2073b6dc58cd0d5fdd946e36dfb7"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_b/aim_walk_b.json",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/aim_walk_b/aim_walk_b.json",
+      "sha256": "e569a289cfba338f9e12126c41769a41d679983a60deb2d3884a6744d48c24db"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_b/aim_walk_b_sheet.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/aim_walk_b/aim_walk_b_sheet.png",
+      "sha256": "a7841a7d690e8b95f3235922e34e068aab90c89c332bdae61ce80d4adae03d9c"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_f/aim_walk_f.json",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/aim_walk_f/aim_walk_f.json",
+      "sha256": "93db03a8bc65e2fdc847c274b79b9b8de1e178d8b79281497ba28ce7f04457b9"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_f/aim_walk_f_sheet.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/aim_walk_f/aim_walk_f_sheet.png",
+      "sha256": "776f5868a21054eb9e97675a101f780a897ba4550f42c7d5d2c2136201b40a8c"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_l/aim_walk_l.json",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/aim_walk_l/aim_walk_l.json",
+      "sha256": "f3b4f18c1c916f3f8d255a3f386099248d65c680035d8d1565e606f16d2ebdc0"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_l/aim_walk_l_sheet.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/aim_walk_l/aim_walk_l_sheet.png",
+      "sha256": "e617f4bc50c1694bc1283f8679623288237058304f49ede21bef2bdb3b488938"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_r/aim_walk_r.json",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/aim_walk_r/aim_walk_r.json",
+      "sha256": "3333d6c0691f6f3887465dbfa9265983dcde75c175c2af46d290078f1fa2b387"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_r/aim_walk_r_sheet.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/aim_walk_r/aim_walk_r_sheet.png",
+      "sha256": "230d159348a3efc1f698ecedf209d897525147653a51344539610505c2f2541f"
+    },
+    {
+      "source": "data/ui/actor/wanderer/draw_holster/draw_holster.json",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/draw_holster/draw_holster.json",
+      "sha256": "97ab1ee98918eef447632edf10576a61ecbe4adca9941217220d0ceed9fcd4fe"
+    },
+    {
+      "source": "data/ui/actor/wanderer/draw_holster/draw_holster_sheet.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/draw_holster/draw_holster_sheet.png",
+      "sha256": "73c6aa6a2f641cf99024d695cc0c49123db77ce38dc3e281c2068bcdc1e3fe7c"
+    },
+    {
+      "source": "data/ui/actor/wanderer/holster/holster.json",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/holster/holster.json",
+      "sha256": "15b6b9681ea3a0b963cbd6343ada9ee1dff59c9dce12769508d927afec09c9b8"
+    },
+    {
+      "source": "data/ui/actor/wanderer/holster/holster_sheet.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/holster/holster_sheet.png",
+      "sha256": "7737a170e5080cb0f69b276f0a28d035ab9046bed58d91e70be2b6e47ef50cf4"
+    },
+    {
+      "source": "data/ui/actor/wanderer/ingame_idle/ingame_idle.json",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/ingame_idle/ingame_idle.json",
+      "sha256": "4b752a3a8675dc3008598e967ba2ef656455c66a3409adea6dec7d7a1a12d97f"
+    },
+    {
+      "source": "data/ui/actor/wanderer/ingame_idle/ingame_idle_back.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/ingame_idle/ingame_idle_back.png",
+      "sha256": "47d05bbd28473fc89538ca1ee5639b6b2b80c4e4b8f0f69c277ea9081ef9debd"
+    },
+    {
+      "source": "data/ui/actor/wanderer/ingame_idle/ingame_idle_gun.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/ingame_idle/ingame_idle_gun.png",
+      "sha256": "4cfbc876c3fba0eef1fd64b6eeeaa0050a48193c2a30ddc505d5c81cf83d84f2"
+    },
+    {
+      "source": "data/ui/actor/wanderer/ingame_idle/ingame_idle_sheet.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/ingame_idle/ingame_idle_sheet.png",
+      "sha256": "fe4fbc47516d7522ad73339f627214d3a0a944a285d2b460a89c0c39d4b0b297"
+    },
+    {
+      "source": "data/ui/actor/wanderer/ingame_idle/ingame_idle_sheet.tmp.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/ingame_idle/ingame_idle_sheet.tmp.png",
+      "sha256": "0994d3ad081f4f6fd233b244f7271aab50668e18f71f8feb9bb37589424aa020"
+    },
+    {
+      "source": "data/ui/actor/wanderer/ingame_idle/ingame_idle_sheet_3q.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/ingame_idle/ingame_idle_sheet_3q.png",
+      "sha256": "d936e6154694088f3dc0250ecdca00c3fe51b225786cd642f55db2a640c1d95e"
+    },
+    {
+      "source": "data/ui/actor/wanderer/move/move.json",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/move/move.json",
+      "sha256": "04864044b24955f3e7fc2c1cad1773a2f95e410f912f9e352643336a88daa914"
+    },
+    {
+      "source": "data/ui/actor/wanderer/move/move_sheet.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/move/move_sheet.png",
+      "sha256": "004a704617ca3b2593a85f1f950fb43c38699e3fe35e8b8d5aeb947aa3252af6"
+    },
+    {
+      "source": "data/ui/actor/wanderer/move/run_left_fwd.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/move/run_left_fwd.png",
+      "sha256": "49d068cd80f8420a722817f60b7975e01f4204f33858918708938ded1bf1ef6d"
+    },
+    {
+      "source": "data/ui/actor/wanderer/move/run_right_fwd.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/move/run_right_fwd.png",
+      "sha256": "21fc4aa62a998f74c826b25e7c31d9234407758b423d463c80ee99019722c1f8"
+    },
+    {
+      "source": "data/ui/actor/wanderer/move_back/move_back.json",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/move_back/move_back.json",
+      "sha256": "fd334c9e786cc014945b00930a065c1dc26d54b78d7e5a325ad827366b60b61d"
+    },
+    {
+      "source": "data/ui/actor/wanderer/move_back/move_back_sheet.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/move_back/move_back_sheet.png",
+      "sha256": "227da94980a2fda6a7a7233092c38c6072438cde4e3baaf99a803c156dfd016e"
+    },
+    {
+      "source": "data/ui/actor/wanderer/throw/throw.json",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/throw/throw.json",
+      "sha256": "de78417b16bc7b68d455a15e5d436557e730cb4515d2eb5f751c379f94cba08c"
+    },
+    {
+      "source": "data/ui/actor/wanderer/throw/throw_sheet.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/throw/throw_sheet.png",
+      "sha256": "aa3dcd1d287c2a1d09960ecafd41ae2b36237188af859166536cdc1f85b81c96"
+    },
+    {
+      "source": "data/ui/actor/wanderer/walk_gun/walk_gun.json",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/walk_gun/walk_gun.json",
+      "sha256": "dce64b8b23ac5243cd044aa7a26c8fc1ef1c90a6b6404ff9e3433d1fff558db4"
+    },
+    {
+      "source": "data/ui/actor/wanderer/walk_gun/walk_gun_sheet.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/walk_gun/walk_gun_sheet.png",
+      "sha256": "2a62fdec222c74d6590b4e5b62264ff8df458b14466e1b9548e01e1ee9ce4a42"
+    },
+    {
+      "source": "data/ui/actor/wanderer/walk_l/walk_l.json",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/walk_l/walk_l.json",
+      "sha256": "5af246be9f7a6a7c8d11c304c9d0d25da585c766566bd1a5eb79ce776b1e88a8"
+    },
+    {
+      "source": "data/ui/actor/wanderer/walk_l/walk_l_sheet.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/walk_l/walk_l_sheet.png",
+      "sha256": "db8a850028a81a4e303da2bd9651e408cf82af5cd57bd7b000db7a56a28f8725"
+    },
+    {
+      "source": "data/ui/actor/wanderer/walk_r/walk_r.json",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/walk_r/walk_r.json",
+      "sha256": "83642ae7e2eb92d33c2715fffd832b21d7b6e074eeb39156a01b115acea9d0d0"
+    },
+    {
+      "source": "data/ui/actor/wanderer/walk_r/walk_r_sheet.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/actor/wanderer/walk_r/walk_r_sheet.png",
+      "sha256": "5dd6925f233aefbb45b66c9b66e791c172984f5c7c1d4983abebdfb666ec7b39"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/frames/shoot_00.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/wanderer/test_clips/shoot/frames/shoot_00.png",
+      "sha256": "01ed06f972c1f14ce994e7562420f07388b20ea139ce013629f86e40c3b8c572"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/frames/shoot_01.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/wanderer/test_clips/shoot/frames/shoot_01.png",
+      "sha256": "b12ee4eaee508d024e702d4c3230a2158bf4b452b30e4e5cefd695f2d31c8d1a"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/frames/shoot_02.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/wanderer/test_clips/shoot/frames/shoot_02.png",
+      "sha256": "2b9521a2eacdd8c446ee43d60088bdf6947644c9d6e39f36347db34f4f8b5df5"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/frames/shoot_03.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/wanderer/test_clips/shoot/frames/shoot_03.png",
+      "sha256": "c74403e69cc3f46a3a9afe8e3f6ff544cd1a3e557ba8ceef7dc1d7303e67499d"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/frames/shoot_04.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/wanderer/test_clips/shoot/frames/shoot_04.png",
+      "sha256": "570560d9376f47f8c2647dc9e0f0e81d4dd8eb9e959a2be8fa5648b3e59cd06e"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/frames/shoot_05.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/wanderer/test_clips/shoot/frames/shoot_05.png",
+      "sha256": "a74ec14adba2de7e2d818607a9052383d656d5c736afbdb5f2f688e826414adf"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/shoot.json",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/wanderer/test_clips/shoot/shoot.json",
+      "sha256": "7e8cc363bf4d253494cafa94be6735bb8696bbcc1cd20a0ecd531ba49d01a9c4"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/shoot_sheet.png",
+      "category": "sprite_references",
+      "status": "identical",
+      "pack": "data/ui/wanderer/test_clips/shoot/shoot_sheet.png",
+      "sha256": "5a79c4576188ed64181fdfdd7d58de4799417f5d334075e460eb9d54bcf8e836"
+    },
+    {
+      "source": "docs/asset_backups/20260927_characters_Codex/manifest.json",
+      "category": "backups",
+      "status": "identical",
+      "pack": "docs/asset_backups/20260927_characters_Codex/manifest.json",
+      "sha256": "e2c6d176ecc50cb1d5076c24f2fd9134032f2dc5273474bdd4932e28ba6d6e70"
+    },
+    {
+      "source": "docs/asset_backups/20260927_characters_Codex/unused_variants_and_previous_tool.zip",
+      "category": "backups",
+      "status": "identical",
+      "pack": "docs/asset_backups/20260927_characters_Codex/unused_variants_and_previous_tool.zip",
+      "sha256": "ea42dcd14a1a849dca4a2f4e54c2ad375a53dde3b93ff5d840f10ad60b49df4b"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/build_a_before.py",
+      "category": "backups",
+      "status": "identical",
+      "pack": "docs/asset_backups/20260927_RuonCrown_Codex/build_a_before.py",
+      "sha256": "88e30cdde064c8d49c6d58787faefe8c483778fe6fb2be765ad38ac6294c6eb6"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/preservation_check.json",
+      "category": "backups",
+      "status": "identical",
+      "pack": "docs/asset_backups/20260927_RuonCrown_Codex/preservation_check.json",
+      "sha256": "ec4ecd63e5f2fc1b3abea8b488a57a7699fe410d1cbff979afe07ec598b9f10c"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/RUON.blend",
+      "category": "backups",
+      "status": "identical",
+      "pack": "docs/asset_backups/20260927_RuonCrown_Codex/RUON.blend",
+      "sha256": "b700c2d324ac5eb47d19f2ff2830be7c5ba15a6029ceec056637970fb6670ff3"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/RUON.glb",
+      "category": "backups",
+      "status": "identical",
+      "pack": "docs/asset_backups/20260927_RuonCrown_Codex/RUON.glb",
+      "sha256": "926e63ac54cb7fa68e052be2ba11560b5060da08097c706252e241acfaf73b1b"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/RUON35_metrics.json",
+      "category": "backups",
+      "status": "identical",
+      "pack": "docs/asset_backups/20260927_RuonCrown_Codex/RUON35_metrics.json",
+      "sha256": "ef484c88e3ec7b5ca669e169e4136de79ef5d8300626845570f41f2bb9ce23bb"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/RUON_35.blend",
+      "category": "backups",
+      "status": "identical",
+      "pack": "docs/asset_backups/20260927_RuonCrown_Codex/RUON_35.blend",
+      "sha256": "4a3e2a3e201a0efb5b2ff41453a36fa47634d73c12376dea92a21970f122fd27"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/RUON_35.glb",
+      "category": "backups",
+      "status": "identical",
+      "pack": "docs/asset_backups/20260927_RuonCrown_Codex/RUON_35.glb",
+      "sha256": "14ed11a244f703ae5b9788839ed2a9e25c0d0070bc77b3b73d04512ac21938ba"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/RUON_metrics.json",
+      "category": "backups",
+      "status": "identical",
+      "pack": "docs/asset_backups/20260927_RuonCrown_Codex/RUON_metrics.json",
+      "sha256": "abbc05b242ade8afb96c3648b2ec0eaea407d526b499ef56472c3aa986c47bf8"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/sha256.json",
+      "category": "backups",
+      "status": "identical",
+      "pack": "docs/asset_backups/20260927_RuonCrown_Codex/sha256.json",
+      "sha256": "2ec4a48f9342a871e9d4b10a0ece267d4dfaaa0fcf719e70dfa70e492c136b33"
+    },
+    {
+      "source": "docs/characters/legacy_sources/unit_lab/_inspect.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/unit_lab/_inspect.py",
+      "sha256": "ef5b60bdaa292a47559ab7f961e6e7091a8c0aaf61de5287626530904e7a1a17"
+    },
+    {
+      "source": "docs/characters/legacy_sources/unit_lab/_inspect2.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/unit_lab/_inspect2.py",
+      "sha256": "415b658acc731c6a837bc527a453623877342396d6720400c74bc713c7d1e7ce"
+    },
+    {
+      "source": "docs/characters/legacy_sources/unit_lab/build_buildings.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/unit_lab/build_buildings.py",
+      "sha256": "90f747a88cbdc9cfa61055a4e8f6188c7bd2e6a0cef10290d2a7ceb829a3ad6d"
+    },
+    {
+      "source": "docs/characters/legacy_sources/unit_lab/build_free.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/unit_lab/build_free.py",
+      "sha256": "4a7321dfb1772c246b8afbcc4eeb8e7a7ceaf5f613fe2d25817173df48021814"
+    },
+    {
+      "source": "docs/characters/legacy_sources/unit_lab/build_units.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/unit_lab/build_units.py",
+      "sha256": "b57ed7d53d369ef8eb0c4e77919c03eb2e5548cd080d5c9c9b5462eccad2ee0c"
+    },
+    {
+      "source": "docs/characters/legacy_sources/unit_lab/render_grid.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/unit_lab/render_grid.py",
+      "sha256": "b800fa77563f708001cb8e706daae68129527eeac8d5474f19096fd6ac84e7fe"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/_arms.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/_arms.py",
+      "sha256": "7aa1236be5d38005f190520536e33da2b67fe8e8e4641b2d4e0a4b809dc4e880"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/_axis.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/_axis.py",
+      "sha256": "dbc6f05f7275044e67674519a2f5c59bf59ae028f9142c9ac36d460e8ef6052d"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/_headbox.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/_headbox.py",
+      "sha256": "d32ee1608084056aff2ae8341a2b169fb22a822ec88b3035f5db1527b462ae4e"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/_ik.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/_ik.py",
+      "sha256": "4e02e4c6023d1010fa81090e12bcd9a0b10b785c44c0ab8dc31cf026609e2191"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/_knee.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/_knee.py",
+      "sha256": "8288a2a012478ad889b37bb2e7597c250e7aadc876f777fd7fbe7461a04c93d2"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/_knee2.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/_knee2.py",
+      "sha256": "d02f94a0d20cc1ae92dee374f3c1c3dedd19ff23bd3f05e901fe34db28feb6f3"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/_probe.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/_probe.py",
+      "sha256": "75130d298e95134959adcafee1bcebd63b58f6ab583d625b71b2964eebafcecb"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/_side_act.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/_side_act.py",
+      "sha256": "a9c9a987ed7a8d52e330b9c6216e7ed255f24332669724ac69445834ce7949b4"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/_solve.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/_solve.py",
+      "sha256": "dc2f711340abd4b045cf4162007379cbd50bba677a0444e322c3010971fef60f"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/_twist.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/_twist.py",
+      "sha256": "370d3fbcce76d146ea45c7b1d618775a88c38a973a02ea181ba8f8be1bf0ca4a"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/_verify.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/_verify.py",
+      "sha256": "ab43ce5c532f29a6fda8e54303e632ae21255f656eb44264c6d9fbca24b7d76e"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/actions.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/actions.py",
+      "sha256": "1272d068362adf2578a2ae5c8ee2cb4dc02565ed2328c024726eb54310e74421"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/body_front.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/body_front.py",
+      "sha256": "e73efa00f542f07f28c6909f947056551cb37a85927a760ae0b7fc04b9c1dbfd"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/body_front_ab.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/body_front_ab.py",
+      "sha256": "d003c2aee10f35c384a588e331ffea891e48d5eb61347fbb0e46786107431aff"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/build_wanderer.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/build_wanderer.py",
+      "sha256": "92f4f2d8fd6683cb996a64ca3af18bfa3619574a9ef8e086b761add1c8117ac3"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/build_wanderer_ab.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/build_wanderer_ab.py",
+      "sha256": "0b557eb39e6ba4bdb244271fdeb826d1422e26889493fa7e4cf197a4e57b3c44"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/capture_ab.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/capture_ab.py",
+      "sha256": "6dd999837e272aa5ca502f4bd0d6593cbc1abf161095ca7a3dcd64399345c916"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/capture_b2.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/capture_b2.py",
+      "sha256": "7c556179c8fb26d95211b6fd3f80e2c510665a9459fbd089c148bb963a7c5dd6"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/compare.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/compare.py",
+      "sha256": "63624d93671603883212799662e463bb3f6bad82a15de4e2c926cdbd27edceea"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/eye_shape.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/eye_shape.py",
+      "sha256": "ab9ea78750ba00238f4c311b9bb98465807f514895658eeec97bd338625ef270"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/eye_shape_b2.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/eye_shape_b2.py",
+      "sha256": "380f68613cd38cc570315cf339afac17edb6764c458c67b823edb6a8120808c8"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/eyes_3d.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/eyes_3d.py",
+      "sha256": "fd7cc84d1790dd8cd1fe61e79e1fcfe31dfba60288a063beca96c9238a596515"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/head_b2.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/head_b2.py",
+      "sha256": "d9efa8ff016884c1fdf8b56571f896966976ca6888e174877cbdc4a4d3af0ea3"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/head_block.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/head_block.py",
+      "sha256": "b9feab826f8b6f625110abf2c1e3f61fb9a9c7570b2fefd842aa241ec66ef701"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/head_cartoon.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/head_cartoon.py",
+      "sha256": "ea100c4429c81a52c1a7ec59ec365e3a9e7ef245f51669019cfc62d5d10f5480"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/measure_outline.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/measure_outline.py",
+      "sha256": "7a2f757a5c80ee19d206407ea883213f8de58b14e8d009d1865392a3ac82f72e"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/paint_face.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/paint_face.py",
+      "sha256": "f27660d169dd42853fa18d0b6483aaf28fe6dfe6e95e49cb94c454504dd90486"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/paint_face_b2.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/paint_face_b2.py",
+      "sha256": "9a70fbf0501c46d9e47761bf5a0de459cf50e7b281f3d608ab84af8104757af5"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/props_guns.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/props_guns.py",
+      "sha256": "99a52a3b95605dc104a8194aaa887d95421bd8c75c529254b4493701b115a57e"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/render_face.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/render_face.py",
+      "sha256": "649787c7f2dd36bc916aa08044c6c61246a73b634d99f6e0d72611021d5006bd"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/render_ref.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/render_ref.py",
+      "sha256": "f56f7a12ab8b05a19a08a99942d86b345c41df3f9129815b1cee758df4fe92a2"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/render_views.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/render_views.py",
+      "sha256": "d814bf8608b9992b6b68b24f1e40183c2a3cf61927b63bf8491365226092a47f"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/rig_ik.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/rig_ik.py",
+      "sha256": "fbc71fadf041f68c95dd58b64877f4064e9fcd4f40e510b4e725e8e20622a7b5"
+    },
+    {
+      "source": "docs/characters/legacy_sources/wanderer/view_acts.py",
+      "category": "legacy_source_copies",
+      "status": "identical",
+      "pack": "docs/characters/legacy_sources/wanderer/view_acts.py",
+      "sha256": "72ce06ce37b56f9433aa0be878c31059c51dcdc6722f69c318ad0ea94c8ce882"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_건물공격.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_건물공격.md",
+      "sha256": "bbedf52f5b9fd9ba92f8f58c84ff6d14dd05ac6fbfc14808b9fae86919e1d227"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_방랑자3D.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_방랑자3D.md",
+      "sha256": "d86bbde5cee33ec1b2c6c4d173556736716f6ca9d36dbce2a2d17aa3f0d43186"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_방랑자_AB재디자인.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_방랑자_AB재디자인.md",
+      "sha256": "763c59ca0a766d533085b9e14d3f39ece6d3f2828bb5ed4a17bcc3317aa51a90"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_방랑자_던지기IK_사격반동.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_방랑자_던지기IK_사격반동.md",
+      "sha256": "d012938e42fb7eb23d906cb385579f5b81922c1da9be26083fdcb5aa20658e8d"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_방랑자_총던지기.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_방랑자_총던지기.md",
+      "sha256": "fb65d768d151dd6949c1f6c41b9aaa469014170ce60647778d298cb513f58d5e"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_방랑자_총쏘기2_던지기.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_방랑자_총쏘기2_던지기.md",
+      "sha256": "826a4f6215d8f301fb0de7746207809a71de6cc1e99cffddce7a9fe0a28f45b2"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_방랑자_카툰머리.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_방랑자_카툰머리.md",
+      "sha256": "089d987c5d21471c7389afe1f95422e6184374e819fd0e1b885961b2aa508339"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_방랑자블록깨짐.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_방랑자블록깨짐.md",
+      "sha256": "c09ad54468b0d7b6012f0afed89d4529d3e5122d3943dddf1067a86666e9106d"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_블록부하.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_블록부하.md",
+      "sha256": "8aa9fb51f8a79bb474ba5ae3b5ee4bcdbd0182a165ac9bdd873f4e81e6bb64d6"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_설치건물.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_설치건물.md",
+      "sha256": "9fb955e3885b8d40e3840fd31ebe7beae1d9db532a30be2bfedb99bd89ceb8b5"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_스킬포탑분리.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_스킬포탑분리.md",
+      "sha256": "b667081c60434ee2b8d3693c185dcd3a445c1e6803b3fdc87e733aa1889344df"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_유닛랩_나란히비교.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_유닛랩_나란히비교.md",
+      "sha256": "63353d184883e64422e8412ef7782df8365cc8b0e31cc1bf1a23be99b0f25d20"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_유닛랩_레고색.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_유닛랩_레고색.md",
+      "sha256": "4564cfb21c5dbf87894873f001723b8aeb66bbb36e8a7b3d52b01933b6bf1c5f"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_유닛랩_무료모델.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_유닛랩_무료모델.md",
+      "sha256": "3ee368295eccc786da2c2774913e40efc99c9b0a2a0cdfb39928610a630deb76"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_유닛랩_블록.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_유닛랩_블록.md",
+      "sha256": "549571cc664a2f2984996214e71e8d28a07b8d64c2e35550f880ad1c67d185ce"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_유닛랩_점구름.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_유닛랩_점구름.md",
+      "sha256": "8d3ae8d6e046ec9776ab5219f285ad6f2a0263f8821522983ad692f865ac39c6"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_총구5도.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_총구5도.md",
+      "sha256": "b2db1cac08c1fe82aee0dbc524e54abec324a13f79e3b7bea6271fde6b77379d"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_캐릭터디테일.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_캐릭터디테일.md",
+      "sha256": "5e22c66ef8eee0e03ec30c98b8b38bc69a73503cdcb7d3182caa52006c41d708"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_캐릭터디테일_고급조명.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_캐릭터디테일_고급조명.md",
+      "sha256": "0672647a7f391d4fa38f32b6ee863309d4666d976c27c13f1ef12c665cecf2fb"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_캐릭터크기.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_캐릭터크기.md",
+      "sha256": "81ce8a86d23d779cf488af3c73ff1742a22052bde5d7febc7613d0cc1df19a3f"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_캐릭터화면크기.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_캐릭터화면크기.md",
+      "sha256": "09689272a7d09e066da4103db77caf051c92968ddb9b486af9c0915ff812a31c"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_클로즈업최적화.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_클로즈업최적화.md",
+      "sha256": "a288ee384a5742cafece11775736bdb2475ba4336e103e84e9bed5424d22416c"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_포탑등장.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_포탑등장.md",
+      "sha256": "701ab373dd5cc1efaab961d5b29ddaca8c4c81235809b46a25ef2ac31823991b"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_포탑사격_적근접.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_포탑사격_적근접.md",
+      "sha256": "d8ba35cdab906b216bbf67b6e0d4db1b6ac835405fa82aef30b11220b3c50df5"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_포탑앞클리어.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_포탑앞클리어.md",
+      "sha256": "810e251d38e18ab8b19796fca50789c7fa6ad489b7242f80c1cef224e21359ef"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_포탑쿼터뷰.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_포탑쿼터뷰.md",
+      "sha256": "191c1a69c674f2424de1b5be3d9ffd40a9284725b493a7d07e86824beefc6b3d"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_포탑키.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_포탑키.md",
+      "sha256": "cb7086aa43c78db1d59dc21a4ebb3f9876f3238d18afe1d61b10013869a3d93a"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_피격연출.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260924_작업보고서_피격연출.md",
+      "sha256": "2f1a8b8011c7136590776984517dad13d53c32f272dba324c408b5cae6779d07"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_D안_얼굴정합_턱목옷깃_Codex.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260925_작업보고서_D안_얼굴정합_턱목옷깃_Codex.md",
+      "sha256": "94b43d48be602a0b008d2708768030129db131f786749c8276189cc0f92a8bf7"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_B2그록블렌더수정.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260925_작업보고서_방랑자_B2그록블렌더수정.md",
+      "sha256": "a4f57628a2e1e6593cc9d407d52b2264c2ecf7b5d499782764f12ddb9b69c6d4"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_B2문어형머리.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260925_작업보고서_방랑자_B2문어형머리.md",
+      "sha256": "5ca878cea70436adee595d518e4a14b3f948f494cafeb3ec1be41c8b1feec42c"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_B2보완_볼륨_입체눈_갈기.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260925_작업보고서_방랑자_B2보완_볼륨_입체눈_갈기.md",
+      "sha256": "a07e1b021722838940385d52b2a69da80918cbb8b1288e86c7b86e5ac553a4b1"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_B2샘플시안.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260925_작업보고서_방랑자_B2샘플시안.md",
+      "sha256": "efb37066e705c6eebc7cc60b0bcde472eb46b2cc336c2daf3fff5405c576abb0"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_B2실루엣맞춤.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260925_작업보고서_방랑자_B2실루엣맞춤.md",
+      "sha256": "174f3f28cbb92889a4dd347c9d9900a1c165187d7abe65d43c757837c960707a"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_시안C등록.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260925_작업보고서_방랑자_시안C등록.md",
+      "sha256": "a8d9fc584b6361693e4bbadf8ba883c69e7964f7bc57b522c47eb11f0565db97"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_입체눈.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260925_작업보고서_방랑자_입체눈.md",
+      "sha256": "b55b8f9e5785d58eb22a8436f65f73ec5cd6e8eccf7ea1053004b694f0634b64"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_총재제작.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260925_작업보고서_방랑자_총재제작.md",
+      "sha256": "cb9e2fc10204a450d2c47b15c3f08df517842f234dc6567336daf30f077509d5"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_시안A.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260925_작업보고서_시안A.md",
+      "sha256": "9bdd88777d29c52a3dce12942d3a58060f0e8efc4710e20def21189d388d7dae"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_시안A디테일.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260925_작업보고서_시안A디테일.md",
+      "sha256": "6b266b999e253b0f8b4d188824db25792d857afc4928b21e8b5acc1c1d7fe943"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_총구방향.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260925_작업보고서_총구방향.md",
+      "sha256": "3fde97dc04b52a35c67638f07228b277700d11159f21413fd935dc5aa4aff128"
+    },
+    {
+      "source": "docs/reports/20260926_작업계획_블록고양이펫_Astra.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260926_작업계획_블록고양이펫_Astra.md",
+      "sha256": "5992d0bba78be028bd9aa873cb31df25d5a99d1e991d1c305c7a9e1df04fdeb8"
+    },
+    {
+      "source": "docs/reports/20260926_작업보고서_A얼굴그림자완화_Codex.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260926_작업보고서_A얼굴그림자완화_Codex.md",
+      "sha256": "980be17d9824dce97738a031f5c5d2f6c2fa6ee18f184598ee052d64b900ade6"
+    },
+    {
+      "source": "docs/reports/20260926_작업보고서_D안_등거치_표정인사승리_Codex.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260926_작업보고서_D안_등거치_표정인사승리_Codex.md",
+      "sha256": "798c794cd5d82da2183aec0141637660f3d4b39600f0937c9c1d62429a47d7b7"
+    },
+    {
+      "source": "docs/reports/20260926_작업보고서_D안_무기애니조명_Codex.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260926_작업보고서_D안_무기애니조명_Codex.md",
+      "sha256": "bdeaf90611782ce904a8c2ce8b7a1fe4ba16359aac6c907c896c8e226f694df6"
+    },
+    {
+      "source": "docs/reports/20260926_작업보고서_D얼굴색_그림자보정_Codex.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260926_작업보고서_D얼굴색_그림자보정_Codex.md",
+      "sha256": "9a1127627860a35900f03fdc98d9fa09b0c6be63c8a0e8ec3d2fd0ec439ff389"
+    },
+    {
+      "source": "docs/reports/20260926_작업보고서_블록고양이펫계획_Codex.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260926_작업보고서_블록고양이펫계획_Codex.md",
+      "sha256": "70221a8e9670e5342b11a4a2a8cb8ad38e43fccebe3c783256eced1c71dd2461"
+    },
+    {
+      "source": "docs/reports/20260926_작업보고서_시안A_D수준제작.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260926_작업보고서_시안A_D수준제작.md",
+      "sha256": "1f66edde1096b255c9a6a755dafa41456db3b17095c1019361a2085500b8b75c"
+    },
+    {
+      "source": "docs/reports/20260926_작업보고서_시안D발도.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260926_작업보고서_시안D발도.md",
+      "sha256": "501af3672bc291742c3bc724ea85035f97878727cc645922e0aab5ea005538d1"
+    },
+    {
+      "source": "docs/reports/20260926_작업보고서_쌍권총두발.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260926_작업보고서_쌍권총두발.md",
+      "sha256": "525651dbd9f7a9a32fbf09ff187a6172239783047c1417c962a8763ca47bfdff"
+    },
+    {
+      "source": "docs/reports/20260926_작업보고서_총구FX_후면가시성_Codex.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260926_작업보고서_총구FX_후면가시성_Codex.md",
+      "sha256": "aae018c34866001c1f25706577ecc653d00002a9875d8fee6a4c604734fb9596"
+    },
+    {
+      "source": "docs/reports/20260926_작업보고서_캐릭터30.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260926_작업보고서_캐릭터30.md",
+      "sha256": "c71614a64c0dad839d1ff51210315d26db8cb3b7db61b95b87d3a40fda880700"
+    },
+    {
+      "source": "docs/reports/20260927_작업계획_D스프라이트비율_Codex.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260927_작업계획_D스프라이트비율_Codex.md",
+      "sha256": "a342975913ee1f3dabf0465eae95e047557c7dbea4554f1b1637f9df58b4efba"
+    },
+    {
+      "source": "docs/reports/20260927_작업계획_루온리아_유닛랩정리_Codex.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260927_작업계획_루온리아_유닛랩정리_Codex.md",
+      "sha256": "458fbb083e9f992b8a3ec64ca90dcfa31acce5253315bc495cc0475cb8695329"
+    },
+    {
+      "source": "docs/reports/20260927_작업보고서_D비율추가_Codex.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260927_작업보고서_D비율추가_Codex.md",
+      "sha256": "dd4e23c346f2ca8d91e8dfc7b05085fdce4c09326c356b743da4951787a258f3"
+    },
+    {
+      "source": "docs/reports/20260927_작업보고서_루온리아_유닛랩정리_Codex.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260927_작업보고서_루온리아_유닛랩정리_Codex.md",
+      "sha256": "b1fb492e86663e1a60ef18cd3260248e89a2727fa3e643cb941d8ea769c58646"
+    },
+    {
+      "source": "docs/reports/20260927_작업보고서_루온정수리_캐릭터제작문서_Codex.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260927_작업보고서_루온정수리_캐릭터제작문서_Codex.md",
+      "sha256": "2c26b97ed9a08159e7a4543b63e7317cac16786fea9f9c0b7f1306161ba028d9"
+    },
+    {
+      "source": "docs/reports/20260927_작업보고서_블록고양이_얼굴전환_Codex.md",
+      "category": "reports",
+      "status": "identical",
+      "pack": "docs/reports/20260927_작업보고서_블록고양이_얼굴전환_Codex.md",
+      "sha256": "81e1862ef5bd1b4baa04102c4449a01d64e668c1bab65812d5ad0e058b9dea66"
+    },
+    {
+      "source": "docs/reports/assets/20260927_루온머리_제작문서_Codex/crown_checks.json",
+      "category": "evidence",
+      "status": "identical",
+      "pack": "docs/reports/assets/20260927_루온머리_제작문서_Codex/crown_checks.json",
+      "sha256": "7f23556112d2f7741d7f4624a18997344af179128657a189aa3d2311b7c1adf2"
+    },
+    {
+      "source": "docs/reports/assets/20260927_루온머리_제작문서_Codex/handoff_checks.json",
+      "category": "evidence",
+      "status": "identical",
+      "pack": "docs/reports/assets/20260927_루온머리_제작문서_Codex/handoff_checks.json",
+      "sha256": "97fa7c471e6307191d9ca94eaffdb32fcf385aa5ec8ca262001d41650323f9a5"
+    },
+    {
+      "source": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_35_back_compare.png",
+      "category": "evidence",
+      "status": "identical",
+      "pack": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_35_back_compare.png",
+      "sha256": "e940601082b74f7d15efce0aef0875eec4411b12e0499e17ea396a4dbb69df53"
+    },
+    {
+      "source": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_35_front_compare.png",
+      "category": "evidence",
+      "status": "identical",
+      "pack": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_35_front_compare.png",
+      "sha256": "7452df6dbd609fffbfdb81ff15304ffaddc79033b806632acc3e94e13801c8a7"
+    },
+    {
+      "source": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_35_high_compare.png",
+      "category": "evidence",
+      "status": "identical",
+      "pack": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_35_high_compare.png",
+      "sha256": "b25ee34c3dd4effa38893400abda465227ae87e1416ddece3504fc3ba11c6fef"
+    },
+    {
+      "source": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_35_unit_final.png",
+      "category": "evidence",
+      "status": "identical",
+      "pack": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_35_unit_final.png",
+      "sha256": "0a6442b11a49aa1759d2428a821262807419a660c43c08060f4dd8231a1a5451"
+    },
+    {
+      "source": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_back_compare.png",
+      "category": "evidence",
+      "status": "identical",
+      "pack": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_back_compare.png",
+      "sha256": "9f876b17c3dd731e552bbfb599353510a817264d6d304e64d678680bf83fa39a"
+    },
+    {
+      "source": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_front_compare.png",
+      "category": "evidence",
+      "status": "identical",
+      "pack": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_front_compare.png",
+      "sha256": "74269df669e0a0455640100bf2d358a571b6f1a40ee9c06042c1ce9590bcda34"
+    },
+    {
+      "source": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_high_compare.png",
+      "category": "evidence",
+      "status": "identical",
+      "pack": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_high_compare.png",
+      "sha256": "60f651c6038e22c72f3df1c39bf3a3e2770c1994871261468fd86ffa7dd2449c"
+    },
+    {
+      "source": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_unit_final.png",
+      "category": "evidence",
+      "status": "identical",
+      "pack": "docs/reports/assets/20260927_루온머리_제작문서_Codex/RUON_unit_final.png",
+      "sha256": "08bf6a4966c3a179163bbe43c774f639ecd1c61c4b41fb540fa1a8dce58e5790"
+    },
+    {
+      "source": "scripts/unit_lab_a/build_a.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_a/build_a.py",
+      "sha256": "de098119ce84f01a0353fed63b3a1326c6f99942b75f81a28e39816e5bcde3a1"
+    },
+    {
+      "source": "scripts/unit_lab_a/capture_muzzle_rear.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_a/capture_muzzle_rear.mjs",
+      "sha256": "b1d8b38fc8f4b2765f836c762a617aff0ecb65a72446a21c4860a9dea55beffb"
+    },
+    {
+      "source": "scripts/unit_lab_a/check_protection.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_a/check_protection.mjs",
+      "sha256": "f490dd7c32433f8ad77ac3d1ed3d04da712679d7e39a3d09aa078988eefc1cc8"
+    },
+    {
+      "source": "scripts/unit_lab_a/crown_a.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_a/crown_a.py",
+      "sha256": "c9a3362ee30715708fa57ba168cecd02b3344f223a1e79faac32f598ae4f0dbe"
+    },
+    {
+      "source": "scripts/unit_lab_a/expressions_a.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_a/expressions_a.py",
+      "sha256": "77ad6cac079fb20ec0f720f07049ee5d7d6abba790931c6cf3484d2abdaba005"
+    },
+    {
+      "source": "scripts/unit_lab_a/inspect_face.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_a/inspect_face.mjs",
+      "sha256": "ef1f55c76c20da2e4941c6bd405bdc30dd5297fc0daef78d1416d0655017114e"
+    },
+    {
+      "source": "scripts/unit_lab_a/legacy_actions.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_a/legacy_actions.py",
+      "sha256": "cc438c6b947501f258eb515231871a0a20f67fadfdd6b016a95f576b2fe30648"
+    },
+    {
+      "source": "scripts/unit_lab_a/legacy_gait.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_a/legacy_gait.py",
+      "sha256": "2b00e2f068b9ddd51694c6d3f2c1c8878c899192fe7e169d491d87c877da3621"
+    },
+    {
+      "source": "scripts/unit_lab_a/review_form.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_a/review_form.mjs",
+      "sha256": "ab84ba6801ebb2bb5568b5c259645fbdfd318d353b43ddae7bfcbe189be4d97f"
+    },
+    {
+      "source": "scripts/unit_lab_a/rig_a.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_a/rig_a.py",
+      "sha256": "9cba51a38d9cce339076617f32a80f8622f68f1391281d144c6eeed164acad56"
+    },
+    {
+      "source": "scripts/unit_lab_a/verify_a01.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_a/verify_a01.mjs",
+      "sha256": "21fd0d83d6d47bd53a510e39bbf70ade309768ccf6f8982067edb20e5ba8160e"
+    },
+    {
+      "source": "scripts/unit_lab_a/verify_face_shadows.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_a/verify_face_shadows.mjs",
+      "sha256": "24675d5b601f152a0b5e0b17cddcd2b73ca5062fcdec1aa57f1b971c3f42f99d"
+    },
+    {
+      "source": "scripts/unit_lab_a/verify_muzzle_fx.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_a/verify_muzzle_fx.mjs",
+      "sha256": "fd229625a6a8b456e74e5bbfe7d4389c184acbccf683c9cd63fb4e2778871f3e"
+    },
+    {
+      "source": "scripts/unit_lab_a/weapons_a.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_a/weapons_a.py",
+      "sha256": "d93a1ed2fb647e406cd77b06205da359a57d77599af58a301f3d681698742330"
+    },
+    {
+      "source": "scripts/unit_lab_cat/build_cat.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_cat/build_cat.py",
+      "sha256": "2698744e333a8f1da0a2897ca058ddbe89857d721c024ce27b27d328509d9d49"
+    },
+    {
+      "source": "scripts/unit_lab_cat/verify_preview.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_cat/verify_preview.mjs",
+      "sha256": "fb5dbd0524d588a58765e2c294eaf9d521486e51b4404e460fedeac74949d2a0"
+    },
+    {
+      "source": "scripts/unit_lab_cat/verify_transitions.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_cat/verify_transitions.mjs",
+      "sha256": "ebd576133a9e40d327857e2e53bb2cdca4ccae5c7bd41ba69894c43d3638238c"
+    },
+    {
+      "source": "scripts/unit_lab_characters/backup.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_characters/backup.py",
+      "sha256": "0b4716df6f51428975f2d21d695c682fe2382f07630ef02dbfd0a1a81a272e88"
+    },
+    {
+      "source": "scripts/unit_lab_characters/build_ruon.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_characters/build_ruon.py",
+      "sha256": "c0243a57ad8824c14db67909b5c88733ba1f3e6749016b6a339c33e085bb6ee6"
+    },
+    {
+      "source": "scripts/unit_lab_characters/document_inventory.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_characters/document_inventory.py",
+      "sha256": "12fe40025d2fa9b7cb6b16a4c20a66c538b0b153283685899fea31ecdc2a5fdb"
+    },
+    {
+      "source": "scripts/unit_lab_characters/organize_tool.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_characters/organize_tool.py",
+      "sha256": "31a7d36e53850f0038228d194f061b6f03937eb2a00a10986d394733da388166"
+    },
+    {
+      "source": "scripts/unit_lab_characters/rebuild.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_characters/rebuild.py",
+      "sha256": "5093f806ba3b09be38093d2350ecccea5aa6695682d28cb23a757e967eb851da"
+    },
+    {
+      "source": "scripts/unit_lab_characters/refine_ruon_crown.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_characters/refine_ruon_crown.py",
+      "sha256": "f6efb0af619fe6bb4896b129d85494448eca8086e439b8153e4bcf8fe8c6b985"
+    },
+    {
+      "source": "scripts/unit_lab_characters/verify.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_characters/verify.mjs",
+      "sha256": "72523c027f145ca24f496f5d54979c0f87b21c8c55e29e24f62cd2c88544ce42"
+    },
+    {
+      "source": "scripts/unit_lab_characters/verify_crown.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_characters/verify_crown.mjs",
+      "sha256": "c52fc02a2dae5fe204762c65ce501783005d2a46cb8e6f44cef3acc44782090b"
+    },
+    {
+      "source": "scripts/unit_lab_characters/verify_handoff.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_characters/verify_handoff.mjs",
+      "sha256": "9de43d3b9164627027befc54b66e420c40c1519c14ece3175c01224b1978d37a"
+    },
+    {
+      "source": "scripts/unit_lab_d/build_d.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/build_d.py",
+      "sha256": "57d173703e3ff23d135fca9d771cdbb4ccccdffd6bc379aa83e0684954db6da6"
+    },
+    {
+      "source": "scripts/unit_lab_d/capture_face_before.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/capture_face_before.mjs",
+      "sha256": "e923c15f0df5f67905a13bf3db198c60d4cd1541210bc3c13a6e0bc9c67c7282"
+    },
+    {
+      "source": "scripts/unit_lab_d/check_geometry.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/check_geometry.mjs",
+      "sha256": "3b79ad08bec40182cb590a35990cdf09017e6f1e9bccb6cd64afffc296008bd9"
+    },
+    {
+      "source": "scripts/unit_lab_d/check_oneshot.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/check_oneshot.mjs",
+      "sha256": "10dc3ab2a048ff1adba77750a1188189ea127efb3f985d8a8a837d99fbd80d67"
+    },
+    {
+      "source": "scripts/unit_lab_d/check_shading.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/check_shading.mjs",
+      "sha256": "2c51b18fdba0ce19f6a9e694d93ee31f77f1a72508081fc9762e625594754697"
+    },
+    {
+      "source": "scripts/unit_lab_d/check_weapon_views.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/check_weapon_views.mjs",
+      "sha256": "6b0c93363e9d096dc30f997440bbd272e9a0fd8e7324ed007de160ab7245896a"
+    },
+    {
+      "source": "scripts/unit_lab_d/expressions_d.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/expressions_d.py",
+      "sha256": "6eabfd4885b4203f50754db53b30b0b11bb37d6935137d251c949e60bce01813"
+    },
+    {
+      "source": "scripts/unit_lab_d/legacy_actions.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/legacy_actions.py",
+      "sha256": "1272d068362adf2578a2ae5c8ee2cb4dc02565ed2328c024726eb54310e74421"
+    },
+    {
+      "source": "scripts/unit_lab_d/legacy_gait.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/legacy_gait.py",
+      "sha256": "2b00e2f068b9ddd51694c6d3f2c1c8878c899192fe7e169d491d87c877da3621"
+    },
+    {
+      "source": "scripts/unit_lab_d/prepare_review.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/prepare_review.py",
+      "sha256": "30b185be88dbc5492ac9b7f8a220bf24cb865d483a0d364841b5a03bff6445b1"
+    },
+    {
+      "source": "scripts/unit_lab_d/reference_eye_left_zoom.png",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/reference_eye_left_zoom.png",
+      "sha256": "808b84ce8ed45e84f38a063fee6411bc764c07180af7406ab7a08a3b3fcb0dd4"
+    },
+    {
+      "source": "scripts/unit_lab_d/reference_eye_right_zoom.png",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/reference_eye_right_zoom.png",
+      "sha256": "9271dc9800e693c8e68e1998131672d7e9d512ba549b87b8de5efba9e2c108da"
+    },
+    {
+      "source": "scripts/unit_lab_d/refine_d08.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/refine_d08.py",
+      "sha256": "65ceafa2223e48cb5add4c81c056ba6a44c1530cbc726348cf095610de658cee"
+    },
+    {
+      "source": "scripts/unit_lab_d/review_face_tone.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/review_face_tone.mjs",
+      "sha256": "a096a83e479f9d51cfefee1401406588f8182d713802ba8c6d4707daf0cf7e82"
+    },
+    {
+      "source": "scripts/unit_lab_d/rig_d.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/rig_d.py",
+      "sha256": "c791e60f383739eee21b40cc658b77f6e3a321f22ed27f943f0c159159cf6014"
+    },
+    {
+      "source": "scripts/unit_lab_d/verify_d.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/verify_d.mjs",
+      "sha256": "17a04c54a58e683821942509aaa6f4ea4090e9afd6d33d2ec8a0b04b94807ae9"
+    },
+    {
+      "source": "scripts/unit_lab_d/verify_d05.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/verify_d05.mjs",
+      "sha256": "0606b09d7c1ea128c33c1dd772451cd83067397345e823186f9abaf9130e6ad5"
+    },
+    {
+      "source": "scripts/unit_lab_d/verify_d06.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/verify_d06.mjs",
+      "sha256": "3c81eddf39a21f231033d8d8dfbf93f2a4906b81b1ce03ef34ae85e8c515cb19"
+    },
+    {
+      "source": "scripts/unit_lab_d/verify_d07.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/verify_d07.mjs",
+      "sha256": "ce155f1fb23317b3495f775d77330fc27a51f0424b2c362653e2915874535e5a"
+    },
+    {
+      "source": "scripts/unit_lab_d/verify_d08.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/verify_d08.mjs",
+      "sha256": "a3ac89420d6d22af80c9f44723ef48e6643283756549c615ef904c72d05e51b2"
+    },
+    {
+      "source": "scripts/unit_lab_d/verify_face_appearance.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/verify_face_appearance.mjs",
+      "sha256": "7d7f4ecf5d1f49f374bc7c42f9438dd9e3fbbf8ec8b8ccd2a047fcf395895db4"
+    },
+    {
+      "source": "scripts/unit_lab_d/verify_lighting.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/verify_lighting.mjs",
+      "sha256": "ac15e2a60b5004e1952d9a803d8bd51a320091a116c97c42ac352cf6d3e8d2c7"
+    },
+    {
+      "source": "scripts/unit_lab_d/weapons_d.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d/weapons_d.py",
+      "sha256": "0a6541ed63836fc359d3a6b5fde0fabbb6b30d42de5a4af73c34ca62eb6e290b"
+    },
+    {
+      "source": "scripts/unit_lab_d_sprite/build_sprite.py",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d_sprite/build_sprite.py",
+      "sha256": "d466582593ef586de99a13c7a68ec144e8daf19fc7031020ea27d4eee45b2823"
+    },
+    {
+      "source": "scripts/unit_lab_d_sprite/verify.mjs",
+      "category": "current_build_scripts",
+      "status": "identical",
+      "pack": "scripts/unit_lab_d_sprite/verify.mjs",
+      "sha256": "b768b8c9aa36c4d24c548b34f0273b1291e1beeafe014906ec3b8c8378391150"
+    },
+    {
+      "source": "src/tools/characterCompare/main.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/characterCompare/main.ts",
+      "sha256": "1921ac482a7e24bee13dcfddcf45015ef2a57473aaf289201420120654ceba0f"
+    },
+    {
+      "source": "src/tools/unitLabA/FaceShadows.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabA/FaceShadows.ts",
+      "sha256": "1d04749ba94742f7d96a18eda827d97f24297808c87604c9da7bf402261ccb0f"
+    },
+    {
+      "source": "src/tools/unitLabA/main.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabA/main.ts",
+      "sha256": "cad2ec6dea8882edbc3e036bdcea1e8387e81bd0f1cde8aa984c5416d4cce196"
+    },
+    {
+      "source": "src/tools/unitLabA/ReferenceLighting.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabA/ReferenceLighting.ts",
+      "sha256": "99953988198554c33b71ccfa9cb2cda93acc527b759a12e0e535e15891294eff"
+    },
+    {
+      "source": "src/tools/unitLabD/FaceAppearance.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabD/FaceAppearance.ts",
+      "sha256": "3a24fa05256a3a4c576d5554de8c41e04f0e67a58261fda24cfab47399ecea69"
+    },
+    {
+      "source": "src/tools/unitLabD/main.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabD/main.ts",
+      "sha256": "c31b0b308ec0bdd886edc06b9af73f9a662007a1ee700c87e375322a89cefca4"
+    },
+    {
+      "source": "src/tools/unitLabD/NativeBlockEffects.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabD/NativeBlockEffects.ts",
+      "sha256": "54723c9ec10f9647252d449161b9b2a03efe2e2849c13b849523f6622670218a"
+    },
+    {
+      "source": "src/tools/unitLabD/ReferenceLighting.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabD/ReferenceLighting.ts",
+      "sha256": "01ada864caa0f8eb9961c3a45645396fbf0c33d4aebce125ef0936066a50ef98"
+    },
+    {
+      "source": "src/tools/unitLabDSprite/main.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabDSprite/main.ts",
+      "sha256": "efa384515b6ad91a59f2f3cdcf570b2749a58d0ed230e3d498d2972daef2d4fb"
+    },
+    {
+      "source": "src/tools/unitLabPet/main.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabPet/main.ts",
+      "sha256": "55674b429ce37837a0ce4fe4a04436835b7ee83b4aac4adc9aa26e587ca3107c"
+    },
+    {
+      "source": "src/tools/unitLabTool/CharacterCatalog.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabTool/CharacterCatalog.ts",
+      "sha256": "a0a30dc9fa0e1125826fba3a07071b3dbba3eb2abe147b184c17df15cc46a2c9"
+    },
+    {
+      "source": "src/tools/unitLabTool/CharacterLab.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabTool/CharacterLab.ts",
+      "sha256": "4aeb923a7eaa5405dce62f74b03059cfdb2b2d96423ae9d31a4bcdc9a9b2c862"
+    },
+    {
+      "source": "src/tools/unitLabTool/CombatLab.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabTool/CombatLab.ts",
+      "sha256": "6b488d7542e8b10e77c509016cf0272aa947a1b3baa200ae0497275dbb926f21"
+    },
+    {
+      "source": "src/tools/unitLabTool/GpuCloud.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabTool/GpuCloud.ts",
+      "sha256": "0c8980053fc2aadb4850b24a0b0e98050652ed0a5685417b516eaafa8bcff3e3"
+    },
+    {
+      "source": "src/tools/unitLabTool/main.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabTool/main.ts",
+      "sha256": "84add9c38867eca5602bd54e82309e792ca7e65be839d62f6ac377b90bcfa0fa"
+    },
+    {
+      "source": "src/tools/unitLabTool/MapLab.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabTool/MapLab.ts",
+      "sha256": "c4babdce3d85531c4782b04923ac8b63283e03b7e3e0c7757f09fe66b1db65c9"
+    },
+    {
+      "source": "src/tools/unitLabTool/VoxelCloud.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabTool/VoxelCloud.ts",
+      "sha256": "a1fec18882cbbedbe12735f5e1eeccab6a8a5760b71313367fefe0e5ad13b989"
+    },
+    {
+      "source": "src/tools/unitLabTool/VoxelMesh.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabTool/VoxelMesh.ts",
+      "sha256": "1784647134af006935374a1a190a0fca38edb11145bb2941b0a1d7561cff05bb"
+    },
+    {
+      "source": "src/tools/unitLabTool/WeaponMuzzleFx.ts",
+      "category": "viewer_source",
+      "status": "identical",
+      "pack": "src/tools/unitLabTool/WeaponMuzzleFx.ts",
+      "sha256": "333a6b09cab7fa638d09a2c3b48a0a59292aa55e5d4664e39b585dc86675362f"
+    },
+    {
+      "source": "unit-lab-tool.html",
+      "category": "tool_html",
+      "status": "different",
+      "pack": null,
+      "existing_candidates": [
+        {
+          "path": "tools/unit-lab-tool.html",
+          "sha256": "d0544f26f221637a12df75ec2d549a0e66472db7e4bd6f4092d02378f9c8bee5",
+          "bytes": 17345
+        }
+      ]
+    },
+    {
+      "source": "wanderer-a-tool.html",
+      "category": "tool_html",
+      "status": "different",
+      "pack": null,
+      "existing_candidates": [
+        {
+          "path": "tools/wanderer-a-tool.html",
+          "sha256": "a2c4ce12fd88013b7fcbc87b9b99068ef2f9ab4b99e61955332763af2989db2d",
+          "bytes": 3572
+        }
+      ]
+    },
+    {
+      "source": "wanderer-d-sprite-tool.html",
+      "category": "tool_html",
+      "status": "different",
+      "pack": null,
+      "existing_candidates": [
+        {
+          "path": "tools/wanderer-d-sprite-tool.html",
+          "sha256": "f73c8ab3e77a0748db0c6d760803cfb5cd6623561052142bd506976477f9386e",
+          "bytes": 395
+        }
+      ]
+    },
+    {
+      "source": "wanderer-d-tool.html",
+      "category": "tool_html",
+      "status": "different",
+      "pack": null,
+      "existing_candidates": [
+        {
+          "path": "tools/wanderer-d-tool.html",
+          "sha256": "353d1ade0f33122d23ed58bef40d20293267e224f96e8c111aea2606ccdba760",
+          "bytes": 3571
+        }
+      ]
+    },
+    {
+      "source": "docs/characters/01_캐릭터_제작방법.md",
+      "category": "character_docs",
+      "status": "identical",
+      "pack": "docs/characters/01_캐릭터_제작방법.md",
+      "sha256": "a45617e42ee6e7e6685477443b2e2480a21fbf17ef4eb143609292c030a81b91"
+    },
+    {
+      "source": "docs/characters/02_전체작업이력.md",
+      "category": "character_docs",
+      "status": "identical",
+      "pack": "docs/characters/02_전체작업이력.md",
+      "sha256": "24d70145056c9c27f084f3e3be8d25309e3c0edb54d37b96bd3ca0f5179c7853"
+    },
+    {
+      "source": "docs/characters/03_실행_검증_복구.md",
+      "category": "character_docs",
+      "status": "identical",
+      "pack": "docs/characters/03_실행_검증_복구.md",
+      "sha256": "a523f6b855283bd88c72883866aecf5bdd8bf82f7ad1f172a8d44a90f96f2ff4"
+    },
+    {
+      "source": "docs/characters/04_파일목록.md",
+      "category": "character_docs",
+      "status": "identical",
+      "pack": "docs/characters/04_파일목록.md",
+      "sha256": "16a0927be1e509314eb81e8ce9446c054c5d06ccc1ac3c60901ccb9603b2fc32"
+    },
+    {
+      "source": "docs/characters/inventory.json",
+      "category": "character_docs",
+      "status": "identical",
+      "pack": "docs/characters/inventory.json",
+      "sha256": "fe67578e5f85b230a3cbcadffad8fbf3713d178d58e756fca497f58b7e0140cf"
+    },
+    {
+      "source": "docs/characters/README.md",
+      "category": "character_docs",
+      "status": "identical",
+      "pack": "docs/characters/README.md",
+      "sha256": "64c93febd69c4f797f7f7fbdcff4ffd48c5889842023bc05714de45ceccf8dba"
+    }
+  ]
+}

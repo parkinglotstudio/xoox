@@ -1,0 +1,1811 @@
+{
+  "at": "2026-09-27T18:08:38",
+  "source": "C:\\xoox",
+  "destination": "C:\\Users\\dmaxd\\CodexPack_20260927",
+  "policy": "copy missing only, preserve existing files, source retained",
+  "files": [
+    {
+      "source": "data/ui/actor/wanderer/aim_fire/aim_fire.json",
+      "destination": "data/ui/actor/wanderer/aim_fire/aim_fire.json",
+      "reason": "sprite_references",
+      "bytes": 834,
+      "sha256": "ec2cd6396769eab9e85b1e07109d3723c04760a37686cbfff6b9dbca51eea86b",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_fire/aim_fire_sheet.png",
+      "destination": "data/ui/actor/wanderer/aim_fire/aim_fire_sheet.png",
+      "reason": "sprite_references",
+      "bytes": 210528,
+      "sha256": "29ba910bfd45739bb56805b45dc43783448f2073b6dc58cd0d5fdd946e36dfb7",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_b/aim_walk_b.json",
+      "destination": "data/ui/actor/wanderer/aim_walk_b/aim_walk_b.json",
+      "reason": "sprite_references",
+      "bytes": 850,
+      "sha256": "e569a289cfba338f9e12126c41769a41d679983a60deb2d3884a6744d48c24db",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_b/aim_walk_b_sheet.png",
+      "destination": "data/ui/actor/wanderer/aim_walk_b/aim_walk_b_sheet.png",
+      "reason": "sprite_references",
+      "bytes": 229151,
+      "sha256": "a7841a7d690e8b95f3235922e34e068aab90c89c332bdae61ce80d4adae03d9c",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_f/aim_walk_f.json",
+      "destination": "data/ui/actor/wanderer/aim_walk_f/aim_walk_f.json",
+      "reason": "sprite_references",
+      "bytes": 850,
+      "sha256": "93db03a8bc65e2fdc847c274b79b9b8de1e178d8b79281497ba28ce7f04457b9",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_f/aim_walk_f_sheet.png",
+      "destination": "data/ui/actor/wanderer/aim_walk_f/aim_walk_f_sheet.png",
+      "reason": "sprite_references",
+      "bytes": 200274,
+      "sha256": "776f5868a21054eb9e97675a101f780a897ba4550f42c7d5d2c2136201b40a8c",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_l/aim_walk_l.json",
+      "destination": "data/ui/actor/wanderer/aim_walk_l/aim_walk_l.json",
+      "reason": "sprite_references",
+      "bytes": 850,
+      "sha256": "f3b4f18c1c916f3f8d255a3f386099248d65c680035d8d1565e606f16d2ebdc0",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_l/aim_walk_l_sheet.png",
+      "destination": "data/ui/actor/wanderer/aim_walk_l/aim_walk_l_sheet.png",
+      "reason": "sprite_references",
+      "bytes": 212485,
+      "sha256": "e617f4bc50c1694bc1283f8679623288237058304f49ede21bef2bdb3b488938",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_r/aim_walk_r.json",
+      "destination": "data/ui/actor/wanderer/aim_walk_r/aim_walk_r.json",
+      "reason": "sprite_references",
+      "bytes": 850,
+      "sha256": "3333d6c0691f6f3887465dbfa9265983dcde75c175c2af46d290078f1fa2b387",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/aim_walk_r/aim_walk_r_sheet.png",
+      "destination": "data/ui/actor/wanderer/aim_walk_r/aim_walk_r_sheet.png",
+      "reason": "sprite_references",
+      "bytes": 217495,
+      "sha256": "230d159348a3efc1f698ecedf209d897525147653a51344539610505c2f2541f",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/draw_holster/draw_holster.json",
+      "destination": "data/ui/actor/wanderer/draw_holster/draw_holster.json",
+      "reason": "sprite_references",
+      "bytes": 2095,
+      "sha256": "97ab1ee98918eef447632edf10576a61ecbe4adca9941217220d0ceed9fcd4fe",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/draw_holster/draw_holster_sheet.png",
+      "destination": "data/ui/actor/wanderer/draw_holster/draw_holster_sheet.png",
+      "reason": "sprite_references",
+      "bytes": 320698,
+      "sha256": "73c6aa6a2f641cf99024d695cc0c49123db77ce38dc3e281c2068bcdc1e3fe7c",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/holster/holster.json",
+      "destination": "data/ui/actor/wanderer/holster/holster.json",
+      "reason": "sprite_references",
+      "bytes": 2030,
+      "sha256": "15b6b9681ea3a0b963cbd6343ada9ee1dff59c9dce12769508d927afec09c9b8",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/holster/holster_sheet.png",
+      "destination": "data/ui/actor/wanderer/holster/holster_sheet.png",
+      "reason": "sprite_references",
+      "bytes": 332660,
+      "sha256": "7737a170e5080cb0f69b276f0a28d035ab9046bed58d91e70be2b6e47ef50cf4",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/ingame_idle/ingame_idle.json",
+      "destination": "data/ui/actor/wanderer/ingame_idle/ingame_idle.json",
+      "reason": "sprite_references",
+      "bytes": 6123,
+      "sha256": "4b752a3a8675dc3008598e967ba2ef656455c66a3409adea6dec7d7a1a12d97f",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/ingame_idle/ingame_idle_back.png",
+      "destination": "data/ui/actor/wanderer/ingame_idle/ingame_idle_back.png",
+      "reason": "sprite_references",
+      "bytes": 594800,
+      "sha256": "47d05bbd28473fc89538ca1ee5639b6b2b80c4e4b8f0f69c277ea9081ef9debd",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/ingame_idle/ingame_idle_gun.png",
+      "destination": "data/ui/actor/wanderer/ingame_idle/ingame_idle_gun.png",
+      "reason": "sprite_references",
+      "bytes": 676794,
+      "sha256": "4cfbc876c3fba0eef1fd64b6eeeaa0050a48193c2a30ddc505d5c81cf83d84f2",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/ingame_idle/ingame_idle_sheet.png",
+      "destination": "data/ui/actor/wanderer/ingame_idle/ingame_idle_sheet.png",
+      "reason": "sprite_references",
+      "bytes": 1406641,
+      "sha256": "fe4fbc47516d7522ad73339f627214d3a0a944a285d2b460a89c0c39d4b0b297",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/ingame_idle/ingame_idle_sheet.tmp.png",
+      "destination": "data/ui/actor/wanderer/ingame_idle/ingame_idle_sheet.tmp.png",
+      "reason": "sprite_references",
+      "bytes": 2542103,
+      "sha256": "0994d3ad081f4f6fd233b244f7271aab50668e18f71f8feb9bb37589424aa020",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/ingame_idle/ingame_idle_sheet_3q.png",
+      "destination": "data/ui/actor/wanderer/ingame_idle/ingame_idle_sheet_3q.png",
+      "reason": "sprite_references",
+      "bytes": 299807,
+      "sha256": "d936e6154694088f3dc0250ecdca00c3fe51b225786cd642f55db2a640c1d95e",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/move/move.json",
+      "destination": "data/ui/actor/wanderer/move/move.json",
+      "reason": "sprite_references",
+      "bytes": 5366,
+      "sha256": "04864044b24955f3e7fc2c1cad1773a2f95e410f912f9e352643336a88daa914",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/move/move_sheet.png",
+      "destination": "data/ui/actor/wanderer/move/move_sheet.png",
+      "reason": "sprite_references",
+      "bytes": 1101250,
+      "sha256": "004a704617ca3b2593a85f1f950fb43c38699e3fe35e8b8d5aeb947aa3252af6",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/move/run_left_fwd.png",
+      "destination": "data/ui/actor/wanderer/move/run_left_fwd.png",
+      "reason": "sprite_references",
+      "bytes": 612455,
+      "sha256": "49d068cd80f8420a722817f60b7975e01f4204f33858918708938ded1bf1ef6d",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/move/run_right_fwd.png",
+      "destination": "data/ui/actor/wanderer/move/run_right_fwd.png",
+      "reason": "sprite_references",
+      "bytes": 640352,
+      "sha256": "21fc4aa62a998f74c826b25e7c31d9234407758b423d463c80ee99019722c1f8",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/move_back/move_back.json",
+      "destination": "data/ui/actor/wanderer/move_back/move_back.json",
+      "reason": "sprite_references",
+      "bytes": 7202,
+      "sha256": "fd334c9e786cc014945b00930a065c1dc26d54b78d7e5a325ad827366b60b61d",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/move_back/move_back_sheet.png",
+      "destination": "data/ui/actor/wanderer/move_back/move_back_sheet.png",
+      "reason": "sprite_references",
+      "bytes": 904777,
+      "sha256": "227da94980a2fda6a7a7233092c38c6072438cde4e3baaf99a803c156dfd016e",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/throw/throw.json",
+      "destination": "data/ui/actor/wanderer/throw/throw.json",
+      "reason": "sprite_references",
+      "bytes": 6261,
+      "sha256": "de78417b16bc7b68d455a15e5d436557e730cb4515d2eb5f751c379f94cba08c",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/throw/throw_sheet.png",
+      "destination": "data/ui/actor/wanderer/throw/throw_sheet.png",
+      "reason": "sprite_references",
+      "bytes": 1428433,
+      "sha256": "aa3dcd1d287c2a1d09960ecafd41ae2b36237188af859166536cdc1f85b81c96",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/walk_gun/walk_gun.json",
+      "destination": "data/ui/actor/wanderer/walk_gun/walk_gun.json",
+      "reason": "sprite_references",
+      "bytes": 824,
+      "sha256": "dce64b8b23ac5243cd044aa7a26c8fc1ef1c90a6b6404ff9e3433d1fff558db4",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/walk_gun/walk_gun_sheet.png",
+      "destination": "data/ui/actor/wanderer/walk_gun/walk_gun_sheet.png",
+      "reason": "sprite_references",
+      "bytes": 206722,
+      "sha256": "2a62fdec222c74d6590b4e5b62264ff8df458b14466e1b9548e01e1ee9ce4a42",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/walk_l/walk_l.json",
+      "destination": "data/ui/actor/wanderer/walk_l/walk_l.json",
+      "reason": "sprite_references",
+      "bytes": 2541,
+      "sha256": "5af246be9f7a6a7c8d11c304c9d0d25da585c766566bd1a5eb79ce776b1e88a8",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/walk_l/walk_l_sheet.png",
+      "destination": "data/ui/actor/wanderer/walk_l/walk_l_sheet.png",
+      "reason": "sprite_references",
+      "bytes": 897830,
+      "sha256": "db8a850028a81a4e303da2bd9651e408cf82af5cd57bd7b000db7a56a28f8725",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/walk_r/walk_r.json",
+      "destination": "data/ui/actor/wanderer/walk_r/walk_r.json",
+      "reason": "sprite_references",
+      "bytes": 1574,
+      "sha256": "83642ae7e2eb92d33c2715fffd832b21d7b6e074eeb39156a01b115acea9d0d0",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/actor/wanderer/walk_r/walk_r_sheet.png",
+      "destination": "data/ui/actor/wanderer/walk_r/walk_r_sheet.png",
+      "reason": "sprite_references",
+      "bytes": 452258,
+      "sha256": "5dd6925f233aefbb45b66c9b66e791c172984f5c7c1d4983abebdfb666ec7b39",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/frames/shoot_00.png",
+      "destination": "data/ui/wanderer/test_clips/shoot/frames/shoot_00.png",
+      "reason": "sprite_references",
+      "bytes": 112537,
+      "sha256": "01ed06f972c1f14ce994e7562420f07388b20ea139ce013629f86e40c3b8c572",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/frames/shoot_01.png",
+      "destination": "data/ui/wanderer/test_clips/shoot/frames/shoot_01.png",
+      "reason": "sprite_references",
+      "bytes": 120505,
+      "sha256": "b12ee4eaee508d024e702d4c3230a2158bf4b452b30e4e5cefd695f2d31c8d1a",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/frames/shoot_02.png",
+      "destination": "data/ui/wanderer/test_clips/shoot/frames/shoot_02.png",
+      "reason": "sprite_references",
+      "bytes": 126830,
+      "sha256": "2b9521a2eacdd8c446ee43d60088bdf6947644c9d6e39f36347db34f4f8b5df5",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/frames/shoot_03.png",
+      "destination": "data/ui/wanderer/test_clips/shoot/frames/shoot_03.png",
+      "reason": "sprite_references",
+      "bytes": 123262,
+      "sha256": "c74403e69cc3f46a3a9afe8e3f6ff544cd1a3e557ba8ceef7dc1d7303e67499d",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/frames/shoot_04.png",
+      "destination": "data/ui/wanderer/test_clips/shoot/frames/shoot_04.png",
+      "reason": "sprite_references",
+      "bytes": 122286,
+      "sha256": "570560d9376f47f8c2647dc9e0f0e81d4dd8eb9e959a2be8fa5648b3e59cd06e",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/frames/shoot_05.png",
+      "destination": "data/ui/wanderer/test_clips/shoot/frames/shoot_05.png",
+      "reason": "sprite_references",
+      "bytes": 121050,
+      "sha256": "a74ec14adba2de7e2d818607a9052383d656d5c736afbdb5f2f688e826414adf",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/shoot.json",
+      "destination": "data/ui/wanderer/test_clips/shoot/shoot.json",
+      "reason": "sprite_references",
+      "bytes": 995,
+      "sha256": "7e8cc363bf4d253494cafa94be6735bb8696bbcc1cd20a0ecd531ba49d01a9c4",
+      "state": "copied"
+    },
+    {
+      "source": "data/ui/wanderer/test_clips/shoot/shoot_sheet.png",
+      "destination": "data/ui/wanderer/test_clips/shoot/shoot_sheet.png",
+      "reason": "sprite_references",
+      "bytes": 691035,
+      "sha256": "5a79c4576188ed64181fdfdd7d58de4799417f5d334075e460eb9d54bcf8e836",
+      "state": "copied"
+    },
+    {
+      "source": "docs/asset_backups/20260927_characters_Codex/manifest.json",
+      "destination": "docs/asset_backups/20260927_characters_Codex/manifest.json",
+      "reason": "backups",
+      "bytes": 3816,
+      "sha256": "e2c6d176ecc50cb1d5076c24f2fd9134032f2dc5273474bdd4932e28ba6d6e70",
+      "state": "copied"
+    },
+    {
+      "source": "docs/asset_backups/20260927_characters_Codex/unused_variants_and_previous_tool.zip",
+      "destination": "docs/asset_backups/20260927_characters_Codex/unused_variants_and_previous_tool.zip",
+      "reason": "backups",
+      "bytes": 22182736,
+      "sha256": "ea42dcd14a1a849dca4a2f4e54c2ad375a53dde3b93ff5d840f10ad60b49df4b",
+      "state": "copied"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/build_a_before.py",
+      "destination": "docs/asset_backups/20260927_RuonCrown_Codex/build_a_before.py",
+      "reason": "backups",
+      "bytes": 28988,
+      "sha256": "88e30cdde064c8d49c6d58787faefe8c483778fe6fb2be765ad38ac6294c6eb6",
+      "state": "copied"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/preservation_check.json",
+      "destination": "docs/asset_backups/20260927_RuonCrown_Codex/preservation_check.json",
+      "reason": "backups",
+      "bytes": 2200,
+      "sha256": "ec4ecd63e5f2fc1b3abea8b488a57a7699fe410d1cbff979afe07ec598b9f10c",
+      "state": "copied"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/RUON.blend",
+      "destination": "docs/asset_backups/20260927_RuonCrown_Codex/RUON.blend",
+      "reason": "backups",
+      "bytes": 3717802,
+      "sha256": "b700c2d324ac5eb47d19f2ff2830be7c5ba15a6029ceec056637970fb6670ff3",
+      "state": "copied"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/RUON.glb",
+      "destination": "docs/asset_backups/20260927_RuonCrown_Codex/RUON.glb",
+      "reason": "backups",
+      "bytes": 8546824,
+      "sha256": "926e63ac54cb7fa68e052be2ba11560b5060da08097c706252e241acfaf73b1b",
+      "state": "copied"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/RUON35_metrics.json",
+      "destination": "docs/asset_backups/20260927_RuonCrown_Codex/RUON35_metrics.json",
+      "reason": "backups",
+      "bytes": 5407,
+      "sha256": "ef484c88e3ec7b5ca669e169e4136de79ef5d8300626845570f41f2bb9ce23bb",
+      "state": "copied"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/RUON_35.blend",
+      "destination": "docs/asset_backups/20260927_RuonCrown_Codex/RUON_35.blend",
+      "reason": "backups",
+      "bytes": 5662557,
+      "sha256": "4a3e2a3e201a0efb5b2ff41453a36fa47634d73c12376dea92a21970f122fd27",
+      "state": "copied"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/RUON_35.glb",
+      "destination": "docs/asset_backups/20260927_RuonCrown_Codex/RUON_35.glb",
+      "reason": "backups",
+      "bytes": 8550804,
+      "sha256": "14ed11a244f703ae5b9788839ed2a9e25c0d0070bc77b3b73d04512ac21938ba",
+      "state": "copied"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/RUON_metrics.json",
+      "destination": "docs/asset_backups/20260927_RuonCrown_Codex/RUON_metrics.json",
+      "reason": "backups",
+      "bytes": 4969,
+      "sha256": "abbc05b242ade8afb96c3648b2ec0eaea407d526b499ef56472c3aa986c47bf8",
+      "state": "copied"
+    },
+    {
+      "source": "docs/asset_backups/20260927_RuonCrown_Codex/sha256.json",
+      "destination": "docs/asset_backups/20260927_RuonCrown_Codex/sha256.json",
+      "reason": "backups",
+      "bytes": 1451,
+      "sha256": "2ec4a48f9342a871e9d4b10a0ece267d4dfaaa0fcf719e70dfa70e492c136b33",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_건물공격.md",
+      "destination": "docs/reports/20260924_작업보고서_건물공격.md",
+      "reason": "reports",
+      "bytes": 629,
+      "sha256": "bbedf52f5b9fd9ba92f8f58c84ff6d14dd05ac6fbfc14808b9fae86919e1d227",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_방랑자3D.md",
+      "destination": "docs/reports/20260924_작업보고서_방랑자3D.md",
+      "reason": "reports",
+      "bytes": 1986,
+      "sha256": "d86bbde5cee33ec1b2c6c4d173556736716f6ca9d36dbce2a2d17aa3f0d43186",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_방랑자_AB재디자인.md",
+      "destination": "docs/reports/20260924_작업보고서_방랑자_AB재디자인.md",
+      "reason": "reports",
+      "bytes": 5129,
+      "sha256": "763c59ca0a766d533085b9e14d3f39ece6d3f2828bb5ed4a17bcc3317aa51a90",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_방랑자_던지기IK_사격반동.md",
+      "destination": "docs/reports/20260924_작업보고서_방랑자_던지기IK_사격반동.md",
+      "reason": "reports",
+      "bytes": 2968,
+      "sha256": "d012938e42fb7eb23d906cb385579f5b81922c1da9be26083fdcb5aa20658e8d",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_방랑자_총던지기.md",
+      "destination": "docs/reports/20260924_작업보고서_방랑자_총던지기.md",
+      "reason": "reports",
+      "bytes": 2305,
+      "sha256": "fb65d768d151dd6949c1f6c41b9aaa469014170ce60647778d298cb513f58d5e",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_방랑자_총쏘기2_던지기.md",
+      "destination": "docs/reports/20260924_작업보고서_방랑자_총쏘기2_던지기.md",
+      "reason": "reports",
+      "bytes": 2602,
+      "sha256": "826a4f6215d8f301fb0de7746207809a71de6cc1e99cffddce7a9fe0a28f45b2",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_방랑자_카툰머리.md",
+      "destination": "docs/reports/20260924_작업보고서_방랑자_카툰머리.md",
+      "reason": "reports",
+      "bytes": 2725,
+      "sha256": "089d987c5d21471c7389afe1f95422e6184374e819fd0e1b885961b2aa508339",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_방랑자블록깨짐.md",
+      "destination": "docs/reports/20260924_작업보고서_방랑자블록깨짐.md",
+      "reason": "reports",
+      "bytes": 1585,
+      "sha256": "c09ad54468b0d7b6012f0afed89d4529d3e5122d3943dddf1067a86666e9106d",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_블록부하.md",
+      "destination": "docs/reports/20260924_작업보고서_블록부하.md",
+      "reason": "reports",
+      "bytes": 1410,
+      "sha256": "8aa9fb51f8a79bb474ba5ae3b5ee4bcdbd0182a165ac9bdd873f4e81e6bb64d6",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_설치건물.md",
+      "destination": "docs/reports/20260924_작업보고서_설치건물.md",
+      "reason": "reports",
+      "bytes": 2180,
+      "sha256": "9fb955e3885b8d40e3840fd31ebe7beae1d9db532a30be2bfedb99bd89ceb8b5",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_스킬포탑분리.md",
+      "destination": "docs/reports/20260924_작업보고서_스킬포탑분리.md",
+      "reason": "reports",
+      "bytes": 988,
+      "sha256": "b667081c60434ee2b8d3693c185dcd3a445c1e6803b3fdc87e733aa1889344df",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_유닛랩_나란히비교.md",
+      "destination": "docs/reports/20260924_작업보고서_유닛랩_나란히비교.md",
+      "reason": "reports",
+      "bytes": 1538,
+      "sha256": "63353d184883e64422e8412ef7782df8365cc8b0e31cc1bf1a23be99b0f25d20",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_유닛랩_레고색.md",
+      "destination": "docs/reports/20260924_작업보고서_유닛랩_레고색.md",
+      "reason": "reports",
+      "bytes": 1593,
+      "sha256": "4564cfb21c5dbf87894873f001723b8aeb66bbb36e8a7b3d52b01933b6bf1c5f",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_유닛랩_무료모델.md",
+      "destination": "docs/reports/20260924_작업보고서_유닛랩_무료모델.md",
+      "reason": "reports",
+      "bytes": 2020,
+      "sha256": "3ee368295eccc786da2c2774913e40efc99c9b0a2a0cdfb39928610a630deb76",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_유닛랩_블록.md",
+      "destination": "docs/reports/20260924_작업보고서_유닛랩_블록.md",
+      "reason": "reports",
+      "bytes": 1999,
+      "sha256": "549571cc664a2f2984996214e71e8d28a07b8d64c2e35550f880ad1c67d185ce",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_유닛랩_점구름.md",
+      "destination": "docs/reports/20260924_작업보고서_유닛랩_점구름.md",
+      "reason": "reports",
+      "bytes": 2552,
+      "sha256": "8d3ae8d6e046ec9776ab5219f285ad6f2a0263f8821522983ad692f865ac39c6",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_총구5도.md",
+      "destination": "docs/reports/20260924_작업보고서_총구5도.md",
+      "reason": "reports",
+      "bytes": 566,
+      "sha256": "b2db1cac08c1fe82aee0dbc524e54abec324a13f79e3b7bea6271fde6b77379d",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_캐릭터디테일.md",
+      "destination": "docs/reports/20260924_작업보고서_캐릭터디테일.md",
+      "reason": "reports",
+      "bytes": 644,
+      "sha256": "5e22c66ef8eee0e03ec30c98b8b38bc69a73503cdcb7d3182caa52006c41d708",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_캐릭터디테일_고급조명.md",
+      "destination": "docs/reports/20260924_작업보고서_캐릭터디테일_고급조명.md",
+      "reason": "reports",
+      "bytes": 1986,
+      "sha256": "0672647a7f391d4fa38f32b6ee863309d4666d976c27c13f1ef12c665cecf2fb",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_캐릭터크기.md",
+      "destination": "docs/reports/20260924_작업보고서_캐릭터크기.md",
+      "reason": "reports",
+      "bytes": 698,
+      "sha256": "81ce8a86d23d779cf488af3c73ff1742a22052bde5d7febc7613d0cc1df19a3f",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_캐릭터화면크기.md",
+      "destination": "docs/reports/20260924_작업보고서_캐릭터화면크기.md",
+      "reason": "reports",
+      "bytes": 713,
+      "sha256": "09689272a7d09e066da4103db77caf051c92968ddb9b486af9c0915ff812a31c",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_클로즈업최적화.md",
+      "destination": "docs/reports/20260924_작업보고서_클로즈업최적화.md",
+      "reason": "reports",
+      "bytes": 1899,
+      "sha256": "a288ee384a5742cafece11775736bdb2475ba4336e103e84e9bed5424d22416c",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_포탑등장.md",
+      "destination": "docs/reports/20260924_작업보고서_포탑등장.md",
+      "reason": "reports",
+      "bytes": 635,
+      "sha256": "701ab373dd5cc1efaab961d5b29ddaca8c4c81235809b46a25ef2ac31823991b",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_포탑사격_적근접.md",
+      "destination": "docs/reports/20260924_작업보고서_포탑사격_적근접.md",
+      "reason": "reports",
+      "bytes": 2336,
+      "sha256": "d8ba35cdab906b216bbf67b6e0d4db1b6ac835405fa82aef30b11220b3c50df5",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_포탑앞클리어.md",
+      "destination": "docs/reports/20260924_작업보고서_포탑앞클리어.md",
+      "reason": "reports",
+      "bytes": 869,
+      "sha256": "810e251d38e18ab8b19796fca50789c7fa6ad489b7242f80c1cef224e21359ef",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_포탑쿼터뷰.md",
+      "destination": "docs/reports/20260924_작업보고서_포탑쿼터뷰.md",
+      "reason": "reports",
+      "bytes": 705,
+      "sha256": "191c1a69c674f2424de1b5be3d9ffd40a9284725b493a7d07e86824beefc6b3d",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_포탑키.md",
+      "destination": "docs/reports/20260924_작업보고서_포탑키.md",
+      "reason": "reports",
+      "bytes": 545,
+      "sha256": "cb7086aa43c78db1d59dc21a4ebb3f9876f3238d18afe1d61b10013869a3d93a",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260924_작업보고서_피격연출.md",
+      "destination": "docs/reports/20260924_작업보고서_피격연출.md",
+      "reason": "reports",
+      "bytes": 945,
+      "sha256": "2f1a8b8011c7136590776984517dad13d53c32f272dba324c408b5cae6779d07",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_B2그록블렌더수정.md",
+      "destination": "docs/reports/20260925_작업보고서_방랑자_B2그록블렌더수정.md",
+      "reason": "reports",
+      "bytes": 3611,
+      "sha256": "a4f57628a2e1e6593cc9d407d52b2264c2ecf7b5d499782764f12ddb9b69c6d4",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_B2문어형머리.md",
+      "destination": "docs/reports/20260925_작업보고서_방랑자_B2문어형머리.md",
+      "reason": "reports",
+      "bytes": 4903,
+      "sha256": "5ca878cea70436adee595d518e4a14b3f948f494cafeb3ec1be41c8b1feec42c",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_B2보완_볼륨_입체눈_갈기.md",
+      "destination": "docs/reports/20260925_작업보고서_방랑자_B2보완_볼륨_입체눈_갈기.md",
+      "reason": "reports",
+      "bytes": 3137,
+      "sha256": "a07e1b021722838940385d52b2a69da80918cbb8b1288e86c7b86e5ac553a4b1",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_B2샘플시안.md",
+      "destination": "docs/reports/20260925_작업보고서_방랑자_B2샘플시안.md",
+      "reason": "reports",
+      "bytes": 3157,
+      "sha256": "efb37066e705c6eebc7cc60b0bcde472eb46b2cc336c2daf3fff5405c576abb0",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_B2실루엣맞춤.md",
+      "destination": "docs/reports/20260925_작업보고서_방랑자_B2실루엣맞춤.md",
+      "reason": "reports",
+      "bytes": 5939,
+      "sha256": "174f3f28cbb92889a4dd347c9d9900a1c165187d7abe65d43c757837c960707a",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_시안C등록.md",
+      "destination": "docs/reports/20260925_작업보고서_방랑자_시안C등록.md",
+      "reason": "reports",
+      "bytes": 2728,
+      "sha256": "a8d9fc584b6361693e4bbadf8ba883c69e7964f7bc57b522c47eb11f0565db97",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_입체눈.md",
+      "destination": "docs/reports/20260925_작업보고서_방랑자_입체눈.md",
+      "reason": "reports",
+      "bytes": 3887,
+      "sha256": "b55b8f9e5785d58eb22a8436f65f73ec5cd6e8eccf7ea1053004b694f0634b64",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_방랑자_총재제작.md",
+      "destination": "docs/reports/20260925_작업보고서_방랑자_총재제작.md",
+      "reason": "reports",
+      "bytes": 2950,
+      "sha256": "cb9e2fc10204a450d2c47b15c3f08df517842f234dc6567336daf30f077509d5",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_시안A.md",
+      "destination": "docs/reports/20260925_작업보고서_시안A.md",
+      "reason": "reports",
+      "bytes": 680,
+      "sha256": "9bdd88777d29c52a3dce12942d3a58060f0e8efc4710e20def21189d388d7dae",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_시안A디테일.md",
+      "destination": "docs/reports/20260925_작업보고서_시안A디테일.md",
+      "reason": "reports",
+      "bytes": 744,
+      "sha256": "6b266b999e253b0f8b4d188824db25792d857afc4928b21e8b5acc1c1d7fe943",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260925_작업보고서_총구방향.md",
+      "destination": "docs/reports/20260925_작업보고서_총구방향.md",
+      "reason": "reports",
+      "bytes": 945,
+      "sha256": "3fde97dc04b52a35c67638f07228b277700d11159f21413fd935dc5aa4aff128",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260926_작업계획_블록고양이펫_Astra.md",
+      "destination": "docs/reports/20260926_작업계획_블록고양이펫_Astra.md",
+      "reason": "reports",
+      "bytes": 22433,
+      "sha256": "5992d0bba78be028bd9aa873cb31df25d5a99d1e991d1c305c7a9e1df04fdeb8",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260926_작업보고서_시안A_D수준제작.md",
+      "destination": "docs/reports/20260926_작업보고서_시안A_D수준제작.md",
+      "reason": "reports",
+      "bytes": 9672,
+      "sha256": "1f66edde1096b255c9a6a755dafa41456db3b17095c1019361a2085500b8b75c",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260926_작업보고서_시안D발도.md",
+      "destination": "docs/reports/20260926_작업보고서_시안D발도.md",
+      "reason": "reports",
+      "bytes": 806,
+      "sha256": "501af3672bc291742c3bc724ea85035f97878727cc645922e0aab5ea005538d1",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260926_작업보고서_쌍권총두발.md",
+      "destination": "docs/reports/20260926_작업보고서_쌍권총두발.md",
+      "reason": "reports",
+      "bytes": 480,
+      "sha256": "525651dbd9f7a9a32fbf09ff187a6172239783047c1417c962a8763ca47bfdff",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/20260926_작업보고서_캐릭터30.md",
+      "destination": "docs/reports/20260926_작업보고서_캐릭터30.md",
+      "reason": "reports",
+      "bytes": 333,
+      "sha256": "c71614a64c0dad839d1ff51210315d26db8cb3b7db61b95b87d3a40fda880700",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_a/build_a.py",
+      "destination": "scripts/unit_lab_a/build_a.py",
+      "reason": "current_build_scripts",
+      "bytes": 29291,
+      "sha256": "de098119ce84f01a0353fed63b3a1326c6f99942b75f81a28e39816e5bcde3a1",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_a/capture_muzzle_rear.mjs",
+      "destination": "scripts/unit_lab_a/capture_muzzle_rear.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 3950,
+      "sha256": "b1d8b38fc8f4b2765f836c762a617aff0ecb65a72446a21c4860a9dea55beffb",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_a/check_protection.mjs",
+      "destination": "scripts/unit_lab_a/check_protection.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 2931,
+      "sha256": "f490dd7c32433f8ad77ac3d1ed3d04da712679d7e39a3d09aa078988eefc1cc8",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_a/crown_a.py",
+      "destination": "scripts/unit_lab_a/crown_a.py",
+      "reason": "current_build_scripts",
+      "bytes": 2339,
+      "sha256": "c9a3362ee30715708fa57ba168cecd02b3344f223a1e79faac32f598ae4f0dbe",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_a/expressions_a.py",
+      "destination": "scripts/unit_lab_a/expressions_a.py",
+      "reason": "current_build_scripts",
+      "bytes": 4624,
+      "sha256": "77ad6cac079fb20ec0f720f07049ee5d7d6abba790931c6cf3484d2abdaba005",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_a/inspect_face.mjs",
+      "destination": "scripts/unit_lab_a/inspect_face.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 1329,
+      "sha256": "ef1f55c76c20da2e4941c6bd405bdc30dd5297fc0daef78d1416d0655017114e",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_a/legacy_actions.py",
+      "destination": "scripts/unit_lab_a/legacy_actions.py",
+      "reason": "current_build_scripts",
+      "bytes": 11010,
+      "sha256": "cc438c6b947501f258eb515231871a0a20f67fadfdd6b016a95f576b2fe30648",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_a/legacy_gait.py",
+      "destination": "scripts/unit_lab_a/legacy_gait.py",
+      "reason": "current_build_scripts",
+      "bytes": 2603,
+      "sha256": "2b00e2f068b9ddd51694c6d3f2c1c8878c899192fe7e169d491d87c877da3621",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_a/review_form.mjs",
+      "destination": "scripts/unit_lab_a/review_form.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 1314,
+      "sha256": "ab84ba6801ebb2bb5568b5c259645fbdfd318d353b43ddae7bfcbe189be4d97f",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_a/rig_a.py",
+      "destination": "scripts/unit_lab_a/rig_a.py",
+      "reason": "current_build_scripts",
+      "bytes": 21594,
+      "sha256": "9cba51a38d9cce339076617f32a80f8622f68f1391281d144c6eeed164acad56",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_a/verify_a01.mjs",
+      "destination": "scripts/unit_lab_a/verify_a01.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 6036,
+      "sha256": "21fd0d83d6d47bd53a510e39bbf70ade309768ccf6f8982067edb20e5ba8160e",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_a/verify_face_shadows.mjs",
+      "destination": "scripts/unit_lab_a/verify_face_shadows.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 2829,
+      "sha256": "24675d5b601f152a0b5e0b17cddcd2b73ca5062fcdec1aa57f1b971c3f42f99d",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_a/verify_muzzle_fx.mjs",
+      "destination": "scripts/unit_lab_a/verify_muzzle_fx.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 5318,
+      "sha256": "fd229625a6a8b456e74e5bbfe7d4389c184acbccf683c9cd63fb4e2778871f3e",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_a/weapons_a.py",
+      "destination": "scripts/unit_lab_a/weapons_a.py",
+      "reason": "current_build_scripts",
+      "bytes": 4161,
+      "sha256": "d93a1ed2fb647e406cd77b06205da359a57d77599af58a301f3d681698742330",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_cat/build_cat.py",
+      "destination": "scripts/unit_lab_cat/build_cat.py",
+      "reason": "current_build_scripts",
+      "bytes": 21594,
+      "sha256": "2698744e333a8f1da0a2897ca058ddbe89857d721c024ce27b27d328509d9d49",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_cat/verify_preview.mjs",
+      "destination": "scripts/unit_lab_cat/verify_preview.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 3969,
+      "sha256": "fb5dbd0524d588a58765e2c294eaf9d521486e51b4404e460fedeac74949d2a0",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_cat/verify_transitions.mjs",
+      "destination": "scripts/unit_lab_cat/verify_transitions.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 2591,
+      "sha256": "ebd576133a9e40d327857e2e53bb2cdca4ccae5c7bd41ba69894c43d3638238c",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_characters/backup.py",
+      "destination": "scripts/unit_lab_characters/backup.py",
+      "reason": "current_build_scripts",
+      "bytes": 1445,
+      "sha256": "0b4716df6f51428975f2d21d695c682fe2382f07630ef02dbfd0a1a81a272e88",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_characters/build_ruon.py",
+      "destination": "scripts/unit_lab_characters/build_ruon.py",
+      "reason": "current_build_scripts",
+      "bytes": 8977,
+      "sha256": "c0243a57ad8824c14db67909b5c88733ba1f3e6749016b6a339c33e085bb6ee6",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_characters/document_inventory.py",
+      "destination": "scripts/unit_lab_characters/document_inventory.py",
+      "reason": "current_build_scripts",
+      "bytes": 6422,
+      "sha256": "12fe40025d2fa9b7cb6b16a4c20a66c538b0b153283685899fea31ecdc2a5fdb",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_characters/organize_tool.py",
+      "destination": "scripts/unit_lab_characters/organize_tool.py",
+      "reason": "current_build_scripts",
+      "bytes": 13752,
+      "sha256": "31a7d36e53850f0038228d194f061b6f03937eb2a00a10986d394733da388166",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_characters/rebuild.py",
+      "destination": "scripts/unit_lab_characters/rebuild.py",
+      "reason": "current_build_scripts",
+      "bytes": 1306,
+      "sha256": "5093f806ba3b09be38093d2350ecccea5aa6695682d28cb23a757e967eb851da",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_characters/refine_ruon_crown.py",
+      "destination": "scripts/unit_lab_characters/refine_ruon_crown.py",
+      "reason": "current_build_scripts",
+      "bytes": 4425,
+      "sha256": "f6efb0af619fe6bb4896b129d85494448eca8086e439b8153e4bcf8fe8c6b985",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_characters/verify.mjs",
+      "destination": "scripts/unit_lab_characters/verify.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 7519,
+      "sha256": "72523c027f145ca24f496f5d54979c0f87b21c8c55e29e24f62cd2c88544ce42",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_characters/verify_crown.mjs",
+      "destination": "scripts/unit_lab_characters/verify_crown.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 3768,
+      "sha256": "c52fc02a2dae5fe204762c65ce501783005d2a46cb8e6f44cef3acc44782090b",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_characters/verify_handoff.mjs",
+      "destination": "scripts/unit_lab_characters/verify_handoff.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 2752,
+      "sha256": "9de43d3b9164627027befc54b66e420c40c1519c14ece3175c01224b1978d37a",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/build_d.py",
+      "destination": "scripts/unit_lab_d/build_d.py",
+      "reason": "current_build_scripts",
+      "bytes": 34796,
+      "sha256": "57d173703e3ff23d135fca9d771cdbb4ccccdffd6bc379aa83e0684954db6da6",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/capture_face_before.mjs",
+      "destination": "scripts/unit_lab_d/capture_face_before.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 1059,
+      "sha256": "e923c15f0df5f67905a13bf3db198c60d4cd1541210bc3c13a6e0bc9c67c7282",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/check_geometry.mjs",
+      "destination": "scripts/unit_lab_d/check_geometry.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 953,
+      "sha256": "3b79ad08bec40182cb590a35990cdf09017e6f1e9bccb6cd64afffc296008bd9",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/check_oneshot.mjs",
+      "destination": "scripts/unit_lab_d/check_oneshot.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 1156,
+      "sha256": "10dc3ab2a048ff1adba77750a1188189ea127efb3f985d8a8a837d99fbd80d67",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/check_shading.mjs",
+      "destination": "scripts/unit_lab_d/check_shading.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 1019,
+      "sha256": "2c51b18fdba0ce19f6a9e694d93ee31f77f1a72508081fc9762e625594754697",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/check_weapon_views.mjs",
+      "destination": "scripts/unit_lab_d/check_weapon_views.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 1130,
+      "sha256": "6b0c93363e9d096dc30f997440bbd272e9a0fd8e7324ed007de160ab7245896a",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/expressions_d.py",
+      "destination": "scripts/unit_lab_d/expressions_d.py",
+      "reason": "current_build_scripts",
+      "bytes": 4624,
+      "sha256": "6eabfd4885b4203f50754db53b30b0b11bb37d6935137d251c949e60bce01813",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/legacy_actions.py",
+      "destination": "scripts/unit_lab_d/legacy_actions.py",
+      "reason": "current_build_scripts",
+      "bytes": 11010,
+      "sha256": "1272d068362adf2578a2ae5c8ee2cb4dc02565ed2328c024726eb54310e74421",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/legacy_gait.py",
+      "destination": "scripts/unit_lab_d/legacy_gait.py",
+      "reason": "current_build_scripts",
+      "bytes": 2603,
+      "sha256": "2b00e2f068b9ddd51694c6d3f2c1c8878c899192fe7e169d491d87c877da3621",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/prepare_review.py",
+      "destination": "scripts/unit_lab_d/prepare_review.py",
+      "reason": "current_build_scripts",
+      "bytes": 876,
+      "sha256": "30b185be88dbc5492ac9b7f8a220bf24cb865d483a0d364841b5a03bff6445b1",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/reference_eye_left_zoom.png",
+      "destination": "scripts/unit_lab_d/reference_eye_left_zoom.png",
+      "reason": "current_build_scripts",
+      "bytes": 19746,
+      "sha256": "808b84ce8ed45e84f38a063fee6411bc764c07180af7406ab7a08a3b3fcb0dd4",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/reference_eye_right_zoom.png",
+      "destination": "scripts/unit_lab_d/reference_eye_right_zoom.png",
+      "reason": "current_build_scripts",
+      "bytes": 18449,
+      "sha256": "9271dc9800e693c8e68e1998131672d7e9d512ba549b87b8de5efba9e2c108da",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/refine_d08.py",
+      "destination": "scripts/unit_lab_d/refine_d08.py",
+      "reason": "current_build_scripts",
+      "bytes": 1464,
+      "sha256": "65ceafa2223e48cb5add4c81c056ba6a44c1530cbc726348cf095610de658cee",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/review_face_tone.mjs",
+      "destination": "scripts/unit_lab_d/review_face_tone.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 1303,
+      "sha256": "a096a83e479f9d51cfefee1401406588f8182d713802ba8c6d4707daf0cf7e82",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/rig_d.py",
+      "destination": "scripts/unit_lab_d/rig_d.py",
+      "reason": "current_build_scripts",
+      "bytes": 21329,
+      "sha256": "c791e60f383739eee21b40cc658b77f6e3a321f22ed27f943f0c159159cf6014",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/verify_d.mjs",
+      "destination": "scripts/unit_lab_d/verify_d.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 2383,
+      "sha256": "17a04c54a58e683821942509aaa6f4ea4090e9afd6d33d2ec8a0b04b94807ae9",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/verify_d05.mjs",
+      "destination": "scripts/unit_lab_d/verify_d05.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 5786,
+      "sha256": "0606b09d7c1ea128c33c1dd772451cd83067397345e823186f9abaf9130e6ad5",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/verify_d06.mjs",
+      "destination": "scripts/unit_lab_d/verify_d06.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 6067,
+      "sha256": "3c81eddf39a21f231033d8d8dfbf93f2a4906b81b1ce03ef34ae85e8c515cb19",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/verify_d07.mjs",
+      "destination": "scripts/unit_lab_d/verify_d07.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 4301,
+      "sha256": "ce155f1fb23317b3495f775d77330fc27a51f0424b2c362653e2915874535e5a",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/verify_d08.mjs",
+      "destination": "scripts/unit_lab_d/verify_d08.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 5774,
+      "sha256": "a3ac89420d6d22af80c9f44723ef48e6643283756549c615ef904c72d05e51b2",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/verify_face_appearance.mjs",
+      "destination": "scripts/unit_lab_d/verify_face_appearance.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 2985,
+      "sha256": "7d7f4ecf5d1f49f374bc7c42f9438dd9e3fbbf8ec8b8ccd2a047fcf395895db4",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/verify_lighting.mjs",
+      "destination": "scripts/unit_lab_d/verify_lighting.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 2476,
+      "sha256": "ac15e2a60b5004e1952d9a803d8bd51a320091a116c97c42ac352cf6d3e8d2c7",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d/weapons_d.py",
+      "destination": "scripts/unit_lab_d/weapons_d.py",
+      "reason": "current_build_scripts",
+      "bytes": 4161,
+      "sha256": "0a6541ed63836fc359d3a6b5fde0fabbb6b30d42de5a4af73c34ca62eb6e290b",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d_sprite/build_sprite.py",
+      "destination": "scripts/unit_lab_d_sprite/build_sprite.py",
+      "reason": "current_build_scripts",
+      "bytes": 8079,
+      "sha256": "d466582593ef586de99a13c7a68ec144e8daf19fc7031020ea27d4eee45b2823",
+      "state": "copied"
+    },
+    {
+      "source": "scripts/unit_lab_d_sprite/verify.mjs",
+      "destination": "scripts/unit_lab_d_sprite/verify.mjs",
+      "reason": "current_build_scripts",
+      "bytes": 3996,
+      "sha256": "b768b8c9aa36c4d24c548b34f0273b1291e1beeafe014906ec3b8c8378391150",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2그록블렌더수정/b2_34.png",
+      "destination": "docs/reports/assets/20260925_B2그록블렌더수정/b2_34.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 253233,
+      "sha256": "e4336b237e1040c64f80b542177a96fe1dedd9c1836fa2c13890585d95416d94",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2그록블렌더수정/b2_back.png",
+      "destination": "docs/reports/assets/20260925_B2그록블렌더수정/b2_back.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 206256,
+      "sha256": "ade67ef9d5d0d5c47d715bf795dc5aac6c04d40531d9b124d1b4f5a4a6fe3922",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2그록블렌더수정/b2_face.png",
+      "destination": "docs/reports/assets/20260925_B2그록블렌더수정/b2_face.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 227201,
+      "sha256": "219ec918bc65ddd8ce5e4246795666e7062c5b433438109cebc212fa57d1c63d",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2그록블렌더수정/b2_front.png",
+      "destination": "docs/reports/assets/20260925_B2그록블렌더수정/b2_front.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 213117,
+      "sha256": "214ae2b2648d25e35c088bcc23195d24d0d40961f636706c0c61a063046aa9e1",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2그록블렌더수정/b2_side90.png",
+      "destination": "docs/reports/assets/20260925_B2그록블렌더수정/b2_side90.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 191928,
+      "sha256": "e9f757c215d534ac95ec3da61476a7d31269f7a54998b521fdda3013b5d09bf6",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2그록블렌더수정/compare_b2_grok.png",
+      "destination": "docs/reports/assets/20260925_B2그록블렌더수정/compare_b2_grok.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 816059,
+      "sha256": "3855674cd15a3c8903d1ab3123c60aeb3151f967593c3a8759275b684f1a9543",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2그록블렌더수정/compare_b2_grok_face.png",
+      "destination": "docs/reports/assets/20260925_B2그록블렌더수정/compare_b2_grok_face.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 219335,
+      "sha256": "212794a30e5388660628751b653b8ef1ede94db3af53b017b5ec543b78168ebf",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2그록블렌더수정/sample.png",
+      "destination": "docs/reports/assets/20260925_B2그록블렌더수정/sample.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 594627,
+      "sha256": "8ce04c6ba4cb02bb35ef483a560f6b08aaa1e4c1bd6c00243c4470714aa29721",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2문어형머리/b2_octopus_34.png",
+      "destination": "docs/reports/assets/20260925_B2문어형머리/b2_octopus_34.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 277295,
+      "sha256": "44200b92ef6b24df7ce859b1a21c324c370b525aeb2b6db3442a337ddc479dc6",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2문어형머리/b2_octopus_back.png",
+      "destination": "docs/reports/assets/20260925_B2문어형머리/b2_octopus_back.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 235943,
+      "sha256": "3e91355e2234095845198b79080175063f45b8937489a95e3581778bca7c5139",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2문어형머리/b2_octopus_eye_texture.png",
+      "destination": "docs/reports/assets/20260925_B2문어형머리/b2_octopus_eye_texture.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 24021,
+      "sha256": "91b466e6bf30d2aaea1c571015991ae2308e7ff6a63067e5c435859185fab4de",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2문어형머리/b2_octopus_face.png",
+      "destination": "docs/reports/assets/20260925_B2문어형머리/b2_octopus_face.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 265238,
+      "sha256": "d16c4bc3eae1d9554f3a6478c5368a8931bba34e07db99c589f80878a6bad4c0",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2문어형머리/b2_octopus_front.png",
+      "destination": "docs/reports/assets/20260925_B2문어형머리/b2_octopus_front.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 249114,
+      "sha256": "d8750773ae4b6e908fe18957ba9a7f1d1a1f4e5fe3a0861e60e10573b0880a20",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2문어형머리/compare_b2_octopus.png",
+      "destination": "docs/reports/assets/20260925_B2문어형머리/compare_b2_octopus.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 773159,
+      "sha256": "00389dcf5ea9f602bdb16ba71bac8e2e09022cd6064e643842f6cb1e9e0a7148",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2문어형머리/compare_b2_octopus_face.png",
+      "destination": "docs/reports/assets/20260925_B2문어형머리/compare_b2_octopus_face.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 255995,
+      "sha256": "b55bce883db100595fd44836f75dded919970082a912bf3501267979d48f1a65",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2보완/b2_v2_compare.png",
+      "destination": "docs/reports/assets/20260925_B2보완/b2_v2_compare.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 735695,
+      "sha256": "ba0fdb06b529f13caa28b18c9c1eca52f74c3c4c5839cb982234c88f9f5b64b8",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2보완/b2_v2_eye_texture.png",
+      "destination": "docs/reports/assets/20260925_B2보완/b2_v2_eye_texture.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 24402,
+      "sha256": "2fc58f08765e1fea9b86ac89af799b413bbf685d305b72e024c7c843aee78084",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2보완/b2_v2_face.png",
+      "destination": "docs/reports/assets/20260925_B2보완/b2_v2_face.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 217948,
+      "sha256": "ed9b2788616948a52b369665d7087161de1912c555ec23d8d974f18700a87866",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2보완/sample.png",
+      "destination": "docs/reports/assets/20260925_B2보완/sample.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 594627,
+      "sha256": "8ce04c6ba4cb02bb35ef483a560f6b08aaa1e4c1bd6c00243c4470714aa29721",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2실루엣맞춤/b2_sil_34.png",
+      "destination": "docs/reports/assets/20260925_B2실루엣맞춤/b2_sil_34.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 285125,
+      "sha256": "52840367bf6018c5aba40f24b2f50a54f0d602d5a7002775103a8816d02ff9e1",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2실루엣맞춤/b2_sil_back.png",
+      "destination": "docs/reports/assets/20260925_B2실루엣맞춤/b2_sil_back.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 228842,
+      "sha256": "02991add9e6609f3016ebab975b2c84c840fd1c76aa61b0c9c1f21e9e9229af4",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2실루엣맞춤/b2_sil_face.png",
+      "destination": "docs/reports/assets/20260925_B2실루엣맞춤/b2_sil_face.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 273215,
+      "sha256": "04dc662497e5c64b976d58adce98c3ca9cf37f5fedce228988e821aee8a0cb8f",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2실루엣맞춤/b2_sil_front.png",
+      "destination": "docs/reports/assets/20260925_B2실루엣맞춤/b2_sil_front.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 247315,
+      "sha256": "f58996c16a05ce83bb38ec44eb7952940bab3d62a446ac8294de120be22573d2",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2실루엣맞춤/b2_sil_side90.png",
+      "destination": "docs/reports/assets/20260925_B2실루엣맞춤/b2_sil_side90.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 205535,
+      "sha256": "ecc9c684030923801da851b23e655e67df84c42749860cef1f481714107a77e7",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2실루엣맞춤/compare_b2_silhouette.png",
+      "destination": "docs/reports/assets/20260925_B2실루엣맞춤/compare_b2_silhouette.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 869242,
+      "sha256": "1074cb7c5a314c2af16f77286bf0ed488f4a30929d1f2a0bf815ce4226c7d724",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2실루엣맞춤/compare_b2_silhouette_face.png",
+      "destination": "docs/reports/assets/20260925_B2실루엣맞춤/compare_b2_silhouette_face.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 264873,
+      "sha256": "54b499c0ca56038b54a047b5abd2888d85e473cb171da90fb10ef42295e4c50f",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2실루엣맞춤/measure_levels_after.png",
+      "destination": "docs/reports/assets/20260925_B2실루엣맞춤/measure_levels_after.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 247135,
+      "sha256": "67c5390e7a4c267af648083b8042574a3557efba04a1e0ad83a6305979276264",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260925_B2실루엣맞춤/measure_levels_before.png",
+      "destination": "docs/reports/assets/20260925_B2실루엣맞춤/measure_levels_before.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 247995,
+      "sha256": "e53f832e28022c96c4cec2f8a4838ce1954da2e2124b92c16c7dcada6d8b4e4c",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/back_idle_0.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/back_idle_0.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 594523,
+      "sha256": "aa4d4eb439f677bd099bc763dc0858d48faa13a17193bad34a39bc54a04a51dc",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/back_rest_0.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/back_rest_0.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 578823,
+      "sha256": "1a4b0ddc41c912f81cbb94b39a664032731941194d00f3e8cd713c2d5bdb2941",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/bow.webm",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/bow.webm",
+      "reason": "referenced_report_evidence",
+      "bytes": 644451,
+      "sha256": "473e718d70b0583c1644b83fe11494f57f669d09f91dc4fca2ed6e4dfa060a11",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/checks.json",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/checks.json",
+      "reason": "referenced_report_evidence",
+      "bytes": 14963,
+      "sha256": "44c0377f38565fee69d1eb26b1ebb6fa2415f99bbe49af69431272250a055f3c",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/costume_rest_0.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/costume_rest_0.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 892610,
+      "sha256": "2704d536b231f0738a92cb8d37ea7c1c8aaac7a40e7f2b4f1481c52fdd468415",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/debug_double.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/debug_double.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 773624,
+      "sha256": "05aaa9a5fc14a6383cdc6c44c9fb7c721fc4c71d924162fa791ae2be38df53e1",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/debug_no_skin.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/debug_no_skin.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 708971,
+      "sha256": "fa379fd81d0e33705c42c1a70b5a605a22f9a86f011fd428bbe78b2f799fe3e3",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/face_blink_0.52.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/face_blink_0.52.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 896111,
+      "sha256": "f6861ee727e6f56b7da45cda630f78df47da7e02ae92a52ab9bf21612913b87c",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/face_blink_0.6.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/face_blink_0.6.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 895170,
+      "sha256": "7bbb2b8adb5656c7955fa7b915095ab96b9aae32f0e06ded5a1956b25cd75814",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/face_idle_0.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/face_idle_0.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 895768,
+      "sha256": "e0046b1c48e4397694b1caeb5741c7dfdfe9cb1d80c84d97957531f1877010ab",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/face_squint_1.1.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/face_squint_1.1.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 906154,
+      "sha256": "e79d0937b516eaa8d98808672fc0ae071ea46fafb063e109e7b0191abafb95ed",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/form_back.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/form_back.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 570940,
+      "sha256": "f1c206f37c3d57ca23dd9e427bb6fa7688dcd2584c4e9c0632ff9a44bfbd688b",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/form_costume.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/form_costume.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 824508,
+      "sha256": "c66a7ea997e920787108cfb996dab7e1e786215252fe95338422a59ce0344a7c",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/form_face.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/form_face.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 889243,
+      "sha256": "fb2c995e3f45cad772674bd916a2020dc91a272593796a7397f3cba7282d8243",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/form_front.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/form_front.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 631307,
+      "sha256": "fced25bba3fc9c366cfa452d09463c51924e381ba3cfdad2b2135e718fc091eb",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/form_side.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/form_side.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 199109,
+      "sha256": "a9eeb0c99aad5a1b99b56c073c822dc812d9435c3db32bf36d6732e773c7fd3e",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/form_threequarter.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/form_threequarter.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 626751,
+      "sha256": "9e60d9c97295c0531ebe9bea40510a90016e56794e5e8bfd80231fe2a1fe500a",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/front_bow_1.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/front_bow_1.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 602438,
+      "sha256": "7e79977f5d3c27c9279f7e80751e8e76352bd1af3ac757d62027f85b158ab4bd",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/front_rest_0.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/front_rest_0.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 656471,
+      "sha256": "b63702068888735292166208489c31134d0e2bf501b231941165d72f5c3c08a3",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/front_shoot_0.05.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/front_shoot_0.05.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 628209,
+      "sha256": "3df5b817879bfc8d9787f0611b335fc489aef0c1d50fda026b2bf9e945567afc",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/front_victory_0.96.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/front_victory_0.96.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 655888,
+      "sha256": "f29c3273ae528670f274cd0ef03e088923901a6ee9b8289990979c22c1714313",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/front_wave_1.4.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/front_wave_1.4.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 659144,
+      "sha256": "d3136935b5ac764592e4f2a294091c1dabaf21a72f65aa596a485250294bb41d",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/idle.webm",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/idle.webm",
+      "reason": "referenced_report_evidence",
+      "bytes": 1324255,
+      "sha256": "7248135a4c4eacac455191edfd7555dd09640ff93c186d8c5424bce90e5a73f9",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/preservation_measurements.json",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/preservation_measurements.json",
+      "reason": "referenced_report_evidence",
+      "bytes": 686,
+      "sha256": "f36bdb34da2f347ee15cc15effae8fd8008c78225989a82b7befaf9910678b07",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/side_bow_1.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/side_bow_1.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 284951,
+      "sha256": "f86e9f274b3ad344a2209f7250cc96f1f2395bea9a9ffe54b602555f5a973bbe",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/side_idle_0.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/side_idle_0.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 260971,
+      "sha256": "f6d09f955423bba389bccaad7d57940408c94e209a97527eb4f1e0300e557d45",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/side_rest_0.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/side_rest_0.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 237100,
+      "sha256": "d72198f8247f99fbcddf07045d87dd81df9f925120aed6451ada2f569d428da7",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/side_throw_0.4.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/side_throw_0.4.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 265824,
+      "sha256": "95fbdb79b73557f432a806e253db2de9aab340c40794feea4a25caf31d69ce47",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/side_victory_1.9.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/side_victory_1.9.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 264754,
+      "sha256": "3a4b25e0d1fdcaf8e1525cdb07e16724bee3c6fae2450b4c63c1dfb51e68e2b6",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/threequarter_draw_launcher_0.7.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/threequarter_draw_launcher_0.7.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 673403,
+      "sha256": "4b951ee831c4f39d6529d5fac34e03439835019e788c6571466ab7e02d780980",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/threequarter_rest_0.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/threequarter_rest_0.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 662982,
+      "sha256": "27dbbf7341230c02c658841215f9961ae19febe6c96e42b22fbe9448d8536924",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/threequarter_run_0.2.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/threequarter_run_0.2.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 636396,
+      "sha256": "86539f6e494cea21f426f9352b4bf052b9d559f08c1c896cdd5eb89cf7ba1597",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/threequarter_shoot2_0.1.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/threequarter_shoot2_0.1.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 634646,
+      "sha256": "dc272e301a02a43d9e799d326b4f76fbe1c60ffe45dd9df1127f1ce127dfc0b6",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/threequarter_walk_0.3.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/threequarter_walk_0.3.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 652173,
+      "sha256": "51215ef10eaba2206f893d93dec6bac663e2b6f062c58b7e8e352cc96f68eada",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/threequarter_wave_1.4.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/threequarter_wave_1.4.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 653627,
+      "sha256": "5ad5ba98b9f17612ea29eef97383b4531855e62d3a3ea858a4256a4f1d51b6a4",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/unit_A01.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/unit_A01.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 313828,
+      "sha256": "eeda93528faa4c81175e9afb291fe7fe42b7813d3341e157b130fce083652c03",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/unit_blink.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/unit_blink.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 299701,
+      "sha256": "4e80e4ae77d82b38d7e368ece4c5bd266f37f89943d844880991cd52002bfae0",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/unit_bow.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/unit_bow.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 277733,
+      "sha256": "fbe9f65b7f9637599173cf21ca57a208f89e2885a259ed6f311588e19ff2f447",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/unit_squint.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/unit_squint.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 302892,
+      "sha256": "d45957382b77b936384c8e10f04ba8ba263950f3666ad176310b070e113a3a02",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/unit_victory.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/unit_victory.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 311613,
+      "sha256": "1430901578ac23b7fe6b98e799789fda773aa4a484725dd0f3accda5eb0d0eb8",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/unit_wave.png",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/unit_wave.png",
+      "reason": "referenced_report_evidence",
+      "bytes": 309604,
+      "sha256": "0ea4a7f64e1209d23eb042cc18a948148f4bf770b15d2c02fbd79c170a889971",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/victory.webm",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/victory.webm",
+      "reason": "referenced_report_evidence",
+      "bytes": 822112,
+      "sha256": "639f2aa60c5bad9f0052c41b33c60df11ef92d370e14f49cb47e4e9df3d94051",
+      "state": "copied"
+    },
+    {
+      "source": "docs/reports/assets/20260926_시안A_D수준제작/wave.webm",
+      "destination": "docs/reports/assets/20260926_시안A_D수준제작/wave.webm",
+      "reason": "referenced_report_evidence",
+      "bytes": 814674,
+      "sha256": "35f56ce44fc5cc6f8f9c543531a4bd018d08ad75f1202f3aebc8dbb2f175f797",
+      "state": "copied"
+    },
+    {
+      "source": "unit-lab-tool.html",
+      "destination": "unit-lab-tool.html",
+      "reason": "root_character_tool_compatibility",
+      "bytes": 17311,
+      "sha256": "5b4a5bd1ae29cecebf992c4a6c4662766f41472b83aeded0c300fd23fdf04e05",
+      "state": "copied"
+    },
+    {
+      "source": "block-cat-tool.html",
+      "destination": "block-cat-tool.html",
+      "reason": "root_character_tool_compatibility",
+      "bytes": 6042,
+      "sha256": "2a10371ac7deb9430ccaf810ec96b33939a7787eb2ea163e21f0f12d35aa0b1c",
+      "state": "copied"
+    },
+    {
+      "source": "character-compare-tool.html",
+      "destination": "character-compare-tool.html",
+      "reason": "root_character_tool_compatibility",
+      "bytes": 2956,
+      "sha256": "b1ce03070103fe54d0578741e71c3fdca63b67896832e52eaa29f25123d2a6a7",
+      "state": "copied"
+    },
+    {
+      "source": "wanderer-a-tool.html",
+      "destination": "wanderer-a-tool.html",
+      "reason": "root_character_tool_compatibility",
+      "bytes": 3566,
+      "sha256": "b82459a1d78d6d6d3e42d288676f7c6d9c6f7da6b439ddfd4ced35ed4acecd22",
+      "state": "copied"
+    },
+    {
+      "source": "wanderer-d-tool.html",
+      "destination": "wanderer-d-tool.html",
+      "reason": "root_character_tool_compatibility",
+      "bytes": 3565,
+      "sha256": "5d925a09c28c6116665e50f676dbb495acb36455c3f570812ab55042a2b7232e",
+      "state": "copied"
+    },
+    {
+      "source": "wanderer-d-sprite-tool.html",
+      "destination": "wanderer-d-sprite-tool.html",
+      "reason": "root_character_tool_compatibility",
+      "bytes": 383,
+      "sha256": "7364fbed498730db911fdd11ae2563c421ba5a19495bdbf2d72a23837c705e25",
+      "state": "copied"
+    }
+  ],
+  "copied_files": 225,
+  "copied_bytes": 98137740,
+  "hash_mismatches": 0
+}

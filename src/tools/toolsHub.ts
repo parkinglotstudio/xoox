@@ -7,7 +7,7 @@ import {
   type ToolGroup,
 } from "./toolsCatalog";
 
-const ORDER: ToolGroup[] = ["map", "scenario", "layout", "art", "proto", "other"];
+const ORDER: ToolGroup[] = ["forest", "scenario", "layout", "art", "proto", "other"];
 
 function groupTools(list: ToolEntry[]): Map<ToolGroup, ToolEntry[]> {
   const map = new Map<ToolGroup, ToolEntry[]>();
@@ -59,7 +59,7 @@ function render() {
       <a class="game-link" href="/" target="_blank" rel="noopener">🎮 게임 열기</a>
     </header>
     <p class="hint">
-      <strong>맵</strong>은 「맵 배치」 하나 — NPC 자리·정화 전후·동선. 데코 그림은 아직 아트 작업.
+      플레이 바닥은 <strong>숲</strong>. 예전 섬 맵 툴은 허브에서 뺐다.
       상단 바에는 실험 프로토를 숨긴다. <strong>새 창</strong>이면 게임과 나란히 둘 수 있다.
     </p>
     ${sections || `<p class="empty">등록된 툴이 없습니다.</p>`}

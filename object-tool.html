@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>오브젝트</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#101810;color:#eef0d8;font:13px system-ui,"Malgun Gothic",sans-serif}
+a{color:#d6e6a8}
+#top{display:flex;gap:8px;align-items:center;padding:8px 12px;background:#1a2818;border-bottom:1px solid #6a7b48}
+#top b{color:#f0e4b0}
+#top a{padding:4px 8px;border:1px solid #5f7144;border-radius:999px;text-decoration:none;background:#243422}
+#layout{display:grid;grid-template-columns:320px 1fr;height:calc(100% - 42px)}
+aside{display:flex;flex-direction:column;gap:8px;padding:10px;border-right:1px solid #5d6f42;background:#162216;min-height:0}
+select,input{width:100%;padding:8px;border-radius:7px;border:1px solid #6a7d4c;background:#2b4028;color:#f0edd4;font:inherit}
+#list{flex:1;overflow:auto;border:1px solid #4f6038;border-radius:7px;background:#121c12}
+#list button{display:block;width:100%;text-align:left;padding:6px 8px;border:0;border-bottom:1px solid #2a3828;background:transparent;color:#e8efc8;cursor:pointer;font:inherit;font-size:12px}
+#list button[aria-current="true"]{background:#354d2e;color:#f3ecc0;font-weight:700}
+#info{white-space:pre-wrap;font-size:12px;color:#c9d4a8;min-height:4.5em}
+#stage{position:relative;min-width:0;background:#0c140c}
+canvas{display:block;width:100%;height:100%}
+#count{color:#c9d589;font-size:12px}
+</style>
+</head>
+<body>
+<header id="top">
+  <b>오브젝트</b>
+  <a href="/tools.html">허브</a>
+  <a href="/forest-play-tool.html">숲 플레이</a>
+  <a href="/">게임</a>
+</header>
+<div id="layout">
+  <aside>
+    <select id="group" aria-label="분류"><option value="">전체</option></select>
+    <input id="search" placeholder="이름 검색" aria-label="검색">
+    <div id="count"></div>
+    <div id="list"></div>
+    <div id="info">목록을 불러오는 중…</div>
+  </aside>
+  <div id="stage"><canvas id="view"></canvas></div>
+</div>
+<script type="module" src="/src/tools/objectTool/main.ts"></script>
+</body>
+</html>

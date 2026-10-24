@@ -1,0 +1,3 @@
+id,name,hp,shot_id,fire_interval,resource_id
+trap_gun,총 블록,36,shot_gun,0.42,res_trap_gun
+trap_throw,던지기 블록,28,shot_bomb,1.05,res_trap_throw

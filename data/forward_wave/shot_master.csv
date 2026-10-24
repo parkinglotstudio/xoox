@@ -1,0 +1,4 @@
+id,name,dmg,speed,life,radius,bomb
+shot_gun,기본 총,1,160,2.3,3,0
+shot_bomb,기본 폭탄,2,168,1.15,5,1
+shot_meteor,운석,3,140,1.05,6,1

@@ -102,28 +102,7 @@ export class ThrowBurstFx {
       reused.visible = true;
       return reused;
     }
-    const g = new THREE.Group();
-    const core = new THREE.Mesh(this.orbCoreGeo, this.orbCoreMat);
-    const spark = new THREE.Mesh(this.orbSparkGeo, this.orbSparkMat);
-    spark.position.set(0.028, 0.021, 0.014);
-    const ring = new THREE.Mesh(this.torusGeo, this.torusMat);
-    ring.rotation.x = Math.PI / 2.6;
-    const glow = new THREE.Sprite(
-      new THREE.SpriteMaterial({
-        map: this.glowTex,
-        color: HOT,
-        transparent: true,
-        opacity: 0.85,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-        fog: false,
-      }),
-    );
-    glow.scale.setScalar(0.8);
-    glow.renderOrder = 9;
-    g.add(core, spark, ring, glow);
-    g.renderOrder = 9;
-    return g;
+    return createPurifyOrb();
   }
 
   recycleOrb(g: THREE.Group): void {
@@ -133,13 +112,7 @@ export class ThrowBurstFx {
   }
 
   spinOrb(g: THREE.Group, t: number): void {
-    const ring = g.children[2];
-    const glow = g.children[3];
-    if (ring) ring.rotation.z = t * 14;
-    if (glow) {
-      const s = 0.74 + Math.sin(t * 18) * 0.1;
-      glow.scale.setScalar(s);
-    }
+    spinPurifyOrb(g, t);
   }
 
   trailAt(x: number, y: number, z: number, dt: number): void {
@@ -416,6 +389,66 @@ export class ThrowBurstFx {
     this.stage.removeOverlay(p.mesh);
     if (this.idleColumns.length < MAX_COLUMNS) this.idleColumns.push(p);
     else p.mat.dispose();
+  }
+}
+
+/** 예전 정화 구슬. 포탑 자리 표시와 오브젝트 툴이 같이 쓴다. */
+export function createPurifyOrb(): THREE.Group {
+  const glowTex = radialTex("rgba(14,211,217,1)", "rgba(15,190,199,0.55)", "rgba(15,190,199,0)");
+  const g = new THREE.Group();
+  const core = new THREE.Mesh(
+    new THREE.SphereGeometry(0.14, 14, 12),
+    new THREE.MeshBasicMaterial({ color: CORE, fog: false }),
+  );
+  const spark = new THREE.Mesh(
+    new THREE.SphereGeometry(0.038, 7, 6),
+    new THREE.MeshBasicMaterial({
+      color: YELLOW,
+      transparent: true,
+      opacity: 0.95,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      fog: false,
+    }),
+  );
+  spark.position.set(0.028, 0.021, 0.014);
+  const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(0.182, 0.022, 8, 20),
+    new THREE.MeshBasicMaterial({
+      color: MAGENTA,
+      transparent: true,
+      opacity: 0.9,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      fog: false,
+    }),
+  );
+  ring.rotation.x = Math.PI / 2.6;
+  const glow = new THREE.Sprite(
+    new THREE.SpriteMaterial({
+      map: glowTex,
+      color: HOT,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      fog: false,
+    }),
+  );
+  glow.scale.setScalar(0.8);
+  glow.renderOrder = 9;
+  g.add(core, spark, ring, glow);
+  g.renderOrder = 9;
+  return g;
+}
+
+export function spinPurifyOrb(g: THREE.Object3D, t: number): void {
+  const ring = g.children[2];
+  const glow = g.children[3];
+  if (ring) ring.rotation.z = t * 14;
+  if (glow) {
+    const s = 0.74 + Math.sin(t * 18) * 0.1;
+    glow.scale.setScalar(s);
   }
 }
 

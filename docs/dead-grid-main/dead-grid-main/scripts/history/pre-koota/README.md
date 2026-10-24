@@ -1,0 +1,1 @@
+Pre-Koota baseline: commit 4987254, captured 2026-10-04. Engine + terrain + research retained only for reproducible deterministic performance and behavior comparisons. Never shipped in the browser bundle.

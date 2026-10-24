@@ -1,0 +1,144 @@
+{
+  "compare": [
+    {
+      "mesh": "D_expression_marks",
+      "skin": [
+        1,
+        1,
+        1
+      ],
+      "blush": [
+        1,
+        1,
+        1
+      ],
+      "shadow": 0.22
+    },
+    {
+      "mesh": "D_face_detail",
+      "skin": [
+        1,
+        1,
+        1
+      ],
+      "blush": [
+        1,
+        1,
+        1
+      ],
+      "shadow": 0.22
+    },
+    {
+      "mesh": "D_head_clean",
+      "skin": [
+        2.8,
+        1.42,
+        1.54
+      ],
+      "blush": [
+        2.15,
+        1.17,
+        1.37
+      ],
+      "shadow": 0.22
+    }
+  ],
+  "unit": [
+    {
+      "mesh": "D_expression_marks",
+      "skin": [
+        1,
+        1,
+        1
+      ],
+      "blush": [
+        1,
+        1,
+        1
+      ],
+      "shadow": 0.22
+    },
+    {
+      "mesh": "D_face_detail",
+      "skin": [
+        1,
+        1,
+        1
+      ],
+      "blush": [
+        1,
+        1,
+        1
+      ],
+      "shadow": 0.22
+    },
+    {
+      "mesh": "D_head_clean",
+      "skin": [
+        2.8,
+        1.42,
+        1.54
+      ],
+      "blush": [
+        2.15,
+        1.17,
+        1.37
+      ],
+      "shadow": 0.22
+    },
+    {
+      "mesh": "D_expression_marks",
+      "skin": [
+        1,
+        1,
+        1
+      ],
+      "blush": [
+        1,
+        1,
+        1
+      ],
+      "shadow": 0.22
+    },
+    {
+      "mesh": "D_face_detail",
+      "skin": [
+        1,
+        1,
+        1
+      ],
+      "blush": [
+        1,
+        1,
+        1
+      ],
+      "shadow": 0.22
+    },
+    {
+      "mesh": "D_head_clean",
+      "skin": [
+        2.8,
+        1.42,
+        1.54
+      ],
+      "blush": [
+        2.15,
+        1.17,
+        1.37
+      ],
+      "shadow": 0.22
+    }
+  ],
+  "a": {
+    "dPatched": 0,
+    "aShadows": [
+      0.18,
+      0.18,
+      0.18,
+      0.18,
+      0.18,
+      0.18
+    ]
+  },
+  "errors": []
+}

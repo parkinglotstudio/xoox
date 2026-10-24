@@ -1,0 +1,35 @@
+
+> dead-grid@1.2.0 test
+> node --import tsx --test src/engine.test.ts
+
+{"seconds":1805,"kills":38385,"bossKills":0,"maxEnemies":520,"maxBullets":379,"maxDrops":926,"level":23}
+✔ pause and upgrade choices freeze the survival clock (4.903375ms)
+✔ dash and pulse give escape windows, then respect cooldowns (2.023541ms)
+✔ evolution requires a level 6 weapon and level 3 partner (2.651041ms)
+✔ late bosses must spawn even when the ordinary enemy pool is full (9.510375ms)
+✔ a full 1800-second encounter schedule runs with bounded entity pools (30446.062416ms)
+✔ 30 minutes starts final combat; only all six boss deaths clear the stage (2.779792ms)
+✔ each of six bosses spawns at its exact five-minute boundary, once (15.715375ms)
+✔ every character can start fresh after a failed or completed run (2.219791ms)
+✔ fatal contact ends the frame before a supply chest can revive the player (1.480125ms)
+✔ a dash stops at the entry wall instead of tunnelling into or across a building (19.731542ms)
+✔ swept friendly and hostile projectiles stop at intact buildings (2.805208ms)
+✔ fog distinguishes unseen, remembered and visible terrain; collapse opens sight (2.792667ms)
+✔ automatic targeted weapons do not shoot enemies hidden behind cover (1.403583ms)
+✔ elite kills give no supply chest and collecting a chest gives no free health (1.425875ms)
+✔ fully evolved gear cannot erase the ten-minute boss in five seconds (66.767417ms)
+✔ overlapping fire patches use the strongest burn rather than multiply boss DPS (3.035125ms)
+✔ pulse clears nearby acid projectiles as well as pushing enemies (1.265584ms)
+✔ zombies attack cover without walking through it and siege damage is bounded (144.55925ms)
+✔ rotated cars block swept movement and shots, burn, then open their hull (2.435291ms)
+✔ fog display eases in and out, retains exploration and resets per run (9.718792ms)
+✔ destructible road barriers share the movement and projectile hull (0.781583ms)
+✔ clock text agrees with exact schedule boundaries despite floating point drift (0.073ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30918.548084

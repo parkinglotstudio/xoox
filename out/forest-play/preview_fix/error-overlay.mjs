@@ -1,0 +1,2 @@
+﻿import { chromium } from 'playwright';
+const b=await chromium.launch({headless:true});const p=await b.newPage();await p.goto('http://127.0.0.1:5179/forest-play-tool.html');await p.waitForTimeout(300);console.log(await p.evaluate(()=>{const e=document.querySelector('vite-error-overlay'); return e?.shadowRoot?.innerText || e?.shadowRoot?.textContent || document.documentElement.innerHTML.slice(-3000)}));await b.close();

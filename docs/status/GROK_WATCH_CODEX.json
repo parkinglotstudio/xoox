@@ -1,0 +1,118 @@
+{
+  "automationId": "30",
+  "intervalMinutes": 60,
+  "lastCheckedAt": "2026-10-04T22:05:38+09:00",
+  "files": {
+    "docs/directives/FROM_GROK.md": {
+      "exists": true,
+      "sha256": "d18d2d31347cf1f4c4857b281746c50b496fb9f0f76aa6454b22c3dce4b3600a"
+    },
+    "docs/status/WORKLIST.md": {
+      "exists": true,
+      "sha256": "e52399160eea5205a14a155b0930592e87167b63f7930b785f8b08a2803da6fe"
+    },
+    "docs/directives/ASTRA_BLOCK_CAT_PET.md": {
+      "exists": true,
+      "sha256": "ef26be600d1a47ea3e7442a219a9d1fd94918dcf0f3fb0ff944afc7479f1305a"
+    },
+    "docs/directives/ASTRA_WANDERER_A.md": {
+      "exists": true,
+      "sha256": "34b601b20844e81f0b030a5df372c84aaa0051418ca020af3f15d324ff3799b8"
+    },
+    "docs/reports/20261004_회신_초기디펜스_그룩.md": {
+      "exists": true,
+      "sha256": "887ca34b9b549896c691c763703123331151366d411d576ef1690ed68671783f"
+    },
+    "docs/handoff/20260927_숲플레이통합/DEFENSE_MODES.md": {
+      "exists": true,
+      "sha256": "78c9f2783cbdfd0c8910c7bdacf38fe5496c98244bcaae90b92dc23b0b878070"
+    }
+  },
+  "lastNotifiedItems": {
+    "BCAT-01": {
+      "status": "완료(제작)",
+      "priority": "높음",
+      "summary": "BCAT02 얼굴 보정 및 앉기↔서기 전환 2종 추가. 독립 툴·검증·보고 완료.",
+      "report": "docs/reports/20260927_작업보고서_블록고양이_얼굴전환_Codex.md"
+    },
+    "WA-01": {
+      "status": "대기",
+      "summary": "별도 착수 지시 대기"
+    },
+    "DEF15-03": {
+      "status": "완료",
+      "report": "docs/reports/20261004_작업보고서_방어진지와공격역할_Codex.md",
+      "notifiedVia": "이 대화의 직전 실제 작업 완료 응답",
+      "summary": "직격·지점 범위 공격 분리, 트랩 4종·진지·동작·밸런스 조정 패널. 실제 화면/FPS 미검증도 이미 보고."
+    }
+  },
+  "lastCheckResult": "no_new_actionable_defense_instruction",
+  "executionScope": "원본 C:\\xoox의 Codex 담당 디펜스 작업만. 첫 타입은 플레이어 캐릭터 없이 시설·본진으로 진행. 문서 단계와 최신 사용자 직접 승인을 준수. 완료 반복·타 담당·CodexPack 작업 금지.",
+  "lastCheckNote": "공유 지시서는 기존 경험 정리와 초기 디펜스 협의 단계. 새로운 착수 가능한 항목 없음. 사용자 직접 승인에 따른 DEF15-03 완료는 이미 대화에 보고되어 중복 알림 없음.",
+  "allowedWindowsKST": [
+    {
+      "start": "2026-10-03 사용자 재개 시점",
+      "endExclusive": "2026-10-04T00:00:00+09:00"
+    },
+    {
+      "start": "2026-10-04T13:00:00+09:00",
+      "endExclusive": "2026-10-05T00:00:00+09:00"
+    }
+  ],
+  "lastObservedChanges": [
+    {
+      "path": "docs/directives/FROM_GROK.md",
+      "priorSha256": "4d7ef920edb8c3fdc55d8d00dee3c74f2cd77f13c5f86ea7c31be8f4a3313ba8",
+      "sha256": "d18d2d31347cf1f4c4857b281746c50b496fb9f0f76aa6454b22c3dce4b3600a",
+      "assessment": "이 대화의 기존 협의·직접 작업에서 이미 확인한 내용. 새로운 제작 지시로 처리하지 않음."
+    },
+    {
+      "path": "docs/reports/20261004_회신_초기디펜스_그룩.md",
+      "priorSha256": null,
+      "sha256": "887ca34b9b549896c691c763703123331151366d411d576ef1690ed68671783f",
+      "assessment": "이 대화의 기존 협의·직접 작업에서 이미 확인한 내용. 새로운 제작 지시로 처리하지 않음."
+    },
+    {
+      "path": "docs/handoff/20260927_숲플레이통합/DEFENSE_MODES.md",
+      "priorSha256": null,
+      "sha256": "78c9f2783cbdfd0c8910c7bdacf38fe5496c98244bcaae90b92dc23b0b878070",
+      "assessment": "이 대화의 기존 협의·직접 작업에서 이미 확인한 내용. 새로운 제작 지시로 처리하지 않음."
+    }
+  ],
+  "lastAssessedItems": {
+    "BCAT-01": {
+      "status": "completed_previously",
+      "directiveChanged": false,
+      "report": "docs/reports/20260927_작업보고서_블록고양이_얼굴전환_Codex.md"
+    },
+    "WA-01": {
+      "status": "completed_previously",
+      "directiveChanged": false,
+      "worklistStatus": "대기 (기존 완료와 불일치)",
+      "evidence": [
+        "docs/reports/20260926_작업보고서_시안A_D수준제작.md",
+        "docs/reports/20260927_작업보고서_루온정수리_캐릭터제작문서_Codex.md",
+        "docs/reports/20260927_작업보고서_캐릭터유닛_AI인계_Codex.md"
+      ]
+    },
+    "ASTRA-XP-01": {
+      "status": "outside_current_defense_scope",
+      "directiveDate": "2026-09-27",
+      "repeatWork": false
+    },
+    "DEFENSE_GROK_REPLY": {
+      "status": "previously_reviewed_discussion_only",
+      "directive": "docs/reports/20261004_회신_초기디펜스_그룩.md",
+      "agreement": "docs/handoff/20260927_숲플레이통합/DEFENSE_MODES.md",
+      "newExecutionApproval": false
+    },
+    "DEF15-03": {
+      "status": "complete_previously_reported_in_chat",
+      "approval": "후속 사용자 직접 작업 지시",
+      "report": "docs/reports/20261004_작업보고서_방어진지와공격역할_Codex.md",
+      "repeatWork": false
+    }
+  },
+  "lastAuditReport": "docs/reports/20261004_작업보고서_그룩디펜스_22시확인_Codex.md",
+  "notificationRequired": false
+}

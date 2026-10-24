@@ -1,0 +1,176 @@
+[
+  {
+    "kind": "reference",
+    "exposure": 1.05,
+    "environment": false,
+    "lights": [
+      {
+        "type": "HemisphereLight",
+        "color": 16774364,
+        "intensity": 1.05,
+        "position": [
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "type": "DirectionalLight",
+        "color": 16771011,
+        "intensity": 1.85,
+        "position": [
+          -3,
+          5,
+          4
+        ]
+      },
+      {
+        "type": "DirectionalLight",
+        "color": 16773339,
+        "intensity": 1,
+        "position": [
+          3,
+          2,
+          4
+        ]
+      },
+      {
+        "type": "DirectionalLight",
+        "color": 16772821,
+        "intensity": 1,
+        "position": [
+          2,
+          4,
+          -3
+        ]
+      },
+      {
+        "type": "PointLight",
+        "color": 16773073,
+        "intensity": 2.2,
+        "position": [
+          -0.84,
+          2.3,
+          1.16
+        ]
+      }
+    ],
+    "calls": 28
+  },
+  {
+    "kind": "animation",
+    "exposure": 1.05,
+    "environment": false,
+    "lights": [
+      {
+        "type": "HemisphereLight",
+        "color": 16774364,
+        "intensity": 1.05,
+        "position": [
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "type": "DirectionalLight",
+        "color": 16771011,
+        "intensity": 1.85,
+        "position": [
+          -3,
+          5,
+          4
+        ]
+      },
+      {
+        "type": "DirectionalLight",
+        "color": 16773339,
+        "intensity": 1,
+        "position": [
+          3,
+          2,
+          4
+        ]
+      },
+      {
+        "type": "DirectionalLight",
+        "color": 16772821,
+        "intensity": 1,
+        "position": [
+          2,
+          4,
+          -3
+        ]
+      },
+      {
+        "type": "PointLight",
+        "color": 16773073,
+        "intensity": 2.2,
+        "position": [
+          -0.84,
+          2.3,
+          1.16
+        ]
+      }
+    ],
+    "calls": 29
+  },
+  {
+    "kind": "blocks",
+    "exposure": 1.05,
+    "environment": false,
+    "lights": [
+      {
+        "type": "HemisphereLight",
+        "color": 16774364,
+        "intensity": 1.05,
+        "position": [
+          0,
+          1,
+          0
+        ]
+      },
+      {
+        "type": "DirectionalLight",
+        "color": 16771011,
+        "intensity": 1.85,
+        "position": [
+          -3,
+          5,
+          4
+        ]
+      },
+      {
+        "type": "DirectionalLight",
+        "color": 16773339,
+        "intensity": 1,
+        "position": [
+          3,
+          2,
+          4
+        ]
+      },
+      {
+        "type": "DirectionalLight",
+        "color": 16772821,
+        "intensity": 1,
+        "position": [
+          2,
+          4,
+          -3
+        ]
+      },
+      {
+        "type": "PointLight",
+        "color": 16773073,
+        "intensity": 2.2,
+        "position": [
+          -0.84,
+          2.3,
+          1.16
+        ]
+      }
+    ],
+    "calls": 29
+  }
+]

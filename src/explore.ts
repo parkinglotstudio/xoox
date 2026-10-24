@@ -1181,22 +1181,14 @@ export class ExploreView {
     if (on) this.layer.classList.remove("minimap-intro", "minimap-travel-active");
   }
 
-  /** HUD 칸에 작은 미니맵을 둔다. */
+  /** 예전 섬 지도. 게임에서는 다시 켜지 않는다. */
   showMinimapDocked(): void {
-    this.suppressMinimap(false);
-    this.layer.classList.remove("minimap-intro", "minimap-travel-active", "minimap-travel-offscreen");
-    this.enableMinimapTabShelf();
+    this.suppressMinimap(true);
   }
 
-  /** 원흉 원 첫 도달 — 가운데에 크게, 그다음 호출측에서 지역 알림. */
-  async playCulpritMapIntro(holdMs = 2200): Promise<void> {
-    if (!this.minimapMode) this.setMinimapMode(true);
-    this.suppressMinimap(false);
-    this.layer.classList.remove("minimap-docked", "minimap-travel-active", "minimap-travel-offscreen");
-    this.layer.classList.add("minimap-tab-mode", "minimap-intro");
-    this.minimapTabBtn.hidden = true;
-    await new Promise<void>((r) => window.setTimeout(r, holdMs));
-    this.layer.classList.remove("minimap-intro");
+  /** 예전 섬 지도 인트로. 띄우지 않는다. */
+  async playCulpritMapIntro(_holdMs = 2200): Promise<void> {
+    this.suppressMinimap(true);
   }
 
   /** 미니맵/탐방 레이어 DOM — HUD 배치 시 폰으로 옮길 때 사용 */

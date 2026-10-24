@@ -1,0 +1,45 @@
+1.3 engine verification — package version was still 1.2.0 at test start; release metadata updated afterward.
+
+> dead-grid@1.2.0 test
+> node --import tsx --test src/engine.test.ts
+
+{"seconds":1805,"kills":35142,"bossKills":0,"maxEnemies":520,"maxBullets":355,"maxDrops":922,"level":23}
+✔ pause and upgrade choices freeze the survival clock (5.101459ms)
+✔ dash and pulse give escape windows, then respect cooldowns (2.042167ms)
+✔ evolution requires a level 6 weapon and level 3 partner (2.43675ms)
+✔ late bosses must spawn even when the ordinary enemy pool is full (9.412458ms)
+✔ a full 1800-second encounter schedule runs with bounded entity pools (76307.030167ms)
+✔ 30 minutes starts final combat; only all six boss deaths clear the stage (2.821333ms)
+✔ each of six bosses spawns at its exact five-minute boundary, once (18.124542ms)
+✔ every character can start fresh after a failed or completed run (2.436ms)
+✔ fatal contact ends the frame before a supply chest can revive the player (1.605292ms)
+✔ a dash stops at the entry wall instead of tunnelling into or across a building (21.578708ms)
+✔ swept friendly and hostile projectiles stop at intact buildings (2.903458ms)
+✔ fog distinguishes unseen, remembered and visible terrain; collapse opens sight (2.99875ms)
+✔ automatic targeted weapons do not shoot enemies hidden behind cover (1.595667ms)
+✔ elite kills give no supply chest and collecting a chest gives no free health (1.590042ms)
+✔ fully evolved gear cannot erase the ten-minute boss in five seconds (68.810917ms)
+✔ overlapping fire patches use the strongest burn rather than multiply boss DPS (3.401792ms)
+✔ pulse clears nearby acid projectiles as well as pushing enemies (1.391375ms)
+✔ zombies attack cover without walking through it and siege damage is bounded (166.627917ms)
+✔ rotated cars block swept movement and shots, burn, then open their hull (2.908792ms)
+✔ fog display eases in and out, retains exploration and resets per run (9.74875ms)
+✔ street props retain their collision hull under unlimited damage (0.938625ms)
+✔ clock text agrees with exact schedule boundaries despite floating point drift (0.177042ms)
+✔ all friendly projectiles including evolutions start at zero penetration (1.810833ms)
+✔ zero penetration hits only the first enemy, regardless of insertion order (1.026916ms)
+✔ penetration rolls again at each contact and cannot hit the same enemy twice (3.4655ms)
+✔ passive rarity distribution and weighted effects agree with displayed bonuses (4.8215ms)
+✔ four continuous boundary walls stop movement, dash and penetrative bullets (35.539167ms)
+✔ magnet pickup starts flight across walls, preserving XP until absorption (15.68025ms)
+✔ magnetic flight clamps high speeds instead of overshooting the player (0.897417ms)
+✔ enemy kills drop magnets by chance with a cooldown and at most two active (1.174542ms)
+✔ XP merging never adds future kills to an already magnetized orb (1.033666ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 76880.25375

@@ -1,0 +1,70 @@
+{
+  "revision": "DEF15-03",
+  "first_hit_kill_cases": 90,
+  "area": [
+    {
+      "kind": "tower_throw",
+      "radius": 6,
+      "damageCenter": 598.7660156250004,
+      "damageEdge": 330.65390624999964,
+      "fixedPoint": {
+        "x": 0,
+        "y": 20
+      },
+      "escapeUndamaged": true
+    },
+    {
+      "kind": "tower_cannon",
+      "radius": 7,
+      "damageCenter": 650,
+      "damageEdge": 361.67857142857065,
+      "fixedPoint": {
+        "x": 0,
+        "y": 20
+      },
+      "escapeUndamaged": true
+    },
+    {
+      "kind": "tower_catapult",
+      "radius": 9,
+      "damageCenter": 720,
+      "damageEdge": 399.60000000000036,
+      "fixedPoint": {
+        "x": 0,
+        "y": 20
+      },
+      "escapeUndamaged": true
+    }
+  ],
+  "traps": [
+    {
+      "kind": "slow",
+      "firstDamage": 0,
+      "rearmed": true,
+      "statusExpires": true
+    },
+    {
+      "kind": "bind",
+      "firstDamage": 0,
+      "rearmed": true,
+      "statusExpires": true
+    },
+    {
+      "kind": "spikes",
+      "firstDamage": 110,
+      "rearmed": true,
+      "statusExpires": true
+    },
+    {
+      "kind": "mine",
+      "firstDamage": 650,
+      "rearmed": true,
+      "statusExpires": true
+    }
+  ],
+  "bind_prevents_attacks": true,
+  "settings_change_actual_damage": true,
+  "no_overlapping_windups": true,
+  "wall_collision_release_and_replay_reset": true,
+  "original_navigation_unchanged": true
+}

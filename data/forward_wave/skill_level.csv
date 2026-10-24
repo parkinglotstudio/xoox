@@ -1,0 +1,15 @@
+skill_id,level,cooldown,duration,value
+skill_ice,1,6,1.2,0.8
+skill_flame,1,6,1.4,1.2
+skill_burst,1,7,1.5,3
+skill_meteor,1,8,0.4,3
+skill_bomb,1,7,0.6,2
+skill_laser,1,6,1,0.35
+passive_rate,1,0,0,0.06
+passive_rate,2,0,0,0.12
+passive_rate,3,0,0,0.18
+passive_range,1,0,0,36
+passive_range,2,0,0,72
+passive_range,3,0,0,108
+passive_spread,1,0,0,1
+passive_chain,1,0,0,1

@@ -1,0 +1,7 @@
+{
+  "src/tools/forestPlay/DefenseSession.ts": "6ed0555f91c1c16856614725c2c4e1fbf958af694de1f828b4f72e7b0d2046f7",
+  "src/tools/forestPlay/DefensePreview.ts": "a4017f932ef672f370a0793360a42cbb74d37d269c47cfc4f615866c869e4b6d",
+  "src/tools/forestPlay/DefenseBalance.ts": "a7185086942fa1fd539b52ea7198dc51cbc4230c07eae93393c38a2efa884cbd",
+  "data/tools/unit_lab/defense_balance.json": "e5cc7fd8a5d29ae30e6f884b56121f2a9ffc4e2c318ee8bf7319abd1919be525",
+  "scripts/verify_defense_15min.mjs": "15d2c49e2fe617f72d6d3e0f8c1013e614c2d31347026d31a50a6881b47a791d"
+}

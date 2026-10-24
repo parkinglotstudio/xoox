@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "navigationUnchanged": true,
+  "constructionUnchanged": true,
+  "allTreeTrunksOutsideWalkableMask": true,
+  "speciesCounts": {
+    "oak": 719,
+    "birch": 566,
+    "fir": 407,
+    "spreading": 379,
+    "lime": 549,
+    "copper": 94
+  },
+  "scaleRange": [
+    0.3073160255094849,
+    1.7497165089534346
+  ]
+}

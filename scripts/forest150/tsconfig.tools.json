@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", "module": "ESNext", "moduleResolution": "bundler",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"], "strict": true,
+    "skipLibCheck": true, "resolveJsonModule": true, "isolatedModules": true, "noEmit": true
+  },
+  "files": [
+    "../../src/tools/forestMap/main.ts", "../../src/tools/forestMap/propCatalog.ts",
+    "../../src/tools/unitLabTool/main.ts", "../../src/tools/unitLabPet/main.ts",
+    "../../src/tools/characterCompare/main.ts", "../../src/tools/unitLabA/main.ts",
+    "../../src/tools/unitLabD/main.ts", "../../src/tools/toolsHub.ts"
+  ],
+  "include": []
+}

@@ -1,0 +1,4 @@
+stage,unit_id,copies,cells,label
+close,q_cat,1,40,클로즈업
+normal,q_green_blob,20,22,기본
+crowd,q_green_blob,80,10,무리

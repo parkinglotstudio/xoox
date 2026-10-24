@@ -1,0 +1,80 @@
+[
+  {
+    "id": "pet_nofilter",
+    "name": "NoFilter",
+    "revision": "PET04-01",
+    "reference": "3NOFILTER.png",
+    "cell_meters": 0.02,
+    "triangles": 15228,
+    "vertices": 30456,
+    "bones": 29,
+    "materials": 2,
+    "voxels": 29786,
+    "bytes": 1969580,
+    "animations": {
+      "idle_stand": 4.0,
+      "idle_sit": 4.0,
+      "idle_look": 5.0,
+      "walk": 1.0,
+      "run": 0.6,
+      "attack_laser": 0.7,
+      "stand_up": 1.1,
+      "sit_down": 1.1
+    },
+    "eye_sockets_head_local": {
+      "L": [
+        0.12800000607967377,
+        0.02599996328353882,
+        0.26399996876716614
+      ],
+      "R": [
+        -0.12800000607967377,
+        0.02599996328353882,
+        0.26399996876716614
+      ]
+    },
+    "laser": {
+      "start": 0.18,
+      "end": 0.3,
+      "range": 2.2,
+      "cooldown": 3,
+      "color": "#13eea3"
+    },
+    "locomotion": {
+      "walk_mps": 1.3,
+      "run_mps": 3.8
+    },
+    "validation": {
+      "idle_stand": {
+        "loop_matrix_error": 0.0
+      },
+      "idle_sit": {
+        "loop_matrix_error": 0.0
+      },
+      "idle_look": {
+        "loop_matrix_error": 0.0
+      },
+      "walk": {
+        "loop_matrix_error": 0.0
+      },
+      "run": {
+        "loop_matrix_error": 0.0
+      },
+      "sit_down_start_error": 0.0,
+      "sit_down_end_error": 0.0,
+      "stand_up_start_error": 0.0,
+      "stand_up_end_error": 0.0,
+      "minimum_vertex_z": -9.089708186138523e-08,
+      "max_loop_matrix_error": 0.0
+    },
+    "palette": {
+      "body": "d9b35d",
+      "light": "f0ce86",
+      "dark": "827247",
+      "armor": "ad9153",
+      "metal": "819079",
+      "accent": "13eea3",
+      "ruff": "e2bd74"
+    }
+  }
+]

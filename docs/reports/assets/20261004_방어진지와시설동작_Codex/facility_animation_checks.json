@@ -1,0 +1,52 @@
+{
+  "revision": "DEF15-03",
+  "actualGLBNodes": true,
+  "tests": [
+    {
+      "kind": "tower_gun",
+      "aimDot": 1,
+      "muzzleHeight": 3.8896551619042605,
+      "returnsToRest": true
+    },
+    {
+      "kind": "tower_ballista",
+      "aimDot": 1,
+      "muzzleHeight": 4.028181824500236,
+      "returnsToRest": true
+    },
+    {
+      "kind": "tower_throw",
+      "aimDot": 1.0000000000000002,
+      "muzzleHeight": 3.9532100230987988,
+      "returnsToRest": true
+    },
+    {
+      "kind": "tower_cannon",
+      "aimDot": 1.0000000000000002,
+      "muzzleHeight": 3.8905723909972347,
+      "returnsToRest": true
+    },
+    {
+      "kind": "tower_catapult",
+      "aimDot": 1.0000000000000002,
+      "muzzleHeight": 3.9532100230987988,
+      "returnsToRest": true
+    },
+    {
+      "kind": "slow",
+      "animationReturnsToRest": true
+    },
+    {
+      "kind": "bind",
+      "animationReturnsToRest": true
+    },
+    {
+      "kind": "spikes",
+      "animationReturnsToRest": true
+    },
+    {
+      "kind": "mine",
+      "animationReturnsToRest": true
+    }
+  ]
+}

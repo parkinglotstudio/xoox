@@ -19,3 +19,11 @@ home/
 
 # 개발 플레이 로그 (세션마다 쌓임)
 data/dev_logs/
+
+# 2026-10-24 projects cleanup (build outputs / backups / logs)
+.tmp*/
+_backups/
+logs/
+*.log
+*.zip
+_tmp_*

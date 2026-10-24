@@ -1,0 +1,22 @@
+[
+  {
+    "id": "1-unit",
+    "kind": "unit_map"
+  },
+  {
+    "id": "2-unit",
+    "kind": "k_tent"
+  },
+  {
+    "id": "3-unit",
+    "kind": "k_structure"
+  },
+  {
+    "id": "4-unit",
+    "kind": "k_machine"
+  },
+  {
+    "id": "5-unit",
+    "kind": "k_crane"
+  }
+]

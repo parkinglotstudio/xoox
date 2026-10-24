@@ -1,0 +1,39 @@
+{
+  "transitions": {
+    "rise": [
+      {
+        "clip": "stand_up",
+        "time": 0,
+        "pelvisY": 0.17299999296665192
+      },
+      {
+        "clip": "stand_up",
+        "time": 0.49999999999999994,
+        "pelvisY": 0.2639999985694885
+      },
+      {
+        "clip": "stand",
+        "time": 0,
+        "pelvisY": 0.35499998927116394
+      }
+    ],
+    "sit": [
+      {
+        "clip": "sit_down",
+        "time": 0,
+        "pelvisY": 0.35499998927116394
+      },
+      {
+        "clip": "sit_down",
+        "time": 0.49999999999999994,
+        "pelvisY": 0.2639999985694885
+      },
+      {
+        "clip": "idle_sit",
+        "time": 0.13333333333333333,
+        "pelvisY": 0.1732310049416454
+      }
+    ]
+  },
+  "errors": []
+}

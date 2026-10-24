@@ -1,0 +1,11 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert'),THREE=require('C:/xoox/node_modules/three'),ts=require('C:/xoox/node_modules/typescript');
+const source=fs.readFileSync('C:/xoox/src/tools/forestMap/main.ts','utf8');
+const start=source.indexOf('function rebuildBuildingVisuals()'),end=source.indexOf('\nconst nav=',start);assert(start>0&&end>start);
+const scene=new THREE.Scene(),old=new THREE.Object3D();scene.add(old);const buildingObjects=new Map([['1-tower',old]]),templates=new Map([['tower',new THREE.Object3D()],['unit',new THREE.Object3D()]]);
+const defense={buildings:[{built:true,hp:123,slot:{id:'1-tower',kind:'tower',x:56.5,y:53}},{built:false,hp:0,slot:{id:'1-unit',kind:'unit',x:56.5,y:39}}]};
+const saved=JSON.stringify(defense),scope={scene,buildingObjects,templates,defense,bl:(x,y,z)=>new THREE.Vector3(x,z,-y)};
+const code=ts.transpileModule(source.slice(start,end),{compilerOptions:{target:ts.ScriptTarget.ES2020}}).outputText;
+vm.runInNewContext(code+'\nrebuildBuildingVisuals();',scope);assert.equal(JSON.stringify(defense),saved);assert.equal(buildingObjects.size,1);assert.equal(old.parent,null);assert.deepEqual(buildingObjects.get('1-tower').position.toArray(),[56.5,0,-53]);
+const first=buildingObjects.get('1-tower');vm.runInNewContext(code+'\nrebuildBuildingVisuals();',scope);assert.notEqual(buildingObjects.get('1-tower'),first);assert.equal(first.parent,null);assert.equal(JSON.stringify(defense),saved);
+const m=JSON.parse(fs.readFileSync('C:/xoox/data/maps/forest150/manifest.json'));assert(m.lighting.polluted.fogFar<m.lighting.purified.fogFar);assert(m.buildingVariants.polluted.tower!==m.buildingVariants.purified.tower);
+console.log('PASS: rebuilding state visuals preserves HP, construction state and slot positions; destroyed structures stay absent; old visuals removed; state assets and fog distinct');

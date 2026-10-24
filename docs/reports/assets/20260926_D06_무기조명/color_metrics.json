@@ -1,0 +1,12 @@
+{
+  "animation": {
+    "mean_absolute_rgb_0_255": 0.0,
+    "p95": 0.0,
+    "max_channel_error": 0
+  },
+  "blocks": {
+    "mean_absolute_rgb_0_255": 5.748995568345702e-05,
+    "p95": 0.0,
+    "max_channel_error": 8
+  }
+}

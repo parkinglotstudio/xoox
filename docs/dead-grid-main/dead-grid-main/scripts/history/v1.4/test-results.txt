@@ -1,0 +1,54 @@
+
+> dead-grid@1.4.0 test
+> node --import tsx --test src/engine.test.ts
+
+{"seconds":1805,"kills":38211,"bossKills":0,"maxEnemies":520,"maxBullets":381,"maxDrops":921,"level":27}
+✔ pause and upgrade choices freeze the survival clock (6.960083ms)
+✔ dash and pulse give escape windows, then respect cooldowns (2.79925ms)
+✔ evolution requires a level 6 weapon and level 3 partner (3.867583ms)
+✔ late bosses must spawn even when the ordinary enemy pool is full (13.60475ms)
+✔ a full 1800-second encounter schedule runs with bounded entity pools (72043.014083ms)
+✔ 30 minutes starts final combat; only all six boss deaths clear the stage (2.677625ms)
+✔ each of six bosses spawns at its exact five-minute boundary, once (17.741667ms)
+✔ every character can start fresh after a failed or completed run (2.432209ms)
+✔ fatal contact ends the frame before a supply chest can revive the player (1.674833ms)
+✔ a dash stops at the entry wall instead of tunnelling into or across a building (21.156417ms)
+✔ swept friendly and hostile projectiles stop at intact buildings (2.865291ms)
+✔ fog distinguishes unseen, remembered and visible terrain; collapse opens sight (2.651834ms)
+✔ mouse-directed fire never auto-targets an enemy hidden behind cover (1.473292ms)
+✔ elite kills give no supply chest and collecting a chest gives no free health (1.718792ms)
+✔ fully evolved gear cannot erase the ten-minute boss in five seconds (69.826583ms)
+✔ overlapping fire patches use the strongest burn rather than multiply boss DPS (3.008375ms)
+✔ pulse clears nearby acid projectiles as well as pushing enemies (1.294291ms)
+✔ zombies attack cover without walking through it and siege damage is bounded (165.209083ms)
+✔ rotated cars block swept movement and shots, burn, then open their hull (2.497625ms)
+✔ fog display eases in and out, retains exploration and resets per run (8.46025ms)
+✔ street props retain their collision hull under unlimited damage (0.775125ms)
+✔ clock text agrees with exact schedule boundaries despite floating point drift (0.058625ms)
+✔ all friendly projectiles including evolutions start at zero penetration (1.703208ms)
+✔ zero penetration hits only the first enemy, regardless of insertion order (1.113625ms)
+✔ penetration rolls again at each contact and cannot hit the same enemy twice (2.998458ms)
+✔ passive rarity distribution and weighted effects agree with displayed bonuses (1.671ms)
+✔ four continuous boundary walls stop movement, dash and penetrative bullets (18.434416ms)
+✔ magnet pickup starts flight across walls, preserving XP until absorption (16.685625ms)
+✔ magnetic flight clamps high speeds instead of overshooting the player (1.045166ms)
+✔ enemy kills drop magnets by chance with a cooldown and at most two active (1.191875ms)
+✔ XP merging never adds future kills to an already magnetized orb (1.195625ms)
+✔ directional weapons follow mouse aim rather than a closer enemy or movement (0.9705ms)
+✔ katana hits the front arc, shows a sweep and respects intact cover (1.236166ms)
+✔ sniper has high damage, long range, slow cadence, a blocked aim line and a bounded final step (1.210375ms)
+✔ flamethrower hits multiple enemies at a cadence, then burns on a separate tick (0.938917ms)
+✔ burn stacks are capped and expire individually while pause freezes them (1.263166ms)
+✔ flame burns buildings and vehicles but never indestructible props or targets behind them (1.545167ms)
+✔ XP and range bonuses apply actual graded strength; extra projectiles remain integer and always rare (0.9405ms)
+✔ new weapons enter the choice pool but a six-weapon loadout keeps its upgrades (0.806791ms)
+✔ legacy research migrates safely, prices are lower and purchase cannot overspend or exceed caps (0.069291ms)
+✔ Q and Space research shorten cooldowns and old protocol remains compatible (2.215042ms)
+ℹ tests 41
+ℹ suites 0
+ℹ pass 41
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 72583.518833

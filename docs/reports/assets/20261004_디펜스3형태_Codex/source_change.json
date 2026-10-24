@@ -1,0 +1,25 @@
+{
+  "before_sha256": "d536f522953084f8f1e01fb3d269f443aaa5a905f8cf75bb3ceb7e5286f8d375",
+  "after_sha256": "427646b6f3a1aff6f7596cec0890d12af82475c82e5a0b84e440218aa78053f4",
+  "changed_anchors": [
+    "import { PlayNavOverlay } from './PlayNavOverlay';",
+    "const keys = new Set<string>();",
+    "  const f = bl(player.x, player.y, 0);",
+    "  ready = true;\n  statusEl()",
+    "  if (!playChar.key) void spawnSelectedCharacter();",
+    "  if (ready && view && !loading && nav) {",
+    "  if (ready && view && !loading) {\n    view.updateVisibility(preview.camera.position);",
+    "selectBuildSlot(id)",
+    "installTurret(slotId, kindId)",
+    "installUnit(slotId, kindId)",
+    "showcaseFive(x, y)",
+    "canStandAt(x, y, r = 0.65)",
+    "findPath(ax, ay, bx, by, r = 0.65)",
+    "segmentClear(ax, ay, bx, by, r = 0.15)",
+    "teleport(x, y)",
+    "async dropCatalog(entryId, clientX, clientY)",
+    "selectUnitCatalog(id)",
+    "projectSlot(slotId)",
+    "async dropCatalogOnSlot(entryId, slotId)"
+  ]
+}

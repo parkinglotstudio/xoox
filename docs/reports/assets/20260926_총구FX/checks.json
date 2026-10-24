@@ -1,0 +1,883 @@
+{
+  "errors": [],
+  "variants": {
+    "A": {
+      "align": [
+        {
+          "clip": "shoot",
+          "t": 0.015,
+          "weapon": "gun",
+          "rimVertices": 288,
+          "error": 1.1315341544156596e-8
+        },
+        {
+          "clip": "shoot",
+          "t": 0.015,
+          "weapon": "gunL",
+          "rimVertices": 288,
+          "error": 1.131534194042354e-8
+        },
+        {
+          "clip": "shoot",
+          "t": 0.015,
+          "weapon": "rifle",
+          "rimVertices": 576,
+          "error": 1.646705873358275e-8
+        },
+        {
+          "clip": "shoot",
+          "t": 0.085,
+          "weapon": "gun",
+          "rimVertices": 288,
+          "error": 1.1315341747677189e-8
+        },
+        {
+          "clip": "shoot",
+          "t": 0.085,
+          "weapon": "gunL",
+          "rimVertices": 288,
+          "error": 1.131534141643977e-8
+        },
+        {
+          "clip": "shoot",
+          "t": 0.085,
+          "weapon": "rifle",
+          "rimVertices": 576,
+          "error": 1.646705932053491e-8
+        },
+        {
+          "clip": "walk_shoot",
+          "t": 0.145,
+          "weapon": "gun",
+          "rimVertices": 288,
+          "error": 1.1315341610435162e-8
+        },
+        {
+          "clip": "walk_shoot",
+          "t": 0.145,
+          "weapon": "gunL",
+          "rimVertices": 288,
+          "error": 1.1315341779812236e-8
+        },
+        {
+          "clip": "walk_shoot",
+          "t": 0.145,
+          "weapon": "rifle",
+          "rimVertices": 576,
+          "error": 1.6467060184006688e-8
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.035,
+          "weapon": "gun",
+          "rimVertices": 288,
+          "error": 1.1315342783243828e-8
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.035,
+          "weapon": "gunL",
+          "rimVertices": 288,
+          "error": 1.1315342618553399e-8
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.035,
+          "weapon": "rifle",
+          "rimVertices": 576,
+          "error": 1.6467060177672176e-8
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.19,
+          "weapon": "gun",
+          "rimVertices": 288,
+          "error": 1.13153425580879e-8
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.19,
+          "weapon": "gunL",
+          "rimVertices": 288,
+          "error": 1.1315342393397468e-8
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.19,
+          "weapon": "rifle",
+          "rimVertices": 576,
+          "error": 1.6467059305699554e-8
+        }
+      ],
+      "events": [
+        {
+          "clip": "shoot",
+          "t": 0.015,
+          "emitters": [
+            {
+              "weapon": "gun",
+              "active": true,
+              "age": 0.015,
+              "glow": 9,
+              "smoke": 3
+            },
+            {
+              "weapon": "gunL",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            },
+            {
+              "weapon": "rifle",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            }
+          ]
+        },
+        {
+          "clip": "shoot",
+          "t": 0.085,
+          "emitters": [
+            {
+              "weapon": "gun",
+              "active": true,
+              "age": 0.085,
+              "glow": 4,
+              "smoke": 3
+            },
+            {
+              "weapon": "gunL",
+              "active": true,
+              "age": 0.018333329856395728,
+              "glow": 9,
+              "smoke": 3
+            },
+            {
+              "weapon": "rifle",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            }
+          ]
+        },
+        {
+          "clip": "walk_shoot",
+          "t": 0.145,
+          "emitters": [
+            {
+              "weapon": "gun",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            },
+            {
+              "weapon": "gunL",
+              "active": true,
+              "age": 0.01999999999999999,
+              "glow": 9,
+              "smoke": 3
+            },
+            {
+              "weapon": "rifle",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            }
+          ]
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.035,
+          "emitters": [
+            {
+              "weapon": "gun",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            },
+            {
+              "weapon": "gunL",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            },
+            {
+              "weapon": "rifle",
+              "active": true,
+              "age": 0.022500000000000003,
+              "glow": 17,
+              "smoke": 8
+            }
+          ]
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.19,
+          "emitters": [
+            {
+              "weapon": "gun",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            },
+            {
+              "weapon": "gunL",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            },
+            {
+              "weapon": "rifle",
+              "active": true,
+              "age": 0.1775,
+              "glow": 10,
+              "smoke": 8
+            }
+          ]
+        }
+      ],
+      "off": {
+        "idle": true,
+        "walk_gun": true,
+        "draw": true,
+        "holster": true,
+        "draw_launcher": true,
+        "holster_launcher": true,
+        "throw": true,
+        "blink": true
+      },
+      "paused": true,
+      "unit": [
+        {
+          "clip": "shoot",
+          "emitters": [
+            [
+              {
+                "weapon": "gun",
+                "active": true,
+                "glow": 9,
+                "smoke": 3
+              },
+              {
+                "weapon": "gunL",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "rifle",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              }
+            ],
+            [
+              {
+                "weapon": "gun",
+                "active": true,
+                "glow": 9,
+                "smoke": 3
+              },
+              {
+                "weapon": "gunL",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "rifle",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              }
+            ]
+          ]
+        },
+        {
+          "clip": "walk_shoot",
+          "emitters": [
+            [
+              {
+                "weapon": "gun",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "gunL",
+                "active": true,
+                "glow": 9,
+                "smoke": 3
+              },
+              {
+                "weapon": "rifle",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              }
+            ],
+            [
+              {
+                "weapon": "gun",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "gunL",
+                "active": true,
+                "glow": 9,
+                "smoke": 3
+              },
+              {
+                "weapon": "rifle",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              }
+            ]
+          ]
+        },
+        {
+          "clip": "shoot2",
+          "emitters": [
+            [
+              {
+                "weapon": "gun",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "gunL",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "rifle",
+                "active": true,
+                "glow": 17,
+                "smoke": 8
+              }
+            ],
+            [
+              {
+                "weapon": "gun",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "gunL",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "rifle",
+                "active": true,
+                "glow": 17,
+                "smoke": 8
+              }
+            ]
+          ]
+        },
+        {
+          "clip": "idle",
+          "emitters": [
+            [
+              {
+                "weapon": "gun",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "gunL",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "rifle",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              }
+            ],
+            [
+              {
+                "weapon": "gun",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "gunL",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "rifle",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "D": {
+      "align": [
+        {
+          "clip": "shoot",
+          "t": 0.015,
+          "weapon": "gun",
+          "rimVertices": 288,
+          "error": 1.1315342027937036e-8
+        },
+        {
+          "clip": "shoot",
+          "t": 0.015,
+          "weapon": "gunL",
+          "rimVertices": 288,
+          "error": 1.1315341530976953e-8
+        },
+        {
+          "clip": "shoot",
+          "t": 0.015,
+          "weapon": "rifle",
+          "rimVertices": 576,
+          "error": 1.646705873358275e-8
+        },
+        {
+          "clip": "shoot",
+          "t": 0.085,
+          "weapon": "gun",
+          "rimVertices": 288,
+          "error": 1.1315341757940791e-8
+        },
+        {
+          "clip": "shoot",
+          "t": 0.085,
+          "weapon": "gunL",
+          "rimVertices": 288,
+          "error": 1.1315341484723654e-8
+        },
+        {
+          "clip": "shoot",
+          "t": 0.085,
+          "weapon": "rifle",
+          "rimVertices": 576,
+          "error": 1.646705932053491e-8
+        },
+        {
+          "clip": "walk_shoot",
+          "t": 0.145,
+          "weapon": "gun",
+          "rimVertices": 288,
+          "error": 1.1315341857058358e-8
+        },
+        {
+          "clip": "walk_shoot",
+          "t": 0.145,
+          "weapon": "gunL",
+          "rimVertices": 288,
+          "error": 1.1315341806628091e-8
+        },
+        {
+          "clip": "walk_shoot",
+          "t": 0.145,
+          "weapon": "rifle",
+          "rimVertices": 576,
+          "error": 1.6467060184006688e-8
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.035,
+          "weapon": "gun",
+          "rimVertices": 288,
+          "error": 1.1315342783243828e-8
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.035,
+          "weapon": "gunL",
+          "rimVertices": 288,
+          "error": 1.1315342618553399e-8
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.035,
+          "weapon": "rifle",
+          "rimVertices": 576,
+          "error": 1.6467057346159558e-8
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.19,
+          "weapon": "gun",
+          "rimVertices": 288,
+          "error": 1.13153425580879e-8
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.19,
+          "weapon": "gunL",
+          "rimVertices": 288,
+          "error": 1.1315342393397468e-8
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.19,
+          "weapon": "rifle",
+          "rimVertices": 576,
+          "error": 1.6467056143638503e-8
+        }
+      ],
+      "events": [
+        {
+          "clip": "shoot",
+          "t": 0.015,
+          "emitters": [
+            {
+              "weapon": "gun",
+              "active": true,
+              "age": 0.015,
+              "glow": 9,
+              "smoke": 3
+            },
+            {
+              "weapon": "gunL",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            },
+            {
+              "weapon": "rifle",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            }
+          ]
+        },
+        {
+          "clip": "shoot",
+          "t": 0.085,
+          "emitters": [
+            {
+              "weapon": "gun",
+              "active": true,
+              "age": 0.085,
+              "glow": 4,
+              "smoke": 3
+            },
+            {
+              "weapon": "gunL",
+              "active": true,
+              "age": 0.018333329856395728,
+              "glow": 9,
+              "smoke": 3
+            },
+            {
+              "weapon": "rifle",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            }
+          ]
+        },
+        {
+          "clip": "walk_shoot",
+          "t": 0.145,
+          "emitters": [
+            {
+              "weapon": "gun",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            },
+            {
+              "weapon": "gunL",
+              "active": true,
+              "age": 0.01999999999999999,
+              "glow": 9,
+              "smoke": 3
+            },
+            {
+              "weapon": "rifle",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            }
+          ]
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.035,
+          "emitters": [
+            {
+              "weapon": "gun",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            },
+            {
+              "weapon": "gunL",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            },
+            {
+              "weapon": "rifle",
+              "active": true,
+              "age": 0.022500000000000003,
+              "glow": 17,
+              "smoke": 8
+            }
+          ]
+        },
+        {
+          "clip": "shoot2",
+          "t": 0.19,
+          "emitters": [
+            {
+              "weapon": "gun",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            },
+            {
+              "weapon": "gunL",
+              "active": false,
+              "age": -1,
+              "glow": 0,
+              "smoke": 0
+            },
+            {
+              "weapon": "rifle",
+              "active": true,
+              "age": 0.1775,
+              "glow": 10,
+              "smoke": 8
+            }
+          ]
+        }
+      ],
+      "off": {
+        "idle": true,
+        "walk_gun": true,
+        "draw": true,
+        "holster": true,
+        "draw_launcher": true,
+        "holster_launcher": true,
+        "throw": true,
+        "blink": true
+      },
+      "paused": true,
+      "unit": [
+        {
+          "clip": "shoot",
+          "emitters": [
+            [
+              {
+                "weapon": "gun",
+                "active": true,
+                "glow": 9,
+                "smoke": 3
+              },
+              {
+                "weapon": "gunL",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "rifle",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              }
+            ],
+            [
+              {
+                "weapon": "gun",
+                "active": true,
+                "glow": 9,
+                "smoke": 3
+              },
+              {
+                "weapon": "gunL",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "rifle",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              }
+            ]
+          ]
+        },
+        {
+          "clip": "walk_shoot",
+          "emitters": [
+            [
+              {
+                "weapon": "gun",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "gunL",
+                "active": true,
+                "glow": 9,
+                "smoke": 3
+              },
+              {
+                "weapon": "rifle",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              }
+            ],
+            [
+              {
+                "weapon": "gun",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "gunL",
+                "active": true,
+                "glow": 9,
+                "smoke": 3
+              },
+              {
+                "weapon": "rifle",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              }
+            ]
+          ]
+        },
+        {
+          "clip": "shoot2",
+          "emitters": [
+            [
+              {
+                "weapon": "gun",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "gunL",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "rifle",
+                "active": true,
+                "glow": 17,
+                "smoke": 8
+              }
+            ],
+            [
+              {
+                "weapon": "gun",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "gunL",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "rifle",
+                "active": true,
+                "glow": 17,
+                "smoke": 8
+              }
+            ]
+          ]
+        },
+        {
+          "clip": "idle",
+          "emitters": [
+            [
+              {
+                "weapon": "gun",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "gunL",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "rifle",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              }
+            ],
+            [
+              {
+                "weapon": "gun",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "gunL",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              },
+              {
+                "weapon": "rifle",
+                "active": false,
+                "glow": 0,
+                "smoke": 0
+              }
+            ]
+          ]
+        }
+      ]
+    }
+  }
+}

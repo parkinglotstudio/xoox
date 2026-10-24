@@ -1,0 +1,40 @@
+[
+  {
+    "variant": "RUON",
+    "non_hair_unchanged": true,
+    "preserved_mesh_hashes": {
+      "A_body_all": "02775044b7a52bbb223182f1d13ca18bede6c3363cdc4ddc57069656e5b18c70",
+      "A_expression_marks": "3abeb30ff15b4c9f7704ee831d8bdcbe40a1e8fb46ca1357760cd906951e7290",
+      "A_face_detail": "3cd1477641c5d06fbd396e95152788c1ac125d7ae9f5043293c3562101441320",
+      "A_head_all": "986976bf2cecbf975c54d8daf6d85e2723c994bd824af1f9d122d512c5756b56",
+      "A_head_clean": "c1f34e8d2a6f62c7f9b6e90a5c8c22b6303186e78879049b8d6da9311d842521",
+      "A_prop_bomb": "311c228b969fc6f73755f949fb11e5e9555a8a1813170ee8c86f40112f78c031",
+      "A_prop_gun": "1502ec1f5593c43bac2ccdeab7c44f12bfc6d048383069c7f2d25c9150835700",
+      "A_prop_gunL": "a1346e49133dbabfafdeae0fcc9baa231197be2ec6f409e9958a9fd275cccc76",
+      "A_prop_rifle": "0237465971e8d3093936b09fd73b2d681230fe08ebc6f617b4b04bdf83f79832",
+      "A_prop_sling": "b307a97caaec280ad8f58662d60f402b1df158f8b6ac29e81948b73d2d9e04fd"
+    },
+    "hair_vertices": 70648,
+    "triangles": 88618,
+    "file_bytes": 9913824
+  },
+  {
+    "variant": "RUON_35",
+    "non_hair_unchanged": true,
+    "preserved_mesh_hashes": {
+      "A_body_all": "d85dc48153c5babcb2c873d00c7ec93cd09c34ab9742a065531d5eaff20457b3",
+      "A_expression_marks": "49396f4075029b3b48c362aec75272f3954b4ae17e8745e02ed994a7add3e46e",
+      "A_face_detail": "ef71045fea4dbfba91d6da6f254a86ad3ba3d1476782512db784d0a5b18fec88",
+      "A_head_all": "a0a5bcff3c0dbfbb6c977db50441f033c83612f5225b8c65b82ec26f0472cb86",
+      "A_head_clean": "44a957746278843a5d2d8a5f376b5e1202fe43b4461ebb9082d171b8dbfe94dd",
+      "A_prop_bomb": "2b671240709fa1f23a7572d7a9fac77dac090262e2a800877e29cccdf7d5645c",
+      "A_prop_gun": "75720dae24426eca3ad56f50798072d1eb4dcea74489bed662b6b80f4d1a37a8",
+      "A_prop_gunL": "f7b4cacdace4fbf2ea182a337eec8d94d101446b53129eb34fabd95e5e998edc",
+      "A_prop_rifle": "4d453fb2bc938886b1fa03ed266b59e739c84d4016a80d2aff118d2958c98bab",
+      "A_prop_sling": "b307a97caaec280ad8f58662d60f402b1df158f8b6ac29e81948b73d2d9e04fd"
+    },
+    "hair_vertices": 70648,
+    "triangles": 88618,
+    "file_bytes": 9917772
+  }
+]

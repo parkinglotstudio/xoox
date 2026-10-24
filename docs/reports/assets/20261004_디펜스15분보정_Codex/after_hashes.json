@@ -1,0 +1,18 @@
+{
+  "src/tools/forestPlay/DefenseSession.ts": "6ed0555f91c1c16856614725c2c4e1fbf958af694de1f828b4f72e7b0d2046f7",
+  "src/tools/forestPlay/DefensePreview.ts": "a4017f932ef672f370a0793360a42cbb74d37d269c47cfc4f615866c869e4b6d",
+  "src/tools/forestPlay/DefenseBalance.ts": "a7185086942fa1fd539b52ea7198dc51cbc4230c07eae93393c38a2efa884cbd",
+  "src/tools/forestPlay/DefenseRoutes.ts": "401facf308550bb74a02bdd1a3362b3b6c75d2b3c8af50f9fc01c93f7fbe0c58",
+  "src/tools/forestPlay/DefenseMonsterLibrary.ts": "83b85147087bc9a8ce845b20516b9f49fcf283be6aa0682309240cf3d5d1d54e",
+  "data/tools/unit_lab/defense_balance.json": "e5cc7fd8a5d29ae30e6f884b56121f2a9ffc4e2c318ee8bf7319abd1919be525",
+  "data/tools/unit_lab/defense_monsters.json": "baa7bc95a7a426b326d7278bb82f8b79b3524c9334c32cc739e7987377d97821",
+  "scripts/verify_defense_modes.mjs": "6ee32fcb4c758a9ef85ee500c69068f9f3b5ae07f10d1191bfd72b9f86951768",
+  "scripts/verify_defense_15min.mjs": "15d2c49e2fe617f72d6d3e0f8c1013e614c2d31347026d31a50a6881b47a791d",
+  "scripts/verify_defense_monsters.mjs": "645d59b8c62c7dbb5a5991dddb7f44fea6bcbdd068e82f1693b2b92bc56eac0a",
+  "scripts/verify_defense_15min_build.mjs": "838aaf447abd8414c469b9814f75250d0cfcf61a32f9f6c4fd1d65c35e3a3287",
+  "scripts/render_defense_voxel_qa.py": "35c91a64576d9ab4f59ceb4de4feb26c5ef3a27658abb78139418e3eefb9353b",
+  "scripts/render_defense_routes_qa.py": "30226ac3e791cff5c72f8a0a86db92bdcd9b9c45b08602f542ff6b82c30a6d69",
+  "docs/reports/20261004_작업계획서_디펜스15분시나리오_Codex.md": "f984bb242b2be43b4e20659b771cad43d4f1dc91e81d3bd3f0fab55357326ab2",
+  "docs/reports/20261004_몬스터45종_설정표_Codex.md": "43a1621352f65334f3d2c9a028837e84494dd2538111e9031f97fe7de0c42cbb",
+  "docs/reports/20261004_작업보고서_디펜스15분과몬스터45종_Codex.md": "e645ff2b42a5dfbdf272fd6e7103f2538a84b15c012bda8c9fb7f1beb988f926"
+}

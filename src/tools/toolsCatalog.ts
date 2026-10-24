@@ -1,12 +1,12 @@
 /**
  * XOOX 개발 툴 목록 (SSoT)
  *
- * 맵 좌표·NPC 동선은 **맵 배치** 하나.
+ * 플레이 바닥은 숲. 예전 섬 맵 툴(맵 배치·마스크·맵 프로토)은 허브에서 뺐다.
  * 레이아웃·HUD·시나리오·전투는 그대로 분리.
  *
- * href는 Vite 루트 기준 경로 (예: `/sector-editor.html`)
+ * href는 Vite 루트 기준 경로 (예: `/forest-play-tool.html`)
  */
-export type ToolGroup = "map" | "scenario" | "layout" | "art" | "proto" | "other";
+export type ToolGroup = "forest" | "scenario" | "layout" | "art" | "proto" | "other";
 
 export interface ToolEntry {
   id: string;
@@ -25,7 +25,7 @@ export const TOOLS_HUB_HREF = "/tools.html";
 export const TOOLS_HUB_TITLE = "XOOX 툴 허브";
 
 export const TOOL_GROUP_LABEL: Record<ToolGroup, string> = {
-  map: "맵",
+  forest: "숲",
   scenario: "시나리오",
   layout: "레이아웃·셸",
   art: "아트·무대",
@@ -35,23 +35,28 @@ export const TOOL_GROUP_LABEL: Record<ToolGroup, string> = {
 
 export const TOOLS: ToolEntry[] = [
   {
-    id: "sector",
-    name: "맵 배치",
-    short: "맵",
-    href: "/sector-editor.html",
-    blurb: "섬 분위기 · NPC 자리 · 정화 전후 · 미리보기 · 동선. 배치는 NPC만 (데코 아트는 별도).",
-    group: "map",
-    npm: "dev:map",
+    id: "forest-play",
+    name: "숲 플레이",
+    short: "숲플레이",
+    href: "/forest-play-tool.html",
+    blurb: "숲 디펜스 · 배치 · 캐릭터 · 포탑. 본편 외출과 같은 맵.",
+    group: "forest",
   },
   {
-    id: "map-mask",
-    name: "맵 마스크",
-    short: "마스크",
-    href: "/map-mask-tool.html",
-    blurb: "섬 마스터 9등분 · 외곽·이동 구역 칠하기 · 네온/인상파 미리보기. 저장: data/map_mask_tool/",
-    group: "map",
-    npm: "dev:mapmask",
+    id: "object-tool",
+    name: "오브젝트",
+    short: "오브젝트",
+    href: "/object-tool.html",
+    blurb: "예전 연출 · 케니 팩 · 복셀 몬스터 · 숲 프롭을 한 목록에서 본다.",
+    group: "forest",
   },
+  { id: "forest150", name: "150×300m 정화 숲", short: "정화 숲", href: "/forest-map-tool.html", blurb: "Blender 정화 전후 · 넓은 공터 · 이동 마스크 · 몬스터 리젠/경로 확인", group: "forest", inBar: false },
+  { id: "island-coast", name: "섬 외곽 · 정화 후", short: "섬", href: "/island-coast-tool.html", blurb: "가장자리 나무, 가운데 풀밭, 새로 그린 절벽과 바다.", group: "forest", inBar: false },
+  { id: "forest-prop", name: "숲 프롭", short: "프롭", href: "/forest-prop-tool.html", blurb: "숲맵 프랍 카탈로그. 정화 전후 미리보기.", group: "forest", inBar: false },
+  { id: "unit-lab", name: "유닛랩", short: "유닛랩", href: "/unit-lab-tool.html", blurb: "복셀 몬스터·유닛·포탑 사격. 점구름 펫은 여기 대상이 아니다.", group: "forest", inBar: false },
+  { id: "combat-skill", name: "전투 스킬 테스트", short: "스킬", href: "/combat-skill-tool.html", blurb: "장판·로켓·유도·속사·산탄·드론을 종류별로 쏘아 본다. 본편과 분리.", group: "forest", inBar: false },
+  { id: "pet-pack", name: "펫 4종", short: "펫", href: "/pet-pack-tool.html", blurb: "복셀 펫 NoFilter · Flux · Lumos · Gizmo.", group: "forest", inBar: false },
+  { id: "block-cat", name: "블록 고양이", short: "캣", href: "/block-cat-tool.html", blurb: "BCAT02 블록 고양이.", group: "forest", inBar: false },
   {
     id: "layout",
     name: "레이아웃 에디터",
@@ -80,60 +85,6 @@ export const TOOLS: ToolEntry[] = [
     npm: "dev:scn",
   },
   {
-    id: "kit",
-    name: "지역 무대 키트",
-    short: "키트",
-    href: "/region-kit-tool.html",
-    blurb: "이동 무대 · 지역 키트 시뮬",
-    group: "art",
-    npm: "dev:kit",
-  },
-  {
-    id: "wanderer-anim",
-    name: "방랑자 스프라이트",
-    short: "방랑자애니",
-    href: "/wanderer-anim.html",
-    blurb: "게임 시트 + 총쏘기2(필드 발사). 줍기2·승리2·패배2는 미리보기.",
-    group: "art",
-    npm: "dev:wanderer-anim",
-  },
-  {
-    id: "fpv",
-    name: "3D 여정 뷰",
-    short: "3D뷰",
-    href: "/fpv-tool.html",
-    blurb: "3인칭/1인칭 카메라·안개 놀이터. NPC 배치는 맵 툴.",
-    group: "art",
-    npm: "dev:fpv",
-  },
-  {
-    id: "purify-raid",
-    name: "정화 습격 프로토",
-    short: "습격",
-    href: "/purify-raid-tool.html",
-    blurb: "정화 총 · 땅 칠 · 웨이브 손맛",
-    group: "art",
-    npm: "dev:raid",
-  },
-  {
-    id: "purify-skill-proto",
-    name: "정화 스킬 프로토",
-    short: "스킬프로토",
-    href: "/purify-skill-proto-tool.html",
-    blurb: "동쪽만 · 오염 파도 게이지 · 스킬 슬롯(다연발/대폭발/연쇄) · 벌레→원흉. 본편 미연결.",
-    group: "art",
-    npm: "dev:skillproto",
-  },
-  {
-    id: "culprit-cloud",
-    name: "원흉 점구름",
-    short: "원흉구름",
-    href: "/culprit-cloud-tool.html",
-    blurb: "Tobby · Bolinha · Vrum + 얼룩·오염 벌레·원흉 점그림.",
-    group: "art",
-    npm: "dev:culprit",
-  },
-  {
     id: "play-log",
     name: "플레이 로그",
     short: "로그",
@@ -141,15 +92,6 @@ export const TOOLS: ToolEntry[] = [
     blurb: "플레이·전투 종류 한 줄 로그 · 5000자마다 파일 저장",
     group: "other",
     npm: "dev:log",
-  },
-  {
-    id: "map-proto",
-    name: "맵·이동 프로토 (구)",
-    short: "맵프로토",
-    href: "/map-proto.html",
-    blurb: "본게임 동선과 별개 실험. 맵 보기·NPC·동선은 「맵 배치」를 쓴다.",
-    group: "proto",
-    inBar: false,
   },
   {
     id: "filler-proto",

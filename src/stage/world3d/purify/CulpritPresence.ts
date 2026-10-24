@@ -287,3 +287,23 @@ export class CulpritPresence {
     this.group.removeFromParent();
   }
 }
+
+/** 임시 자리 표시. 포탑이 들어서기 전과 오브젝트 툴이 같이 쓴다. */
+export const MARK_CORE = { scale: 2.4, count: 700, size: 0.055, cloudScaleMul: 1.6 };
+
+export function createMarkCore(): CulpritPresence {
+  const mark = new CulpritPresence({
+    scale: MARK_CORE.scale,
+    count: MARK_CORE.count,
+    size: MARK_CORE.size,
+    cloudScaleMul: MARK_CORE.cloudScaleMul,
+    idlePulse: true,
+  });
+  mark.cloud.gather = 0.35;
+  mark.cloud.gatherTo = 0.35;
+  mark.cloud.rise = 1;
+  mark.cloud.riseTo = 1;
+  mark.cloud.purify = 0;
+  mark.cloud.purifyTo = 0;
+  return mark;
+}

@@ -1,0 +1,63 @@
+
+> dead-grid@1.5.0 test
+> node --import tsx --test src/*.test.ts
+
+✔ ECS owns records and cached views preserve identity and spawn order (4.689125ms)
+✔ burn trait disappears on expiry, death, reset and entity destruction (2.131834ms)
+✔ world clock freezes while paused and owner leases survive StrictMode effect replay (15.367584ms)
+✔ spatial scratch query reuses memory and retains baseline cell traversal order (0.679375ms)
+✔ cached rotated hull broad phase matches prior geometry and invalidates mutations (7.35925ms)
+✔ deterministic combat remains equivalent to 4987254 with current medkit rule: pistol,shotgun,frost,katana,sniper,flamethrower (1190.994208ms)
+✔ deterministic combat remains equivalent to 4987254 with current medkit rule: orbit,molotov,lightning,pistol,shotgun,frost (1206.956167ms)
+{"seconds":1805,"kills":38211,"bossKills":0,"maxEnemies":520,"maxBullets":381,"maxDrops":921,"level":27}
+✔ pause and upgrade choices freeze the survival clock (7.49175ms)
+✔ dash and pulse give escape windows, then respect cooldowns (2.243333ms)
+✔ evolution requires a level 6 weapon and level 3 partner (2.401125ms)
+✔ late bosses must spawn even when the ordinary enemy pool is full (10.314834ms)
+✔ a full 1800-second encounter schedule runs with bounded entity pools (36942.873709ms)
+✔ 30 minutes starts final combat; only all six boss deaths clear the stage (2.549417ms)
+✔ each of six bosses spawns at its exact five-minute boundary, once (11.891958ms)
+✔ every character can start fresh after a failed or completed run (2.236292ms)
+✔ fatal contact ends the frame before a supply chest can revive the player (1.653666ms)
+✔ a dash stops at the entry wall instead of tunnelling into or across a building (15.162125ms)
+✔ swept friendly and hostile projectiles stop at intact buildings (3.045ms)
+✔ fog distinguishes unseen, remembered and visible terrain; collapse opens sight (2.499292ms)
+✔ mouse-directed fire never auto-targets an enemy hidden behind cover (1.600333ms)
+✔ elite kills give no supply chest and collecting a chest gives no free health (1.548125ms)
+✔ fully evolved gear cannot erase the ten-minute boss in five seconds (47.551042ms)
+✔ overlapping fire patches use the strongest burn rather than multiply boss DPS (3.471417ms)
+✔ pulse clears nearby acid projectiles as well as pushing enemies (1.657459ms)
+✔ zombies attack cover without walking through it and siege damage is bounded (101.941833ms)
+✔ rotated cars block swept movement and shots, burn, then open their hull (2.377125ms)
+✔ fog display eases in and out, retains exploration and resets per run (8.664584ms)
+✔ street props retain their collision hull under unlimited damage (0.864042ms)
+✔ clock text agrees with exact schedule boundaries despite floating point drift (0.069875ms)
+✔ all friendly projectiles including evolutions start at zero penetration (1.679084ms)
+✔ zero penetration hits only the first enemy, regardless of insertion order (1.03725ms)
+✔ penetration rolls again at each contact and cannot hit the same enemy twice (3.283292ms)
+✔ passive rarity distribution and weighted effects agree with displayed bonuses (1.743625ms)
+✔ four continuous boundary walls stop movement, dash and penetrative bullets (13.827292ms)
+✔ magnet pickup starts flight across walls, preserving XP until absorption (11.58875ms)
+✔ magnetic flight clamps high speeds instead of overshooting the player (1.052875ms)
+✔ enemy kills drop magnets by chance with a cooldown and at most two active (1.749541ms)
+✔ XP merging never adds future kills to an already magnetized orb (2.132334ms)
+✔ directional weapons follow mouse aim rather than a closer enemy or movement (1.026541ms)
+✔ katana hits the front arc, shows a sweep and respects intact cover (2.030542ms)
+✔ sniper has high damage, long range, slow cadence, a blocked aim line and a bounded final step (2.232458ms)
+✔ flamethrower hits multiple enemies at a cadence, then burns on a separate tick (1.361625ms)
+✔ burn stacks are capped and expire individually while pause freezes them (1.690834ms)
+✔ flame burns buildings and vehicles but never indestructible props or targets behind them (1.668667ms)
+✔ XP and range bonuses apply actual graded strength; extra projectiles remain integer and always rare (1.238667ms)
+✔ new weapons enter the choice pool but a six-weapon loadout keeps its upgrades (1.075ms)
+✔ legacy research migrates safely, prices are lower and purchase cannot overspend or exceed caps (0.078459ms)
+✔ Q and Space research shorten cooldowns and old protocol remains compatible (2.603375ms)
+✔ ordinary and boss medkits are identical and heal half the current maximum health (1.697ms)
+✔ medkits scale with max health, cap at full health, and never use legacy fixed values (6.805667ms)
+ℹ tests 50
+ℹ suites 0
+ℹ pass 50
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37364.57825

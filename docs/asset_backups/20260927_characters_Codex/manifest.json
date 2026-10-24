@@ -1,0 +1,106 @@
+{
+  "active": [
+    "Ruon original",
+    "Ruon 3.5",
+    "Ria original",
+    "Ria 3.5"
+  ],
+  "policy": "Unused variants hidden from active tools; compatibility source files retained. Archive entries restore to original C:/xoox relative paths.",
+  "files": [
+    {
+      "path": "data/tools/unit_lab/character/wanderer.glb",
+      "bytes": 2444256,
+      "sha256": "bcb86cc326cfc15410e44fefaa74103bbb9bf28ed26552d09b79bdd6b4aae42d"
+    },
+    {
+      "path": "data/tools/unit_lab/character/wanderer_A.glb",
+      "bytes": 2001416,
+      "sha256": "d68ab76dd1e4bf8bc6c1be78c47e65ee3fb9728a196f95a30e4b4be0c5df91c1"
+    },
+    {
+      "path": "data/tools/unit_lab/character/wanderer_A_eye.glb",
+      "bytes": 2227928,
+      "sha256": "025ad56787d8e1fe950f866c42db86cc8c953b96199b880b787fed7c11684d4e"
+    },
+    {
+      "path": "data/tools/unit_lab/character/wanderer_B.glb",
+      "bytes": 1927048,
+      "sha256": "4818dfaeac935d64f742000797f2cc4c331019bad4ef0cd6ff4064ea9871a72c"
+    },
+    {
+      "path": "data/tools/unit_lab/character/wanderer_B2.glb",
+      "bytes": 3163828,
+      "sha256": "ff89551e0d2352db5cd92cda5962c0db100802a4146f964d0befe2cc4e3783b9"
+    },
+    {
+      "path": "data/tools/unit_lab/character/wanderer_B_eye.glb",
+      "bytes": 2169884,
+      "sha256": "4a3bffc2f3bee9b5c6c3649e40fddc4c67edf54ef99ef455aa441c0085aa8468"
+    },
+    {
+      "path": "data/tools/unit_lab/character/wanderer_C.glb",
+      "bytes": 3163828,
+      "sha256": "ff89551e0d2352db5cd92cda5962c0db100802a4146f964d0befe2cc4e3783b9"
+    },
+    {
+      "path": "data/tools/unit_lab/character/wanderer_Kay_crossbow.glb",
+      "bytes": 309888,
+      "sha256": "6bd9d0a102e8deb561e05b1653dec04109de5752c9196f8471717f6fa0e4f302"
+    },
+    {
+      "path": "data/tools/unit_lab/character/D_sprite/metrics.json",
+      "bytes": 5260,
+      "sha256": "c5d947d1ddd43a4efac78391ca3b77602caf52674a70f0b99346037504906142"
+    },
+    {
+      "path": "data/tools/unit_lab/character/D_sprite/reference_idle.png",
+      "bytes": 119789,
+      "sha256": "a40193fde0cf188372caffed548d070f12534412fae7cba146a6824a58bc0d09"
+    },
+    {
+      "path": "data/tools/unit_lab/character/D_sprite/wanderer_D_sprite.blend",
+      "bytes": 6156016,
+      "sha256": "de91785641a78da87a835ffa3777775c7c02af83e7bf9b39192f586850145c53"
+    },
+    {
+      "path": "data/tools/unit_lab/character/D_sprite/wanderer_D_sprite.blend1",
+      "bytes": 6154883,
+      "sha256": "4e88e57cd6bf0948c5345fafc6a10e62308ad57790aafb02863f677d8e7a63c8"
+    },
+    {
+      "path": "data/tools/unit_lab/character/D_sprite/wanderer_D_sprite.glb",
+      "bytes": 10234048,
+      "sha256": "a8d358ad7232806aa6c42fbad8475e748d650f2bdd654ef728ff6474e5c7a11c"
+    },
+    {
+      "path": "unit-lab-tool.html",
+      "bytes": 14720,
+      "sha256": "e47e72fa0e86961711ba6399a357bbd091ae8ea71d4a535c1c29f6ee8ff8a1ba"
+    },
+    {
+      "path": "src/tools/unitLabTool/main.ts",
+      "bytes": 40518,
+      "sha256": "d27fbc79d5350a01f67d71ed46ae5d7205c4e27af9da2d2d32046a99d71e5874"
+    },
+    {
+      "path": "wanderer-d-sprite-tool.html",
+      "bytes": 3235,
+      "sha256": "2a1b30e977e7bd46f31398aad581b4e66254c40c941058ff30b0b545b1af4a16"
+    },
+    {
+      "path": "src/tools/unitLabDSprite/main.ts",
+      "bytes": 5423,
+      "sha256": "efa384515b6ad91a59f2f3cdcf570b2749a58d0ed230e3d498d2972daef2d4fb"
+    },
+    {
+      "path": "scripts/unit_lab_d_sprite/build_sprite.py",
+      "bytes": 7808,
+      "sha256": "846f7f39993d8d0899d685cc6372ce24ac8a362db1d7cc69bbb7082266124d63"
+    },
+    {
+      "path": "scripts/unit_lab_d_sprite/verify.mjs",
+      "bytes": 3996,
+      "sha256": "b768b8c9aa36c4d24c548b34f0273b1291e1beeafe014906ec3b8c8378391150"
+    }
+  ]
+}
